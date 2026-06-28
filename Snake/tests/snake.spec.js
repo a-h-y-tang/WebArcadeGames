@@ -205,7 +205,7 @@ test.describe('Snake', () => {
             await expect(page.locator('#overlay-title')).toContainText('Game Over');
         });
 
-        test('game over title includes the score', async ({ page }) => {
+        test('game over score element shows points', async ({ page }) => {
             await page.keyboard.press('ArrowRight');
             // Eat one food item so score > 0
             await page.evaluate(() => {
@@ -213,7 +213,8 @@ test.describe('Snake', () => {
             });
             await page.waitForTimeout(200);
             await page.evaluate(() => endGame());
-            await expect(page.locator('#overlay-title')).toContainText('pts');
+            await expect(page.locator('#overlay-title')).toContainText('Game Over');
+            await expect(page.locator('#overlay-score')).toContainText('pts');
         });
 
         test('Play Again button is visible after game over', async ({ page }) => {

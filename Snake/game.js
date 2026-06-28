@@ -8,6 +8,7 @@ const scoreEl = document.getElementById('score');
 const bestEl = document.getElementById('best');
 const overlay = document.getElementById('overlay');
 const overlayTitle = document.getElementById('overlay-title');
+const overlayScore = document.getElementById('overlay-score');
 const overlaySub = document.getElementById('overlay-sub');
 const btnStart = document.getElementById('btn-start');
 
@@ -82,7 +83,8 @@ function endGame() {
         bestEl.textContent = best;
         localStorage.setItem('snake-best', best);
     }
-    overlayTitle.textContent = `Game Over — ${score} pts`;
+    overlayTitle.textContent = 'Game Over';
+    overlayScore.textContent = `${score} pts`;
     overlaySub.textContent = 'Press an arrow key or WASD to play again';
     btnStart.textContent = 'Play Again';
     overlay.classList.add('visible');
@@ -200,6 +202,7 @@ document.addEventListener('keydown', e => {
         if (state === 'running') {
             state = 'paused';
             overlayTitle.textContent = 'Paused';
+            overlayScore.textContent = '';
             overlaySub.textContent = 'Press P to resume';
             btnStart.textContent = 'Resume';
             overlay.classList.add('visible');
@@ -239,9 +242,7 @@ best = parseInt(localStorage.getItem('snake-best') || '0', 10);
 bestEl.textContent = best;
 state = 'idle';
 
-// Draw an empty board immediately so there's something to look at
-draw();
-// Seed snake preview on start screen
+// Seed state before first draw so draw() has valid snake/food/dir
 snake = [{ x: 10, y: 10 }, { x: 9, y: 10 }, { x: 8, y: 10 }];
 food = { x: 14, y: 10 };
 dir = DIR.ArrowRight;

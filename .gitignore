@@ -1,0 +1,16 @@
+# Dependencies
+node_modules/
+
+# Playwright test artifacts
+test-results/
+playwright-report/
+.playwright/
+
+# OS
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Editors
+*.swp
+*~
