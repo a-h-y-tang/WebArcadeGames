@@ -1,4 +1,14 @@
 const { defineConfig, devices } = require('@playwright/test');
+const fs = require('fs');
+
+// In some managed/CI environments a full Chromium binary is pre-installed at a
+// fixed path and Playwright's own browser download is disabled. When that
+// binary exists, point Playwright at it; otherwise fall back to the browser
+// Playwright manages itself (the normal local/Windows case).
+const PREINSTALLED_CHROMIUM = '/opt/pw-browsers/chromium';
+const launchOptions = fs.existsSync(PREINSTALLED_CHROMIUM)
+    ? { executablePath: PREINSTALLED_CHROMIUM }
+    : {};
 
 module.exports = defineConfig({
     testDir: '.',
@@ -6,6 +16,7 @@ module.exports = defineConfig({
     timeout: 10_000,
     use: {
         headless: true,
+        launchOptions,
     },
     projects: [
         {
