@@ -75,7 +75,8 @@ the Snake and Breakout games:
 - Constants: `WIDTH`, `HEIGHT`, `SHIP_R`, `BULLET_SPEED`, `BULLET_LIFE`,
   `MAX_BULLETS`, `ASTEROID_R` (radius by size), `LIVES_START`
 - Functions: `startGame()`, `endGame()`, `step(dtMs)`, `fireBullet()`,
-  `spawnAsteroid(x, y, size, vx, vy)`, `loseLife()`
+  `spawnAsteroid(x, y, size, vx, vy)`, `loseLife()`, `driftAsteroids(dtMs)`
+  (cosmetic title-screen movement)
 
 `step(dtMs)` advances all physics (rotation from held keys, thrust,
 integration, wrapping, bullet/asteroid collisions, ship/asteroid

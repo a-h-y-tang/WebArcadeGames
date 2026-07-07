@@ -417,6 +417,17 @@ btnStart.addEventListener('click', () => {
     else startGame();
 });
 
+// Cosmetic drift for the title screen: nudge the rocks so the idle wave behind
+// the overlay is alive, without running ship physics, firing or collisions.
+function driftAsteroids(dt) {
+    for (const a of asteroids) {
+        a.x += a.vx * dt;
+        a.y += a.vy * dt;
+        a.spin += 0.001 * dt;
+        wrap(a);
+    }
+}
+
 // ===========================================================================
 // Main loop
 // ===========================================================================
@@ -427,6 +438,7 @@ function loop(now) {
     lastTime = now;
     if (dt > 50) dt = 50; // clamp big gaps (e.g. tab switch) for stability
     if (state === 'running') step(dt);
+    else if (state === 'idle' || state === 'over') driftAsteroids(dt);
     render();
     requestAnimationFrame(loop);
 }

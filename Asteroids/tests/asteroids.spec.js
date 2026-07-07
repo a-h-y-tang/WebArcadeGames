@@ -490,4 +490,27 @@ test.describe('Asteroids', () => {
             expect(parseInt(stored)).toBeGreaterThanOrEqual(777);
         });
     });
+
+    // -----------------------------------------------------------------------
+    // Title-screen ambience
+    // -----------------------------------------------------------------------
+    test.describe('idle drift', () => {
+        test('asteroids drift on the title screen while idle', async ({ page }) => {
+            const before = await page.evaluate(() => asteroids.map(a => ({ x: a.x, y: a.y })));
+            await page.evaluate(() => driftAsteroids(100));
+            const after = await page.evaluate(() => asteroids.map(a => ({ x: a.x, y: a.y })));
+            const moved = before.some((b, i) => b.x !== after[i].x || b.y !== after[i].y);
+            expect(moved).toBe(true);
+            // Still idle — drifting must not start the game.
+            expect(await page.evaluate(() => state)).toBe('idle');
+        });
+
+        test('idle drift never removes asteroids from the wave', async ({ page }) => {
+            const n = await page.evaluate(() => {
+                driftAsteroids(1000);
+                return asteroids.length;
+            });
+            expect(n).toBeGreaterThan(0);
+        });
+    });
 });
