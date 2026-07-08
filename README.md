@@ -7,6 +7,7 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Game | Folder | Status |
 |---|---|---|
 | Snake | [Snake/](Snake/) | Complete |
+| Flappy Bird | [FlappyBird/](FlappyBird/) | Complete |
 | 2048 | [2048/](2048/) | Complete |
 | Tetris | [Tetris/](Tetris/) | Complete |
 | Breakout | [Breakout/](Breakout/) | Complete |
