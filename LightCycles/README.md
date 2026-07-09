@@ -4,6 +4,8 @@ A Tron-inspired grid duel. Pilot your cyan light cycle, leave a wall of light
 behind you, and force the orange CPU cycle to crash before you do. First to
 **5** round wins takes the match.
 
+![Light Cycles screenshot](screenshot.png)
+
 ## How to play
 
 Open `index.html` in any modern browser — no build step or server needed.
