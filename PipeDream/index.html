@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pipe Dream</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Pipe Dream</h1>
+        <div id="hud">
+            <span>Pipes: <strong id="score-pipes">0</strong></span>
+            <span>Target: <strong id="target">0</strong></span>
+            <span>Best: <strong id="best">0</strong></span>
+        </div>
+        <div id="stage">
+            <div id="tray">
+                <span id="tray-label">Next</span>
+                <div id="queue"></div>
+            </div>
+            <div id="canvas-wrapper">
+                <canvas id="canvas" width="672" height="504"></canvas>
+                <div id="overlay" class="visible">
+                    <p id="overlay-title">Pipe Dream</p>
+                    <p id="overlay-score"></p>
+                    <p id="overlay-sub">Click empty tiles to lay pipe and race the ooze — connect enough pipe before it leaks</p>
+                    <button id="btn-start">Start Game</button>
+                </div>
+            </div>
+        </div>
+        <p id="controls-hint">Click a tile to place the next pipe &nbsp;·&nbsp; P to pause &nbsp;·&nbsp; beat the flow!</p>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
