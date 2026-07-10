@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sky Climber</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Sky Climber</h1>
+        <div id="hud">
+            <span>Height: <strong id="score">0</strong> m</span>
+            <span>Best: <strong id="best">0</strong> m</span>
+        </div>
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="480" height="640"></canvas>
+            <div id="overlay" class="visible">
+                <p id="overlay-title">Sky Climber</p>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Use ← → (or A / D) to steer &mdash; bounce as high as you can</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+        <p id="controls-hint">← → / A D to steer &nbsp;·&nbsp; P to pause</p>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
