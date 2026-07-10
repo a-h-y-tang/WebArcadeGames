@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tron Light Cycles</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Tron</h1>
+        <div id="hud">
+            <span>Wins: <strong id="wins">0</strong></span>
+            <span>Losses: <strong id="losses">0</strong></span>
+            <span>Best Streak: <strong id="best">0</strong></span>
+        </div>
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="700" height="500"></canvas>
+            <div id="overlay" class="visible">
+                <p id="overlay-title">Light Cycles</p>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Use ↑ ↓ ← → (or W A S D) to steer · trap the CPU to win</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+        <p id="controls-hint">↑ ↓ ← → / W A S D to steer &nbsp;·&nbsp; P to pause</p>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
