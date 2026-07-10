@@ -18,6 +18,7 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Minesweeper | [Minesweeper/](Minesweeper/) | Complete |
 | Frogger | [Frogger/](Frogger/) | Complete |
 | Asteroids | [Asteroids/](Asteroids/) | Complete |
+| Fruit Slice | [FruitSlice/](FruitSlice/) | Complete |
 
 ## Playing
 
