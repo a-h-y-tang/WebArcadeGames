@@ -12,6 +12,8 @@ For each new game, put it in a new folder. Each game should have its own README.
 | 2048 | [2048/](2048/) | Complete |
 | Tetris | [Tetris/](Tetris/) | Complete |
 | Breakout | [Breakout/](Breakout/) | Complete |
+| Centipede | [Centipede/](Centipede/) | Complete |
+| Tron Light Cycles | [Tron/](Tron/) | Complete |
 | Lunar Lander | [LunarLander/](LunarLander/) | Complete |
 | Missile Command | [MissileCommand/](MissileCommand/) | Complete |
 | Pong | [Pong/](Pong/) | Complete |
@@ -19,6 +21,7 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Frogger | [Frogger/](Frogger/) | Complete |
 | Asteroids | [Asteroids/](Asteroids/) | Complete |
 | Sokoban | [Sokoban/](Sokoban/) | Complete |
+| Doodle Jump | [DoodleJump/](DoodleJump/) | Complete |
 
 ## Playing
 
