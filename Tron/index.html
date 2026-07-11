@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tron Light Cycles</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Tron</h1>
+        <div id="hud">
+            <span class="you">You: <strong id="you">0</strong></span>
+            <span class="cpu">CPU: <strong id="cpu">0</strong></span>
+            <span>Round: <strong id="round">1</strong></span>
+            <span>Best: <strong id="best">0</strong></span>
+        </div>
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="480" height="480"></canvas>
+            <div id="overlay" class="visible">
+                <p id="overlay-title">Tron</p>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Press Space or an arrow key to start</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+        <p id="controls-hint">↑ ↓ ← → / W A S D to steer &nbsp;·&nbsp; P to pause &nbsp;·&nbsp; first to 5 rounds wins</p>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
