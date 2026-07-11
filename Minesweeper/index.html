@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minesweeper</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Minesweeper</h1>
+        <div id="hud">
+            <span>Mines: <strong id="mines">10</strong></span>
+            <span>Time: <strong id="time">0:00</strong></span>
+            <span>Best: <strong id="best">—</strong></span>
+        </div>
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="360" height="360"></canvas>
+            <div id="overlay" class="visible">
+                <p id="overlay-title">Minesweeper</p>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Left-click to reveal · right-click to flag. Press any key to start.</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+        <p id="controls-hint">Left-click reveal &nbsp;·&nbsp; Right-click flag &nbsp;·&nbsp; Clear the field without hitting a mine</p>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
