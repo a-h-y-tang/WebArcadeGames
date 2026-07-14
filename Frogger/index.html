@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frogger</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Frogger</h1>
+        <div id="hud">
+            <span>Score: <strong id="score">0</strong></span>
+            <span>Best: <strong id="best">0</strong></span>
+            <span>Lives: <strong id="lives">3</strong></span>
+        </div>
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="520" height="520"></canvas>
+            <div id="overlay" class="visible">
+                <p id="overlay-title">Frogger</p>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Press an arrow key or WASD to start</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+        <p id="controls-hint">Arrow keys / WASD to hop &nbsp;·&nbsp; P to pause</p>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
