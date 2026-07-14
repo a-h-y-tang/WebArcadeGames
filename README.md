@@ -7,6 +7,7 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Game | Folder | Status |
 |---|---|---|
 | Snake | [Snake/](Snake/) | Complete |
+| Reversi (Othello) | [Reversi/](Reversi/) | Complete |
 | Match-3 | [Match3/](Match3/) | Complete |
 | Space Invaders | [SpaceInvaders/](SpaceInvaders/) | Complete |
 | Flappy Bird | [FlappyBird/](FlappyBird/) | Complete |
