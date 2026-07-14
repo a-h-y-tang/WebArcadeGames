@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pong</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Pong</h1>
+        <div id="hud">
+            <span>You: <strong id="score-player">0</strong></span>
+            <span>CPU: <strong id="score-cpu">0</strong></span>
+            <span>Best Rally: <strong id="best">0</strong></span>
+        </div>
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="700" height="500"></canvas>
+            <div id="overlay" class="visible">
+                <p id="overlay-title">Pong</p>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Use ↑ ↓ (or the mouse) to move · first to 7 wins</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+        <p id="controls-hint">↑ ↓ / W S or mouse &nbsp;·&nbsp; P to pause</p>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>

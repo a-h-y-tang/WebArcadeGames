@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lights Out</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="wrap">
+        <header class="hud">
+            <div class="stat"><span class="label">MOVES</span><span id="moves">0</span></div>
+            <div class="stat"><span class="label">LEVEL</span><span id="level">1</span></div>
+            <div class="stat"><span class="label">BEST</span><span id="best">—</span></div>
+        </header>
+
+        <div class="stage">
+            <canvas id="canvas" width="400" height="400"></canvas>
+
+            <div id="overlay" class="overlay visible">
+                <h1 id="overlay-title">LIGHTS OUT</h1>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Tap a tile to flip it and its neighbours — turn every light off</p>
+                <button id="btn-start">Start</button>
+            </div>
+        </div>
+
+        <footer class="help">
+            <span><kbd>Click</kbd> flip</span>
+            <span><kbd>N</kbd> new board</span>
+            <span><kbd>R</kbd> reset</span>
+        </footer>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
