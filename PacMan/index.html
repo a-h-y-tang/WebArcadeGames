@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pac-Man</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Pac-Man</h1>
+        <div id="hud">
+            <span>Score: <strong id="score">0</strong></span>
+            <span>Best: <strong id="best">0</strong></span>
+            <span>Lives: <strong id="lives">3</strong></span>
+            <span>Level: <strong id="level">1</strong></span>
+        </div>
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="456" height="504"></canvas>
+            <div id="overlay" class="visible">
+                <p id="overlay-title">Pac-Man</p>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Press Space or an arrow key to start</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+        <p id="controls-hint">← ↑ → ↓ / W A S D to move &nbsp;·&nbsp; eat power pellets to hunt ghosts &nbsp;·&nbsp; P to pause</p>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
