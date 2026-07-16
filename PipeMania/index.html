@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pipe Mania</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="wrap">
+        <header class="hud">
+            <div class="stat"><span class="label">SCORE</span><span id="score">0</span></div>
+            <div class="stat"><span class="label">GOAL</span><span id="goal">5</span></div>
+            <div class="stat"><span class="label">LEVEL</span><span id="level">1</span></div>
+            <div class="stat"><span class="label">BEST</span><span id="best">—</span></div>
+        </header>
+
+        <div class="timer"><div id="timer-fill" class="timer-fill"></div></div>
+
+        <div class="stage">
+            <div class="board">
+                <canvas id="canvas" width="540" height="420"></canvas>
+
+                <div id="overlay" class="overlay visible">
+                    <h1 id="overlay-title">PIPE MANIA</h1>
+                    <p id="overlay-score"></p>
+                    <p id="overlay-sub">Lay pipe ahead of the flowing water — carry it through enough pipes to clear the level</p>
+                    <button id="btn-start">Start</button>
+                </div>
+            </div>
+
+            <aside class="side">
+                <span class="side-label">NEXT</span>
+                <canvas id="queue" width="60" height="300"></canvas>
+            </aside>
+        </div>
+
+        <footer class="help">
+            <span><kbd>Click</kbd> place pipe</span>
+            <span><kbd>Space</kbd> release water</span>
+            <span><kbd>R</kbd> restart</span>
+        </footer>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
