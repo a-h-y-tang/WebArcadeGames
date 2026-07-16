@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Poker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Video Poker</h1>
+        <div id="hud">
+            <span>Credits: <strong id="credits">100</strong></span>
+            <span>Bet: <strong id="bet">1</strong></span>
+            <span>Best: <strong id="best">0</strong></span>
+        </div>
+        <p id="result">&nbsp;</p>
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="640" height="420"></canvas>
+            <div id="overlay" class="visible">
+                <p id="overlay-title">Video Poker</p>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Press Space or Deal to play &middot; Jacks or Better</p>
+                <button id="btn-start">Deal</button>
+            </div>
+        </div>
+        <p id="controls-hint">Space = Deal / Draw &nbsp;·&nbsp; 1–5 or click = Hold &nbsp;·&nbsp; B = Bet</p>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
