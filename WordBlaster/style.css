@@ -1,0 +1,121 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: #0d1117;
+    color: #e6edf3;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#container {
+    text-align: center;
+}
+
+h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.6rem;
+    background: linear-gradient(90deg, #38bdf8, #a78bfa);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+#hud {
+    display: flex;
+    justify-content: center;
+    gap: 1.6rem;
+    font-size: 1.05rem;
+    margin-bottom: 0.8rem;
+}
+
+#hud strong {
+    color: #38bdf8;
+}
+
+#hud span:last-child strong {
+    color: #f87171;
+}
+
+#canvas-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+#canvas {
+    display: block;
+    background: #0b0f16;
+    border: 1px solid #1f2733;
+    border-radius: 10px;
+    box-shadow: 0 0 40px rgba(56, 189, 248, 0.08);
+}
+
+#overlay {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0.7rem;
+    background: rgba(6, 10, 17, 0.86);
+    border-radius: 10px;
+    backdrop-filter: blur(2px);
+}
+
+#overlay.visible {
+    display: flex;
+}
+
+#overlay-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #e6edf3;
+}
+
+#overlay-score {
+    font-size: 1.15rem;
+    color: #38bdf8;
+    min-height: 1.2rem;
+}
+
+#overlay-sub {
+    font-size: 0.95rem;
+    color: #9aa7b8;
+    max-width: 24rem;
+}
+
+#btn-start {
+    margin-top: 0.4rem;
+    padding: 0.6rem 1.6rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #05070b;
+    background: linear-gradient(90deg, #38bdf8, #a78bfa);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.08s ease, filter 0.15s ease;
+}
+
+#btn-start:hover {
+    filter: brightness(1.08);
+}
+
+#btn-start:active {
+    transform: scale(0.97);
+}
+
+#controls-hint {
+    margin-top: 0.9rem;
+    font-size: 0.85rem;
+    color: #6b7688;
+}
