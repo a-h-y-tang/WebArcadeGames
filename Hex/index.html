@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hex</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="wrap">
+        <header class="hud">
+            <div class="stat">
+                <span class="label">TURN</span>
+                <span id="turn" class="turn-red">Red</span>
+            </div>
+            <div class="stat">
+                <span class="label">MOVES</span>
+                <span id="moves">0</span>
+            </div>
+        </header>
+
+        <div class="stage">
+            <canvas id="canvas"></canvas>
+
+            <div id="overlay" class="overlay visible">
+                <h1 id="overlay-title">HEX</h1>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Two players. <b>Red</b> connects top &amp; bottom, <b>Blue</b> connects left &amp; right. First to link their two sides wins.</p>
+                <button id="btn-start">Start</button>
+            </div>
+        </div>
+
+        <footer class="help">
+            <span><kbd>Click</kbd> place stone</span>
+            <button id="btn-swap" class="swap hidden">Swap</button>
+            <span><kbd>R</kbd> new game</span>
+        </footer>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
