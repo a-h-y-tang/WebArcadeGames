@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Untangle</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Untangle</h1>
+        <div id="hud">
+            <span>Level: <strong id="level">1</strong></span>
+            <span>Crossings: <strong id="crossings">0</strong></span>
+            <span>Moves: <strong id="moves">0</strong></span>
+            <span>Best: <strong id="best">–</strong></span>
+        </div>
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="600" height="600"></canvas>
+            <div id="overlay" class="visible">
+                <p id="overlay-title">Untangle</p>
+                <p id="overlay-sub">Drag the dots so that no two lines cross · reach zero crossings to win</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+        <div id="buttons">
+            <button id="btn-reset">Reset (R)</button>
+            <button id="btn-next">Next (N)</button>
+        </div>
+        <p id="controls-hint">Drag any dot to move it &nbsp;·&nbsp; R reset &nbsp;·&nbsp; N next level</p>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
