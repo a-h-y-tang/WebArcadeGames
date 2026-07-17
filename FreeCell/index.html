@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreeCell</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="game">
+        <header class="hud">
+            <h1>FREECELL</h1>
+            <div class="stats">
+                <div class="stat"><span class="label">Moves</span><span id="moves">0</span></div>
+                <div class="stat"><span class="label">Time</span><span id="time">0:00</span></div>
+                <div class="stat"><span class="label">Best</span><span id="best">—</span></div>
+            </div>
+        </header>
+
+        <div class="toolbar">
+            <button id="btn-new" type="button">New Game</button>
+            <button id="btn-auto" type="button">Auto ▸</button>
+            <span class="hint">Click a card, then its destination · double-click sends a card home</span>
+        </div>
+
+        <div class="board-wrap">
+            <canvas id="canvas" width="624" height="700"></canvas>
+            <div id="overlay" class="overlay visible">
+                <h2 id="overlay-title">FREECELL</h2>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Click New Game or press any key to start</p>
+                <button id="btn-start" type="button">New Game</button>
+            </div>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>
