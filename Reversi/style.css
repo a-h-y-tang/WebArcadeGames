@@ -1,0 +1,139 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: radial-gradient(circle at 50% 0%, #1f3d2e, #12211a 70%);
+    color: #e8f0ea;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 24px 12px;
+}
+
+#container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+h1 {
+    font-size: 2.1rem;
+    letter-spacing: 3px;
+    color: #e9c46a;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+#scoreboard {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    width: 100%;
+    max-width: 492px;
+}
+
+.score-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #1c3226;
+    border: 2px solid #2c4a38;
+    border-radius: 999px;
+    padding: 6px 16px;
+    min-width: 84px;
+    justify-content: center;
+}
+
+.score-chip.active {
+    border-color: #e9c46a;
+    box-shadow: 0 0 12px rgba(233, 196, 106, 0.35);
+}
+
+.score-num {
+    font-size: 1.5rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.disc-icon {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.disc-icon.black {
+    background: radial-gradient(circle at 35% 30%, #4a4a4a, #050505);
+}
+
+.disc-icon.white {
+    background: radial-gradient(circle at 35% 30%, #ffffff, #c2c9c4);
+}
+
+#status {
+    text-align: center;
+    flex: 1;
+}
+
+#turn-indicator {
+    font-size: 1rem;
+    color: #cfe0d5;
+}
+
+#message {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #e9c46a;
+    min-height: 1.2em;
+}
+
+#board-wrap {
+    padding: 10px;
+    background: #12211a;
+    border-radius: 10px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+}
+
+#canvas {
+    display: block;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#controls {
+    display: flex;
+    gap: 10px;
+}
+
+#new-game {
+    background: #e9c46a;
+    color: #12211a;
+    border: none;
+    border-radius: 8px;
+    padding: 9px 22px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.1s, background 0.15s;
+}
+
+#new-game:hover {
+    background: #f0d488;
+}
+
+#new-game:active {
+    transform: scale(0.95);
+}
+
+#hint {
+    font-size: 0.85rem;
+    color: #8fae9c;
+    text-align: center;
+    max-width: 480px;
+}
