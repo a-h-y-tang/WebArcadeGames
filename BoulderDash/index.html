@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boulder Dash</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Boulder Dash</h1>
+        <div id="hud">
+            <span>Score: <strong id="score">0</strong></span>
+            <span>Diamonds: <strong id="collected">0</strong>/<strong id="required">0</strong></span>
+            <span>Best: <strong id="best">0</strong></span>
+        </div>
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="640" height="448"></canvas>
+            <div id="overlay" class="visible">
+                <p id="overlay-title">Boulder Dash</p>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Dig with the arrows &middot; grab diamonds &middot; mind the falling boulders, then reach the exit</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+        <p id="controls-hint">← ↑ ↓ → / W A S D to dig &nbsp;·&nbsp; push boulders sideways &nbsp;·&nbsp; P to pause</p>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
