@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nonogram</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Nonogram</h1>
+        <div id="hud">
+            <span>Puzzle: <strong id="puzzle-name">–</strong></span>
+            <span>Mistakes: <strong id="mistakes">0</strong></span>
+            <span>Status: <strong id="status">Ready</strong></span>
+        </div>
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="424" height="424"></canvas>
+            <div id="overlay" class="visible">
+                <p id="overlay-title">Nonogram</p>
+                <p id="overlay-sub">Use the row &amp; column clues to fill the hidden picture. Left-click fills, right-click marks.</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+        <div id="buttons">
+            <button id="btn-reset">Reset (R)</button>
+            <button id="btn-next">Next puzzle (N)</button>
+        </div>
+        <p id="controls-hint">
+            Left-click fill &nbsp;·&nbsp; Right-click mark &nbsp;·&nbsp; Arrows / WASD move &nbsp;·&nbsp;
+            F / Space fill &nbsp;·&nbsp; X mark &nbsp;·&nbsp; R reset &nbsp;·&nbsp; N next
+        </p>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mancala</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Mancala</h1>
+        <div id="hud">
+            <span>You: <strong id="p1-store">0</strong></span>
+            <span id="turn">Your move</span>
+            <span>CPU: <strong id="p2-store">0</strong></span>
+        </div>
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="700" height="300"></canvas>
+            <div id="overlay">
+                <p id="overlay-title">Game Over</p>
+                <p id="overlay-sub"></p>
+                <button id="btn-play">Play Again</button>
+            </div>
+        </div>
+        <div id="controls">
+            <button id="btn-restart">New Game</button>
+        </div>
+        <p id="controls-hint">Click one of your pits (bottom row) or press <strong>1–6</strong> &nbsp;·&nbsp; land the last stone in your store for another turn</p>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
