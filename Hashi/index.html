@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hashi (Bridges)</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Hashi</h1>
+        <div id="hud">
+            <span>Islands: <strong id="satisfied">0 / 0</strong></span>
+            <span>Moves: <strong id="moves">0</strong></span>
+            <span>Best: <strong id="best">—</strong></span>
+        </div>
+        <div id="levels"></div>
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="560" height="560"></canvas>
+            <div id="overlay" class="visible">
+                <p id="overlay-title">Hashi</p>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Connect the islands with bridges so every number is satisfied</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+        <p id="controls-hint">Click a dot then a neighbour (or drag between them) &nbsp;·&nbsp; R restart &nbsp;·&nbsp; N next level</p>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>

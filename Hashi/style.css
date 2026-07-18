@@ -1,0 +1,131 @@
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    background: #0d1b2a;
+    color: #e8f0ff;
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+
+#container {
+    padding: 20px;
+    text-align: center;
+}
+
+h1 {
+    margin: 8px 0 12px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-size: 28px;
+}
+
+#hud {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    margin-bottom: 12px;
+    font-size: 16px;
+}
+
+#hud strong { color: #6fd3ff; }
+
+#levels {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+
+.level-btn {
+    background: #16273a;
+    color: #e8f0ff;
+    border: 1px solid #274863;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.level-btn:hover { background: #203551; }
+
+.level-btn.active {
+    background: #1f7ae0;
+    border-color: #4fa3ff;
+}
+
+#canvas-wrapper {
+    position: relative;
+    width: 560px;
+    max-width: 92vw;
+    margin: 0 auto;
+}
+
+#canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+    background: #0f2233;
+    border-radius: 10px;
+    touch-action: none;
+    cursor: pointer;
+}
+
+#overlay {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: rgba(7, 16, 26, 0.9);
+    border-radius: 10px;
+    padding: 20px;
+}
+
+#overlay.visible { display: flex; }
+
+#overlay-title {
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0 0 8px;
+}
+
+#overlay-score {
+    font-size: 18px;
+    color: #6fd3ff;
+    margin: 0 0 8px;
+    min-height: 22px;
+}
+
+#overlay-sub {
+    font-size: 15px;
+    color: #a9bce0;
+    margin: 0 0 18px;
+    max-width: 380px;
+}
+
+#btn-start {
+    background: #1f7ae0;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 28px;
+    font-size: 17px;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+#btn-start:hover { background: #2f8bf5; }
+
+#controls-hint {
+    margin-top: 14px;
+    font-size: 13px;
+    color: #7f92b8;
+}
