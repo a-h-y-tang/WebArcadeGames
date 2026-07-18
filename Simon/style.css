@@ -1,0 +1,122 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Verdana, sans-serif;
+    background: #0b0f17;
+    color: #e6f0ff;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+#container {
+    text-align: center;
+}
+
+h1 {
+    font-weight: 700;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    font-size: 1.9rem;
+    margin-bottom: 14px;
+    color: #f8fafc;
+    text-shadow: 0 0 14px rgba(148, 163, 184, 0.4);
+}
+
+#hud {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    margin-bottom: 14px;
+    font-size: 1rem;
+    color: #94a3b8;
+}
+
+#hud strong {
+    color: #e6f0ff;
+    font-variant-numeric: tabular-nums;
+}
+
+#canvas-wrapper {
+    position: relative;
+    width: 500px;
+    height: 500px;
+    margin: 0 auto;
+}
+
+#canvas {
+    display: block;
+    background: #0b0f17;
+    border-radius: 50%;
+}
+
+#overlay {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    background: rgba(11, 15, 23, 0.86);
+    border-radius: 50%;
+    backdrop-filter: blur(2px);
+}
+
+#overlay.visible {
+    display: flex;
+}
+
+#overlay-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: #f8fafc;
+}
+
+#overlay-score {
+    font-size: 1.1rem;
+    color: #cbd5e1;
+    min-height: 1.1rem;
+}
+
+#overlay-sub {
+    font-size: 0.95rem;
+    color: #94a3b8;
+    max-width: 300px;
+}
+
+#btn-start {
+    margin-top: 6px;
+    padding: 11px 30px;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: #0b0f17;
+    background: #e2e8f0;
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: transform 0.08s ease, background 0.15s ease;
+}
+
+#btn-start:hover {
+    background: #f8fafc;
+    transform: translateY(-1px);
+}
+
+#btn-start:active {
+    transform: translateY(0);
+}
+
+#controls-hint {
+    margin-top: 16px;
+    font-size: 0.85rem;
+    color: #64748b;
+}
