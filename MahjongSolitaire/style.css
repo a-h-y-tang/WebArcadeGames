@@ -1,0 +1,146 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: radial-gradient(circle at 50% 0%, #123a2c 0%, #06120d 70%);
+    color: #f2efe4;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+}
+
+#container {
+    width: 100%;
+    max-width: 480px;
+    text-align: center;
+}
+
+h1 {
+    font-size: 1.8rem;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+    text-shadow: 0 0 14px rgba(80, 220, 160, 0.35);
+}
+
+#hud {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 0.95rem;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+}
+
+#hud strong {
+    color: #ffd76a;
+}
+
+#canvas-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 480 / 500;
+}
+
+canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    border-radius: 10px;
+    background: #0c231b;
+    box-shadow: 0 0 30px rgba(40, 160, 110, 0.3);
+    touch-action: none;
+}
+
+#overlay {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    background: rgba(6, 18, 13, 0.85);
+    border-radius: 10px;
+    backdrop-filter: blur(2px);
+    padding: 20px;
+}
+
+#overlay.visible {
+    display: flex;
+}
+
+#overlay-title {
+    font-size: 1.9rem;
+    font-weight: 700;
+    text-shadow: 0 0 16px rgba(80, 220, 160, 0.5);
+}
+
+#overlay-score {
+    font-size: 1.2rem;
+    color: #ffd76a;
+    min-height: 1.2rem;
+}
+
+#overlay-sub {
+    font-size: 1rem;
+    opacity: 0.85;
+    max-width: 340px;
+}
+
+button {
+    font-family: inherit;
+    cursor: pointer;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: transform 0.08s ease, box-shadow 0.2s ease;
+}
+
+#btn-start {
+    margin-top: 6px;
+    padding: 12px 30px;
+    font-size: 1.05rem;
+    color: #06120d;
+    background: linear-gradient(180deg, #7ff0b6, #34c88a);
+    box-shadow: 0 4px 18px rgba(52, 200, 138, 0.5);
+}
+
+#btn-start:hover {
+    transform: translateY(-1px);
+}
+
+#buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+#buttons button {
+    padding: 9px 16px;
+    font-size: 0.9rem;
+    color: #eafff5;
+    background: rgba(52, 200, 138, 0.18);
+    border: 1px solid rgba(52, 200, 138, 0.4);
+}
+
+#buttons button:hover {
+    background: rgba(52, 200, 138, 0.32);
+    transform: translateY(-1px);
+}
+
+#buttons button:active {
+    transform: translateY(1px);
+}
+
+#controls-hint {
+    margin-top: 12px;
+    font-size: 0.8rem;
+    opacity: 0.6;
+}

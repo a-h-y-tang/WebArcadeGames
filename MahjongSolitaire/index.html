@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mahjong Solitaire</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Mahjong Solitaire</h1>
+        <div id="hud">
+            <span>Tiles: <strong id="remaining">64</strong></span>
+            <span>Time: <strong id="time">0:00</strong></span>
+            <span>Best: <strong id="best">—</strong></span>
+        </div>
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="480" height="500"></canvas>
+            <div id="overlay" class="visible">
+                <p id="overlay-title">Mahjong Solitaire</p>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Match free pairs of identical tiles to clear the board. Every deal is solvable!</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+        <div id="buttons">
+            <button id="btn-hint">Hint (H)</button>
+            <button id="btn-undo">Undo (U)</button>
+            <button id="btn-new">New Game (N)</button>
+        </div>
+        <p id="controls-hint">Click a free tile, then a matching free tile &nbsp;·&nbsp; a tile is free when nothing sits on top and one side is open</p>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
