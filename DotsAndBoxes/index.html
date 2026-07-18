@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dots and Boxes</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Dots and Boxes</h1>
+        <div id="hud">
+            <span class="score score-blue" id="score-blue-wrap">
+                <span class="dot dot-blue"></span> You <strong id="score-blue">0</strong>
+            </span>
+            <span class="turn" id="turn">Your turn</span>
+            <span class="score score-red" id="score-red-wrap">
+                <strong id="score-red">0</strong> CPU <span class="dot dot-red"></span>
+            </span>
+        </div>
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="450" height="450"></canvas>
+            <div id="overlay" class="visible">
+                <p id="overlay-title">Dots and Boxes</p>
+                <p id="overlay-sub">You are Blue. Complete more boxes than the computer!</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+        <p id="controls-hint">Click near a line to draw it &nbsp;·&nbsp; complete a box to go again</p>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
