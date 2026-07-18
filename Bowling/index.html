@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bowling</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Bowling</h1>
+        <div id="hud">
+            <span>Frame: <strong id="frame-no">1</strong></span>
+            <span>Total: <strong id="total">0</strong></span>
+        </div>
+        <div id="playfield">
+            <div id="canvas-wrapper">
+                <canvas id="canvas" width="420" height="560"></canvas>
+                <div id="overlay" class="visible">
+                    <p id="overlay-title">Bowling</p>
+                    <p id="overlay-score"></p>
+                    <p id="overlay-sub">Aim with ← → (or the mouse) and bowl with Space / click.</p>
+                    <button id="btn-start">Start Game</button>
+                </div>
+            </div>
+        </div>
+        <div id="scorecard"></div>
+        <p id="controls-hint">← → / A D or mouse to aim &nbsp;·&nbsp; Space / click to bowl &nbsp;·&nbsp; R to restart</p>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
