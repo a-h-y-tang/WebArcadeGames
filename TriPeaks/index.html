@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TriPeaks Solitaire</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="game">
+        <header class="hud">
+            <h1>TRI<span>PEAKS</span></h1>
+            <div class="stats">
+                <div class="stat"><span class="label">Score</span><span id="score">0</span></div>
+                <div class="stat"><span class="label">Streak</span><span id="streak">0</span></div>
+                <div class="stat"><span class="label">Best</span><span id="best">0</span></div>
+            </div>
+        </header>
+
+        <div class="board-wrap">
+            <canvas id="canvas" width="760" height="470"></canvas>
+            <div id="overlay" class="overlay visible">
+                <h2 id="overlay-title">TRIPEAKS SOLITAIRE</h2>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Clear the peaks by playing cards one rank above or below the waste pile. Aces wrap around. Deal to begin.</p>
+                <button id="btn-start">Deal Cards</button>
+            </div>
+        </div>
+
+        <div class="help">
+            <p>Click an <strong>exposed</strong> card one rank above/below the waste</p>
+            <p>Click the <strong>stock</strong> to flip a new card</p>
+            <p><kbd>N</kbd> new game</p>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>
