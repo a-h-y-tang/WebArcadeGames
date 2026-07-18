@@ -50,6 +50,7 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Gem Match | [GemMatch/](GemMatch/) | Complete |
 | Sokoban | [Sokoban/](Sokoban/) | Complete |
 | Doodle Jump | [DoodleJump/](DoodleJump/) | Complete |
+| Turbo Racer | [TurboRacer/](TurboRacer/) | Complete |
 | Columns | [Columns/](Columns/) | Complete |
 | Dots and Boxes | [DotsAndBoxes/](DotsAndBoxes/) | Complete |
 | Maze | [Maze/](Maze/) | Complete |
