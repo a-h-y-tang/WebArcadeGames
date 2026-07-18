@@ -7,6 +7,7 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Game | Folder | Status |
 |---|---|---|
 | Snake | [Snake/](Snake/) | Complete |
+| Mastermind | [Mastermind/](Mastermind/) | Complete |
 | Mini Golf | [MiniGolf/](MiniGolf/) | Complete |
 | Q*bert | [Qbert/](Qbert/) | Complete |
 | Reversi (Othello) | [Reversi/](Reversi/) | Complete |
