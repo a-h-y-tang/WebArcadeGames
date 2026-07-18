@@ -50,6 +50,7 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Gem Match | [GemMatch/](GemMatch/) | Complete |
 | Sokoban | [Sokoban/](Sokoban/) | Complete |
 | Doodle Jump | [DoodleJump/](DoodleJump/) | Complete |
+| FreeCell | [FreeCell/](FreeCell/) | Complete |
 | 15 Puzzle | [FifteenPuzzle/](FifteenPuzzle/) | Complete |
 | Word Guess | [WordGuess/](WordGuess/) | Complete |
 | Klondike Solitaire | [Solitaire/](Solitaire/) | Complete |
