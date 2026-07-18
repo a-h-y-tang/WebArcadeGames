@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kakuro</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="game">
+        <header class="hud">
+            <h1>KAKURO</h1>
+            <div class="stats">
+                <div class="stat"><span class="label">Puzzle</span><span id="puzzle-name">—</span></div>
+                <div class="stat"><span class="label">Time</span><span id="time">0:00</span></div>
+                <div class="stat"><span class="label">Best</span><span id="best">—</span></div>
+            </div>
+        </header>
+
+        <div class="board-wrap">
+            <canvas id="canvas" width="360" height="360"></canvas>
+            <div id="overlay" class="overlay">
+                <h2 id="overlay-title">SOLVED!</h2>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Nicely done.</p>
+                <button id="btn-next">Next Puzzle</button>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button id="btn-restart">Restart</button>
+            <button id="btn-newnext">Next Puzzle</button>
+        </div>
+
+        <div class="help">
+            <p>Click a white cell, type <kbd>1</kbd>–<kbd>9</kbd></p>
+            <p><kbd>0</kbd>/<kbd>⌫</kbd> clear · <kbd>↑↓←→</kbd> move</p>
+            <p>Fill every run to its sum with no repeated digits.</p>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>
