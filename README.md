@@ -33,6 +33,7 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Minesweeper | [Minesweeper/](Minesweeper/) | Complete |
 | Frogger | [Frogger/](Frogger/) | Complete |
 | Asteroids | [Asteroids/](Asteroids/) | Complete |
+| Fruit Slice | [FruitSlice/](FruitSlice/) | Complete |
 | Artillery Duel | [ArtilleryDuel/](ArtilleryDuel/) | Complete |
 | Memory Match | [MemoryMatch/](MemoryMatch/) | Complete |
 | Stacker | [Stacker/](Stacker/) | Complete |
