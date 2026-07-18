@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peg Solitaire</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Peg Solitaire</h1>
+        <div id="hud">
+            <span>Pegs: <strong id="pegs">32</strong></span>
+            <span>Removed: <strong id="score">0</strong></span>
+            <span>Best: <strong id="best">0</strong></span>
+        </div>
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="420" height="420"></canvas>
+            <div id="overlay" class="visible">
+                <p id="overlay-title">Peg Solitaire</p>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Click Start, then click a peg and a highlighted hole</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+        <p id="status">Clear the board to a single peg</p>
+        <p id="controls-hint">Click a peg, then click a highlighted hole to jump</p>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
