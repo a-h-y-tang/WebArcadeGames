@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nine Men's Morris</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Nine Men's Morris</h1>
+        <div id="hud">
+            <span>You (White): <strong id="white-hand">9</strong> to place</span>
+            <span>Black: <strong id="black-hand">9</strong> to place</span>
+        </div>
+        <div id="status">Press Space to start</div>
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="500" height="500"></canvas>
+            <div id="overlay" class="visible">
+                <p id="overlay-title">Nine Men's Morris</p>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Press Space or click Start to play</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+        <p id="controls-hint">Click a point to place · click a piece then a spot to move · form a mill to remove a piece</p>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
