@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kaboom!</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="game">
+        <header class="hud">
+            <h1>KABOOM!</h1>
+            <div class="stats">
+                <div class="stat"><span class="label">Score</span><span id="score">0</span></div>
+                <div class="stat"><span class="label">Wave</span><span id="wave">1</span></div>
+                <div class="stat"><span class="label">Buckets</span><span id="buckets">3</span></div>
+                <div class="stat"><span class="label">Best</span><span id="best">0</span></div>
+            </div>
+        </header>
+
+        <div class="board-wrap">
+            <canvas id="canvas" width="600" height="400"></canvas>
+            <div id="overlay" class="overlay visible">
+                <h2 id="overlay-title">KABOOM!</h2>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Press Space or click Start to play</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+
+        <div class="help">
+            <p><kbd>←</kbd> <kbd>→</kbd> move buckets</p>
+            <p>mouse to slide</p>
+            <p><kbd>Space</kbd> start</p>
+            <p><kbd>P</kbd> pause</p>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>
