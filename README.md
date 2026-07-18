@@ -7,11 +7,24 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Game | Folder | Status |
 |---|---|---|
 | Snake | [Snake/](Snake/) | Complete |
+| Reversi (Othello) | [Reversi/](Reversi/) | Complete |
+| Match-3 | [Match3/](Match3/) | Complete |
 | Space Invaders | [SpaceInvaders/](SpaceInvaders/) | Complete |
 | Flappy Bird | [FlappyBird/](FlappyBird/) | Complete |
 | 2048 | [2048/](2048/) | Complete |
 | Tetris | [Tetris/](Tetris/) | Complete |
 | Breakout | [Breakout/](Breakout/) | Complete |
+| Connect Four | [ConnectFour/](ConnectFour/) | Complete |
+| Simon | [Simon/](Simon/) | Complete |
+| Galaga | [Galaga/](Galaga/) | Complete |
+| Lights Out | [LightsOut/](LightsOut/) | Complete |
+| Dino Run | [DinoRun/](DinoRun/) | Complete |
+| Whack-a-Mole | [WhackAMole/](WhackAMole/) | Complete |
+| Bubble Shooter | [BubbleShooter/](BubbleShooter/) | Complete |
+| Pac-Man | [PacMan/](PacMan/) | Complete |
+| Bomberman | [Bomberman/](Bomberman/) | Complete |
+| Centipede | [Centipede/](Centipede/) | Complete |
+| Tron Light Cycles | [Tron/](Tron/) | Complete |
 | Lunar Lander | [LunarLander/](LunarLander/) | Complete |
 | Missile Command | [MissileCommand/](MissileCommand/) | Complete |
 | Pong | [Pong/](Pong/) | Complete |
@@ -19,6 +32,10 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Frogger | [Frogger/](Frogger/) | Complete |
 | Asteroids | [Asteroids/](Asteroids/) | Complete |
 | Boulder Dash | [BoulderDash/](BoulderDash/) | Complete |
+| Light Cycles | [LightCycles/](LightCycles/) | Complete |
+| Gem Match | [GemMatch/](GemMatch/) | Complete |
+| Sokoban | [Sokoban/](Sokoban/) | Complete |
+| Doodle Jump | [DoodleJump/](DoodleJump/) | Complete |
 
 ## Playing
 

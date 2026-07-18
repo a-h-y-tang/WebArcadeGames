@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bubble Shooter</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Bubble Shooter</h1>
+        <div id="hud">
+            <span>Score: <strong id="score">0</strong></span>
+            <span>Best: <strong id="best">0</strong></span>
+        </div>
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="400" height="520"></canvas>
+            <div id="overlay" class="visible">
+                <p id="overlay-title">Bubble Shooter</p>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Match 3+ colours to pop them. Clear the board to win!</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+        <p id="controls-hint">Move mouse or ← → to aim &nbsp;·&nbsp; Space / click to fire</p>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
