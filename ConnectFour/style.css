@@ -1,0 +1,117 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: radial-gradient(circle at 50% 20%, #1b2540 0%, #0a0f1e 70%);
+    color: #e6edf3;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+#container {
+    text-align: center;
+}
+
+h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    color: #dbe7ff;
+    text-shadow: 0 0 12px rgba(120, 170, 255, 0.4);
+}
+
+#status {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin-bottom: 14px;
+    min-height: 1.4rem;
+    color: #b9c6dd;
+}
+
+#canvas-wrapper {
+    display: inline-block;
+    line-height: 0;
+}
+
+#canvas {
+    border-radius: 14px;
+    box-shadow: 0 12px 40px rgba(10, 40, 120, 0.45);
+    cursor: pointer;
+}
+
+#scoreboard {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.chip strong {
+    font-size: 1.05rem;
+    color: #ffffff;
+}
+
+.chip.red::before,
+.chip.yellow::before,
+.chip.draw::before {
+    content: '';
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.chip.red::before { background: #e5484d; box-shadow: 0 0 8px rgba(229, 72, 77, 0.7); }
+.chip.yellow::before { background: #f5c518; box-shadow: 0 0 8px rgba(245, 197, 24, 0.7); }
+.chip.draw::before { background: #7f97ba; }
+
+#controls {
+    margin-top: 16px;
+}
+
+#btn-new {
+    padding: 10px 26px;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: #0a0f1e;
+    background: linear-gradient(180deg, #dbe7ff, #8fb3ff);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: transform 0.08s ease, box-shadow 0.2s ease;
+    box-shadow: 0 0 16px rgba(120, 170, 255, 0.45);
+}
+
+#btn-new:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 0 24px rgba(120, 170, 255, 0.7);
+}
+
+#btn-new:active { transform: translateY(0); }
+
+#controls-hint {
+    margin-top: 14px;
+    font-size: 0.85rem;
+    color: #61789c;
+}
