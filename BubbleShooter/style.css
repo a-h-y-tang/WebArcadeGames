@@ -1,0 +1,114 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #0d1117;
+    color: #e6edf3;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#container {
+    text-align: center;
+}
+
+h1 {
+    font-size: 1.9rem;
+    font-weight: 700;
+    margin-bottom: 0.6rem;
+    letter-spacing: 0.02em;
+    background: linear-gradient(90deg, #ef4444, #eab308, #22c55e, #3b82f6, #a855f7);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+#hud {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 0.8rem;
+    font-size: 1.05rem;
+    color: #8b949e;
+}
+
+#hud strong {
+    color: #e6edf3;
+}
+
+#canvas-wrapper {
+    position: relative;
+    display: inline-block;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+canvas {
+    display: block;
+    background: #0d1117;
+    cursor: crosshair;
+}
+
+#overlay {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.7rem;
+    background: rgba(13, 17, 23, 0.88);
+    backdrop-filter: blur(3px);
+    padding: 1rem;
+}
+
+#overlay.visible {
+    display: flex;
+}
+
+#overlay-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+#overlay-score {
+    font-size: 1.1rem;
+    color: #eab308;
+    min-height: 1.1rem;
+}
+
+#overlay-sub {
+    font-size: 0.95rem;
+    color: #8b949e;
+    max-width: 300px;
+}
+
+#btn-start {
+    margin-top: 0.4rem;
+    padding: 0.6rem 1.6rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #0d1117;
+    background: #58a6ff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+#btn-start:hover {
+    background: #79b8ff;
+}
+
+#controls-hint {
+    margin-top: 0.8rem;
+    font-size: 0.85rem;
+    color: #6e7681;
+}
