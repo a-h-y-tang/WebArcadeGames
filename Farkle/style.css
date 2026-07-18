@@ -1,0 +1,133 @@
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    background: radial-gradient(circle at 50% 0%, #2a1633 0%, #170b1d 70%, #0c060f 100%);
+    color: #f0e8f5;
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+
+#container {
+    margin: 24px 16px 48px;
+    text-align: center;
+    width: 100%;
+    max-width: 620px;
+}
+
+h1 {
+    margin: 0;
+    font-size: 2.1rem;
+    letter-spacing: 0.08em;
+    color: #ffca4a;
+    text-shadow: 0 0 14px rgba(255, 202, 74, 0.45);
+}
+
+#subtitle {
+    margin: 2px 0 14px;
+    font-size: 0.85rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #b48fca;
+}
+
+#subtitle span { color: #ffca4a; }
+
+#hud {
+    display: flex;
+    justify-content: center;
+    gap: 22px;
+    flex-wrap: wrap;
+    font-size: 1.02rem;
+    margin-bottom: 12px;
+}
+
+#hud strong { color: #ffca4a; }
+
+#canvas-wrapper {
+    position: relative;
+    display: inline-block;
+    line-height: 0;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+canvas {
+    display: block;
+    background: #1c7a4a;
+    max-width: 100%;
+    height: auto;
+}
+
+#overlay {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    background: rgba(12, 6, 15, 0.86);
+    line-height: 1.4;
+    padding: 16px;
+}
+
+#overlay.visible { display: flex; }
+
+#overlay-title {
+    margin: 0;
+    font-size: 1.8rem;
+    color: #ffca4a;
+    letter-spacing: 0.06em;
+}
+
+#overlay-sub {
+    margin: 0;
+    font-size: 1rem;
+    color: #d9c8e6;
+    max-width: 380px;
+}
+
+#message {
+    min-height: 1.4em;
+    font-size: 1.08rem;
+    margin: 14px 0 12px;
+    color: #e6d8ef;
+}
+
+#controls {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+button {
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #170b1d;
+    background: #ffca4a;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 22px;
+    cursor: pointer;
+    transition: transform 0.06s ease, filter 0.12s ease;
+}
+
+button:hover:not(:disabled) { filter: brightness(1.08); }
+button:active:not(:disabled) { transform: translateY(1px); }
+button:disabled { opacity: 0.38; cursor: default; }
+
+#btn-setaside { background: #7fe0a8; }
+#btn-bank { background: #7fb8ff; }
+
+#controls-hint {
+    margin-top: 14px;
+    font-size: 0.8rem;
+    color: #9877ad;
+}
