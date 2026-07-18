@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Battleship</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Battleship</h1>
+        <div id="hud">
+            <span>Enemy ships: <strong id="enemy-ships">5</strong></span>
+            <span>Your ships: <strong id="your-ships">5</strong></span>
+            <span>Shots: <strong id="shots">0</strong></span>
+            <span>Best: <strong id="best">—</strong></span>
+        </div>
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="660" height="360"></canvas>
+            <div id="overlay" class="visible">
+                <p id="overlay-title">Battleship</p>
+                <p id="overlay-sub">Place your fleet, then sink the enemy's before they sink yours</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+        <div id="controls">
+            <p id="hint"></p>
+            <button id="btn-random">Randomize Fleet</button>
+        </div>
+        <p id="controls-hint">Click a grid to place / fire &nbsp;·&nbsp; R to rotate &nbsp;·&nbsp; Space to start</p>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
