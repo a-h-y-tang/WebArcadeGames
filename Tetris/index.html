@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tetris</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="game">
+        <header class="hud">
+            <h1>TETRIS</h1>
+            <div class="stats">
+                <div class="stat"><span class="label">Score</span><span id="score">0</span></div>
+                <div class="stat"><span class="label">Lines</span><span id="lines">0</span></div>
+                <div class="stat"><span class="label">Level</span><span id="level">1</span></div>
+                <div class="stat"><span class="label">Best</span><span id="best">0</span></div>
+            </div>
+        </header>
+
+        <div class="playfield">
+            <div class="board-wrap">
+                <canvas id="canvas" width="250" height="500"></canvas>
+                <div id="overlay" class="overlay visible">
+                    <h2 id="overlay-title">TETRIS</h2>
+                    <p id="overlay-score"></p>
+                    <p id="overlay-sub">Press any arrow key or Space to start</p>
+                    <button id="btn-start">Start Game</button>
+                </div>
+            </div>
+
+            <aside class="side">
+                <div class="next-box">
+                    <span class="label">Next</span>
+                    <canvas id="next-canvas" width="100" height="100"></canvas>
+                </div>
+                <div class="help">
+                    <p>← → &nbsp;move</p>
+                    <p>↑ &nbsp;rotate</p>
+                    <p>↓ &nbsp;soft drop</p>
+                    <p>Space &nbsp;hard drop</p>
+                    <p>P &nbsp;pause</p>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>
