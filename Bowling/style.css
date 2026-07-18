@@ -1,0 +1,117 @@
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at 50% 0%, #1c2333, #0a0d13 70%);
+    color: #e6e9f0;
+    font-family: "Segoe UI", system-ui, sans-serif;
+}
+
+#container {
+    text-align: center;
+    padding: 20px;
+}
+
+h1 {
+    margin: 0 0 12px;
+    font-size: 32px;
+    letter-spacing: 2px;
+    color: #f0b95b;
+    text-shadow: 0 0 14px rgba(240, 185, 91, 0.35);
+}
+
+#hud {
+    display: flex;
+    gap: 26px;
+    justify-content: center;
+    margin-bottom: 14px;
+    font-size: 17px;
+}
+
+#hud strong { color: #f0b95b; }
+
+#playfield { display: flex; justify-content: center; }
+
+#canvas-wrapper {
+    position: relative;
+    line-height: 0;
+}
+
+canvas#canvas {
+    border: 2px solid #2a3245;
+    border-radius: 10px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.55);
+    cursor: crosshair;
+}
+
+#overlay {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: rgba(9, 12, 18, 0.86);
+    border-radius: 10px;
+    line-height: 1.4;
+    padding: 24px;
+}
+
+#overlay.visible { display: flex; }
+
+#overlay-title { margin: 0; font-size: 30px; color: #f0b95b; }
+#overlay-score { margin: 0; font-size: 18px; color: #6fe08a; }
+#overlay-sub { margin: 0; max-width: 300px; color: #b6bdcf; font-size: 14px; }
+
+#btn-start {
+    margin-top: 8px;
+    padding: 10px 26px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #221703;
+    background: #f0b95b;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: transform 0.08s ease, background 0.15s ease;
+}
+
+#btn-start:hover { background: #ffcc73; transform: translateY(-1px); }
+
+#scorecard { margin: 16px auto 0; }
+
+#scorecard table {
+    border-collapse: collapse;
+    margin: 0 auto;
+    font-variant-numeric: tabular-nums;
+}
+
+#scorecard th {
+    font-size: 11px;
+    color: #8b93a7;
+    font-weight: 600;
+    border: 1px solid #2a3245;
+    width: 40px;
+    padding: 2px 0;
+}
+
+#scorecard td {
+    border: 1px solid #2a3245;
+    width: 40px;
+    height: 22px;
+    font-size: 13px;
+}
+
+#scorecard tr.balls td { color: #e6e9f0; letter-spacing: 2px; }
+#scorecard tr.cum td { color: #f0b95b; font-weight: 600; }
+
+#controls-hint {
+    margin-top: 14px;
+    font-size: 13px;
+    color: #8b93a7;
+}
