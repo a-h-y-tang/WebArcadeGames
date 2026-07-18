@@ -1,0 +1,133 @@
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: #05130a;
+    color: #e6f3ea;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+#container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+}
+
+h1 {
+    font-size: 2.4rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    color: #4ade80;
+    text-transform: uppercase;
+    text-shadow: 0 0 20px #4ade8066;
+}
+
+#hud {
+    display: flex;
+    gap: 22px;
+    font-size: 0.95rem;
+    color: #7fae90;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+#hud strong {
+    color: #e6f3ea;
+}
+
+#canvas-wrapper {
+    position: relative;
+    line-height: 0;
+}
+
+#canvas {
+    display: block;
+    border: 2px solid #14351f;
+    border-radius: 4px;
+    background: #0a2415;
+    cursor: crosshair;
+    outline: none;
+}
+
+#overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(5, 19, 10, 0.9);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    border-radius: 4px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+}
+
+#overlay.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+#overlay-title {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: #4ade80;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+#overlay-score {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #e6f3ea;
+    line-height: 1.2;
+    text-align: center;
+}
+
+#overlay-score:empty {
+    display: none;
+}
+
+#overlay-sub {
+    font-size: 0.95rem;
+    color: #7fae90;
+    text-align: center;
+    padding: 0 16px;
+}
+
+#btn-start {
+    margin-top: 8px;
+    padding: 10px 28px;
+    font-size: 1rem;
+    font-weight: 600;
+    background: #4ade80;
+    color: #05130a;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+}
+
+#btn-start:hover {
+    background: #22c55e;
+}
+
+#btn-start:active {
+    transform: scale(0.97);
+}
+
+#controls-hint {
+    font-size: 0.8rem;
+    color: #3d6a4c;
+    text-align: center;
+}
