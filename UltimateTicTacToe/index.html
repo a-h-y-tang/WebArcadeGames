@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Tic-Tac-Toe</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main>
+        <h1>Ultimate Tic-Tac-Toe</h1>
+        <p class="tagline">Win three boards in a row. You are <b class="x">X</b>; the computer is <b class="o">O</b>.</p>
+
+        <div id="status" class="status">X to move — play anywhere</div>
+
+        <canvas id="canvas" width="540" height="540" aria-label="Ultimate Tic-Tac-Toe board"></canvas>
+
+        <div class="scoreboard">
+            <div class="score x">
+                <span class="label">X</span>
+                <span id="x-wins" class="value">0</span>
+            </div>
+            <div class="score draws">
+                <span class="label">Draws</span>
+                <span id="draws" class="value">0</span>
+            </div>
+            <div class="score o">
+                <span class="label">O</span>
+                <span id="o-wins" class="value">0</span>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button id="btn-new" type="button">New Game</button>
+            <span class="hint">Click a highlighted cell · <kbd>R</kbd> new game</span>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>
