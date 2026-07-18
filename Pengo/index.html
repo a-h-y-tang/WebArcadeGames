@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pengo</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Pengo</h1>
+        <div id="hud">
+            <div><span class="label">Score</span><strong id="score">0</strong></div>
+            <div><span class="label">Best</span><strong id="best">0</strong></div>
+            <div><span class="label">Lives</span><strong id="lives">3</strong></div>
+            <div><span class="label">Level</span><strong id="level">1</strong></div>
+        </div>
+        <div id="playfield">
+            <canvas id="canvas" width="468" height="468"></canvas>
+            <div id="overlay" class="visible">
+                <h2 id="overlay-title">Pengo</h2>
+                <p id="overlay-sub">Slide ice blocks to crush the Sno-Bees.</p>
+                <button id="btn-start">Start</button>
+            </div>
+        </div>
+        <p id="hint">
+            Move with arrows or WASD &nbsp;·&nbsp; push a block to send it sliding &nbsp;·&nbsp;
+            crush every Sno-Bee &nbsp;·&nbsp; P pause &nbsp;·&nbsp; R restart
+        </p>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
