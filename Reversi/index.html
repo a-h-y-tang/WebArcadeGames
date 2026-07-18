@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reversi</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Reversi</h1>
+
+        <div id="scoreboard">
+            <div class="score-chip black" id="chip-black">
+                <span class="disc-icon black"></span>
+                <span class="score-num" id="black-score">2</span>
+            </div>
+            <div id="status">
+                <div id="turn-indicator">Black's turn</div>
+                <div id="message"></div>
+            </div>
+            <div class="score-chip white" id="chip-white">
+                <span class="score-num" id="white-score">2</span>
+                <span class="disc-icon white"></span>
+            </div>
+        </div>
+
+        <div id="board-wrap">
+            <canvas id="canvas" width="480" height="480"></canvas>
+        </div>
+
+        <div id="controls">
+            <button id="new-game">New Game</button>
+        </div>
+        <p id="hint">You are <strong>black</strong>. Click a highlighted square to play · R for a new game</p>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
