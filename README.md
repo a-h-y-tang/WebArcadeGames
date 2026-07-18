@@ -32,6 +32,7 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Minesweeper | [Minesweeper/](Minesweeper/) | Complete |
 | Frogger | [Frogger/](Frogger/) | Complete |
 | Asteroids | [Asteroids/](Asteroids/) | Complete |
+| Artillery Duel | [ArtilleryDuel/](ArtilleryDuel/) | Complete |
 | Memory Match | [MemoryMatch/](MemoryMatch/) | Complete |
 | Stacker | [Stacker/](Stacker/) | Complete |
 | Road Rush | [RoadRush/](RoadRush/) | Complete |
