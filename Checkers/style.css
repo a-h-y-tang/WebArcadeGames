@@ -1,0 +1,147 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: #0d1117;
+    color: #e6edf3;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+#container {
+    text-align: center;
+}
+
+h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    margin-bottom: 12px;
+    background: linear-gradient(90deg, #ef4444, #f8fafc);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+#hud {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 14px;
+    font-size: 0.95rem;
+    flex-wrap: wrap;
+}
+
+.hud-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.chip {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+}
+
+.chip-red {
+    background: #ef4444;
+    box-shadow: 0 0 6px #ef444488;
+}
+
+.chip-black {
+    background: #1f2937;
+    border: 1px solid #4b5563;
+}
+
+#turn-indicator {
+    font-weight: 700;
+    min-width: 120px;
+    justify-content: center;
+    color: #ef4444;
+}
+
+#turn-indicator.ai {
+    color: #cbd5e1;
+}
+
+#canvas-wrapper {
+    position: relative;
+    display: inline-block;
+    max-width: 100%;
+}
+
+#canvas {
+    display: block;
+    border-radius: 8px;
+    max-width: 100%;
+    height: auto;
+    cursor: pointer;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+#overlay {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    background: rgba(6, 12, 20, 0.85);
+    border-radius: 8px;
+    backdrop-filter: blur(3px);
+    padding: 0 30px;
+    text-align: center;
+}
+
+#overlay.visible {
+    display: flex;
+}
+
+#overlay-title {
+    font-size: 2.1rem;
+    font-weight: 800;
+}
+
+#overlay-sub {
+    font-size: 1rem;
+    color: #9aa7b8;
+}
+
+#btn-start {
+    margin-top: 6px;
+    padding: 12px 28px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #0d1117;
+    background: linear-gradient(90deg, #ef4444, #f97316);
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: transform 0.08s ease, box-shadow 0.2s ease;
+}
+
+#btn-start:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(249, 115, 22, 0.35);
+}
+
+#btn-start:active {
+    transform: translateY(0);
+}
+
+#controls-hint {
+    margin-top: 14px;
+    font-size: 0.85rem;
+    color: #6b7787;
+}
