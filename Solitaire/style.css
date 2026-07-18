@@ -1,0 +1,122 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: #0d1512;
+    color: #e8f0ec;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+#container {
+    text-align: center;
+}
+
+h1 {
+    font-size: 2rem;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+    color: #ffd479;
+    text-shadow: 0 2px 0 #7a5a12;
+}
+
+#hud {
+    display: flex;
+    justify-content: center;
+    gap: 26px;
+    font-size: 1.05rem;
+    margin-bottom: 14px;
+}
+
+#hud strong {
+    color: #8ee6b0;
+}
+
+#canvas-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+canvas {
+    background: linear-gradient(160deg, #17654a 0%, #0f4a37 100%);
+    border: 2px solid #0a3627;
+    border-radius: 10px;
+    display: block;
+}
+
+#overlay {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    background: rgba(7, 20, 15, 0.86);
+    border-radius: 10px;
+    padding: 24px;
+}
+
+#overlay.visible {
+    display: flex;
+}
+
+#overlay-title {
+    font-size: 2rem;
+    color: #ffd479;
+    text-shadow: 0 2px 0 #7a5a12;
+}
+
+#overlay-sub {
+    max-width: 460px;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #c3d2cb;
+}
+
+button {
+    background: #ffd479;
+    color: #1a1205;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 22px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.08s ease, background 0.15s ease;
+}
+
+button:hover {
+    background: #ffe0a0;
+}
+
+button:active {
+    transform: translateY(1px);
+}
+
+#buttons {
+    margin-top: 14px;
+}
+
+#controls-hint {
+    margin-top: 12px;
+    font-size: 0.85rem;
+    color: #7e968b;
+}
+
+kbd {
+    background: #1c2a24;
+    border: 1px solid #34473d;
+    border-bottom-width: 2px;
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-family: inherit;
+    font-size: 0.8rem;
+    color: #d8e6de;
+}
