@@ -8,6 +8,54 @@ For each new game, put it in a new folder. Each game should have its own README.
 |---|---|---|
 | Snake | [Snake/](Snake/) | Complete |
 | Pang | [Pang/](Pang/) | Complete |
+| Mastermind | [Mastermind/](Mastermind/) | Complete |
+| Mini Golf | [MiniGolf/](MiniGolf/) | Complete |
+| Q*bert | [Qbert/](Qbert/) | Complete |
+| Reversi (Othello) | [Reversi/](Reversi/) | Complete |
+| Match-3 | [Match3/](Match3/) | Complete |
+| Space Invaders | [SpaceInvaders/](SpaceInvaders/) | Complete |
+| Flappy Bird | [FlappyBird/](FlappyBird/) | Complete |
+| 2048 | [2048/](2048/) | Complete |
+| Tetris | [Tetris/](Tetris/) | Complete |
+| Breakout | [Breakout/](Breakout/) | Complete |
+| Connect Four | [ConnectFour/](ConnectFour/) | Complete |
+| Simon | [Simon/](Simon/) | Complete |
+| Galaga | [Galaga/](Galaga/) | Complete |
+| Lights Out | [LightsOut/](LightsOut/) | Complete |
+| Dino Run | [DinoRun/](DinoRun/) | Complete |
+| Whack-a-Mole | [WhackAMole/](WhackAMole/) | Complete |
+| Bubble Shooter | [BubbleShooter/](BubbleShooter/) | Complete |
+| Pac-Man | [PacMan/](PacMan/) | Complete |
+| Bomberman | [Bomberman/](Bomberman/) | Complete |
+| Centipede | [Centipede/](Centipede/) | Complete |
+| Tron Light Cycles | [Tron/](Tron/) | Complete |
+| Lunar Lander | [LunarLander/](LunarLander/) | Complete |
+| Missile Command | [MissileCommand/](MissileCommand/) | Complete |
+| Pong | [Pong/](Pong/) | Complete |
+| Minesweeper | [Minesweeper/](Minesweeper/) | Complete |
+| Frogger | [Frogger/](Frogger/) | Complete |
+| Asteroids | [Asteroids/](Asteroids/) | Complete |
+| Air Hockey | [AirHockey/](AirHockey/) | Complete |
+| Battleship | [Battleship/](Battleship/) | Complete |
+| Sliding Puzzle | [SlidingPuzzle/](SlidingPuzzle/) | Complete |
+| Skeet Shooter | [SkeetShooter/](SkeetShooter/) | Complete |
+| Fruit Slice | [FruitSlice/](FruitSlice/) | Complete |
+| Artillery Duel | [ArtilleryDuel/](ArtilleryDuel/) | Complete |
+| Memory Match | [MemoryMatch/](MemoryMatch/) | Complete |
+| Stacker | [Stacker/](Stacker/) | Complete |
+| Road Rush | [RoadRush/](RoadRush/) | Complete |
+| Boulder Dash | [BoulderDash/](BoulderDash/) | Complete |
+| Light Cycles | [LightCycles/](LightCycles/) | Complete |
+| Gem Match | [GemMatch/](GemMatch/) | Complete |
+| Sokoban | [Sokoban/](Sokoban/) | Complete |
+| Doodle Jump | [DoodleJump/](DoodleJump/) | Complete |
+| Dots and Boxes | [DotsAndBoxes/](DotsAndBoxes/) | Complete |
+| Maze | [Maze/](Maze/) | Complete |
+| Joust | [Joust/](Joust/) | Complete |
+| Checkers | [Checkers/](Checkers/) | Complete |
+| Flood It | [FloodIt/](FloodIt/) | Complete |
+| Gomoku | [Gomoku/](Gomoku/) | Complete |
+| Peg Solitaire | [PegSolitaire/](PegSolitaire/) | Complete |
 
 ## Playing
 
