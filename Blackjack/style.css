@@ -1,0 +1,132 @@
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: #0d1117;
+    color: #e6edf3;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+#container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+h1 {
+    font-size: 2.4rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    color: #f5d64e;
+    text-transform: uppercase;
+    text-shadow: 0 0 20px #f5d64e55;
+}
+
+#hud {
+    display: flex;
+    gap: 32px;
+    font-size: 1rem;
+    color: #8b949e;
+}
+
+#hud strong {
+    color: #f5d64e;
+}
+
+#canvas-wrapper {
+    position: relative;
+    line-height: 0;
+}
+
+#canvas {
+    display: block;
+    border: 2px solid #21262d;
+    border-radius: 8px;
+    background: #0d1117;
+}
+
+#message {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #e6edf3;
+    min-height: 1.4em;
+    text-align: center;
+}
+
+#controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+#bet-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #161b22;
+    border: 1px solid #21262d;
+    border-radius: 8px;
+    padding: 4px 10px;
+}
+
+#bet-label {
+    font-size: 0.85rem;
+    color: #8b949e;
+    min-width: 26px;
+    text-align: center;
+}
+
+#controls button {
+    font-size: 1rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s, opacity 0.15s;
+}
+
+#btn-bet-up, #btn-bet-down {
+    width: 32px;
+    height: 32px;
+    background: #30363d;
+    color: #e6edf3;
+    font-size: 1.2rem;
+    line-height: 1;
+}
+
+#btn-bet-up:hover, #btn-bet-down:hover { background: #3d444d; }
+
+#btn-deal, #btn-hit, #btn-stand {
+    padding: 10px 26px;
+    color: #0d1117;
+}
+
+#btn-deal { background: #f5d64e; }
+#btn-deal:hover { background: #e6c53a; }
+#btn-hit { background: #3fb950; }
+#btn-hit:hover { background: #2ea043; }
+#btn-stand { background: #db6d4a; }
+#btn-stand:hover { background: #c85a38; }
+
+#controls button:active { transform: scale(0.96); }
+
+#controls button:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    transform: none;
+}
+
+#controls-hint {
+    font-size: 0.8rem;
+    color: #484f58;
+}
