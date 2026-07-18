@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pipe Dream</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Pipe Dream</h1>
+        <div id="hud">
+            <span>Level: <strong id="level">1</strong></span>
+            <span>Score: <strong id="score">0</strong></span>
+            <span>Pipes: <strong id="length">0</strong>/<strong id="target">8</strong></span>
+            <span>Flow: <strong id="countdown">–</strong></span>
+        </div>
+        <div id="play">
+            <div id="queue-panel">
+                <p class="panel-label">Next</p>
+                <canvas id="queue" width="72" height="360"></canvas>
+            </div>
+            <div id="canvas-wrapper">
+                <canvas id="canvas" width="576" height="448"></canvas>
+                <div id="overlay" class="visible">
+                    <p id="overlay-title">Pipe Dream</p>
+                    <p id="overlay-sub">Lay pipe to guide the ooze — the longer the connected path, the higher the score.</p>
+                    <button id="btn-start">Start Game</button>
+                </div>
+            </div>
+        </div>
+        <div id="buttons">
+            <button id="btn-flow">Flow Now (F)</button>
+            <button id="btn-reset">Reset (R)</button>
+        </div>
+        <p id="controls-hint">Click a cell (or move with arrows / WASD + Space) to lay the next pipe &nbsp;·&nbsp; F releases the ooze early &nbsp;·&nbsp; R resets</p>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
