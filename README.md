@@ -48,6 +48,7 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Gem Match | [GemMatch/](GemMatch/) | Complete |
 | Sokoban | [Sokoban/](Sokoban/) | Complete |
 | Doodle Jump | [DoodleJump/](DoodleJump/) | Complete |
+| Joust | [Joust/](Joust/) | Complete |
 | Checkers | [Checkers/](Checkers/) | Complete |
 | Flood It | [FloodIt/](FloodIt/) | Complete |
 | Gomoku | [Gomoku/](Gomoku/) | Complete |
