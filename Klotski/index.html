@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Klotski</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Klotski</h1>
+        <div id="hud">
+            <span>Moves: <strong id="moves">0</strong></span>
+            <span>Best: <strong id="best">–</strong></span>
+        </div>
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="400" height="500"></canvas>
+            <div id="overlay" class="visible">
+                <p id="overlay-title">Klotski</p>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Click a block, then use the arrow keys — free the big block out the bottom</p>
+                <button id="btn-start">Start Puzzle</button>
+            </div>
+        </div>
+        <p id="status">Slide the 2×2 block to the exit gap at the bottom</p>
+        <p id="controls-hint">Click a block to pick it up · Arrow keys to slide · Click an empty cell to move there</p>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
