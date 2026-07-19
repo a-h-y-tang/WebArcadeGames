@@ -1,0 +1,117 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: #120d08;
+    color: #f0e6d8;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 20px;
+}
+
+#container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+h1 {
+    font-size: 28px;
+    letter-spacing: 3px;
+    color: #ffcf70;
+    text-shadow: 0 0 14px rgba(255, 207, 112, 0.45);
+}
+
+#hud {
+    display: flex;
+    gap: 20px;
+    font-size: 15px;
+    color: #b8a488;
+}
+
+#hud strong {
+    color: #fff;
+}
+
+#canvas-wrapper {
+    position: relative;
+    line-height: 0;
+}
+
+canvas {
+    background: #1c130a;
+    border: 2px solid #3a2a17;
+    border-radius: 8px;
+    max-width: 100%;
+    touch-action: none;
+}
+
+#overlay {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 14px;
+    background: rgba(18, 13, 8, 0.85);
+    border-radius: 8px;
+    text-align: center;
+    padding: 20px;
+}
+
+#overlay.visible {
+    display: flex;
+}
+
+#overlay-title {
+    font-size: 34px;
+    font-weight: 700;
+    color: #ffcf70;
+    text-shadow: 0 0 16px rgba(255, 207, 112, 0.5);
+}
+
+#overlay-score {
+    font-size: 20px;
+    color: #ffe0a0;
+    min-height: 22px;
+}
+
+#overlay-sub {
+    font-size: 15px;
+    color: #ddd0bc;
+    max-width: 340px;
+}
+
+#btn-start {
+    margin-top: 6px;
+    padding: 12px 28px;
+    font-size: 17px;
+    font-weight: 600;
+    color: #241706;
+    background: #ffcf70;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: transform 0.08s ease, background 0.15s ease;
+}
+
+#btn-start:hover {
+    background: #ffdd93;
+}
+
+#btn-start:active {
+    transform: scale(0.96);
+}
+
+#controls-hint {
+    font-size: 13px;
+    color: #7a6b53;
+}
