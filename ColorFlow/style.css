@@ -1,0 +1,111 @@
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    background: #10131a;
+    color: #e7ecf3;
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    -webkit-user-select: none;
+    user-select: none;
+    touch-action: none;
+}
+
+#container {
+    margin: 24px 16px;
+    text-align: center;
+}
+
+h1 {
+    margin: 0 0 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    font-size: 30px;
+    background: linear-gradient(90deg, #e6194b, #ffe119, #3cb44b, #4363d8, #911eb4);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+#hud {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-bottom: 12px;
+    font-size: 15px;
+    color: #9aa6b8;
+}
+
+#hud strong { color: #e7ecf3; }
+
+#canvas-wrapper {
+    position: relative;
+    display: inline-block;
+    line-height: 0;
+}
+
+canvas {
+    background: #1a1f2b;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+    touch-action: none;
+}
+
+#overlay {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: rgba(10, 13, 20, 0.86);
+    border-radius: 12px;
+    text-align: center;
+    padding: 20px;
+}
+
+#overlay.visible { display: flex; }
+
+#overlay-title {
+    font-size: 30px;
+    font-weight: 700;
+    margin: 0 0 8px;
+}
+
+#overlay-sub {
+    margin: 0 0 20px;
+    max-width: 420px;
+    color: #b9c2d0;
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+button {
+    font: inherit;
+    font-size: 15px;
+    padding: 10px 20px;
+    margin: 4px;
+    border: none;
+    border-radius: 8px;
+    background: #4363d8;
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.05s;
+}
+
+button:hover { background: #5877e8; }
+button:active { transform: translateY(1px); }
+
+#buttons { margin-top: 14px; }
+
+#buttons button { background: #2b3242; }
+#buttons button:hover { background: #3a4358; }
+
+#controls-hint {
+    margin-top: 12px;
+    color: #6f7c92;
+    font-size: 13px;
+}

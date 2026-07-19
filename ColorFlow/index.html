@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ColorFlow</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>ColorFlow</h1>
+        <div id="hud">
+            <span>Level: <strong id="level">1</strong></span>
+            <span>Pipes: <strong id="pipes">0 / 0</strong></span>
+            <span>Flow: <strong id="flow">0%</strong></span>
+        </div>
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="560" height="560"></canvas>
+            <div id="overlay" class="visible">
+                <p id="overlay-title">ColorFlow</p>
+                <p id="overlay-sub">Connect each pair of dots and fill every cell with pipe · drag from a dot</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+        <div id="buttons">
+            <button id="btn-reset">Reset (R)</button>
+            <button id="btn-next">Next (N)</button>
+        </div>
+        <p id="controls-hint">Drag from a coloured dot to draw a pipe &nbsp;·&nbsp; R reset &nbsp;·&nbsp; N next level</p>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
