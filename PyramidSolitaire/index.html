@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pyramid Solitaire</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="game">
+        <header class="hud">
+            <h1>PYRAMID <span class="accent">SOLITAIRE</span></h1>
+            <div class="stats">
+                <div class="stat"><span class="label">Score</span><span id="score">0</span></div>
+                <div class="stat"><span class="label">Left</span><span id="remaining">28</span></div>
+                <div class="stat"><span class="label">Best</span><span id="best">0</span></div>
+                <button id="btn-new">New Game</button>
+            </div>
+        </header>
+
+        <div class="board-wrap">
+            <canvas id="canvas" width="760" height="600"></canvas>
+            <div id="overlay" class="overlay">
+                <h2 id="overlay-title"></h2>
+                <p id="overlay-sub"></p>
+            </div>
+        </div>
+
+        <div class="help">
+            <p>Remove pairs that add to <strong>13</strong> · Kings go alone</p>
+            <p>Click the <strong>stock</strong> to deal · <kbd>N</kbd> new game</p>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>
