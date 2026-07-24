@@ -1,0 +1,100 @@
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at 50% 20%, #1b2540, #0a0e1a 70%);
+    color: #e8ecf5;
+    font-family: "Segoe UI", system-ui, Arial, sans-serif;
+}
+
+#container {
+    text-align: center;
+    padding: 16px;
+}
+
+h1 {
+    margin: 0 0 12px;
+    font-size: 32px;
+    letter-spacing: 2px;
+    color: #ffd15c;
+    text-shadow: 0 2px 0 #a8590f, 0 0 18px rgba(255, 160, 40, 0.5);
+}
+
+#hud {
+    display: flex;
+    gap: 18px;
+    justify-content: center;
+    margin-bottom: 12px;
+    font-size: 15px;
+    color: #9fb0d0;
+}
+
+#hud strong { color: #fff; }
+
+#canvas-wrapper {
+    position: relative;
+    display: inline-block;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+}
+
+canvas {
+    display: block;
+    background: linear-gradient(#0d1530, #060a18);
+    cursor: crosshair;
+}
+
+#overlay {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    background: rgba(6, 10, 24, 0.82);
+    backdrop-filter: blur(2px);
+    text-align: center;
+    padding: 20px;
+}
+
+#overlay.visible { display: flex; }
+
+#overlay-title {
+    margin: 0;
+    font-size: 40px;
+    font-weight: 800;
+    color: #ffd15c;
+    text-shadow: 0 0 18px rgba(255, 160, 40, 0.6);
+}
+
+#overlay-score { margin: 0; font-size: 18px; color: #cfe0ff; min-height: 18px; }
+#overlay-sub { margin: 0; font-size: 15px; color: #9fb0d0; max-width: 320px; }
+
+button {
+    margin-top: 6px;
+    padding: 12px 30px;
+    font-size: 17px;
+    font-weight: 700;
+    color: #221600;
+    background: linear-gradient(#ffd76b, #ff9d2e);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #b96a10;
+    transition: transform 0.05s ease;
+}
+
+button:hover { filter: brightness(1.05); }
+button:active { transform: translateY(2px); box-shadow: 0 2px 0 #b96a10; }
+
+#controls-hint {
+    margin: 14px 0 0;
+    font-size: 13px;
+    color: #6c7da0;
+}
