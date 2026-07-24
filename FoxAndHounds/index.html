@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fox and Hounds</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="wrap">
+        <header class="hud">
+            <div class="stat">
+                <span class="label">TURN</span>
+                <span id="turn" class="turn-fox">Fox</span>
+            </div>
+        </header>
+
+        <div class="stage">
+            <canvas id="canvas"></canvas>
+
+            <div id="overlay" class="overlay visible">
+                <h1 id="overlay-title">FOX &amp; HOUNDS</h1>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">One <b>fox</b>, four hounds. The hounds march down to trap the fox; the fox slips past them to reach the top row. Nobody is ever captured — it's all about blocking.</p>
+                <button id="btn-start">Start</button>
+            </div>
+        </div>
+
+        <footer class="help">
+            <span><kbd>Click</kbd> a piece, then a highlighted square</span>
+            <span><kbd>R</kbd> restart</span>
+        </footer>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
