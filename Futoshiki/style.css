@@ -1,0 +1,151 @@
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: #0d1117;
+    color: #e6edf3;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+#container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+}
+
+h1 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    color: #e6edf3;
+    text-transform: uppercase;
+    text-shadow: 0 0 20px #5aa1ff55;
+}
+
+#hud {
+    font-size: 1rem;
+    color: #8b949e;
+}
+
+#hud strong {
+    color: #e6edf3;
+}
+
+#diff-row, #palette, #actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+button {
+    font-family: inherit;
+    cursor: pointer;
+    border: 1px solid #30363d;
+    background: #161b22;
+    color: #e6edf3;
+    border-radius: 6px;
+    padding: 8px 14px;
+    font-size: 0.95rem;
+    transition: background 0.12s, border-color 0.12s, transform 0.08s;
+}
+
+button:hover {
+    background: #21262d;
+    border-color: #5aa1ff;
+}
+
+button:active {
+    transform: scale(0.96);
+}
+
+.diff-btn.active {
+    background: #1f6feb;
+    border-color: #1f6feb;
+    color: #fff;
+}
+
+.num-btn {
+    width: 46px;
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+#canvas-wrapper {
+    position: relative;
+    line-height: 0;
+}
+
+#canvas {
+    display: block;
+    border: 2px solid #21262d;
+    border-radius: 6px;
+    background: #0b1120;
+    cursor: pointer;
+}
+
+#overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(5, 7, 13, 0.92);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 14px;
+    border-radius: 6px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+}
+
+#overlay.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+#overlay-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #3fb950;
+    letter-spacing: 0.06em;
+}
+
+#overlay-sub {
+    font-size: 0.95rem;
+    color: #8b949e;
+    text-align: center;
+    padding: 0 16px;
+}
+
+#btn-continue {
+    margin-top: 6px;
+    background: #e6edf3;
+    color: #05070d;
+    border: none;
+    font-weight: 700;
+    padding: 10px 26px;
+}
+
+#btn-continue:hover {
+    background: #fff;
+}
+
+#controls-hint {
+    font-size: 0.8rem;
+    color: #484f58;
+    text-align: center;
+}
+
+#controls-hint strong {
+    color: #8b949e;
+}
