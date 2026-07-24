@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hitori</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main id="container">
+        <h1>Hitori</h1>
+
+        <div id="hud">
+            <div class="stat"><span class="label">Puzzle</span><strong id="puzzle-label">A</strong></div>
+            <div class="stat"><span class="label">Status</span><strong id="status">No conflicts — keep going.</strong></div>
+        </div>
+
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="420" height="420"></canvas>
+            <div id="overlay">
+                <h2 id="overlay-title">Solved!</h2>
+                <p id="overlay-sub"></p>
+            </div>
+        </div>
+
+        <div id="controls">
+            <button id="btn-reset">Reset</button>
+            <button id="btn-new">New Puzzle</button>
+        </div>
+
+        <div id="rules">
+            <p>Click a cell to <strong>shade</strong> it black; click again to clear it.</p>
+            <p>Solve so that: no number repeats in any row or column among the
+               white cells, no two black cells touch, and all white cells stay
+               connected.</p>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>

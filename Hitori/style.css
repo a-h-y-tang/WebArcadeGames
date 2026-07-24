@@ -1,0 +1,160 @@
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: #0d1117;
+    color: #e6edf3;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 16px;
+}
+
+#container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+}
+
+h1 {
+    font-size: 2.4rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    color: #d8b25a;
+    text-transform: uppercase;
+    text-shadow: 0 0 20px #d8b25a66;
+}
+
+#hud {
+    display: flex;
+    gap: 32px;
+    font-size: 1rem;
+    color: #8b949e;
+    align-items: flex-start;
+}
+
+#hud .stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+#hud .label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+#hud strong {
+    color: #e6edf3;
+    font-size: 1.05rem;
+    font-weight: 600;
+}
+
+#status.solved {
+    color: #3fb950;
+}
+
+#canvas-wrapper {
+    position: relative;
+    line-height: 0;
+}
+
+#canvas {
+    display: block;
+    border: 2px solid #21262d;
+    border-radius: 6px;
+    background: #0d1117;
+    cursor: pointer;
+}
+
+#overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(13, 17, 23, 0.82);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    border-radius: 6px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s;
+}
+
+#overlay.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+#overlay-title {
+    font-size: 2.4rem;
+    font-weight: 800;
+    color: #3fb950;
+    text-shadow: 0 0 24px #3fb95066;
+}
+
+#overlay-sub {
+    font-size: 0.95rem;
+    color: #c9d1d9;
+    text-align: center;
+    padding: 0 20px;
+}
+
+#controls {
+    display: flex;
+    gap: 12px;
+}
+
+#controls button {
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 9px 22px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background: #21262d;
+    color: #e6edf3;
+    transition: background 0.15s, transform 0.1s;
+}
+
+#controls button:hover {
+    background: #30363d;
+}
+
+#controls button:active {
+    transform: scale(0.97);
+}
+
+#btn-new {
+    background: #d8b25a;
+    color: #0d1117;
+}
+
+#btn-new:hover {
+    background: #c99f45;
+}
+
+#rules {
+    max-width: 420px;
+    font-size: 0.82rem;
+    color: #8b949e;
+    text-align: center;
+    line-height: 1.5;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+#rules strong {
+    color: #c9d1d9;
+}
