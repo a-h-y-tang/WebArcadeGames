@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Untangle</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Untangle</h1>
+        <div id="hud">
+            <span>Crossings: <strong id="crossings">0</strong></span>
+            <span>Moves: <strong id="moves">0</strong></span>
+            <span>Best: <strong id="best">—</strong></span>
+        </div>
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="500" height="500"></canvas>
+            <div id="overlay" class="visible">
+                <p id="overlay-title">Untangle</p>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Drag the nodes so that no lines cross.</p>
+                <button id="btn-start">Start</button>
+            </div>
+        </div>
+        <div id="controls">
+            <div id="difficulty">
+                <button class="diff" data-diff="easy">Easy</button>
+                <button class="diff" data-diff="medium">Medium</button>
+                <button class="diff" data-diff="hard">Hard</button>
+            </div>
+            <button id="btn-new">New Puzzle</button>
+        </div>
+        <p id="controls-hint">Drag nodes · 1/2/3 difficulty · N new puzzle</p>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
