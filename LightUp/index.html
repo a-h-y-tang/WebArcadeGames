@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Light Up (Akari)</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="wrap">
+        <header class="hud">
+            <div class="stat">
+                <span class="label">PUZZLE</span>
+                <span id="level">1 / 4</span>
+            </div>
+            <div class="stat">
+                <span class="label">BULBS</span>
+                <span id="bulbs">0</span>
+            </div>
+        </header>
+
+        <div class="stage">
+            <canvas id="canvas"></canvas>
+
+            <div id="overlay" class="overlay visible">
+                <h1 id="overlay-title">LIGHT UP</h1>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Place bulbs so every white cell is <b>illuminated</b>. No bulb may shine on another, and each numbered wall needs exactly that many bulbs around it.</p>
+                <button id="btn-start">Start</button>
+            </div>
+        </div>
+
+        <footer class="help">
+            <span><kbd>Click</kbd> bulb</span>
+            <span><kbd>Right-click</kbd> mark</span>
+            <span><kbd>N</kbd> next</span>
+            <span><kbd>R</kbd> reset</span>
+        </footer>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
