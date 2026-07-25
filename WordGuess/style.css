@@ -1,0 +1,122 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    background: radial-gradient(circle at 50% 0%, #1f2b3a 0%, #0d1117 70%);
+    color: #e6edf3;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+}
+
+#container {
+    text-align: center;
+}
+
+h1 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    color: #6aaa64;
+    text-shadow: 0 2px 12px rgba(106, 170, 100, 0.35);
+}
+
+#hud {
+    display: flex;
+    justify-content: center;
+    gap: 28px;
+    font-size: 16px;
+    margin-bottom: 12px;
+    color: #9fb0c3;
+}
+
+#hud strong {
+    color: #e6edf3;
+    font-variant-numeric: tabular-nums;
+}
+
+#canvas-wrapper {
+    position: relative;
+    width: 400px;
+    height: 600px;
+    margin: 0 auto;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+}
+
+canvas {
+    display: block;
+    background: #121620;
+}
+
+#overlay {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    background: rgba(6, 12, 24, 0.86);
+    backdrop-filter: blur(2px);
+    text-align: center;
+    padding: 24px;
+}
+
+#overlay.visible {
+    display: flex;
+}
+
+#overlay-title {
+    font-size: 30px;
+    font-weight: 700;
+    color: #6aaa64;
+}
+
+#overlay-score {
+    font-size: 18px;
+    color: #e6edf3;
+    min-height: 22px;
+    letter-spacing: 1px;
+}
+
+#overlay-sub {
+    font-size: 15px;
+    color: #9fb0c3;
+}
+
+#btn-start {
+    margin-top: 6px;
+    padding: 10px 26px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #0d1117;
+    background: #6aaa64;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.08s ease, background 0.15s ease;
+}
+
+#btn-start:hover {
+    background: #85c17e;
+}
+
+#btn-start:active {
+    transform: scale(0.96);
+}
+
+#controls-hint {
+    margin-top: 14px;
+    font-size: 13px;
+    color: #6b7c92;
+}

@@ -1,0 +1,126 @@
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at 50% 0%, #14324e 0%, #050b14 70%);
+    color: #eaf4ff;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+#container {
+    text-align: center;
+    padding: 20px;
+}
+
+h1 {
+    margin: 0 0 14px;
+    font-size: 36px;
+    letter-spacing: 8px;
+    font-weight: 800;
+    color: #8fd6ff;
+    text-shadow: 0 0 18px rgba(80, 180, 255, 0.5);
+}
+
+#hud {
+    display: flex;
+    justify-content: center;
+    gap: 26px;
+    margin-bottom: 14px;
+}
+
+#hud div {
+    display: flex;
+    flex-direction: column;
+    min-width: 60px;
+}
+
+#hud .label {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #6f92b3;
+}
+
+#hud strong {
+    font-size: 24px;
+    font-weight: 800;
+    color: #fff;
+}
+
+#playfield {
+    position: relative;
+    display: inline-block;
+}
+
+#canvas {
+    display: block;
+    border: 3px solid #2f5a7d;
+    border-radius: 10px;
+    box-shadow: 0 0 40px rgba(80, 180, 255, 0.15), inset 0 0 30px rgba(0, 0, 0, 0.5);
+    background: #0d2438;
+}
+
+#overlay {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 20px;
+    background: rgba(5, 11, 20, 0.85);
+    border-radius: 10px;
+    backdrop-filter: blur(2px);
+}
+
+#overlay.visible { display: flex; }
+
+#overlay h2 {
+    margin: 0;
+    font-size: 32px;
+    letter-spacing: 4px;
+    color: #8fd6ff;
+    text-shadow: 0 0 16px rgba(80, 180, 255, 0.5);
+}
+
+#overlay p {
+    margin: 0;
+    max-width: 260px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #a9c2da;
+}
+
+#btn-start {
+    margin-top: 6px;
+    padding: 10px 30px;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #052034;
+    background: linear-gradient(90deg, #6fd0ff, #7affd6);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+#btn-start:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(80, 180, 255, 0.4);
+}
+
+#hint {
+    margin: 16px auto 0;
+    max-width: 440px;
+    font-size: 12px;
+    line-height: 1.7;
+    color: #6f92b3;
+}

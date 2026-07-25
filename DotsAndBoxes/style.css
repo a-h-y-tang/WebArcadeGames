@@ -1,0 +1,155 @@
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: #0d1117;
+    color: #e6edf3;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+#container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+}
+
+h1 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    color: #38bdf8;
+    text-transform: uppercase;
+    text-shadow: 0 0 20px #38bdf888;
+}
+
+#hud {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    font-size: 1rem;
+    color: #8b949e;
+    min-height: 1.6rem;
+}
+
+.score {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-weight: 600;
+    color: #e6edf3;
+}
+
+.score strong {
+    font-size: 1.25rem;
+    min-width: 1.2ch;
+    text-align: center;
+}
+
+.score-blue strong { color: #38bdf8; }
+.score-red strong { color: #f87171; }
+
+.turn {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #c9d1d9;
+    padding: 3px 12px;
+    border-radius: 999px;
+    background: #161b22;
+    border: 1px solid #21262d;
+    min-width: 11ch;
+    text-align: center;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+    box-shadow: 0 0 8px currentColor;
+}
+
+.dot-blue { background: #38bdf8; color: #38bdf8; }
+.dot-red { background: #f87171; color: #f87171; }
+
+#canvas-wrapper {
+    position: relative;
+    line-height: 0;
+}
+
+#canvas {
+    display: block;
+    border-radius: 8px;
+    background: #0d1117;
+    border: 2px solid #21262d;
+    cursor: pointer;
+}
+
+#overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(13, 17, 23, 0.9);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 14px;
+    border-radius: 8px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+}
+
+#overlay.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+#overlay-title {
+    font-size: 1.9rem;
+    font-weight: 800;
+    color: #38bdf8;
+    text-align: center;
+    padding: 0 16px;
+}
+
+#overlay-sub {
+    font-size: 0.95rem;
+    color: #8b949e;
+    text-align: center;
+    padding: 0 20px;
+    max-width: 360px;
+}
+
+#btn-start {
+    margin-top: 6px;
+    padding: 10px 28px;
+    font-size: 1rem;
+    font-weight: 700;
+    background: #38bdf8;
+    color: #0d1117;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+}
+
+#btn-start:hover {
+    background: #0ea5e9;
+}
+
+#btn-start:active {
+    transform: scale(0.97);
+}
+
+#controls-hint {
+    font-size: 0.8rem;
+    color: #484f58;
+}

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gomoku — Five in a Row</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Gomoku</h1>
+        <div id="hud">
+            <span>Turn: <strong id="turn">Black</strong></span>
+            <span>Moves: <strong id="moves">0</strong></span>
+            <span>Wins: <strong id="wins">0</strong></span>
+        </div>
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="540" height="540"></canvas>
+            <div id="overlay" class="visible">
+                <p id="overlay-title">Gomoku</p>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">You are Black — line up five in a row. Click the board or press Start to start.</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+        <p id="controls-hint">Click an intersection to place a stone &nbsp;·&nbsp; five in a row wins &nbsp;·&nbsp; you are Black</p>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>

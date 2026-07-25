@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Golf</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Mini Golf</h1>
+        <div id="hud">
+            <span>Hole: <strong id="hole">1 / 3</strong></span>
+            <span>Strokes: <strong id="strokes">0</strong></span>
+            <span>Total: <strong id="total">0</strong></span>
+            <span>Par: <strong id="par">0</strong></span>
+            <span>Best: <strong id="best">–</strong></span>
+        </div>
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="500" height="500" tabindex="0"></canvas>
+            <div id="overlay" class="visible">
+                <p id="overlay-title">Mini Golf</p>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Press Space or click Start to tee off</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+        <p id="controls-hint">Drag from the ball to aim &amp; set power &nbsp;·&nbsp; ← → aim &nbsp;·&nbsp; ↑ ↓ power &nbsp;·&nbsp; Space putt &nbsp;·&nbsp; P pause</p>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>

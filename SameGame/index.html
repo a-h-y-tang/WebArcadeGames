@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SameGame</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="game">
+        <header class="hud">
+            <h1>SAME<span>GAME</span></h1>
+            <div class="stats">
+                <div class="stat"><span class="label">Score</span><span id="score">0</span></div>
+                <div class="stat"><span class="label">Group</span><span id="preview">0</span></div>
+                <div class="stat"><span class="label">Best</span><span id="best">0</span></div>
+            </div>
+        </header>
+
+        <div class="board-wrap">
+            <canvas id="canvas" width="504" height="360"></canvas>
+            <div id="overlay" class="overlay visible">
+                <h2 id="overlay-title">SAMEGAME</h2>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Clear groups of 2+ matching tiles. Bigger groups score more!</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+
+        <p class="tip">Click any group of two or more touching tiles of the same colour to clear it. Tiles fall to fill gaps and empty columns close up. Clear the whole board for a big bonus.</p>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>

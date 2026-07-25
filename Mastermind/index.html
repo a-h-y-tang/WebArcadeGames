@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mastermind</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Mastermind</h1>
+        <div id="hud">
+            <span>Guesses left: <strong id="remaining">10</strong></span>
+        </div>
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="380" height="560"></canvas>
+            <div id="overlay" class="visible">
+                <p id="overlay-title">Mastermind</p>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Crack the hidden 4-colour code. Press any key to start.</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+        <p id="controls-hint">Keys 1–6 pick colours &nbsp;·&nbsp; Enter submits &nbsp;·&nbsp; Backspace deletes &nbsp;·&nbsp; or click the palette</p>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>

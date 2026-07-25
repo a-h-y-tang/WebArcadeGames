@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rush Hour</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="wrap">
+        <header class="hud">
+            <div class="stat"><span class="label">MOVES</span><span id="moves">0</span></div>
+            <div class="stat"><span class="label">LEVEL</span><span id="level">1</span></div>
+            <div class="stat"><span class="label">BEST</span><span id="best">—</span></div>
+        </header>
+
+        <div class="stage">
+            <canvas id="canvas" width="480" height="480"></canvas>
+
+            <div id="overlay" class="overlay visible">
+                <h1 id="overlay-title">RUSH HOUR</h1>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Clear a path and slide the red car out through the exit on the right</p>
+                <button id="btn-start">Start</button>
+            </div>
+        </div>
+
+        <footer class="help">
+            <span><kbd>Click</kbd> select</span>
+            <span><kbd>↑↓←→</kbd> slide</span>
+            <span><kbd>R</kbd> restart</span>
+            <span><kbd>N</kbd> next</span>
+        </footer>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
