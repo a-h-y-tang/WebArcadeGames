@@ -1,0 +1,114 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: #0d1020;
+    color: #f4f4f4;
+    font-family: "Segoe UI", Tahoma, Verdana, sans-serif;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+#container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+}
+
+h1 {
+    font-size: 2rem;
+    letter-spacing: 3px;
+    color: #ff5da2;
+    text-shadow: 2px 2px 0 #1b6ca8;
+}
+
+#hud {
+    display: flex;
+    gap: 24px;
+    font-size: 1rem;
+    background: #171b2e;
+    padding: 8px 20px;
+    border-radius: 8px;
+}
+
+#hud strong {
+    color: #ffd166;
+}
+
+#canvas-wrapper {
+    position: relative;
+    width: 640px;
+    height: 480px;
+}
+
+canvas {
+    background: linear-gradient(#1b2140 0%, #10152b 100%);
+    border-radius: 10px;
+    display: block;
+    border: 2px solid #2a3358;
+}
+
+#overlay {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    background: rgba(9, 11, 22, 0.86);
+    border-radius: 10px;
+    text-align: center;
+    padding: 20px;
+}
+
+#overlay.visible {
+    display: flex;
+}
+
+#overlay-title {
+    font-size: 2.4rem;
+    color: #ff5da2;
+    text-shadow: 2px 2px 0 #1b6ca8;
+}
+
+#overlay-sub {
+    font-size: 1rem;
+    max-width: 440px;
+    color: #cfd2e0;
+}
+
+button {
+    font: inherit;
+    font-weight: 600;
+    color: #0d1020;
+    background: #ffd166;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 22px;
+    cursor: pointer;
+    transition: transform 0.08s ease, background 0.15s ease;
+}
+
+button:hover {
+    background: #ffdb85;
+    transform: translateY(-1px);
+}
+
+#buttons {
+    display: flex;
+    gap: 12px;
+}
+
+#controls-hint {
+    font-size: 0.85rem;
+    color: #8a8fa3;
+    text-align: center;
+    max-width: 640px;
+}
