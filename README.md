@@ -50,6 +50,15 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Gem Match | [GemMatch/](GemMatch/) | Complete |
 | Sokoban | [Sokoban/](Sokoban/) | Complete |
 | Doodle Jump | [DoodleJump/](DoodleJump/) | Complete |
+| Bowling | [Bowling/](Bowling/) | Complete |
+| Flow | [Flow/](Flow/) | Complete |
+| Word Blaster | [WordBlaster/](WordBlaster/) | Complete |
+| Untangle | [Untangle/](Untangle/) | Complete |
+| Tempest | [Tempest/](Tempest/) | Complete |
+| Moon Patrol | [MoonPatrol/](MoonPatrol/) | Complete |
+| Set | [SetGame/](SetGame/) | Complete |
+| Lumberjack | [Lumberjack/](Lumberjack/) | Complete |
+| Tower Stack | [TowerStack/](TowerStack/) | Complete |
 | Hex | [Hex/](Hex/) | Complete |
 | Pengo | [Pengo/](Pengo/) | Complete |
 | Blob Drop | [BlobDrop/](BlobDrop/) | Complete |
@@ -81,6 +90,8 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Gomoku | [Gomoku/](Gomoku/) | Complete |
 | Peg Solitaire | [PegSolitaire/](PegSolitaire/) | Complete |
 | TriPeaks Solitaire | [TriPeaks/](TriPeaks/) | Complete |
+| Kakuro | [Kakuro/](Kakuro/) | Complete |
+| Kaboom! | [Kaboom/](Kaboom/) | Complete |
 
 ## Playing
 
