@@ -1,0 +1,122 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at 50% 12%, #0f3d2e 0%, #06201700 0%),
+                radial-gradient(circle at 50% 15%, #12503a 0%, #061c14 72%);
+    color: #eafff4;
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+
+#container {
+    text-align: center;
+    padding: 16px;
+}
+
+h1 {
+    margin: 0 0 10px;
+    font-size: 1.9rem;
+    letter-spacing: 1px;
+    color: #ffd54a;
+    text-shadow: 0 2px 0 #7a5a05, 0 0 18px rgba(255, 178, 42, 0.4);
+}
+
+#hud {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+    font-size: 1.05rem;
+}
+
+#hud strong {
+    color: #ffd54a;
+}
+
+#canvas-wrapper {
+    position: relative;
+    display: inline-block;
+    line-height: 0;
+}
+
+canvas {
+    background: linear-gradient(#0c5138 0%, #0a3f2c 100%);
+    border: 3px solid #1c7a55;
+    border-radius: 10px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+}
+
+#overlay {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    background: rgba(4, 20, 14, 0.86);
+    border-radius: 10px;
+    padding: 24px;
+}
+
+#overlay.visible {
+    display: flex;
+}
+
+#overlay-title {
+    margin: 0;
+    font-size: 2rem;
+    color: #ffd54a;
+    text-shadow: 0 0 16px rgba(255, 178, 42, 0.5);
+}
+
+#overlay-score {
+    margin: 0;
+    font-size: 1.1rem;
+    min-height: 1.2em;
+    color: #d8ffec;
+}
+
+#overlay-sub {
+    margin: 0;
+    max-width: 400px;
+    color: #a8d8c2;
+    font-size: 0.95rem;
+    line-height: 1.45;
+}
+
+#btn-start {
+    margin-top: 8px;
+    padding: 12px 28px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #062017;
+    background: linear-gradient(#ffd54a, #f5a623);
+    border: none;
+    border-radius: 999px;
+    box-shadow: 0 4px 0 #7a5a05;
+    transition: transform 0.08s ease, box-shadow 0.08s ease;
+}
+
+#btn-start:hover {
+    transform: translateY(-1px);
+}
+
+#btn-start:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #7a5a05;
+}
+
+#controls-hint {
+    margin-top: 14px;
+    color: #5f9a80;
+    font-size: 0.85rem;
+}

@@ -1,0 +1,121 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at 50% 0%, #1b2430 0%, #0d1117 60%);
+    color: #e6edf3;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    padding: 16px;
+}
+
+#container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+h1 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #f0f6fc;
+}
+
+#hud {
+    display: flex;
+    gap: 28px;
+    font-size: 1rem;
+    color: #9da7b3;
+}
+
+#hud strong {
+    color: #f0f6fc;
+    font-variant-numeric: tabular-nums;
+}
+
+#canvas-wrapper {
+    position: relative;
+    line-height: 0;
+}
+
+canvas {
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 10px;
+    touch-action: manipulation;
+    display: block;
+}
+
+#overlay {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    text-align: center;
+    background: rgba(13, 17, 23, 0.82);
+    backdrop-filter: blur(2px);
+    border-radius: 10px;
+    /* Let clicks/taps fall through to the canvas so "tap to start/drop" works
+       anywhere on the play area; only the button itself intercepts. */
+    pointer-events: none;
+}
+
+#overlay.visible {
+    display: flex;
+}
+
+#overlay-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #f0f6fc;
+}
+
+#overlay-score {
+    font-size: 1.1rem;
+    color: #58a6ff;
+    min-height: 1.1rem;
+}
+
+#overlay-sub {
+    font-size: 0.95rem;
+    color: #9da7b3;
+    max-width: 260px;
+}
+
+#btn-start {
+    margin-top: 6px;
+    padding: 10px 22px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #0d1117;
+    background: #58a6ff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    pointer-events: auto;
+    transition: transform 0.06s ease, background 0.15s ease;
+}
+
+#btn-start:hover {
+    background: #79b8ff;
+}
+
+#btn-start:active {
+    transform: translateY(1px);
+}
+
+#controls-hint {
+    font-size: 0.85rem;
+    color: #6e7681;
+}
