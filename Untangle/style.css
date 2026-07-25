@@ -1,0 +1,121 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: #14161c;
+    color: #e6e8ee;
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 24px 12px;
+}
+
+#container {
+    text-align: center;
+}
+
+h1 {
+    font-size: 28px;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+    color: #8affc1;
+}
+
+#hud {
+    display: flex;
+    gap: 22px;
+    justify-content: center;
+    margin-bottom: 12px;
+    font-size: 15px;
+    color: #aab1c4;
+}
+
+#hud strong {
+    color: #ffffff;
+}
+
+#canvas-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+canvas {
+    background: #1d2029;
+    border: 2px solid #2c313f;
+    border-radius: 6px;
+    display: block;
+    touch-action: none;
+}
+
+#overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 17, 23, 0.86);
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    border-radius: 6px;
+    padding: 16px;
+}
+
+#overlay.visible {
+    display: flex;
+}
+
+#overlay-title {
+    font-size: 30px;
+    font-weight: 700;
+    color: #8affc1;
+}
+
+#overlay-sub {
+    font-size: 15px;
+    color: #c7ccda;
+    max-width: 440px;
+    line-height: 1.45;
+}
+
+button {
+    background: #8affc1;
+    color: #10251a;
+    border: none;
+    border-radius: 5px;
+    padding: 9px 18px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+button:hover {
+    background: #a9ffd3;
+}
+
+#buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 14px;
+}
+
+#buttons button {
+    background: #2c313f;
+    color: #e6e8ee;
+}
+
+#buttons button:hover {
+    background: #3a4152;
+}
+
+#controls-hint {
+    margin-top: 12px;
+    font-size: 13px;
+    color: #6b7182;
+}
