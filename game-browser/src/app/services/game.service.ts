@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { catchError, tap } from 'rxjs/operators';
+import { of } from 'rxjs';
 import { Game } from '../models/game';
 
 @Injectable({
@@ -16,9 +17,19 @@ export class GameService {
   }
 
   private loadGames(): void {
-    this.http.get<Game[]>('/assets/games.json').subscribe((games) => {
-      this.gamesSubject.next(games);
-    });
+    this.http.get<Game[]>('assets/games.json')
+      .pipe(
+        tap((games) => {
+          console.log('Games loaded:', games.length);
+          this.gamesSubject.next(games);
+        }),
+        catchError((error) => {
+          console.error('Failed to load games:', error);
+          this.gamesSubject.next([]);
+          return of([]);
+        })
+      )
+      .subscribe();
   }
 
   getGames(): Game[] {
