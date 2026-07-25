@@ -50,6 +50,7 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Gem Match | [GemMatch/](GemMatch/) | Complete |
 | Sokoban | [Sokoban/](Sokoban/) | Complete |
 | Doodle Jump | [DoodleJump/](DoodleJump/) | Complete |
+| Untangle | [Untangle/](Untangle/) | Complete |
 | Tempest | [Tempest/](Tempest/) | Complete |
 | Moon Patrol | [MoonPatrol/](MoonPatrol/) | Complete |
 | Set | [SetGame/](SetGame/) | Complete |
