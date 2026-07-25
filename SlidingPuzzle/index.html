@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sliding Puzzle</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Sliding Puzzle</h1>
+        <div id="hud">
+            <span>Moves: <strong id="moves">0</strong></span>
+            <span>Best: <strong id="best">—</strong></span>
+        </div>
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="480" height="480"></canvas>
+            <div id="overlay">
+                <p id="overlay-title">Solved!</p>
+                <p id="overlay-sub"></p>
+                <button id="btn-new">New Game</button>
+            </div>
+        </div>
+        <p id="controls-hint">Click a tile or use Arrow keys / WASD &nbsp;·&nbsp; N for a new puzzle</p>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>

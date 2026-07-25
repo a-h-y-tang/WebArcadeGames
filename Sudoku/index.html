@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sudoku</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Sudoku</h1>
+        <div id="hud">
+            <span>Difficulty: <strong id="difficulty-label">Easy</strong></span>
+            <span>Time: <strong id="timer">0:00</strong></span>
+        </div>
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="504" height="504"></canvas>
+            <div id="overlay">
+                <p id="overlay-title">Solved!</p>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Press New Game to play again</p>
+                <button id="btn-play-again">New Game</button>
+            </div>
+        </div>
+        <div id="controls">
+            <button id="btn-new" class="ctl">New Game</button>
+            <span class="divider"></span>
+            <button id="btn-easy" class="ctl diff">Easy</button>
+            <button id="btn-medium" class="ctl diff">Medium</button>
+            <button id="btn-hard" class="ctl diff">Hard</button>
+        </div>
+        <p id="controls-hint">Click a cell &nbsp;·&nbsp; 1–9 to fill &nbsp;·&nbsp; 0 / Backspace to clear &nbsp;·&nbsp; arrows to move</p>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
