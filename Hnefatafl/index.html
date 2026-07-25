@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hnefatafl</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Hnefatafl</h1>
+        <div id="hud">
+            <span id="status">Attackers move first</span>
+        </div>
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="560" height="560"></canvas>
+            <div id="overlay" class="visible">
+                <p id="overlay-title">Hnefatafl</p>
+                <p id="overlay-sub">
+                    You are the Defenders. Guide your King to a corner —
+                    the Attackers move first.
+                </p>
+                <button id="btn-start">New Game</button>
+            </div>
+        </div>
+        <p id="controls-hint">Click a gold piece, then a highlighted square to move &nbsp;·&nbsp; get the King to any corner</p>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>

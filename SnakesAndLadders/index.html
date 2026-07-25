@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snakes and Ladders</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Snakes and Ladders</h1>
+        <div id="hud">
+            <span>Turn: <strong id="turn">You</strong></span>
+            <span>Last roll: <strong id="lastroll">–</strong></span>
+            <span><span class="dot you"></span>You: <strong id="pos-you">0</strong></span>
+            <span><span class="dot cpu"></span>CPU: <strong id="pos-cpu">0</strong></span>
+            <span>Wins: <strong id="best">0</strong></span>
+        </div>
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="500" height="500"></canvas>
+            <div id="overlay" class="visible">
+                <p id="overlay-title">Snakes and Ladders</p>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Race the computer to square 100. Land on a
+                    ladder to climb, avoid the snakes!</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+        <div id="controls">
+            <button id="btn-roll" class="primary">Roll Die</button>
+        </div>
+        <p id="status">Press Roll (or Space) on your turn.</p>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
