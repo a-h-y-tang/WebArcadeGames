@@ -1,0 +1,130 @@
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    background: radial-gradient(circle at 50% 0%, #2a3350, #0b0e18 70%);
+    color: #eef1f7;
+    font-family: "Segoe UI", system-ui, sans-serif;
+}
+
+#container {
+    padding: 20px 16px 40px;
+    text-align: center;
+    width: 100%;
+    max-width: 560px;
+}
+
+h1 {
+    margin: 8px 0 14px;
+    font-size: 30px;
+    letter-spacing: 1px;
+    color: #ffd76a;
+    text-shadow: 0 2px 0 #6a4d08;
+}
+
+#hud {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    font-size: 15px;
+    margin-bottom: 12px;
+}
+
+#hud strong { color: #ffd76a; }
+
+.dot {
+    display: inline-block;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    margin-right: 4px;
+    vertical-align: middle;
+}
+.dot.you { background: #3d8bff; }
+.dot.cpu { background: #ff5a5a; }
+
+#canvas-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    max-width: 500px;
+}
+
+canvas {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 10px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.55);
+    background: #12172a;
+}
+
+#overlay {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    padding: 20px;
+    border-radius: 10px;
+    background: rgba(8, 11, 22, 0.88);
+}
+
+#overlay.visible { display: flex; }
+
+#overlay-title {
+    font-size: 28px;
+    margin: 0;
+    color: #ffd76a;
+    letter-spacing: 1px;
+}
+
+#overlay-score { font-size: 19px; margin: 0; color: #a9b6d6; }
+#overlay-sub { margin: 0; max-width: 400px; color: #c7d1ea; }
+
+button {
+    font: inherit;
+    cursor: pointer;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 22px;
+    background: #2c3a63;
+    color: #eef1f7;
+    transition: transform 0.05s ease, background 0.15s ease;
+}
+
+button:hover { background: #3a4d82; }
+button:active { transform: translateY(1px); }
+
+button.primary {
+    background: #d9a521;
+    color: #241800;
+    font-weight: 700;
+    font-size: 18px;
+    padding: 12px 34px;
+}
+button.primary:hover { background: #f0bb34; }
+
+#overlay button {
+    margin-top: 8px;
+    background: #d9a521;
+    color: #241800;
+    font-weight: 700;
+    padding: 12px 28px;
+    font-size: 18px;
+}
+
+#controls { margin: 16px 0 8px; }
+
+#status {
+    min-height: 20px;
+    color: #a9b6d6;
+    margin: 6px 0 0;
+}
