@@ -90,6 +90,7 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Flood It | [FloodIt/](FloodIt/) | Complete |
 | Gomoku | [Gomoku/](Gomoku/) | Complete |
 | Peg Solitaire | [PegSolitaire/](PegSolitaire/) | Complete |
+| Chain Reaction | [ChainReaction/](ChainReaction/) | Complete |
 | Futoshiki | [Futoshiki/](Futoshiki/) | Complete |
 | Darts (501) | [Darts/](Darts/) | Complete |
 | Light Up (Akari) | [LightUp/](LightUp/) | Complete |

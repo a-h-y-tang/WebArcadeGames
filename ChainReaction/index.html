@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chain Reaction</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="game">
+        <header class="hud">
+            <h1>CHAIN&nbsp;REACTION</h1>
+            <div id="turn" class="turn turn-red">
+                <span class="dot"></span>
+                <span id="turn-label">Red's turn</span>
+            </div>
+        </header>
+
+        <div class="board-wrap">
+            <canvas id="canvas" width="408" height="408"></canvas>
+            <div id="overlay" class="overlay">
+                <h2 id="overlay-title">Red wins!</h2>
+                <button id="btn-again">Play Again</button>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button id="btn-new">New Game</button>
+            <p class="hint">Click a cell to drop an orb. Fill a cell past its
+                neighbour count to explode and capture. Wipe out your opponent to win.</p>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>
