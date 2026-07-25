@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Futoshiki</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Futoshiki</h1>
+        <div id="hud">
+            <span>Puzzle: <strong id="difficulty-label">Easy</strong></span>
+        </div>
+
+        <div id="diff-row">
+            <button class="diff-btn" data-index="0">Easy</button>
+            <button class="diff-btn" data-index="1">Medium</button>
+            <button class="diff-btn" data-index="2">Hard</button>
+            <button class="diff-btn" data-index="3">Expert</button>
+        </div>
+
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="480" height="480"></canvas>
+            <div id="overlay">
+                <p id="overlay-title">Solved!</p>
+                <p id="overlay-sub">Nicely deduced. Try the next difficulty.</p>
+                <button id="btn-continue">Play Again</button>
+            </div>
+        </div>
+
+        <div id="palette">
+            <button class="num-btn" data-num="1">1</button>
+            <button class="num-btn" data-num="2">2</button>
+            <button class="num-btn" data-num="3">3</button>
+            <button class="num-btn" data-num="4">4</button>
+            <button class="num-btn" data-num="5">5</button>
+            <button id="btn-clear">Clear</button>
+        </div>
+
+        <div id="actions">
+            <button id="btn-hint">Hint</button>
+            <button id="btn-restart">Restart</button>
+        </div>
+
+        <p id="controls-hint">
+            Click a cell · type 1–5 · arrows to move · <strong>&lt;</strong>/<strong>&gt;</strong> signs must hold
+        </p>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>

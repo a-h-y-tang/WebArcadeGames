@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calcudoku</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="wrap">
+        <header class="hud">
+            <div class="stat">
+                <span class="label">FILLED</span>
+                <span id="filled">0 / 0</span>
+            </div>
+            <div class="stat">
+                <span class="label">STATUS</span>
+                <span id="status">Ready</span>
+            </div>
+        </header>
+
+        <div class="stage">
+            <canvas id="canvas"></canvas>
+
+            <div id="overlay" class="overlay visible">
+                <h1 id="overlay-title">CALCUDOKU</h1>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Fill the grid so every <b>row</b> and <b>column</b> holds each digit once, and every outlined <b>cage</b> hits its target with the shown operation.</p>
+                <button id="btn-start">Start</button>
+            </div>
+        </div>
+
+        <footer class="help">
+            <span><kbd>Click</kbd> select</span>
+            <span><kbd>1</kbd>&ndash;<kbd>4</kbd> enter</span>
+            <span><kbd>&larr;&uarr;&darr;&rarr;</kbd> move</span>
+            <span><kbd>R</kbd> restart</span>
+        </footer>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
