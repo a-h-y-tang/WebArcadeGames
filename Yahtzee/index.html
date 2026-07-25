@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yahtzee</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Yahtzee</h1>
+        <div id="hud">
+            <span>Score: <strong id="score">0</strong></span>
+            <span>Best: <strong id="best">0</strong></span>
+        </div>
+
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="500" height="130"></canvas>
+            <div id="overlay" class="visible">
+                <p id="overlay-title">Yahtzee</p>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Press Space or Enter to start</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+
+        <div id="roll-bar">
+            <button id="btn-roll">Roll</button>
+            <span id="rolls-label">Rolls left: <strong id="rolls">3</strong></span>
+        </div>
+
+        <table id="scorecard">
+            <tbody id="scorecard-body"><!-- rows injected by game.js --></tbody>
+        </table>
+
+        <p id="controls-hint">Space / Enter or Roll &nbsp;·&nbsp; 1–5 or click a die to hold &nbsp;·&nbsp; click a row to score</p>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>

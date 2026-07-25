@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flood It</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Flood It</h1>
+        <div id="hud">
+            <span>Moves: <strong id="moves">30</strong> / <strong id="max-moves">30</strong></span>
+            <span>Best: <strong id="best">—</strong></span>
+        </div>
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="500" height="500"></canvas>
+            <div id="overlay" class="visible">
+                <p id="overlay-title">Flood It</p>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Pick a color to flood the board from the top-left corner</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+        <div id="palette"></div>
+        <p id="controls-hint">Click a color or press 1&ndash;6 &nbsp;·&nbsp; R for a new game</p>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>

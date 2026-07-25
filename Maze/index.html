@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maze</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Maze</h1>
+        <div id="hud">
+            <span>Level: <strong id="level">1</strong></span>
+            <span>Score: <strong id="score">0</strong></span>
+            <span>Time: <strong id="time">0</strong></span>
+            <span>Best: <strong id="best">0</strong></span>
+        </div>
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="500" height="500"></canvas>
+            <div id="overlay" class="visible">
+                <p id="overlay-title">Maze</p>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Reach the glowing exit before time runs out. Press Start to play.</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+        <p id="controls-hint">Arrow keys / WASD to move</p>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>

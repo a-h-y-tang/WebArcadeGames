@@ -1,0 +1,127 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at 50% 0%, #17213c, #080b16 70%);
+    color: #e8ecf5;
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+
+#container {
+    text-align: center;
+    padding: 24px;
+}
+
+h1 {
+    margin: 0 0 6px;
+    font-size: 2rem;
+    letter-spacing: 2px;
+    font-weight: 700;
+}
+
+#status {
+    margin: 0 0 14px;
+    font-size: 1.05rem;
+    min-height: 1.3em;
+    color: #b7c0da;
+}
+
+#canvas-wrapper {
+    display: inline-block;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.55);
+    line-height: 0;
+}
+
+canvas {
+    display: block;
+    cursor: pointer;
+}
+
+#scoreboard {
+    margin: 18px 0 8px;
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.stat {
+    padding: 6px 16px;
+    border-radius: 999px;
+    font-size: 0.95rem;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.stat strong {
+    margin-left: 6px;
+    font-size: 1.05rem;
+    color: #8fd3ff;
+}
+
+#controls {
+    margin: 10px 0;
+    display: flex;
+    gap: 18px;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.control-group {
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.label {
+    font-size: 0.9rem;
+    color: #97a2c0;
+    margin-right: 2px;
+}
+
+button {
+    background: #33406e;
+    color: #f2f4fb;
+    border: none;
+    padding: 8px 16px;
+    font-size: 0.95rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+button:hover {
+    background: #45568e;
+}
+
+.disk-btn {
+    padding: 8px 13px;
+    min-width: 40px;
+}
+
+.disk-btn.active {
+    background: #5b74c8;
+    box-shadow: 0 0 0 2px rgba(143, 211, 255, 0.5);
+}
+
+#btn-solve {
+    background: #2f6b4a;
+}
+
+#btn-solve:hover {
+    background: #3d8b60;
+}
+
+#controls-hint {
+    margin: 6px 0 0;
+    font-size: 0.82rem;
+    color: #7f89a8;
+}
