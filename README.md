@@ -89,6 +89,7 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Flood It | [FloodIt/](FloodIt/) | Complete |
 | Gomoku | [Gomoku/](Gomoku/) | Complete |
 | Peg Solitaire | [PegSolitaire/](PegSolitaire/) | Complete |
+| TriPeaks Solitaire | [TriPeaks/](TriPeaks/) | Complete |
 | Kakuro | [Kakuro/](Kakuro/) | Complete |
 | Kaboom! | [Kaboom/](Kaboom/) | Complete |
 
