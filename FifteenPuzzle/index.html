@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>15 Puzzle</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>15 Puzzle</h1>
+        <div id="hud">
+            <span>Moves: <strong id="moves">0</strong></span>
+            <span>Time: <strong id="time">00:00</strong></span>
+            <span>Best: <strong id="best">--</strong></span>
+        </div>
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="500" height="500"></canvas>
+            <div id="overlay">
+                <p id="overlay-title">Solved!</p>
+                <p id="overlay-sub"></p>
+                <button id="btn-overlay-new">Play Again</button>
+            </div>
+        </div>
+        <div id="controls">
+            <button id="btn-new">New Game</button>
+        </div>
+        <p id="controls-hint">Click a tile next to the gap &nbsp;·&nbsp; or use the arrow keys</p>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
