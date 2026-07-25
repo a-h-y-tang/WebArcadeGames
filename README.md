@@ -50,6 +50,7 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Gem Match | [GemMatch/](GemMatch/) | Complete |
 | Sokoban | [Sokoban/](Sokoban/) | Complete |
 | Doodle Jump | [DoodleJump/](DoodleJump/) | Complete |
+| Lumberjack | [Lumberjack/](Lumberjack/) | Complete |
 | Tower Stack | [TowerStack/](TowerStack/) | Complete |
 | Hex | [Hex/](Hex/) | Complete |
 | Pengo | [Pengo/](Pengo/) | Complete |
