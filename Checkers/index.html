@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkers</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Checkers</h1>
+        <div id="hud">
+            <span class="hud-item"><span class="chip chip-red"></span>You <strong id="red-count">12</strong></span>
+            <span class="hud-item" id="turn-indicator">Your move</span>
+            <span class="hud-item"><span class="chip chip-black"></span>AI <strong id="black-count">12</strong></span>
+        </div>
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="560" height="560"></canvas>
+            <div id="overlay" class="visible">
+                <p id="overlay-title">Checkers</p>
+                <p id="overlay-sub">Capture all of the AI's pieces to win</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+        <p id="controls-hint">Click a piece, then a highlighted square &nbsp;·&nbsp; captures are forced &nbsp;·&nbsp; R to restart</p>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
