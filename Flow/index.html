@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flow</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="game">
+        <header class="hud">
+            <h1>FLOW</h1>
+            <div class="stats">
+                <div class="stat"><span class="label">Level</span><span id="level">1</span></div>
+                <div class="stat"><span class="label">Moves</span><span id="moves">0</span></div>
+                <div class="stat"><span class="label">Pipe</span><span id="pipe">0%</span></div>
+                <div class="stat"><span class="label">Best</span><span id="best">&ndash;</span></div>
+            </div>
+        </header>
+
+        <div class="playfield">
+            <div class="board-wrap">
+                <canvas id="canvas" width="480" height="480"></canvas>
+                <div id="overlay" class="overlay visible">
+                    <h2 id="overlay-title">FLOW</h2>
+                    <p id="overlay-score"></p>
+                    <p id="overlay-sub">Connect matching colours to fill the grid. Press any key or click to start</p>
+                    <button id="btn-start">Start Game</button>
+                </div>
+            </div>
+
+            <aside class="side">
+                <div class="help">
+                    <p><b>Goal</b></p>
+                    <p>Join each pair of dots and cover every cell.</p>
+                    <p>&nbsp;</p>
+                    <p><b>Controls</b></p>
+                    <p>Drag &nbsp;draw a pipe</p>
+                    <p>R &nbsp;reset level</p>
+                    <p>N &nbsp;next level</p>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>
