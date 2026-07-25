@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blob Drop</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Blob Drop</h1>
+        <div id="layout">
+            <div id="canvas-wrapper">
+                <canvas id="canvas" width="240" height="480" tabindex="0"></canvas>
+                <div id="overlay" class="visible">
+                    <p id="overlay-title">Blob Drop</p>
+                    <p id="overlay-sub">Match 4+ same-colour blobs to pop them — line up chain reactions for big scores! Arrows move, ↑/Z rotate, Space to slam.</p>
+                    <button id="btn-start">Start Game</button>
+                </div>
+            </div>
+            <aside id="sidebar">
+                <div class="panel">
+                    <span class="label">Next</span>
+                    <canvas id="next" width="72" height="84"></canvas>
+                </div>
+                <div class="panel stat">
+                    <span class="label">Score</span>
+                    <strong id="score">0</strong>
+                </div>
+                <div class="panel stat">
+                    <span class="label">Best</span>
+                    <strong id="best">0</strong>
+                </div>
+                <div class="panel stat">
+                    <span class="label">Last chain</span>
+                    <strong id="chain">0</strong>
+                </div>
+            </aside>
+        </div>
+        <p id="controls-hint">
+            ← → move &nbsp;·&nbsp; ↑ / Z / X rotate &nbsp;·&nbsp; ↓ soft drop &nbsp;·&nbsp; Space hard drop &nbsp;·&nbsp; P pause &nbsp;·&nbsp; R restart
+        </p>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>

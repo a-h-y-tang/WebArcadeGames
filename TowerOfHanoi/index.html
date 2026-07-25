@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tower of Hanoi</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Tower of Hanoi</h1>
+        <p id="status">Move the stack to peg C</p>
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="600" height="360"></canvas>
+        </div>
+        <div id="scoreboard">
+            <span class="stat">Moves <strong id="moves">0</strong></span>
+            <span class="stat">Optimal <strong id="min-moves">15</strong></span>
+            <span class="stat">Best <strong id="best">–</strong></span>
+        </div>
+        <div id="controls">
+            <span class="control-group" id="disk-buttons">
+                <span class="label">Disks:</span>
+                <button id="btn-disks-3" class="disk-btn">3</button>
+                <button id="btn-disks-4" class="disk-btn">4</button>
+                <button id="btn-disks-5" class="disk-btn">5</button>
+                <button id="btn-disks-6" class="disk-btn">6</button>
+            </span>
+            <span class="control-group">
+                <button id="btn-solve">Solve</button>
+                <button id="btn-reset">Reset</button>
+            </span>
+        </div>
+        <p id="controls-hint">Click a peg to lift its top disk, then click a peg to drop it &nbsp;·&nbsp; R to reset</p>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>

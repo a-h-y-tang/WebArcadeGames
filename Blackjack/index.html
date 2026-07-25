@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blackjack</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Blackjack</h1>
+        <div id="hud">
+            <span>Balance: <strong id="balance">100</strong></span>
+            <span>Bet: <strong id="bet">10</strong></span>
+            <span>Best: <strong id="best">100</strong></span>
+        </div>
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="640" height="460"></canvas>
+        </div>
+        <p id="message">Place your bet and deal.</p>
+        <div id="controls">
+            <div id="bet-controls">
+                <button id="btn-bet-down" title="Lower bet">–</button>
+                <span id="bet-label">Bet</span>
+                <button id="btn-bet-up" title="Raise bet">+</button>
+            </div>
+            <button id="btn-deal">Deal</button>
+            <button id="btn-hit" disabled>Hit</button>
+            <button id="btn-stand" disabled>Stand</button>
+        </div>
+        <p id="controls-hint">D deal &nbsp;·&nbsp; H hit &nbsp;·&nbsp; S stand &nbsp;·&nbsp; ↑ ↓ bet</p>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
