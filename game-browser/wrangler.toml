@@ -1,0 +1,11 @@
+name = "game-browser"
+type = "javascript"
+account_id = ""
+workers_dev = true
+
+[env.production]
+vars = { ENVIRONMENT = "production" }
+
+[build]
+command = "npm run build"
+cwd = "./"
