@@ -90,6 +90,7 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Flood It | [FloodIt/](FloodIt/) | Complete |
 | Gomoku | [Gomoku/](Gomoku/) | Complete |
 | Peg Solitaire | [PegSolitaire/](PegSolitaire/) | Complete |
+| Hnefatafl | [Hnefatafl/](Hnefatafl/) | Complete |
 | Klotski | [Klotski/](Klotski/) | Complete |
 | Farkle | [Farkle/](Farkle/) | Complete |
 | Hashi (Bridges) | [Hashi/](Hashi/) | Complete |
