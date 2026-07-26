@@ -42,7 +42,7 @@ export class GameCardComponent {
   @Input() game!: Game;
 
   openGame(): void {
-    window.location.href = this.game.path;
+    window.location.href = '/' + this.game.path;
   }
 
   onImageError(event: any): void {

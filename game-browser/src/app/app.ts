@@ -1,6 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
 import { HeaderComponent } from './components/header/header.component';
 import { SearchComponent } from './components/search/search.component';
 import { FilterComponent } from './components/filter/filter.component';
@@ -13,7 +12,6 @@ import { Game } from './models/game';
   standalone: true,
   imports: [
     CommonModule,
-    HttpClientModule,
     HeaderComponent,
     SearchComponent,
     FilterComponent,
@@ -22,21 +20,17 @@ import { Game } from './models/game';
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
-export class App implements OnInit {
-  games: Game[] = [];
+export class App {
+  games: readonly Game[];
   filteredGames: Game[] = [];
   categories: string[] = [];
   searchQuery = '';
   selectedCategory = '';
 
-  constructor(private gameService: GameService) {}
-
-  ngOnInit(): void {
-    this.gameService.games$.subscribe((games) => {
-      this.games = games;
-      this.categories = this.gameService.getAllCategories();
-      this.updateFiltered();
-    });
+  constructor(private gameService: GameService) {
+    this.games = this.gameService.getGames();
+    this.categories = this.gameService.getAllCategories();
+    this.filteredGames = this.gameService.searchGames('', '');
   }
 
   onSearchChange(query: string): void {

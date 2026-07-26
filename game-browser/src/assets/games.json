@@ -1,106 +1,938 @@
 [
-  { "id": "2048", "name": "2048", "description": "Slide tiles to combine numbers and reach 2048", "category": "Puzzle", "path": "../2048", "thumbnail": "../2048/thumbnail.png" },
-  { "id": "air-hockey", "name": "Air Hockey", "description": "Fast-paced air hockey match against the computer", "category": "Action", "path": "../AirHockey", "thumbnail": "../AirHockey/thumbnail.png" },
-  { "id": "artillery-duel", "name": "Artillery Duel", "description": "Strategic turn-based artillery combat game", "category": "Strategy", "path": "../ArtilleryDuel", "thumbnail": "../ArtilleryDuel/thumbnail.png" },
-  { "id": "asteroids", "name": "Asteroids", "description": "Classic arcade shooter - destroy asteroids before they hit you", "category": "Action", "path": "../Asteroids", "thumbnail": "../Asteroids/thumbnail.png" },
-  { "id": "battleship", "name": "Battleship", "description": "Naval strategy game - find and sink opponent's ships", "category": "Strategy", "path": "../Battleship", "thumbnail": "../Battleship/thumbnail.png" },
-  { "id": "blackjack", "name": "Blackjack", "description": "Classic card game - beat the dealer to 21", "category": "Card Game", "path": "../Blackjack", "thumbnail": "../Blackjack/thumbnail.png" },
-  { "id": "blob-drop", "name": "Blob Drop", "description": "Drop colorful blobs to clear the board", "category": "Puzzle", "path": "../BlobDrop", "thumbnail": "../BlobDrop/thumbnail.png" },
-  { "id": "bomberman", "name": "Bomberman", "description": "Strategic bomb-placing action game", "category": "Action", "path": "../Bomberman", "thumbnail": "../Bomberman/thumbnail.png" },
-  { "id": "boulder-dash", "name": "Boulder Dash", "description": "Dig and collect diamonds while avoiding dangers", "category": "Action", "path": "../BoulderDash", "thumbnail": "../BoulderDash/thumbnail.png" },
-  { "id": "bowling", "name": "Bowling", "description": "Classic bowling game - aim for strikes", "category": "Sports", "path": "../Bowling", "thumbnail": "../Bowling/thumbnail.png" },
-  { "id": "breakout", "name": "Breakout", "description": "Paddle-based arcade game - break all the bricks", "category": "Action", "path": "../Breakout", "thumbnail": "../Breakout/thumbnail.png" },
-  { "id": "bubble-shooter", "name": "Bubble Shooter", "description": "Aim and pop bubbles before they overflow", "category": "Puzzle", "path": "../BubbleShooter", "thumbnail": "../BubbleShooter/thumbnail.png" },
-  { "id": "calcudoku", "name": "Calcudoku", "description": "Math logic puzzle with grid and operations", "category": "Puzzle", "path": "../Calcudoku", "thumbnail": "../Calcudoku/thumbnail.png" },
-  { "id": "centipede", "name": "Centipede", "description": "Classic arcade shooter - defeat the centipede", "category": "Action", "path": "../Centipede", "thumbnail": "../Centipede/thumbnail.png" },
-  { "id": "chain-reaction", "name": "Chain Reaction", "description": "Strategy game of connecting and controlling territories", "category": "Strategy", "path": "../ChainReaction", "thumbnail": "../ChainReaction/thumbnail.png" },
-  { "id": "checkers", "name": "Checkers", "description": "Classic board game - jump over opponent's pieces", "category": "Board Game", "path": "../Checkers", "thumbnail": "../Checkers/thumbnail.png" },
-  { "id": "columns", "name": "Columns", "description": "Match falling blocks to clear the board", "category": "Puzzle", "path": "../Columns", "thumbnail": "../Columns/thumbnail.png" },
-  { "id": "connect-four", "name": "Connect Four", "description": "Classic strategy game - get four in a row", "category": "Board Game", "path": "../ConnectFour", "thumbnail": "../ConnectFour/thumbnail.png" },
-  { "id": "darts", "name": "Darts", "description": "Aim and throw darts at the board", "category": "Sports", "path": "../Darts", "thumbnail": "../Darts/thumbnail.png" },
-  { "id": "dig-dug", "name": "Dig Dug", "description": "Dig tunnels and defeat underground creatures", "category": "Action", "path": "../DigDug", "thumbnail": "../DigDug/thumbnail.png" },
-  { "id": "dino-run", "name": "Dino Run", "description": "Guide a dinosaur through obstacles and escape", "category": "Action", "path": "../DinoRun", "thumbnail": "../DinoRun/thumbnail.png" },
-  { "id": "doodle-jump", "name": "Doodle Jump", "description": "Jump higher and higher, avoid enemies", "category": "Action", "path": "../DoodleJump", "thumbnail": "../DoodleJump/thumbnail.png" },
-  { "id": "dots-and-boxes", "name": "Dots and Boxes", "description": "Strategy game - claim more boxes than your opponent", "category": "Strategy", "path": "../DotsAndBoxes", "thumbnail": "../DotsAndBoxes/thumbnail.png" },
-  { "id": "farkle", "name": "Farkle", "description": "Dice-rolling game - score combinations wisely", "category": "Card Game", "path": "../Farkle", "thumbnail": "../Farkle/thumbnail.png" },
-  { "id": "fifteen-puzzle", "name": "Fifteen Puzzle", "description": "Slide numbered tiles into correct order", "category": "Puzzle", "path": "../FifteenPuzzle", "thumbnail": "../FifteenPuzzle/thumbnail.png" },
-  { "id": "flappy-bird", "name": "Flappy Bird", "description": "Navigate a bird through pipes with careful taps", "category": "Action", "path": "../FlappyBird", "thumbnail": "../FlappyBird/thumbnail.png" },
-  { "id": "flood-it", "name": "Flood It", "description": "Flood the board with one color to win", "category": "Puzzle", "path": "../FloodIt", "thumbnail": "../FloodIt/thumbnail.png" },
-  { "id": "flow", "name": "Flow", "description": "Connect dots with paths without crossing", "category": "Puzzle", "path": "../Flow", "thumbnail": "../Flow/thumbnail.png" },
-  { "id": "fox-and-hounds", "name": "Fox and Hounds", "description": "Abstract strategy game - chase or escape", "category": "Strategy", "path": "../FoxAndHounds", "thumbnail": "../FoxAndHounds/thumbnail.png" },
-  { "id": "freecell", "name": "FreeCell", "description": "Card solitaire game with strategic depth", "category": "Card Game", "path": "../FreeCell", "thumbnail": "../FreeCell/thumbnail.png" },
-  { "id": "frogger", "name": "Frogger", "description": "Guide a frog across traffic and water", "category": "Action", "path": "../Frogger", "thumbnail": "../Frogger/thumbnail.png" },
-  { "id": "frostbite", "name": "Frostbite", "description": "Guide your character across ice floes", "category": "Action", "path": "../Frostbite", "thumbnail": "../Frostbite/thumbnail.png" },
-  { "id": "fruit-slice", "name": "Fruit Slice", "description": "Swipe to slice falling fruit", "category": "Action", "path": "../FruitSlice", "thumbnail": "../FruitSlice/thumbnail.png" },
-  { "id": "futoshiki", "name": "Futoshiki", "description": "Logic puzzle with inequality constraints", "category": "Puzzle", "path": "../Futoshiki", "thumbnail": "../Futoshiki/thumbnail.png" },
-  { "id": "galaga", "name": "Galaga", "description": "Space shooter - defend against alien waves", "category": "Action", "path": "../Galaga", "thumbnail": "../Galaga/thumbnail.png" },
-  { "id": "gem-match", "name": "Gem Match", "description": "Match gemstones to clear levels", "category": "Puzzle", "path": "../GemMatch", "thumbnail": "../GemMatch/thumbnail.png" },
-  { "id": "geo-dash", "name": "Geo Dash", "description": "Rhythm-based platformer with geometric obstacles", "category": "Action", "path": "../GeoDash", "thumbnail": "../GeoDash/thumbnail.png" },
-  { "id": "golf-solitaire", "name": "Golf Solitaire", "description": "Card solitaire with golf-themed scoring", "category": "Card Game", "path": "../GolfSolitaire", "thumbnail": "../GolfSolitaire/thumbnail.png" },
-  { "id": "gomoku", "name": "Gomoku", "description": "Get five in a row on a large board", "category": "Board Game", "path": "../Gomoku", "thumbnail": "../Gomoku/thumbnail.png" },
-  { "id": "hashi", "name": "Hashi", "description": "Connect islands with bridges in a logic puzzle", "category": "Puzzle", "path": "../Hashi", "thumbnail": "../Hashi/thumbnail.png" },
-  { "id": "hex", "name": "Hex", "description": "Strategic hexagonal board game", "category": "Board Game", "path": "../Hex", "thumbnail": "../Hex/thumbnail.png" },
-  { "id": "hitori", "name": "Hitori", "description": "Logic puzzle - eliminate duplicate cells", "category": "Puzzle", "path": "../Hitori", "thumbnail": "../Hitori/thumbnail.png" },
-  { "id": "hnefatafl", "name": "Hnefatafl", "description": "Ancient Norse strategy board game", "category": "Strategy", "path": "../Hnefatafl", "thumbnail": "../Hnefatafl/thumbnail.png" },
-  { "id": "joust", "name": "Joust", "description": "Arcade action game - defeat flying enemies", "category": "Action", "path": "../Joust", "thumbnail": "../Joust/thumbnail.png" },
-  { "id": "kaboom", "name": "Kaboom", "description": "Catch falling bombs before they explode", "category": "Action", "path": "../Kaboom", "thumbnail": "../Kaboom/thumbnail.png" },
-  { "id": "kakuro", "name": "Kakuro", "description": "Number logic puzzle combining crosswords and sudoku", "category": "Puzzle", "path": "../Kakuro", "thumbnail": "../Kakuro/thumbnail.png" },
-  { "id": "klotski", "name": "Klotski", "description": "Sliding block puzzle - move blocks strategically", "category": "Puzzle", "path": "../Klotski", "thumbnail": "../Klotski/thumbnail.png" },
-  { "id": "light-cycles", "name": "Light Cycles", "description": "High-speed action game - avoid collisions", "category": "Action", "path": "../LightCycles", "thumbnail": "../LightCycles/thumbnail.png" },
-  { "id": "light-up", "name": "Light Up", "description": "Place lights to illuminate a grid in this logic puzzle", "category": "Puzzle", "path": "../LightUp", "thumbnail": "../LightUp/thumbnail.png" },
-  { "id": "lights-out", "name": "Lights Out", "description": "Toggle lights to turn them all off", "category": "Puzzle", "path": "../LightsOut", "thumbnail": "../LightsOut/thumbnail.png" },
-  { "id": "lumberjack", "name": "Lumberjack", "description": "Action game - fell trees and avoid obstacles", "category": "Action", "path": "../Lumberjack", "thumbnail": "../Lumberjack/thumbnail.png" },
-  { "id": "lunar-lander", "name": "Lunar Lander", "description": "Physics-based spacecraft landing game", "category": "Action", "path": "../LunarLander", "thumbnail": "../LunarLander/thumbnail.png" },
-  { "id": "mahjong-solitaire", "name": "Mahjong Solitaire", "description": "Match mahjong tiles to clear the board", "category": "Card Game", "path": "../MahjongSolitaire", "thumbnail": "../MahjongSolitaire/thumbnail.png" },
-  { "id": "mancala", "name": "Mancala", "description": "Ancient strategy board game with stones", "category": "Board Game", "path": "../Mancala", "thumbnail": "../Mancala/thumbnail.png" },
-  { "id": "mastermind", "name": "Mastermind", "description": "Guess the code with logical deduction", "category": "Strategy", "path": "../Mastermind", "thumbnail": "../Mastermind/thumbnail.png" },
-  { "id": "match3", "name": "Match 3", "description": "Match three or more gems to clear levels", "category": "Puzzle", "path": "../Match3", "thumbnail": "../Match3/thumbnail.png" },
-  { "id": "maze", "name": "Maze", "description": "Navigate through procedurally generated mazes", "category": "Puzzle", "path": "../Maze", "thumbnail": "../Maze/thumbnail.png" },
-  { "id": "memory-match", "name": "Memory Match", "description": "Classic memory game - match pairs of cards", "category": "Puzzle", "path": "../MemoryMatch", "thumbnail": "../MemoryMatch/thumbnail.png" },
-  { "id": "minesweeper", "name": "Minesweeper", "description": "Logic puzzle - clear the board without hitting mines", "category": "Puzzle", "path": "../Minesweeper", "thumbnail": "../Minesweeper/thumbnail.png" },
-  { "id": "mini-golf", "name": "Mini Golf", "description": "Putt through creative holes", "category": "Sports", "path": "../MiniGolf", "thumbnail": "../MiniGolf/thumbnail.png" },
-  { "id": "missile-command", "name": "Missile Command", "description": "Defense arcade game - protect cities from missiles", "category": "Action", "path": "../MissileCommand", "thumbnail": "../MissileCommand/thumbnail.png" },
-  { "id": "moon-patrol", "name": "Moon Patrol", "description": "Arcade action game - navigate the moon's surface", "category": "Action", "path": "../MoonPatrol", "thumbnail": "../MoonPatrol/thumbnail.png" },
-  { "id": "nine-mens-morris", "name": "Nine Men's Morris", "description": "Ancient strategy board game", "category": "Board Game", "path": "../NineMensMorris", "thumbnail": "../NineMensMorris/thumbnail.png" },
-  { "id": "nonogram", "name": "Nonogram", "description": "Logic puzzle - fill cells based on number clues", "category": "Puzzle", "path": "../Nonogram", "thumbnail": "../Nonogram/thumbnail.png" },
-  { "id": "pacman", "name": "PacMan", "description": "Classic arcade game - eat pellets and avoid ghosts", "category": "Action", "path": "../PacMan", "thumbnail": "../PacMan/thumbnail.png" },
-  { "id": "pang", "name": "Pang", "description": "Arcade action game - pop balloons with projectiles", "category": "Action", "path": "../Pang", "thumbnail": "../Pang/thumbnail.png" },
-  { "id": "peg-solitaire", "name": "Peg Solitaire", "description": "Jump pegs to eliminate them from the board", "category": "Puzzle", "path": "../PegSolitaire", "thumbnail": "../PegSolitaire/thumbnail.png" },
-  { "id": "pengo", "name": "Pengo", "description": "Arcade game - navigate maze and defeat enemies", "category": "Action", "path": "../Pengo", "thumbnail": "../Pengo/thumbnail.png" },
-  { "id": "pill-drop", "name": "Pill Drop", "description": "Match falling pills to eliminate viruses", "category": "Action", "path": "../PillDrop", "thumbnail": "../PillDrop/thumbnail.png" },
-  { "id": "pinball", "name": "Pinball", "description": "Classic pinball machine with physics", "category": "Action", "path": "../Pinball", "thumbnail": "../Pinball/thumbnail.png" },
-  { "id": "pipe-dream", "name": "Pipe Dream", "description": "Connect pipes before water flows through", "category": "Puzzle", "path": "../PipeDream", "thumbnail": "../PipeDream/thumbnail.png" },
-  { "id": "pong", "name": "Pong", "description": "Classic arcade paddle game", "category": "Sports", "path": "../Pong", "thumbnail": "../Pong/thumbnail.png" },
-  { "id": "pyramid-solitaire", "name": "Pyramid Solitaire", "description": "Card solitaire with pyramid layout", "category": "Card Game", "path": "../PyramidSolitaire", "thumbnail": "../PyramidSolitaire/thumbnail.png" },
-  { "id": "qbert", "name": "Q*Bert", "description": "Arcade action game - change cube colors while avoiding enemies", "category": "Action", "path": "../Qbert", "thumbnail": "../Qbert/thumbnail.png" },
-  { "id": "reversi", "name": "Reversi", "description": "Othello strategy game - flip opponent's pieces", "category": "Board Game", "path": "../Reversi", "thumbnail": "../Reversi/thumbnail.png" },
-  { "id": "road-racer", "name": "Road Racer", "description": "Arcade racing game - avoid obstacles on the road", "category": "Action", "path": "../RoadRacer", "thumbnail": "../RoadRacer/thumbnail.png" },
-  { "id": "road-rush", "name": "Road Rush", "description": "Fast-paced racing action game", "category": "Action", "path": "../RoadRush", "thumbnail": "../RoadRush/thumbnail.png" },
-  { "id": "rush-hour", "name": "Rush Hour", "description": "Sliding block puzzle - get the red car out", "category": "Puzzle", "path": "../RushHour", "thumbnail": "../RushHour/thumbnail.png" },
-  { "id": "same-game", "name": "Same Game", "description": "Clear same-colored groups of stones", "category": "Puzzle", "path": "../SameGame", "thumbnail": "../SameGame/thumbnail.png" },
-  { "id": "set-game", "name": "Set Game", "description": "Card game - find sets of three cards with matching attributes", "category": "Card Game", "path": "../SetGame", "thumbnail": "../SetGame/thumbnail.png" },
-  { "id": "simon", "name": "Simon", "description": "Memory game - repeat the color sequence", "category": "Puzzle", "path": "../Simon", "thumbnail": "../Simon/thumbnail.png" },
-  { "id": "skeet-shooter", "name": "Skeet Shooter", "description": "Shooting game - hit flying targets", "category": "Action", "path": "../SkeetShooter", "thumbnail": "../SkeetShooter/thumbnail.png" },
-  { "id": "sliding-puzzle", "name": "Sliding Puzzle", "description": "Slide tiles into the correct order", "category": "Puzzle", "path": "../SlidingPuzzle", "thumbnail": "../SlidingPuzzle/thumbnail.png" },
-  { "id": "snake", "name": "Snake", "description": "Classic snake game - eat food and grow longer", "category": "Action", "path": "../Snake", "thumbnail": "../Snake/thumbnail.png" },
-  { "id": "snakes-and-ladders", "name": "Snakes and Ladders", "description": "Classic board game - race to the end", "category": "Board Game", "path": "../SnakesAndLadders", "thumbnail": "../SnakesAndLadders/thumbnail.png" },
-  { "id": "sokoban", "name": "Sokoban", "description": "Puzzle game - push boxes to their destinations", "category": "Puzzle", "path": "../Sokoban", "thumbnail": "../Sokoban/thumbnail.png" },
-  { "id": "solitaire", "name": "Solitaire", "description": "Classic card solitaire game", "category": "Card Game", "path": "../Solitaire", "thumbnail": "../Solitaire/thumbnail.png" },
-  { "id": "space-invaders", "name": "Space Invaders", "description": "Classic arcade shooter - defeat the aliens", "category": "Action", "path": "../SpaceInvaders", "thumbnail": "../SpaceInvaders/thumbnail.png" },
-  { "id": "stacker", "name": "Stacker", "description": "Stack falling blocks with precision", "category": "Action", "path": "../Stacker", "thumbnail": "../Stacker/thumbnail.png" },
-  { "id": "sudoku", "name": "Sudoku", "description": "Number logic puzzle - fill the grid correctly", "category": "Puzzle", "path": "../Sudoku", "thumbnail": "../Sudoku/thumbnail.png" },
-  { "id": "tempest", "name": "Tempest", "description": "Arcade action game - navigate tube mazes", "category": "Action", "path": "../Tempest", "thumbnail": "../Tempest/thumbnail.png" },
-  { "id": "tetris", "name": "Tetris", "description": "Classic falling block puzzle game", "category": "Puzzle", "path": "../Tetris", "thumbnail": "../Tetris/thumbnail.png" },
-  { "id": "tower-of-hanoi", "name": "Tower of Hanoi", "description": "Logic puzzle - move disks to solve the tower", "category": "Puzzle", "path": "../TowerOfHanoi", "thumbnail": "../TowerOfHanoi/thumbnail.png" },
-  { "id": "tower-stack", "name": "Tower Stack", "description": "Stack blocks as high as possible", "category": "Action", "path": "../TowerStack", "thumbnail": "../TowerStack/thumbnail.png" },
-  { "id": "tri-peaks", "name": "Tri-Peaks", "description": "Card solitaire with three-pyramid layout", "category": "Card Game", "path": "../TriPeaks", "thumbnail": "../TriPeaks/thumbnail.png" },
-  { "id": "tron", "name": "Tron", "description": "High-speed action game - light bike racing", "category": "Action", "path": "../Tron", "thumbnail": "../Tron/thumbnail.png" },
-  { "id": "turbo-racer", "name": "Turbo Racer", "description": "Arcade racing game with high-speed action", "category": "Action", "path": "../TurboRacer", "thumbnail": "../TurboRacer/thumbnail.png" },
-  { "id": "ultimate-tic-tac-toe", "name": "Ultimate Tic Tac Toe", "description": "Advanced tic tac toe variant on a larger grid", "category": "Board Game", "path": "../UltimateTicTacToe", "thumbnail": "../UltimateTicTacToe/thumbnail.png" },
-  { "id": "untangle", "name": "Untangle", "description": "Logic puzzle - untangle the web of dots", "category": "Puzzle", "path": "../Untangle", "thumbnail": "../Untangle/thumbnail.png" },
-  { "id": "whack-a-mole", "name": "Whack-A-Mole", "description": "Action game - tap moles as they pop up", "category": "Action", "path": "../WhackAMole", "thumbnail": "../WhackAMole/thumbnail.png" },
-  { "id": "word-blaster", "name": "Word Blaster", "description": "Typing game - blast words before they reach you", "category": "Action", "path": "../WordBlaster", "thumbnail": "../WordBlaster/thumbnail.png" },
-  { "id": "word-guess", "name": "Word Guess", "description": "Guess the word with limited attempts", "category": "Puzzle", "path": "../WordGuess", "thumbnail": "../WordGuess/thumbnail.png" },
-  { "id": "xonix", "name": "Xonix", "description": "Arcade action game - capture territory with careful movement", "category": "Action", "path": "../Xonix", "thumbnail": "../Xonix/thumbnail.png" },
-  { "id": "yahtzee", "name": "Yahtzee", "description": "Dice game - roll and score combinations", "category": "Card Game", "path": "../Yahtzee", "thumbnail": "../Yahtzee/thumbnail.png" }
+  {
+    "id": "2048",
+    "name": "2048",
+    "description": "Slide tiles to combine numbers and reach 2048",
+    "category": "Puzzle",
+    "dir": "2048",
+    "path": "games/2048/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "air-hockey",
+    "name": "Air Hockey",
+    "description": "Fast-paced air hockey match against the computer",
+    "category": "Action",
+    "dir": "AirHockey",
+    "path": "games/AirHockey/index.html",
+    "thumbnail": "games/AirHockey/screenshot.png"
+  },
+  {
+    "id": "artillery-duel",
+    "name": "Artillery Duel",
+    "description": "Strategic turn-based artillery combat game",
+    "category": "Strategy",
+    "dir": "ArtilleryDuel",
+    "path": "games/ArtilleryDuel/index.html",
+    "thumbnail": "games/ArtilleryDuel/screenshot.png"
+  },
+  {
+    "id": "asteroids",
+    "name": "Asteroids",
+    "description": "Classic arcade shooter - destroy asteroids before they hit you",
+    "category": "Action",
+    "dir": "Asteroids",
+    "path": "games/Asteroids/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "battleship",
+    "name": "Battleship",
+    "description": "Naval strategy game - find and sink opponent's ships",
+    "category": "Strategy",
+    "dir": "Battleship",
+    "path": "games/Battleship/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "blackjack",
+    "name": "Blackjack",
+    "description": "Classic card game - beat the dealer to 21",
+    "category": "Card Game",
+    "dir": "Blackjack",
+    "path": "games/Blackjack/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "blob-drop",
+    "name": "Blob Drop",
+    "description": "Drop colorful blobs to clear the board",
+    "category": "Puzzle",
+    "dir": "BlobDrop",
+    "path": "games/BlobDrop/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "bomberman",
+    "name": "Bomberman",
+    "description": "Strategic bomb-placing action game",
+    "category": "Action",
+    "dir": "Bomberman",
+    "path": "games/Bomberman/index.html",
+    "thumbnail": "games/Bomberman/screenshot.png"
+  },
+  {
+    "id": "boulder-dash",
+    "name": "Boulder Dash",
+    "description": "Dig and collect diamonds while avoiding dangers",
+    "category": "Action",
+    "dir": "BoulderDash",
+    "path": "games/BoulderDash/index.html",
+    "thumbnail": "games/BoulderDash/screenshot.png"
+  },
+  {
+    "id": "bowling",
+    "name": "Bowling",
+    "description": "Classic bowling game - aim for strikes",
+    "category": "Sports",
+    "dir": "Bowling",
+    "path": "games/Bowling/index.html",
+    "thumbnail": "games/Bowling/screenshot.png"
+  },
+  {
+    "id": "breakout",
+    "name": "Breakout",
+    "description": "Paddle-based arcade game - break all the bricks",
+    "category": "Action",
+    "dir": "Breakout",
+    "path": "games/Breakout/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "bubble-shooter",
+    "name": "Bubble Shooter",
+    "description": "Aim and pop bubbles before they overflow",
+    "category": "Puzzle",
+    "dir": "BubbleShooter",
+    "path": "games/BubbleShooter/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "calcudoku",
+    "name": "Calcudoku",
+    "description": "Math logic puzzle with grid and operations",
+    "category": "Puzzle",
+    "dir": "Calcudoku",
+    "path": "games/Calcudoku/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "centipede",
+    "name": "Centipede",
+    "description": "Classic arcade shooter - defeat the centipede",
+    "category": "Action",
+    "dir": "Centipede",
+    "path": "games/Centipede/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "chain-reaction",
+    "name": "Chain Reaction",
+    "description": "Strategy game of connecting and controlling territories",
+    "category": "Strategy",
+    "dir": "ChainReaction",
+    "path": "games/ChainReaction/index.html",
+    "thumbnail": "games/ChainReaction/screenshot.png"
+  },
+  {
+    "id": "checkers",
+    "name": "Checkers",
+    "description": "Classic board game - jump over opponent's pieces",
+    "category": "Board Game",
+    "dir": "Checkers",
+    "path": "games/Checkers/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "columns",
+    "name": "Columns",
+    "description": "Match falling blocks to clear the board",
+    "category": "Puzzle",
+    "dir": "Columns",
+    "path": "games/Columns/index.html",
+    "thumbnail": "games/Columns/screenshot.png"
+  },
+  {
+    "id": "connect-four",
+    "name": "Connect Four",
+    "description": "Classic strategy game - get four in a row",
+    "category": "Board Game",
+    "dir": "ConnectFour",
+    "path": "games/ConnectFour/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "darts",
+    "name": "Darts",
+    "description": "Aim and throw darts at the board",
+    "category": "Sports",
+    "dir": "Darts",
+    "path": "games/Darts/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "dig-dug",
+    "name": "Dig Dug",
+    "description": "Dig tunnels and defeat underground creatures",
+    "category": "Action",
+    "dir": "DigDug",
+    "path": "games/DigDug/index.html",
+    "thumbnail": "games/DigDug/screenshot.png"
+  },
+  {
+    "id": "dino-run",
+    "name": "Dino Run",
+    "description": "Guide a dinosaur through obstacles and escape",
+    "category": "Action",
+    "dir": "DinoRun",
+    "path": "games/DinoRun/index.html",
+    "thumbnail": "games/DinoRun/screenshot.png"
+  },
+  {
+    "id": "doodle-jump",
+    "name": "Doodle Jump",
+    "description": "Jump higher and higher, avoid enemies",
+    "category": "Action",
+    "dir": "DoodleJump",
+    "path": "games/DoodleJump/index.html",
+    "thumbnail": "games/DoodleJump/screenshot.png"
+  },
+  {
+    "id": "dots-and-boxes",
+    "name": "Dots and Boxes",
+    "description": "Strategy game - claim more boxes than your opponent",
+    "category": "Strategy",
+    "dir": "DotsAndBoxes",
+    "path": "games/DotsAndBoxes/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "farkle",
+    "name": "Farkle",
+    "description": "Dice-rolling game - score combinations wisely",
+    "category": "Card Game",
+    "dir": "Farkle",
+    "path": "games/Farkle/index.html",
+    "thumbnail": "games/Farkle/screenshot.png"
+  },
+  {
+    "id": "fifteen-puzzle",
+    "name": "Fifteen Puzzle",
+    "description": "Slide numbered tiles into correct order",
+    "category": "Puzzle",
+    "dir": "FifteenPuzzle",
+    "path": "games/FifteenPuzzle/index.html",
+    "thumbnail": "games/FifteenPuzzle/screenshot.png"
+  },
+  {
+    "id": "flappy-bird",
+    "name": "Flappy Bird",
+    "description": "Navigate a bird through pipes with careful taps",
+    "category": "Action",
+    "dir": "FlappyBird",
+    "path": "games/FlappyBird/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "flood-it",
+    "name": "Flood It",
+    "description": "Flood the board with one color to win",
+    "category": "Puzzle",
+    "dir": "FloodIt",
+    "path": "games/FloodIt/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "flow",
+    "name": "Flow",
+    "description": "Connect dots with paths without crossing",
+    "category": "Puzzle",
+    "dir": "Flow",
+    "path": "games/Flow/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "fox-and-hounds",
+    "name": "Fox and Hounds",
+    "description": "Abstract strategy game - chase or escape",
+    "category": "Strategy",
+    "dir": "FoxAndHounds",
+    "path": "games/FoxAndHounds/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "freecell",
+    "name": "FreeCell",
+    "description": "Card solitaire game with strategic depth",
+    "category": "Card Game",
+    "dir": "FreeCell",
+    "path": "games/FreeCell/index.html",
+    "thumbnail": "games/FreeCell/screenshot.png"
+  },
+  {
+    "id": "frogger",
+    "name": "Frogger",
+    "description": "Guide a frog across traffic and water",
+    "category": "Action",
+    "dir": "Frogger",
+    "path": "games/Frogger/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "frostbite",
+    "name": "Frostbite",
+    "description": "Guide your character across ice floes",
+    "category": "Action",
+    "dir": "Frostbite",
+    "path": "games/Frostbite/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "fruit-slice",
+    "name": "Fruit Slice",
+    "description": "Swipe to slice falling fruit",
+    "category": "Action",
+    "dir": "FruitSlice",
+    "path": "games/FruitSlice/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "futoshiki",
+    "name": "Futoshiki",
+    "description": "Logic puzzle with inequality constraints",
+    "category": "Puzzle",
+    "dir": "Futoshiki",
+    "path": "games/Futoshiki/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "galaga",
+    "name": "Galaga",
+    "description": "Space shooter - defend against alien waves",
+    "category": "Action",
+    "dir": "Galaga",
+    "path": "games/Galaga/index.html",
+    "thumbnail": "games/Galaga/screenshot.png"
+  },
+  {
+    "id": "gem-match",
+    "name": "Gem Match",
+    "description": "Match gemstones to clear levels",
+    "category": "Puzzle",
+    "dir": "GemMatch",
+    "path": "games/GemMatch/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "geo-dash",
+    "name": "Geo Dash",
+    "description": "Rhythm-based platformer with geometric obstacles",
+    "category": "Action",
+    "dir": "GeoDash",
+    "path": "games/GeoDash/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "golf-solitaire",
+    "name": "Golf Solitaire",
+    "description": "Card solitaire with golf-themed scoring",
+    "category": "Card Game",
+    "dir": "GolfSolitaire",
+    "path": "games/GolfSolitaire/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "gomoku",
+    "name": "Gomoku",
+    "description": "Get five in a row on a large board",
+    "category": "Board Game",
+    "dir": "Gomoku",
+    "path": "games/Gomoku/index.html",
+    "thumbnail": "games/Gomoku/screenshot.png"
+  },
+  {
+    "id": "hashi",
+    "name": "Hashi",
+    "description": "Connect islands with bridges in a logic puzzle",
+    "category": "Puzzle",
+    "dir": "Hashi",
+    "path": "games/Hashi/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "hex",
+    "name": "Hex",
+    "description": "Strategic hexagonal board game",
+    "category": "Board Game",
+    "dir": "Hex",
+    "path": "games/Hex/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "hitori",
+    "name": "Hitori",
+    "description": "Logic puzzle - eliminate duplicate cells",
+    "category": "Puzzle",
+    "dir": "Hitori",
+    "path": "games/Hitori/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "hnefatafl",
+    "name": "Hnefatafl",
+    "description": "Ancient Norse strategy board game",
+    "category": "Strategy",
+    "dir": "Hnefatafl",
+    "path": "games/Hnefatafl/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "joust",
+    "name": "Joust",
+    "description": "Arcade action game - defeat flying enemies",
+    "category": "Action",
+    "dir": "Joust",
+    "path": "games/Joust/index.html",
+    "thumbnail": "games/Joust/screenshot.png"
+  },
+  {
+    "id": "kaboom",
+    "name": "Kaboom",
+    "description": "Catch falling bombs before they explode",
+    "category": "Action",
+    "dir": "Kaboom",
+    "path": "games/Kaboom/index.html",
+    "thumbnail": "games/Kaboom/screenshot.png"
+  },
+  {
+    "id": "kakuro",
+    "name": "Kakuro",
+    "description": "Number logic puzzle combining crosswords and sudoku",
+    "category": "Puzzle",
+    "dir": "Kakuro",
+    "path": "games/Kakuro/index.html",
+    "thumbnail": "games/Kakuro/screenshot.png"
+  },
+  {
+    "id": "klotski",
+    "name": "Klotski",
+    "description": "Sliding block puzzle - move blocks strategically",
+    "category": "Puzzle",
+    "dir": "Klotski",
+    "path": "games/Klotski/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "light-cycles",
+    "name": "Light Cycles",
+    "description": "High-speed action game - avoid collisions",
+    "category": "Action",
+    "dir": "LightCycles",
+    "path": "games/LightCycles/index.html",
+    "thumbnail": "games/LightCycles/screenshot.png"
+  },
+  {
+    "id": "light-up",
+    "name": "Light Up",
+    "description": "Place lights to illuminate a grid in this logic puzzle",
+    "category": "Puzzle",
+    "dir": "LightUp",
+    "path": "games/LightUp/index.html",
+    "thumbnail": "games/LightUp/screenshot.png"
+  },
+  {
+    "id": "lights-out",
+    "name": "Lights Out",
+    "description": "Toggle lights to turn them all off",
+    "category": "Puzzle",
+    "dir": "LightsOut",
+    "path": "games/LightsOut/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "lumberjack",
+    "name": "Lumberjack",
+    "description": "Action game - fell trees and avoid obstacles",
+    "category": "Action",
+    "dir": "Lumberjack",
+    "path": "games/Lumberjack/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "lunar-lander",
+    "name": "Lunar Lander",
+    "description": "Physics-based spacecraft landing game",
+    "category": "Action",
+    "dir": "LunarLander",
+    "path": "games/LunarLander/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "mahjong-solitaire",
+    "name": "Mahjong Solitaire",
+    "description": "Match mahjong tiles to clear the board",
+    "category": "Card Game",
+    "dir": "MahjongSolitaire",
+    "path": "games/MahjongSolitaire/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "mancala",
+    "name": "Mancala",
+    "description": "Ancient strategy board game with stones",
+    "category": "Board Game",
+    "dir": "Mancala",
+    "path": "games/Mancala/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "mastermind",
+    "name": "Mastermind",
+    "description": "Guess the code with logical deduction",
+    "category": "Strategy",
+    "dir": "Mastermind",
+    "path": "games/Mastermind/index.html",
+    "thumbnail": "games/Mastermind/screenshot.png"
+  },
+  {
+    "id": "match3",
+    "name": "Match 3",
+    "description": "Match three or more gems to clear levels",
+    "category": "Puzzle",
+    "dir": "Match3",
+    "path": "games/Match3/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "maze",
+    "name": "Maze",
+    "description": "Navigate through procedurally generated mazes",
+    "category": "Puzzle",
+    "dir": "Maze",
+    "path": "games/Maze/index.html",
+    "thumbnail": "games/Maze/screenshot.png"
+  },
+  {
+    "id": "memory-match",
+    "name": "Memory Match",
+    "description": "Classic memory game - match pairs of cards",
+    "category": "Puzzle",
+    "dir": "MemoryMatch",
+    "path": "games/MemoryMatch/index.html",
+    "thumbnail": "games/MemoryMatch/screenshot.png"
+  },
+  {
+    "id": "minesweeper",
+    "name": "Minesweeper",
+    "description": "Logic puzzle - clear the board without hitting mines",
+    "category": "Puzzle",
+    "dir": "Minesweeper",
+    "path": "games/Minesweeper/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "mini-golf",
+    "name": "Mini Golf",
+    "description": "Putt through creative holes",
+    "category": "Sports",
+    "dir": "MiniGolf",
+    "path": "games/MiniGolf/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "missile-command",
+    "name": "Missile Command",
+    "description": "Defense arcade game - protect cities from missiles",
+    "category": "Action",
+    "dir": "MissileCommand",
+    "path": "games/MissileCommand/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "moon-patrol",
+    "name": "Moon Patrol",
+    "description": "Arcade action game - navigate the moon's surface",
+    "category": "Action",
+    "dir": "MoonPatrol",
+    "path": "games/MoonPatrol/index.html",
+    "thumbnail": "games/MoonPatrol/screenshot.png"
+  },
+  {
+    "id": "nine-mens-morris",
+    "name": "Nine Men's Morris",
+    "description": "Ancient strategy board game",
+    "category": "Board Game",
+    "dir": "NineMensMorris",
+    "path": "games/NineMensMorris/index.html",
+    "thumbnail": "games/NineMensMorris/screenshot.png"
+  },
+  {
+    "id": "nonogram",
+    "name": "Nonogram",
+    "description": "Logic puzzle - fill cells based on number clues",
+    "category": "Puzzle",
+    "dir": "Nonogram",
+    "path": "games/Nonogram/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "pacman",
+    "name": "PacMan",
+    "description": "Classic arcade game - eat pellets and avoid ghosts",
+    "category": "Action",
+    "dir": "PacMan",
+    "path": "games/PacMan/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "pang",
+    "name": "Pang",
+    "description": "Arcade action game - pop balloons with projectiles",
+    "category": "Action",
+    "dir": "Pang",
+    "path": "games/Pang/index.html",
+    "thumbnail": "games/Pang/screenshot.png"
+  },
+  {
+    "id": "peg-solitaire",
+    "name": "Peg Solitaire",
+    "description": "Jump pegs to eliminate them from the board",
+    "category": "Puzzle",
+    "dir": "PegSolitaire",
+    "path": "games/PegSolitaire/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "pengo",
+    "name": "Pengo",
+    "description": "Arcade game - navigate maze and defeat enemies",
+    "category": "Action",
+    "dir": "Pengo",
+    "path": "games/Pengo/index.html",
+    "thumbnail": "games/Pengo/screenshot.png"
+  },
+  {
+    "id": "pill-drop",
+    "name": "Pill Drop",
+    "description": "Match falling pills to eliminate viruses",
+    "category": "Action",
+    "dir": "PillDrop",
+    "path": "games/PillDrop/index.html",
+    "thumbnail": "games/PillDrop/screenshot.png"
+  },
+  {
+    "id": "pinball",
+    "name": "Pinball",
+    "description": "Classic pinball machine with physics",
+    "category": "Action",
+    "dir": "Pinball",
+    "path": "games/Pinball/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "pipe-dream",
+    "name": "Pipe Dream",
+    "description": "Connect pipes before water flows through",
+    "category": "Puzzle",
+    "dir": "PipeDream",
+    "path": "games/PipeDream/index.html",
+    "thumbnail": "games/PipeDream/screenshot.png"
+  },
+  {
+    "id": "pong",
+    "name": "Pong",
+    "description": "Classic arcade paddle game",
+    "category": "Sports",
+    "dir": "Pong",
+    "path": "games/Pong/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "pyramid-solitaire",
+    "name": "Pyramid Solitaire",
+    "description": "Card solitaire with pyramid layout",
+    "category": "Card Game",
+    "dir": "PyramidSolitaire",
+    "path": "games/PyramidSolitaire/index.html",
+    "thumbnail": "games/PyramidSolitaire/screenshot.png"
+  },
+  {
+    "id": "qbert",
+    "name": "Q*Bert",
+    "description": "Arcade action game - change cube colors while avoiding enemies",
+    "category": "Action",
+    "dir": "Qbert",
+    "path": "games/Qbert/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "reversi",
+    "name": "Reversi",
+    "description": "Othello strategy game - flip opponent's pieces",
+    "category": "Board Game",
+    "dir": "Reversi",
+    "path": "games/Reversi/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "road-racer",
+    "name": "Road Racer",
+    "description": "Arcade racing game - avoid obstacles on the road",
+    "category": "Action",
+    "dir": "RoadRacer",
+    "path": "games/RoadRacer/index.html",
+    "thumbnail": "games/RoadRacer/screenshot.png"
+  },
+  {
+    "id": "road-rush",
+    "name": "Road Rush",
+    "description": "Fast-paced racing action game",
+    "category": "Action",
+    "dir": "RoadRush",
+    "path": "games/RoadRush/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "rush-hour",
+    "name": "Rush Hour",
+    "description": "Sliding block puzzle - get the red car out",
+    "category": "Puzzle",
+    "dir": "RushHour",
+    "path": "games/RushHour/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "same-game",
+    "name": "Same Game",
+    "description": "Clear same-colored groups of stones",
+    "category": "Puzzle",
+    "dir": "SameGame",
+    "path": "games/SameGame/index.html",
+    "thumbnail": "games/SameGame/screenshot.png"
+  },
+  {
+    "id": "set-game",
+    "name": "Set Game",
+    "description": "Card game - find sets of three cards with matching attributes",
+    "category": "Card Game",
+    "dir": "SetGame",
+    "path": "games/SetGame/index.html",
+    "thumbnail": "games/SetGame/screenshot.png"
+  },
+  {
+    "id": "simon",
+    "name": "Simon",
+    "description": "Memory game - repeat the color sequence",
+    "category": "Puzzle",
+    "dir": "Simon",
+    "path": "games/Simon/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "skeet-shooter",
+    "name": "Skeet Shooter",
+    "description": "Shooting game - hit flying targets",
+    "category": "Action",
+    "dir": "SkeetShooter",
+    "path": "games/SkeetShooter/index.html",
+    "thumbnail": "games/SkeetShooter/screenshot.png"
+  },
+  {
+    "id": "sliding-puzzle",
+    "name": "Sliding Puzzle",
+    "description": "Slide tiles into the correct order",
+    "category": "Puzzle",
+    "dir": "SlidingPuzzle",
+    "path": "games/SlidingPuzzle/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "snake",
+    "name": "Snake",
+    "description": "Classic snake game - eat food and grow longer",
+    "category": "Action",
+    "dir": "Snake",
+    "path": "games/Snake/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "snakes-and-ladders",
+    "name": "Snakes and Ladders",
+    "description": "Classic board game - race to the end",
+    "category": "Board Game",
+    "dir": "SnakesAndLadders",
+    "path": "games/SnakesAndLadders/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "sokoban",
+    "name": "Sokoban",
+    "description": "Puzzle game - push boxes to their destinations",
+    "category": "Puzzle",
+    "dir": "Sokoban",
+    "path": "games/Sokoban/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "solitaire",
+    "name": "Solitaire",
+    "description": "Classic card solitaire game",
+    "category": "Card Game",
+    "dir": "Solitaire",
+    "path": "games/Solitaire/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "space-invaders",
+    "name": "Space Invaders",
+    "description": "Classic arcade shooter - defeat the aliens",
+    "category": "Action",
+    "dir": "SpaceInvaders",
+    "path": "games/SpaceInvaders/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "stacker",
+    "name": "Stacker",
+    "description": "Stack falling blocks with precision",
+    "category": "Action",
+    "dir": "Stacker",
+    "path": "games/Stacker/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "sudoku",
+    "name": "Sudoku",
+    "description": "Number logic puzzle - fill the grid correctly",
+    "category": "Puzzle",
+    "dir": "Sudoku",
+    "path": "games/Sudoku/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "tempest",
+    "name": "Tempest",
+    "description": "Arcade action game - navigate tube mazes",
+    "category": "Action",
+    "dir": "Tempest",
+    "path": "games/Tempest/index.html",
+    "thumbnail": "games/Tempest/screenshot.png"
+  },
+  {
+    "id": "tetris",
+    "name": "Tetris",
+    "description": "Classic falling block puzzle game",
+    "category": "Puzzle",
+    "dir": "Tetris",
+    "path": "games/Tetris/index.html",
+    "thumbnail": "games/Tetris/screenshot.png"
+  },
+  {
+    "id": "tower-of-hanoi",
+    "name": "Tower of Hanoi",
+    "description": "Logic puzzle - move disks to solve the tower",
+    "category": "Puzzle",
+    "dir": "TowerOfHanoi",
+    "path": "games/TowerOfHanoi/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "tower-stack",
+    "name": "Tower Stack",
+    "description": "Stack blocks as high as possible",
+    "category": "Action",
+    "dir": "TowerStack",
+    "path": "games/TowerStack/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "tri-peaks",
+    "name": "Tri-Peaks",
+    "description": "Card solitaire with three-pyramid layout",
+    "category": "Card Game",
+    "dir": "TriPeaks",
+    "path": "games/TriPeaks/index.html",
+    "thumbnail": "games/TriPeaks/screenshot.png"
+  },
+  {
+    "id": "tron",
+    "name": "Tron",
+    "description": "High-speed action game - light bike racing",
+    "category": "Action",
+    "dir": "Tron",
+    "path": "games/Tron/index.html",
+    "thumbnail": "games/Tron/screenshot.png"
+  },
+  {
+    "id": "turbo-racer",
+    "name": "Turbo Racer",
+    "description": "Arcade racing game with high-speed action",
+    "category": "Action",
+    "dir": "TurboRacer",
+    "path": "games/TurboRacer/index.html",
+    "thumbnail": "games/TurboRacer/screenshot.png"
+  },
+  {
+    "id": "ultimate-tic-tac-toe",
+    "name": "Ultimate Tic Tac Toe",
+    "description": "Advanced tic tac toe variant on a larger grid",
+    "category": "Board Game",
+    "dir": "UltimateTicTacToe",
+    "path": "games/UltimateTicTacToe/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "untangle",
+    "name": "Untangle",
+    "description": "Logic puzzle - untangle the web of dots",
+    "category": "Puzzle",
+    "dir": "Untangle",
+    "path": "games/Untangle/index.html",
+    "thumbnail": "games/Untangle/screenshot.png"
+  },
+  {
+    "id": "whack-a-mole",
+    "name": "Whack-A-Mole",
+    "description": "Action game - tap moles as they pop up",
+    "category": "Action",
+    "dir": "WhackAMole",
+    "path": "games/WhackAMole/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "word-blaster",
+    "name": "Word Blaster",
+    "description": "Typing game - blast words before they reach you",
+    "category": "Action",
+    "dir": "WordBlaster",
+    "path": "games/WordBlaster/index.html",
+    "thumbnail": "games/WordBlaster/screenshot.png"
+  },
+  {
+    "id": "word-guess",
+    "name": "Word Guess",
+    "description": "Guess the word with limited attempts",
+    "category": "Puzzle",
+    "dir": "WordGuess",
+    "path": "games/WordGuess/index.html",
+    "thumbnail": "games/WordGuess/screenshot.png"
+  },
+  {
+    "id": "xonix",
+    "name": "Xonix",
+    "description": "Arcade action game - capture territory with careful movement",
+    "category": "Action",
+    "dir": "Xonix",
+    "path": "games/Xonix/index.html",
+    "thumbnail": ""
+  },
+  {
+    "id": "yahtzee",
+    "name": "Yahtzee",
+    "description": "Dice game - roll and score combinations",
+    "category": "Card Game",
+    "dir": "Yahtzee",
+    "path": "games/Yahtzee/index.html",
+    "thumbnail": ""
+  }
 ]

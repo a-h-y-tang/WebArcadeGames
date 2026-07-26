@@ -1,61 +1,44 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
-import { of } from 'rxjs';
+import gamesData from '../../assets/games.json';
 import { Game } from '../models/game';
 
-@Injectable({
-  providedIn: 'root',
-})
+const CATEGORY_ORDER = [
+  'Action',
+  'Puzzle',
+  'Strategy',
+  'Board Game',
+  'Card Game',
+  'Sports',
+];
+
+@Injectable({ providedIn: 'root' })
 export class GameService {
-  private gamesSubject = new BehaviorSubject<Game[]>([]);
-  public games$ = this.gamesSubject.asObservable();
+  private readonly games: readonly Game[] = gamesData as Game[];
 
-  constructor(private http: HttpClient) {
-    this.loadGames();
-  }
-
-  private loadGames(): void {
-    this.http.get<Game[]>('assets/games.json')
-      .pipe(
-        tap((games) => {
-          console.log('Games loaded:', games.length);
-          this.gamesSubject.next(games);
-        }),
-        catchError((error) => {
-          console.error('Failed to load games:', error);
-          this.gamesSubject.next([]);
-          return of([]);
-        })
-      )
-      .subscribe();
-  }
-
-  getGames(): Game[] {
-    return this.gamesSubject.value;
+  getGames(): readonly Game[] {
+    return this.games;
   }
 
   getAllCategories(): string[] {
-    const games = this.gamesSubject.value;
-    const categories = new Set(games.map((game) => game.category));
-    return Array.from(categories).sort();
+    const present = new Set(this.games.map((game) => game.category));
+    const known = CATEGORY_ORDER.filter((category) => present.has(category));
+    const extra = [...present].filter((c) => !CATEGORY_ORDER.includes(c)).sort();
+    return [...known, ...extra];
   }
 
-  searchGames(query: string, category: string = ''): Game[] {
-    const games = this.gamesSubject.value;
-    const lowerQuery = query.toLowerCase();
+  countByCategory(category: string): number {
+    return this.games.filter((game) => game.category === category).length;
+  }
 
-    let filtered = games.filter(
-      (game) =>
-        game.name.toLowerCase().includes(lowerQuery) ||
-        game.description.toLowerCase().includes(lowerQuery)
-    );
-
-    if (category && category !== 'All') {
-      filtered = filtered.filter((game) => game.category === category);
-    }
-
-    return filtered;
+  searchGames(query: string, category = ''): Game[] {
+    const needle = query.trim().toLowerCase();
+    return this.games.filter((game) => {
+      if (category && game.category !== category) return false;
+      if (!needle) return true;
+      return (
+        game.name.toLowerCase().includes(needle) ||
+        game.description.toLowerCase().includes(needle)
+      );
+    });
   }
 }
