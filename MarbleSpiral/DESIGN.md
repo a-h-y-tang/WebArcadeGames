@@ -38,7 +38,9 @@ Each frame:
 
 So the train is a pure follow-the-leader chain; no physics, no per-marble
 velocity. Marbles waiting to enter live in `queue` and are fed onto the track at
-distance 0 as soon as there is room for them.
+distance 0 as soon as there is room for them. A level opens with its first
+`SEED_BALLS` (14) marbles already packed onto the track, so there is something to
+shoot at immediately rather than a slow drip from the entrance.
 
 ### Shooting and insertion
 

@@ -18,6 +18,7 @@ const SPACING = 26;             // gap between marble centres along the track
 const SHOT_SPEED = 520;         // px/s for a fired marble
 const CATCH_SPEED = 300;        // px/s a detached tail uses to close a gap
 const SHOOTER_MUZZLE = 22;      // how far from the shooter a marble is born
+const SEED_BALLS = 14;          // marbles already on the track when a level opens
 
 const CENTER = { x: 300, y: 240 };
 const R_OUT = 310;              // spiral radius at the track entrance
@@ -159,6 +160,13 @@ function startLevel(l) {
     const count = levelBallCount(l);
     for (let i = 0; i < count; i++) {
         queue.push(palette[Math.floor(Math.random() * palette.length)]);
+    }
+
+    // Start with part of the train already on the track so the level opens with
+    // something to shoot at instead of a slow drip from the entrance.
+    const seeded = Math.min(count, SEED_BALLS);
+    for (let i = 0; i < seeded; i++) {
+        balls.push({ color: queue.shift(), dist: (seeded - 1 - i) * SPACING });
     }
 
     shooter.color = pickColor();

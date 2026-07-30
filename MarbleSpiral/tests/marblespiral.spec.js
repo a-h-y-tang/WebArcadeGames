@@ -165,14 +165,25 @@ test.describe('Marble Spiral', () => {
     // The marble train
     // -----------------------------------------------------------------------
     test.describe('the marble train', () => {
-        test('marbles feed onto the track from the queue', async ({ page }) => {
+        test('a level opens with part of the train already on the track', async ({ page }) => {
             const s = await page.evaluate(() => {
                 startGame();
-                for (let i = 0; i < 120; i++) step(0.016);
-                return { onTrack: balls.length, queued: queue.length };
+                return { onTrack: balls.length, head: balls[0].dist, queued: queue.length };
             });
+            expect(s.onTrack).toBeGreaterThan(5);
+            expect(s.queued).toBeGreaterThan(0);
+            expect(s.head).toBeGreaterThan(0);
+        });
+
+        test('marbles keep feeding onto the track from the queue', async ({ page }) => {
+            const s = await page.evaluate(() => {
+                startGame();
+                const before = queue.length;
+                for (let i = 0; i < 300; i++) step(0.016);
+                return { before, after: queue.length, onTrack: balls.length };
+            });
+            expect(s.after).toBeLessThan(s.before);
             expect(s.onTrack).toBeGreaterThan(1);
-            expect(s.queued).toBeLessThan(30);
         });
 
         test('the train crawls towards the pit over time', async ({ page }) => {
@@ -728,13 +739,18 @@ test.describe('Marble Spiral', () => {
                 level = 7;
                 endGame();
                 startGame();
-                return { score, level, state, onTrack: balls.length, shots: shots.length };
+                return {
+                    score, level, state, shots: shots.length,
+                    total: balls.length + queue.length, expected: levelBallCount(1),
+                    head: balls[0].dist,
+                };
             });
             expect(s.score).toBe(0);
             expect(s.level).toBe(1);
             expect(s.state).toBe('running');
-            expect(s.onTrack).toBe(0);
             expect(s.shots).toBe(0);
+            expect(s.total).toBe(s.expected);
+            expect(s.head).toBeLessThan(500);
         });
 
         test('the HUD reflects score, level and marbles left', async ({ page }) => {
