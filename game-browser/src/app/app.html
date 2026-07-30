@@ -1,0 +1,25 @@
+<div class="min-h-screen bg-gray-50">
+  <app-header></app-header>
+
+  <main class="max-w-7xl mx-auto px-4 py-8">
+    <!-- Search and Filter Section -->
+    <div class="mb-8 space-y-4">
+      <app-search (searchChange)="onSearchChange($event)"></app-search>
+      <app-filter
+        [categories]="categories"
+        (categoryChange)="onCategoryChange($event)"
+      ></app-filter>
+    </div>
+
+    <!-- Game Grid Section -->
+    <app-game-grid [games]="filteredGames"></app-game-grid>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white py-8 mt-12">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+      <p class="mb-2">WholesomeFun - Free, Ad-Free Games for Families</p>
+      <p class="text-gray-400 text-sm">Help us keep this free and ad-free</p>
+    </div>
+  </footer>
+</div>
