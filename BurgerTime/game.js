@@ -110,6 +110,14 @@ const plateCount = [0, 0, 0, 0];
 const enemies = [];
 const peppers = [];
 const sparks = [];
+// Purely cosmetic toast drawn over the kitchen; it lives outside step() so it
+// fades on real time and never affects the simulation.
+const banner = { text: '', life: 0 };
+
+function flash(text) {
+    banner.text = text;
+    banner.life = 1.2;
+}
 
 // ---------------------------------------------------------------------------
 // Deterministic RNG (mulberry32) — tests pin it with setSeed().
@@ -320,6 +328,7 @@ function startGame() {
 function nextLevel() {
     level += 1;
     score += LEVEL_BONUS;
+    flash(`LEVEL ${level}`);
     pepper = Math.min(pepper + 1, 9);
     buildLevel();
     spawnEnemies();
@@ -331,6 +340,7 @@ function nextLevel() {
 function loseLife() {
     lives -= 1;
     burst(chef.x, chef.y - CHEF_H / 2, '#ff6b4a', 16);
+    flash('OUCH!');
     if (lives <= 0) {
         gameOver();
     } else {
@@ -456,6 +466,7 @@ function landIngredient(ing, floor) {
         if (plateCount[ing.stack] === INGREDIENTS_PER_BURGER) {
             burgersDone += 1;
             score += BURGER_BONUS;
+            flash('BURGER!');
             if (burgersDone === STACK_X.length) levelCleared = true;
         }
         return;
@@ -628,6 +639,8 @@ function burst(x, y, color, count) {
 }
 
 function updateSparks(dt) {
+    if (banner.life > 0) banner.life = Math.max(0, banner.life - dt);
+
     for (let i = sparks.length - 1; i >= 0; i--) {
         const s = sparks[i];
         s.x += s.vx * dt;
@@ -935,6 +948,22 @@ function drawSparks() {
     ctx.globalAlpha = 1;
 }
 
+function drawBanner() {
+    if (banner.life <= 0) return;
+    const alpha = Math.min(1, banner.life / 0.4);
+    const rise = (1.2 - banner.life) * 14;
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.textAlign = 'center';
+    ctx.font = 'bold 26px "Trebuchet MS", sans-serif';
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.7)';
+    ctx.strokeText(banner.text, CANVAS_W / 2, CANVAS_H / 2 - rise);
+    ctx.fillStyle = '#ffc74d';
+    ctx.fillText(banner.text, CANVAS_W / 2, CANVAS_H / 2 - rise);
+    ctx.restore();
+}
+
 function draw() {
     drawBackground();
     drawLadders();
@@ -945,6 +974,7 @@ function draw() {
     for (const e of enemies) drawEnemy(e);
     if (state !== 'idle') drawChef();
     drawSparks();
+    drawBanner();
 }
 
 // ---------------------------------------------------------------------------
