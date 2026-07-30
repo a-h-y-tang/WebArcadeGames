@@ -83,6 +83,9 @@ const btnStart = document.getElementById('btn-start');
 var state, score, best, level, lives, bonus, spawnTimer, seed;
 const player = { x: PLAYER_START.x, y: platforms[0].y, vy: 0, dir: 0, climbDir: 0, onGround: true, climbing: false, ladder: null, face: 1, walk: 0 };
 const barrels = [];
+// Purely cosmetic: floating "+100" labels and a flash when you get flattened.
+const popups = [];
+var hitFlash = 0;
 
 // ---------------------------------------------------------------------------
 // Seeded RNG — keeps a run reproducible for the tests (and for replayable luck)
@@ -353,6 +356,7 @@ function scoreHurdles() {
         if (clearance > BARREL_R && clearance < 70) {
             b.jumped = true;
             score += JUMP_POINTS;
+            popups.push({ x: player.x, y: player.y - PLAYER_H - 6, life: 0.9, text: `+${JUMP_POINTS}` });
         }
     }
 }
@@ -384,6 +388,7 @@ function atGoal() {
 
 function resetStage() {
     barrels.length = 0;
+    popups.length = 0;
     placePlayerOnFloor(PLAYER_START.floor, PLAYER_START.x);
     player.dir = 0;
     player.climbDir = 0;
@@ -393,6 +398,7 @@ function resetStage() {
 
 function loseLife() {
     lives -= 1;
+    hitFlash = 0.6;
     resetStage();
     if (lives <= 0) {
         lives = 0;
@@ -404,10 +410,13 @@ function loseLife() {
 }
 
 function completeLevel() {
-    score += Math.round(bonus);
+    const banked = Math.round(bonus);
+    score += banked;
     level += 1;
     bonus = BONUS_START;
     resetStage();
+    // pushed after the reset, which clears the previous level's popups
+    popups.push({ x: GOAL.x, y: platforms[TOP_FLOOR].y - 40, life: 1.6, text: `+${banked}` });
     updateHud();
 }
 
@@ -415,9 +424,20 @@ function completeLevel() {
 // Simulation
 // ---------------------------------------------------------------------------
 
+// Ages the cosmetic bits. Nothing here touches gameplay state.
+function updateEffects(dt) {
+    hitFlash = Math.max(0, hitFlash - dt);
+    for (let i = popups.length - 1; i >= 0; i--) {
+        popups[i].life -= dt;
+        popups[i].y -= 34 * dt;
+        if (popups[i].life <= 0) popups.splice(i, 1);
+    }
+}
+
 function step(dt) {
     if (state !== 'running') return;
 
+    updateEffects(dt);
     updatePlayer(dt);
     updateBarrels(dt);
     scoreHurdles();
@@ -612,6 +632,19 @@ function draw() {
     drawMachine();
     for (const b of barrels) drawBarrel(b);
     drawPlayer();
+
+    ctx.textAlign = 'center';
+    ctx.font = 'bold 14px "Segoe UI", system-ui, sans-serif';
+    for (const p of popups) {
+        ctx.fillStyle = `rgba(255, 209, 102, ${Math.min(1, p.life / 0.6)})`;
+        ctx.fillText(p.text, p.x, p.y);
+    }
+    ctx.textAlign = 'left';
+
+    if (hitFlash > 0) {
+        ctx.fillStyle = `rgba(239, 68, 68, ${hitFlash * 0.45})`;
+        ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
+    }
 
     if (state === 'idle') {
         ctx.fillStyle = 'rgba(244, 236, 223, 0.5)';

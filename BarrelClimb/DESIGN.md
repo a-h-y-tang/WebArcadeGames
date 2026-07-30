@@ -122,7 +122,7 @@ bonus drains so the banked bonus is exactly what the HUD showed.
 
 ## Testing
 
-`tests/barrelclimb.spec.js` holds 63 Playwright tests written before the
+`tests/barrelclimb.spec.js` holds 64 Playwright tests written before the
 implementation, covering the idle screen, starting, running, jumping, ladders,
 barrel rolling/falling/laddering, collisions, hurdle scoring, the goal, the bonus
 timer, best-score persistence, and pause/restart. Tests drive the simulation

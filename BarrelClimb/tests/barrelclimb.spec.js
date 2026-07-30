@@ -545,6 +545,22 @@ test.describe('Barrel Climb', () => {
             expect(score).toBe(0);
         });
 
+        test('hurdling a barrel shows a floating score popup that fades', async ({ page }) => {
+            const s = await page.evaluate(() => {
+                startGame();
+                barrels.length = 0;
+                setPlayerX(300);
+                spawnBarrel({ x: 260, floor: 0, dir: 1 });
+                jump();
+                for (let i = 0; i < 40; i++) step(0.016);
+                const shown = popups.length;
+                for (let i = 0; i < 90; i++) step(0.016);
+                return { shown, faded: popups.length };
+            });
+            expect(s.shown).toBe(1);
+            expect(s.faded).toBe(0);
+        });
+
         test('standing next to a barrel without jumping scores nothing', async ({ page }) => {
             const score = await page.evaluate(() => {
                 startGame();

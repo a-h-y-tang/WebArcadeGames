@@ -48,7 +48,7 @@ npx playwright install chromium
 npx playwright test BarrelClimb/tests/
 ```
 
-The 63 tests drive the simulation directly through `step(dt)` and assert on game
+The 64 tests drive the simulation directly through `step(dt)` and assert on game
 state, so they run fast and don't depend on frame timing.
 
 See [DESIGN.md](DESIGN.md) for how the code is put together.
