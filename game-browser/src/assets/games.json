@@ -36,6 +36,15 @@
     "thumbnail": ""
   },
   {
+    "id": "barrel-climb",
+    "name": "Barrel Climb",
+    "description": "Climb girders and ladders to the prize while dodging rolling barrels",
+    "category": "Action",
+    "dir": "BarrelClimb",
+    "path": "games/BarrelClimb/index.html",
+    "thumbnail": "games/BarrelClimb/screenshot.png"
+  },
+  {
     "id": "battleship",
     "name": "Battleship",
     "description": "Naval strategy game - find and sink opponent's ships",
