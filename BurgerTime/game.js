@@ -682,7 +682,7 @@ function drawChef() {
     ctx.fillStyle = '#e8eef7';                        // body
     ctx.fillRect(x - 8, y - 13, 16, 9);
     ctx.fillStyle = '#3a6fd8';                        // legs
-    ctx.fillRect(x - 6, y - 4, 4, 4 + swing * 0);
+    ctx.fillRect(x - 6, y - 4, 4, 4);
     ctx.fillRect(x + 2, y - 4, 4, 4);
     ctx.fillStyle = '#243b6b';
     ctx.fillRect(x - 7 + swing, y - 1, 5, 2);
