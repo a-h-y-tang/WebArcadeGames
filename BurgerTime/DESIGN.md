@@ -64,8 +64,10 @@ already resting on the target floor, that one is knocked into a drop of its own
 The result is a satisfying ripple down the stack rather than an
 everything-cascades-to-the-plate chain reaction.
 
-Landing on a girder scores `DROP_SCORE` (50) and resets the segments, so the
-ingredient must be walked across again to move it further. Dropping past floor 4
+Landing on a girder scores `DROP_SCORE` (50) plus `CHAIN_BONUS` (25) per level of
+ripple — an ingredient knocked loose by the one above is worth more than one you
+walked across yourself — and resets the segments, so the ingredient must be
+walked across again to move it further. Dropping past floor 4
 lands the ingredient on the plate: it is added to `tray[col]`, and when a column
 holds all four ingredients the burger scores `BURGER_SCORE` (500). Serving every
 burger clears the level for `LEVEL_SCORE` (1000).

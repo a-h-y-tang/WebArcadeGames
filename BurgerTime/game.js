@@ -58,6 +58,7 @@ const PEPPER_LIFE = 0.35;     // seconds the cloud lingers
 const PEPPER_R = 22;          // cloud radius
 
 const DROP_SCORE = 50;
+const CHAIN_BONUS = 25;   // extra per level of ripple when a drop knocks others loose
 const BURGER_SCORE = 500;
 const LEVEL_SCORE = 1000;
 const SQUASH_BASE = 100;
@@ -298,7 +299,9 @@ function squashCheck(ing) {
 function landIngredient(ing) {
     ing.falling = false;
     for (let s = 0; s < SEGS; s++) ing.segs[s] = false;
-    score += DROP_SCORE;
+    // Ingredients knocked loose by the one above pay a ripple bonus, so setting
+    // off a long chain is worth more than moving each ingredient by hand.
+    score += DROP_SCORE + ing.chain * CHAIN_BONUS;
 
     if (ing.floor >= FLOOR_COUNT) {
         const plate = tray[ing.col];

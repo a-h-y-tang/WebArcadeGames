@@ -34,7 +34,9 @@ Game**) to begin.
   drops one girder — segments reset when it lands, so you have to walk it again
   to move it further.
 - A dropping ingredient **knocks the ingredient it lands on** down a level too,
-  so a well-timed walk sets off a satisfying ripple down the stack.
+  so a well-timed walk sets off a satisfying ripple down the stack. Each landing
+  scores **50**, plus **25** more for every level of ripple below the ingredient
+  you actually walked across.
 - Ingredients dropped off the bottom girder land on the **plate**. Four
   ingredients on a plate serves a burger (**500** points); serving all four
   burgers clears the level (**1000** points) and refills your pepper.

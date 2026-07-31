@@ -374,6 +374,26 @@ test.describe('Burger Time', () => {
             expect(s).toBeGreaterThan(0);
         });
 
+        test('a ripple pays more than the same number of single drops', async ({ page }) => {
+            const r = await page.evaluate(() => {
+                startGame(); autoSpawn = false; enemies.length = 0;
+                // An isolated ingredient with nothing under it: no ripple.
+                const solo = ingredients[12];
+                ingredients.filter((i) => i.col === 3 && i !== solo).forEach((i) => { i.col = -1; });
+                let mark = score;
+                dropIngredient(solo);
+                for (let i = 0; i < 120; i++) step(0.016);
+                const soloGain = score - mark;
+                // Column 0 is a full stack, so one drop ripples all four down.
+                mark = score;
+                dropIngredient(ingredients[0]);
+                for (let i = 0; i < 200; i++) step(0.016);
+                return { soloGain, rippleGain: score - mark };
+            });
+            expect(r.soloGain).toBe(50);
+            expect(r.rippleGain).toBeGreaterThan(4 * r.soloGain);
+        });
+
         test('an ingredient dropped off the bottom girder lands on the plate', async ({ page }) => {
             const r = await page.evaluate(() => {
                 startGame(); autoSpawn = false; enemies.length = 0;
