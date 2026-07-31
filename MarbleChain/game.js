@@ -151,7 +151,7 @@ function colorCount(lvl) {
 }
 
 function chainSpeedFor(lvl) {
-    return 20 + (lvl - 1) * 6;
+    return 24 + (lvl - 1) * 6;
 }
 
 function chainLengthFor(lvl) {

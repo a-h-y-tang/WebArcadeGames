@@ -30,7 +30,7 @@ canvas point (a flying marble) back to the closest distance along the track.
 `balls` is kept **front-first**: `balls[0]` is closest to the pit and distances
 decrease monotonically down the array. Each tick:
 
-- the head advances at `chainSpeedFor(level)` px/s (20 + 6 per level);
+- the head advances at `chainSpeedFor(level)` px/s (24 + 6 per level);
 - every follower moves at up to `CATCHUP` (3×) that speed, but is clamped to
   `previous.dist - SPACING`.
 
