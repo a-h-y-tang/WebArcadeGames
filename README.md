@@ -109,6 +109,7 @@ For each new game, put it in a new folder. Each game should have its own README.
 | TriPeaks Solitaire | [TriPeaks/](TriPeaks/) | Complete |
 | Kakuro | [Kakuro/](Kakuro/) | Complete |
 | Kaboom! | [Kaboom/](Kaboom/) | Complete |
+| Burger Time | [BurgerTime/](BurgerTime/) | In Progress |
 
 ## Playing
 
