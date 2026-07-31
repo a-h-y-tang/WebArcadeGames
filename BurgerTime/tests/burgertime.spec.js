@@ -776,6 +776,22 @@ test.describe('BurgerTime', () => {
     });
 
     // -----------------------------------------------------------------------
+    // The real animation loop (every other test drives step() by hand)
+    // -----------------------------------------------------------------------
+    test.describe('animation loop', () => {
+        test('the game runs and spawns from requestAnimationFrame', async ({ page }) => {
+            await page.evaluate(() => { autoStep = true; spawnEnabled = true; startGame(); });
+            await page.keyboard.down('ArrowLeft');
+            await page.waitForTimeout(2600);   // past the first spawn timer
+            await page.keyboard.up('ArrowLeft');
+            const r = await page.evaluate(() => ({ x: chef.x, start: LADDER_X[2], enemies: enemies.length, state }));
+            expect(r.x).toBeLessThan(r.start - 20);
+            expect(r.enemies).toBeGreaterThan(0);
+            expect(['running', 'over']).toContain(r.state);
+        });
+    });
+
+    // -----------------------------------------------------------------------
     // Determinism
     // -----------------------------------------------------------------------
     test.describe('determinism', () => {
