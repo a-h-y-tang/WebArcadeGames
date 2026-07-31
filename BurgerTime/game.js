@@ -13,7 +13,7 @@
 // ---------------------------------------------------------------------------
 
 // --- World geometry ---
-const TILE = 30;
+const TILE = 30;                            // grid unit: one ingredient segment
 const CANVAS_W = 600;
 const CANVAS_H = 480;
 
@@ -26,14 +26,14 @@ const LADDER_SNAP = 15;                     // how close you must be to grab one
 // --- Burgers ---
 const BURGER_X = [30, 180, 330, 480];       // left edge of each burger column
 const BURGER_W = 120;
-const SEGMENTS = 4;
-const SEG_W = BURGER_W / SEGMENTS;
+const SEGMENTS = BURGER_W / TILE;           // one segment per grid tile
+const SEG_W = TILE;
 const ING_H = 10;                           // drawn thickness of an ingredient
 const PLATE_STEP = 9;                       // vertical pitch of a plated stack
 const KINDS = ['bunTop', 'lettuce', 'patty', 'bunBase'];
 
 // --- Actors ---
-const CHEF_W = 20, CHEF_H = 26, CHEF_SPEED = 84;
+const CHEF_W = 20, CHEF_H = 26, CHEF_SPEED = 96;
 const ENEMY_W = 22, ENEMY_H = 26;
 const ENEMY_TYPES = {
     hotdog: { speed: 46 },
@@ -666,46 +666,68 @@ function drawChef() {
     ctx.fillRect(x - 6, y - 37, 12, 4);
 }
 
+const ENEMY_LOOK = {
+    hotdog: { body: '#d1503c', rx: 11, ry: 8 },
+    egg: { body: '#f5efdc', rx: 9, ry: 10 },
+    pickle: { body: '#5fa63c', rx: 10, ry: 9 },
+};
+
 function drawEnemy(e) {
     const x = e.x, y = e.y;
     const stunned = e.stun > 0;
-    const body = stunned ? '#7fb2ff'
-        : e.type === 'hotdog' ? '#d1503c'
-            : e.type === 'egg' ? '#f5efdc' : '#5fa63c';
+    const look = ENEMY_LOOK[e.type];
+    const cy = y - 5 - look.ry;
+    const stride = !stunned && Math.floor(animTime * 9) % 2 === 0 ? 1 : -1;
 
-    ctx.fillStyle = stunned ? '#4b6fa8' : '#2a2f45';  // feet
-    ctx.fillRect(x - 8, y - 5, 5, 5);
-    ctx.fillRect(x + 3, y - 5, 5, 5);
+    ctx.fillStyle = stunned ? '#4b6fa8' : '#2a2f45';        // feet
+    ctx.fillRect(x - 8, y - 5 + Math.min(0, stride), 5, 5);
+    ctx.fillRect(x + 3, y - 5 - Math.max(0, stride), 5, 5);
 
-    ctx.fillStyle = body;
+    ctx.fillStyle = stunned ? '#7fb2ff' : look.body;        // body
     ctx.beginPath();
-    ctx.ellipse(x, y - 13, ENEMY_W / 2, 10, 0, 0, Math.PI * 2);
+    ctx.ellipse(x, cy, look.rx, look.ry, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    if (e.type === 'hotdog' && !stunned) {
-        ctx.fillStyle = '#e8c26b';
-        ctx.fillRect(x - 11, y - 15, 22, 3);
-    } else if (e.type === 'egg' && !stunned) {
-        ctx.fillStyle = '#f2c03a';
-        ctx.beginPath();
-        ctx.arc(x, y - 13, 4, 0, Math.PI * 2);
-        ctx.fill();
+    if (!stunned) {
+        if (e.type === 'hotdog') {
+            ctx.fillStyle = '#e8c26b';                       // bun
+            ctx.fillRect(x - look.rx, cy - 2, look.rx * 2, 3);
+            ctx.fillStyle = '#f2d97a';                       // mustard
+            for (let i = -8; i <= 6; i += 5) ctx.fillRect(x + i, cy - 5, 3, 2);
+        } else if (e.type === 'egg') {
+            ctx.fillStyle = '#f2c03a';                       // yolk
+            ctx.beginPath();
+            ctx.arc(x, cy + 1, 4, 0, Math.PI * 2);
+            ctx.fill();
+        } else {
+            ctx.fillStyle = '#3f7d26';                       // pickle bumps
+            for (let i = -6; i <= 4; i += 5) ctx.fillRect(x + i, cy - 1, 2, 2);
+        }
     }
 
-    ctx.fillStyle = '#12131a';                        // eyes
-    ctx.fillRect(x - 5, y - 18, 3, 3);
-    ctx.fillRect(x + 2, y - 18, 3, 3);
+    ctx.fillStyle = '#12131a';                               // eyes
+    ctx.fillRect(x - 5, cy - look.ry + 2, 3, 3);
+    ctx.fillRect(x + 2, cy - look.ry + 2, 3, 3);
 
-    if (stunned) {
+    if (stunned) {                                           // "seeing stars"
         ctx.fillStyle = '#ffe9a8';
-        ctx.fillRect(x - 2, y - 26, 4, 4);
+        for (let i = 0; i < 3; i++) {
+            ctx.fillRect(x - 8 + i * 7, cy - look.ry - 8 - (i % 2) * 3, 3, 3);
+        }
     }
 }
 
 function drawPeppers() {
     for (const cloud of peppers) {
-        ctx.fillStyle = `rgba(226, 226, 236, ${0.25 + 0.5 * (cloud.t / PEPPER_LIFE)})`;
-        for (let i = 0; i < 10; i++) {
+        const fade = cloud.t / PEPPER_LIFE;
+        ctx.fillStyle = `rgba(255, 250, 235, ${0.10 + 0.22 * fade})`;
+        for (let i = 0; i < 4; i++) {   // a soft puff rather than a grey box
+            ctx.beginPath();
+            ctx.arc(cloud.x + 6 + (i % 2) * 16, cloud.y + 7 + Math.floor(i / 2) * 12, 10, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        ctx.fillStyle = `rgba(60, 45, 40, ${0.55 + 0.45 * fade})`;
+        for (let i = 0; i < 14; i++) {
             const px = cloud.x + ((i * 37) % cloud.w);
             const py = cloud.y + ((i * 53) % cloud.h);
             ctx.fillRect(px, py, 3, 3);

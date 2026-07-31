@@ -720,6 +720,54 @@ test.describe('BurgerTime', () => {
     });
 
     // -----------------------------------------------------------------------
+    // A full stage, played through the real controls
+    // -----------------------------------------------------------------------
+    test.describe('playthrough', () => {
+        test('a stage can be cleared by walking the lattice', async ({ page }) => {
+            const r = await page.evaluate(() => {
+                startGame();
+                spawnEnabled = false;    // this test is about the burgers, not the chase
+
+                // Simplest possible bot: always work on the ingredient closest
+                // to the plates, climb to its floor, then walk over the first
+                // segment it has not trodden yet.
+                const nextTarget = () => ingredients
+                    .filter((i) => i.level < PLATE_LEVEL && !i.falling)
+                    .sort((a, b) => b.level - a.level || a.burger - b.burger)[0] || null;
+
+                let frames = 0;
+                const CAP = 60 * 300;
+                while (level === 1 && frames < CAP) {
+                    const t = nextTarget();
+                    if (!t) {
+                        setWish(0, 0);
+                    } else if (floorIndexAt(chef.y) !== t.level) {
+                        const lx = ladderXNear(chef.x);
+                        if (lx === null && floorIndexAt(chef.y) >= 0) {
+                            let nearest = LADDER_X[0];
+                            for (const x of LADDER_X) {
+                                if (Math.abs(x - chef.x) < Math.abs(nearest - chef.x)) nearest = x;
+                            }
+                            setWish(nearest > chef.x ? 1 : -1, 0);
+                        } else {
+                            setWish(0, FLOOR_Y[t.level] > chef.y ? 1 : -1);
+                        }
+                    } else {
+                        const seg = t.segs.findIndex((s) => !s);
+                        const tx = t.x + seg * SEG_W + SEG_W / 2;
+                        setWish(Math.abs(tx - chef.x) < 1.5 ? 0 : (tx > chef.x ? 1 : -1), 0);
+                    }
+                    step(1 / 60);
+                    frames += 1;
+                }
+                return { level, frames, score, seconds: Math.round(frames / 60) };
+            });
+            expect(r.level).toBe(2);          // the stage was cleared and rolled over
+            expect(r.score).toBeGreaterThan(1000);
+        });
+    });
+
+    // -----------------------------------------------------------------------
     // Determinism
     // -----------------------------------------------------------------------
     test.describe('determinism', () => {
