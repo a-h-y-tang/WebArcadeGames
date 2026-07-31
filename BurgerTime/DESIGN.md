@@ -37,22 +37,34 @@ Entity positions are "feet" coordinates: `y` is the surface the entity stands on
 ### Stamping ingredients
 
 An ingredient is divided into `SEGMENTS = 4` segments, each 32 px wide. While the
-chef stands on the floor an ingredient rests on, whichever segment his `x` falls
-inside is stamped (`pressed[i] = true`) and visibly sinks. When all four segments
-of an ingredient are stamped it drops (+`DROP_POINTS`).
+chef stands on a floor, whichever segment of the *top* ingredient of the pile
+there his `x` falls inside is stamped (`pressed[i] = true`) and visibly sinks.
+When all four segments are stamped the whole pile drops together, scoring
+`DROP_POINTS` per ingredient — so knocking a tall pile down is worth more than
+nudging a single layer.
 
-### Falling and cascading
+### Falling, pushing and piling
 
 A falling ingredient descends at `FALL_SPEED` px/s toward the next floor down.
 On arrival:
 
 - **Plate floor** → the ingredient is plated (+`PLATE_POINTS`) and stops for good.
   Plated ingredients pile visibly on the plate and can never be stamped again.
-- **Occupied by a resting ingredient** → that ingredient is knocked loose too
-  (its stamps reset) and *both* keep falling to the next floor. This is the
-  chain reaction that lets a well-timed drop clear a whole column.
+- **Occupied by a resting pile, and this ingredient has not pushed yet** → that
+  pile is knocked loose (stamps reset) and everything — pusher and pushed —
+  continues one more floor together. The `hasPushed` flag then stops the chain:
+  the group comes to rest wherever it lands next, however much is already there.
+  One stamped crossing therefore moves a burger *two* floors at most, not all the
+  way to the plate.
 - **Empty floor** → the ingredient comes to rest there with its stamps cleared,
-  ready to be walked across again.
+  ready to be walked across again. If the rest of its group is still falling past
+  that floor it rides along instead of stopping in mid-air.
+
+Because ingredients can never overtake each other, a pile's stacking order is
+just the burger's own layer order (`layerRank`): the bottom bun always ends up on
+the bottom and the top bun on top, on any floor and on the plate. Falling
+ingredients are resolved lowest-layer-first each frame so a group that lands
+together lands in the right order.
 
 Any enemy standing under a falling ingredient (inside the stack's horizontal
 span) is squashed for `SQUASH_POINTS`.
@@ -111,7 +123,10 @@ Snake and the rest of the repo, so its state and functions are reachable from th
 Playwright tests as plain globals.
 
 - **Pure geometry helpers** — `floorIndexAt(y)`, `nearestFloorIndex(y)`,
-  `nearestLadderX(x)`, `stackIndexAt(x)`.
+  `nearestLadderX(x)`, `stackIndexAt(x)`, plus `pileAt(stack, floor)` which
+  returns the ingredients resting on one floor of one stack, bottom layer first.
+  `plateAll()` is a test/debug shortcut that drops every ingredient straight onto
+  its plate.
 - **`step(dt)`** advances the whole simulation: chef, ingredients, enemies,
   pepper clouds, spawn timer, collisions. All speeds are per second.
 - **`draw()`** renders; it never mutates simulation state.
@@ -143,6 +158,13 @@ Where the brief was open-ended the simpler option was taken, and recorded here:
   through the chef harmlessly — only enemies are squashed.
 - **No stack-height bonus.** Squashing several enemies with one drop scores
   `SQUASH_POINTS` each, with no escalating multiplier.
+- **Piles are physics-free.** Ingredients stacked on one floor are drawn on top
+  of each other and the chef is drawn standing on top of the pile, but his
+  collision height and the enemies' stay at floor level. It reads correctly and
+  keeps every position exactly on the floor grid.
+- **Chains stop after one push**, as described above. Letting them run would mean
+  a single crossing could plate an entire burger, which makes a level three
+  crossings long; capping the chain gives the level about a dozen.
 - **Instant transitions.** Losing a life and completing a level both take effect
   immediately (no death animation or interstitial screen), which keeps the state
   machine to `idle / running / paused / over`.

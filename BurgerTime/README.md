@@ -10,9 +10,11 @@ platforms and ladders — while the food fights back.
 Open `index.html` in any browser. No build step, no server.
 
 Walk across an ingredient and each segment you cross is stamped down. Stamp all
-four segments and the ingredient drops to the platform below — and anything it
-lands on drops with it. Get all twelve ingredients onto the plates at the bottom
-to finish the level.
+four segments and it drops to the platform below — landing on another layer
+knocks that one loose too, so the pair falls an extra floor and lands as a pile.
+Stamp the top of a pile and the whole pile goes down together, which is how you
+plate a burger in a couple of well-planned trips. Get all twelve ingredients onto
+the plates at the bottom to finish the level.
 
 A hot dog, a pickle and a fried egg chase you through the maze. Touch one and
 you lose a chef. When they get too close, hit them with a puff of pepper: they

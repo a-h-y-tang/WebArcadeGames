@@ -430,18 +430,81 @@ test.describe('Burger Time', () => {
             expect(res.top).toBe('falling');
         });
 
-        test('a cascade carries every ingredient in the column to the plate', async ({ page }) => {
+        test('a knocked-loose pair settles two floors down as one pile', async ({ page }) => {
             const res = await page.evaluate(() => {
                 startGame(); autoLoop = false;
                 const stack = ingredients.filter((i) => i.stack === 1);
-                dropIngredient(stack.find((i) => i.floor === 0));
-                for (let i = 0; i < 1200; i++) {
-                    step(0.016);
-                    if (stack.every((s) => s.state === 'plated')) break;
-                }
-                return stack.map((s) => s.state);
+                const top = stack.find((i) => i.kind === 'topbun');
+                dropIngredient(top);
+                for (let i = 0; i < 400 && stack.some((s) => s.state === 'falling'); i++) step(0.016);
+                return {
+                    states: stack.map((s) => s.state),
+                    pile: pileAt(1, 2).map((s) => s.kind),
+                    lonely: pileAt(1, 3).map((s) => s.kind),
+                };
             });
-            expect(res).toEqual(['plated', 'plated', 'plated', 'plated']);
+            // top bun lands on the lettuce, which is pushed onto the patty's floor
+            expect(res.states).toEqual(['rest', 'rest', 'rest', 'rest']);
+            expect(res.pile).toEqual(['patty', 'lettuce', 'topbun']);
+            expect(res.lonely).toEqual(['bottombun']);
+        });
+
+        test('the chain stops after one push — one drop cannot clear a column', async ({ page }) => {
+            const plated = await page.evaluate(() => {
+                startGame(); autoLoop = false;
+                dropIngredient(ingredients.find((i) => i.stack === 1 && i.kind === 'topbun'));
+                for (let i = 0; i < 600; i++) step(0.016);
+                return ingredients.filter((i) => i.state === 'plated').length;
+            });
+            expect(plated).toBe(0);
+        });
+
+        test('stamping a pile drops every ingredient in it', async ({ page }) => {
+            const res = await page.evaluate(() => {
+                startGame(); autoLoop = false;
+                const stack = ingredients.filter((i) => i.stack === 1);
+                dropIngredient(stack.find((i) => i.kind === 'topbun'));
+                for (let i = 0; i < 400 && stack.some((s) => s.state === 'falling'); i++) step(0.016);
+                score = 0;
+                // Walk the whole width of the three-high pile now sitting on floor 2.
+                setChefAt(STACK_X[1] - 8, FLOOR_Y[2]);
+                input.right = true;
+                for (let i = 0; i < 200 && pileAt(1, 2).length === 3; i++) step(0.016);
+                return { falling: stack.filter((s) => s.state === 'falling').length, score };
+            });
+            expect(res.falling).toBe(3);
+            expect(res.score).toBe(150); // 50 per ingredient in the pile
+        });
+
+        test('a pile dropped onto the last layer plates the whole burger in order', async ({ page }) => {
+            const res = await page.evaluate(() => {
+                startGame(); autoLoop = false;
+                const stack = ingredients.filter((i) => i.stack === 1);
+                dropIngredient(stack.find((i) => i.kind === 'topbun'));
+                for (let i = 0; i < 400 && stack.some((s) => s.state === 'falling'); i++) step(0.016);
+                dropIngredient(pileAt(1, 2)[0]);
+                for (let i = 0; i < 600 && !stack.every((s) => s.state === 'plated'); i++) step(0.016);
+                return stack.slice().sort((a, b) => a.plateIndex - b.plateIndex).map((s) => s.kind);
+            });
+            expect(res).toEqual(['bottombun', 'patty', 'lettuce', 'topbun']);
+        });
+
+        test('only the top of a pile can be stamped', async ({ page }) => {
+            const res = await page.evaluate(() => {
+                startGame(); autoLoop = false;
+                const stack = ingredients.filter((i) => i.stack === 1);
+                dropIngredient(stack.find((i) => i.kind === 'topbun'));
+                for (let i = 0; i < 400 && stack.some((s) => s.state === 'falling'); i++) step(0.016);
+                setChefAt(STACK_X[1] + SEG_W * 0.5, FLOOR_Y[2]);
+                step(0.016);
+                const pile = pileAt(1, 2);
+                return {
+                    top: pile[pile.length - 1].pressed.slice(),
+                    buried: pile[0].pressed.slice(),
+                };
+            });
+            expect(res.top).toEqual([true, false, false, false]);
+            expect(res.buried).toEqual([false, false, false, false]);
         });
 
         test('an ingredient reaching the bottom is plated and scores', async ({ page }) => {

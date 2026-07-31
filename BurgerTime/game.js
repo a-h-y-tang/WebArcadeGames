@@ -160,6 +160,7 @@ function buildIngredients() {
                 y: FLOOR_Y[k],
                 state: 'rest',            // 'rest' | 'falling' | 'plated'
                 pressed: new Array(SEGMENTS).fill(false),
+                hasPushed: false,         // already knocked a pile loose this fall
                 plateIndex: -1,
             });
         }
@@ -290,43 +291,70 @@ function updateChef(dt) {
     }
 }
 
-// Stamp whichever ingredient segment the chef is standing on.
+// Stamp the top ingredient of whichever pile the chef is standing on.
 function stampUnderChef() {
     const floor = floorIndexAt(chef.y);
     if (floor < 0) return;
     const stack = stackIndexAt(chef.x);
     if (stack < 0) return;
-    for (const ing of ingredients) {
-        if (ing.state !== 'rest' || ing.stack !== stack || ing.floor !== floor) continue;
-        const seg = clamp(Math.floor((chef.x - ingredientLeft(ing)) / SEG_W), 0, SEGMENTS - 1);
-        if (!ing.pressed[seg]) {
-            ing.pressed[seg] = true;
-            if (ing.pressed.every(Boolean)) dropIngredient(ing);
-        }
-    }
+    const pile = pileAt(stack, floor);
+    if (!pile.length) return;
+    const top = pile[pile.length - 1];
+    const seg = clamp(Math.floor((chef.x - ingredientLeft(top)) / SEG_W), 0, SEGMENTS - 1);
+    if (top.pressed[seg]) return;
+    top.pressed[seg] = true;
+    if (top.pressed.every(Boolean)) dropPile(stack, floor);
 }
 
 // ---------------------------------------------------------------------------
 // Ingredients
 // ---------------------------------------------------------------------------
 
+// Layer order within a burger: 0 is the top bun, 3 the bottom bun. Ingredients
+// can never overtake each other, so this doubles as the stacking order of any
+// pile — the highest rank sits on the bottom.
+function layerRank(ing) {
+    return KINDS.indexOf(ing.kind);
+}
+
+// The ingredients resting on one floor of one stack, bottom layer first.
+function pileAt(stack, floor) {
+    return ingredients
+        .filter((i) => i.state === 'rest' && i.stack === stack && i.floor === floor)
+        .sort((a, b) => layerRank(b) - layerRank(a));
+}
+
+// How many resting ingredients this one is sitting on (0 = on the floor).
+function pileHeightOf(ing) {
+    return Math.max(0, pileAt(ing.stack, ing.floor).indexOf(ing));
+}
+
+// Send a whole pile down one floor. `hasPushed` is what stops the chain: an
+// ingredient may knock the pile below it loose once, and after that it just
+// comes to rest on top of whatever it finds.
+function dropPile(stack, floor) {
+    const pile = pileAt(stack, floor);
+    for (const ing of pile) {
+        ing.state = 'falling';
+        ing.hasPushed = false;
+        ing.targetFloor = Math.min(floor + 1, PLATE_FLOOR);
+        ing.pressed.fill(false);
+        addScore(DROP_POINTS);
+    }
+    return pile;
+}
+
+// Drop the pile the given ingredient belongs to (the tests' entry point).
 function dropIngredient(ing) {
     if (ing.state !== 'rest') return;
-    ing.state = 'falling';
-    ing.targetFloor = Math.min(ing.floor + 1, PLATE_FLOOR);
-    addScore(DROP_POINTS);
+    dropPile(ing.stack, ing.floor);
 }
 
-function restingIngredientAt(stack, floor, except) {
+// An ingredient of the same stack already on its way down past this floor: the
+// arriving one rides along instead of stopping in mid-air.
+function ridingIngredientAt(stack, floor, except) {
     return ingredients.find((i) => i !== except && i.stack === stack
-        && i.floor === floor && i.state === 'rest');
-}
-
-// Another ingredient of the same stack already falling past this floor — the
-// arriving one rides down with it rather than landing on thin air.
-function fallingIngredientAt(stack, floor, except) {
-    return ingredients.find((i) => i !== except && i.stack === stack
-        && i.state === 'falling' && i.y >= FLOOR_Y[floor] - 1);
+        && i.state === 'falling' && i.targetFloor > floor && i.y >= FLOOR_Y[floor] - 1);
 }
 
 function plateIngredient(ing) {
@@ -347,21 +375,27 @@ function landIngredient(ing) {
         plateIngredient(ing);
         return;
     }
-    const blocker = restingIngredientAt(ing.stack, floor, ing);
-    if (blocker) {
-        // Knock the ingredient below loose; both continue to the next floor.
-        blocker.state = 'falling';
-        blocker.pressed.fill(false);
-        blocker.targetFloor = Math.min(floor + 1, PLATE_FLOOR);
+    const pile = pileAt(ing.stack, floor);
+    if (pile.length && !ing.hasPushed) {
+        // Knock the pile below loose; everything drops one more floor together.
+        for (const below of pile) {
+            below.state = 'falling';
+            below.hasPushed = true;
+            below.pressed.fill(false);
+            below.targetFloor = Math.min(floor + 1, PLATE_FLOOR);
+        }
+        ing.hasPushed = true;
         ing.targetFloor = Math.min(floor + 1, PLATE_FLOOR);
         return;
     }
-    if (fallingIngredientAt(ing.stack, floor, ing)) {
-        // Part of a cascade: keep riding down with the rest of the column.
+    if (!pile.length && ridingIngredientAt(ing.stack, floor, ing)) {
+        // The rest of this pile is still going down; ride along with it.
+        ing.hasPushed = true;
         ing.targetFloor = Math.min(floor + 1, PLATE_FLOOR);
         return;
     }
     ing.state = 'rest';
+    ing.hasPushed = false;
     ing.pressed.fill(false);
 }
 
@@ -378,7 +412,11 @@ function squashEnemiesUnder(ing) {
 }
 
 function updateIngredients(dt) {
-    for (const ing of ingredients) {
+    // Lower layers are resolved first so that a pile lands (and plates) in the
+    // right order when several ingredients arrive on the same frame.
+    const falling = ingredients.filter((i) => i.state === 'falling')
+        .sort((a, b) => layerRank(b) - layerRank(a));
+    for (const ing of falling) {
         if (ing.state !== 'falling') continue;
         ing.y += FALL_SPEED * dt;
         squashEnemiesUnder(ing);
@@ -630,13 +668,19 @@ function drawMaze() {
     }
 }
 
+// Height of the pile an entity standing at (stack, floor) is walking on.
+function pileLift(stack, floor) {
+    return pileAt(stack, floor).length * (INGREDIENT_H - 3);
+}
+
 function drawIngredient(ing) {
     const style = INGREDIENT_STYLE[ing.kind];
     const left = ingredientLeft(ing);
+    const stacked = ing.state === 'rest' ? pileHeightOf(ing) * (INGREDIENT_H - 3) : 0;
     for (let s = 0; s < SEGMENTS; s++) {
         const sunk = ing.state === 'rest' && ing.pressed[s] ? 4 : 0;
         const x = left + s * SEG_W;
-        const y = ing.y - INGREDIENT_H + sunk;
+        const y = ing.y - INGREDIENT_H + sunk - stacked;
         ctx.fillStyle = style.fill;
         if (ing.kind === 'topbun') {
             ctx.beginPath();
@@ -683,7 +727,10 @@ function drawIngredient(ing) {
 
 function drawChef() {
     const x = chef.x;
-    const y = chef.y;
+    // Purely cosmetic: stand the chef on top of the pile he is walking over.
+    const floor = floorIndexAt(chef.y);
+    const stack = stackIndexAt(chef.x);
+    const y = chef.y - (floor >= 0 && stack >= 0 ? pileLift(stack, floor) : 0);
     // legs
     ctx.fillStyle = '#2f3a5c';
     ctx.fillRect(x - 8, y - 10, 6, 10);
