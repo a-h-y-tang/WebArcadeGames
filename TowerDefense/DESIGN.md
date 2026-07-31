@@ -47,10 +47,14 @@ results from the same inputs.
 ## Creeps
 
 - Wave `w` sends `4 + 2w` creeps, spawned 0.7 s apart.
-- HP is `round(18 · 1.32^(w-1))`, speed is `1.5 + 0.05(w-1)` cells/s, and each
-  creep is worth `3 + w` gold and the same in score.
-- Waves 5 and 10 also spawn a boss at the end of the wave: 8× HP, 0.6× speed,
+- HP is `round(20 · 1.41^(w-1))`, speed is `1.5 + 0.07(w-1)` cells/s, and each
+  creep is worth `2 + ceil(w/2)` gold and the same in score.
+- Waves 5 and 10 also spawn a boss at the end of the wave: 10× HP, 0.6× speed,
   10× bounty, and it costs 5 lives if it leaks (a normal creep costs 1).
+- Those constants were tuned against two scripted playthroughs: a careless
+  player who sprinkles towers in scan order dies around wave 6, while one who
+  concentrates high-coverage spots and upgrades them clears wave 10 with a
+  handful of lives left.
 
 ## Economy and flow
 

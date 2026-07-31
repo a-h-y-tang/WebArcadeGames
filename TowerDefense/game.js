@@ -38,7 +38,7 @@ const PROJECTILE_SPEED = 420;      // px/s
 const SLOW_FACTOR = 0.45;          // speed multiplier while frozen
 const SLOW_DURATION = 1.5;         // seconds
 const SPAWN_INTERVAL = 0.7;        // seconds between creeps in a wave
-const BOSS_HP_MULT = 8;
+const BOSS_HP_MULT = 10;
 const BOSS_SPEED_MULT = 0.6;
 const BOSS_BOUNTY_MULT = 10;
 const BOSS_LIVES_COST = 5;
@@ -194,9 +194,9 @@ function selectTower(type) {
 // Creeps
 // ---------------------------------------------------------------------------
 
-function creepHp(w) { return Math.round(18 * Math.pow(1.32, w - 1)); }
-function creepSpeed(w) { return 1.5 + 0.05 * (w - 1); }   // cells/s
-function creepBounty(w) { return 3 + w; }
+function creepHp(w) { return Math.round(20 * Math.pow(1.41, w - 1)); }
+function creepSpeed(w) { return 1.5 + 0.07 * (w - 1); }   // cells/s
+function creepBounty(w) { return 2 + Math.ceil(w / 2); }
 function creepCount(w) { return 4 + 2 * w; }
 
 function syncCreep(creep) {
