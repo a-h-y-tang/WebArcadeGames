@@ -171,6 +171,15 @@
     "thumbnail": ""
   },
   {
+    "id": "defender",
+    "name": "Defender",
+    "description": "Side-scrolling rescue shooter - protect the humanoids from alien landers",
+    "category": "Action",
+    "dir": "Defender",
+    "path": "games/Defender/index.html",
+    "thumbnail": "games/Defender/screenshot.png"
+  },
+  {
     "id": "dig-dug",
     "name": "Dig Dug",
     "description": "Dig tunnels and defeat underground creatures",
