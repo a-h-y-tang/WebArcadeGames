@@ -48,8 +48,11 @@ you can survive on three lives.
   room with every robot destroyed awards a 100-point clearance bonus.
 - **Evil Otto** appears after 20 seconds in a room — or just 5 seconds once every
   robot is dead, so an empty room is never a safe place to rest. He homes in on
-  the player at a speed faster than any robot, ignores the maze completely, and
-  cannot be shot. The only answer is to leave.
+  the player in a straight line, ignoring the maze completely, and cannot be
+  shot. He arrives *slower* than the player (70 px/s) and accelerates by
+  22 px/s² up to 175 px/s, so his appearance is a deadline rather than an instant
+  death: you can outrun him at first, but not for long. The only answer is to
+  leave.
 - **Scoring.** 50 per robot plus 100 per cleared room. The best score is
   persisted in `localStorage` under `berzerk-best`.
 
@@ -94,8 +97,14 @@ reachable from Playwright as plain globals.
 
 All randomness comes from a `mulberry32` PRNG seeded from the room number, so a
 given room always produces the same maze and the same robot timings. Motion is
-expressed per-second and advanced through `step(dt)`, letting the 57 Playwright
+expressed per-second and advanced through `step(dt)`, letting the 58 Playwright
 tests simulate frames exactly rather than waiting on `requestAnimationFrame`.
+
+The suite covers the idle screen and HUD, maze generation (determinism, border
+doorways, and that every doorway stays reachable in the first 25 rooms), eight-way
+movement and wall collision, the one-bullet rule and wall absorption, robot
+chasing / firing / friendly fire, room transitions and the clearance bonus, all
+three ways Otto can end a life, and the lives / pause / game-over flow.
 
 Tests drive the game through the same public surface the game uses:
 `startGame()`, `setDir()`, `fire()`, `spawnRobot(x, y)`, `spawnOtto()`,

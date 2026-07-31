@@ -595,6 +595,34 @@ test.describe('Berzerk', () => {
             expect(res.after).toBeLessThan(res.before);
         });
 
+        test('Otto drifts in slowly and speeds up the longer he chases', async ({ page }) => {
+            const res = await page.evaluate(() => {
+                startGame();
+                emptyArena();
+                robots.length = 0;
+                bullets.length = 0;
+                player.x = 620; player.y = 460;
+                spawnOtto();
+                const initial = otto.speed;
+                step(1.0);
+                const after1s = otto.speed;
+                let fastest = after1s;
+                for (let i = 0; i < 40 && otto; i++) {
+                    step(0.1);
+                    if (otto) fastest = otto.speed;
+                }
+                return {
+                    initial, after1s, fastest,
+                    start: OTTO_SPEED, cap: OTTO_MAX_SPEED, playerSpeed: PLAYER_SPEED,
+                };
+            });
+            expect(res.initial).toBe(res.start);
+            expect(res.start).toBeLessThan(res.playerSpeed); // outrunnable at first
+            expect(res.after1s).toBeGreaterThan(res.initial);
+            expect(res.fastest).toBeGreaterThan(res.playerSpeed); // but not forever
+            expect(res.fastest).toBeLessThanOrEqual(res.cap);
+        });
+
         test('bullets cannot destroy Otto', async ({ page }) => {
             const alive = await page.evaluate(() => {
                 startGame();

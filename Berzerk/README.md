@@ -31,7 +31,8 @@ Open `index.html` in any modern browser. No build step or server required.
 - You lose a life if a robot touches you, a robot bullet hits you, or Evil Otto
   reaches you. Your own bullets are harmless to you.
 - Otto arrives 20 seconds into a room — or just 5 seconds after the last robot
-  dies. He cannot be shot. Keep moving.
+  dies. He cannot be shot. He drifts in slowly enough to outrun, then keeps
+  gathering speed until he is faster than you are, so treat him as a deadline.
 - Three lives. Later rooms hold more robots, faster robots and denser mazes.
   Your best score is saved in the browser.
 

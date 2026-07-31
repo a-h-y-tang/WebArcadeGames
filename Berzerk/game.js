@@ -47,7 +47,9 @@ const MAX_ROBOT_BULLETS = 4;
 const FIRE_MIN = 1.4, FIRE_MAX = 3.4;  // seconds between a robot's shots
 const OTTO_DELAY = 20;          // seconds in a room before Otto shows up
 const OTTO_CLEARED_DELAY = 5;   // ...or this soon once every robot is dead
-const OTTO_SPEED = 95;
+const OTTO_SPEED = 70;          // Otto drifts in gently...
+const OTTO_ACCEL = 22;          // ...and winds up the longer you make him chase
+const OTTO_MAX_SPEED = 175;
 const OTTO_HALF = 11;
 
 // --- DOM ---
@@ -277,8 +279,9 @@ function enterRoom(n, side) {
     walls = generateWalls(n);
     robots.length = 0;
     bullets.length = 0;
-    debris.length = 0;
     otto = null;
+    // Debris deliberately survives the transition so the death explosion that
+    // triggered a respawn is still visible for a moment.
     roomTimer = 0;
     placePlayer(entrySide);
     spawnRobots(robotCountFor(n));
@@ -354,8 +357,8 @@ function movePlayer(h) {
 
 function robotFire(r) {
     if (bullets.filter((b) => b.owner === 'robot').length >= MAX_ROBOT_BULLETS) return;
-    let dx = player.x - r.x;
-    let dy = player.y - r.y;
+    const dx = player.x - r.x;
+    const dy = player.y - r.y;
     // Snap the aim to one of the eight arcade directions.
     const ax = Math.abs(dx), ay = Math.abs(dy);
     const sx = Math.sign(dx), sy = Math.sign(dy);
@@ -428,7 +431,7 @@ function moveBullets(h) {
 }
 
 function spawnOtto() {
-    otto = { x: CELL * 1.5, y: CELL * 1.5, bob: 0 };
+    otto = { x: CELL * 1.5, y: CELL * 1.5, bob: 0, speed: OTTO_SPEED };
     return otto;
 }
 
@@ -439,12 +442,14 @@ function moveOtto(h) {
         if (roomTimer >= delay) spawnOtto();
         return true;
     }
-    // Otto floats straight at the player, straight through the maze.
+    // Otto floats straight at the player, straight through the maze. He starts
+    // slower than the player — outrunnable — and winds up until he is not.
+    otto.speed = Math.min(OTTO_MAX_SPEED, otto.speed + OTTO_ACCEL * h);
     const dx = player.x - otto.x;
     const dy = player.y - otto.y;
     const len = Math.hypot(dx, dy) || 1;
-    otto.x += (dx / len) * OTTO_SPEED * h;
-    otto.y += (dy / len) * OTTO_SPEED * h;
+    otto.x += (dx / len) * otto.speed * h;
+    otto.y += (dy / len) * otto.speed * h;
     otto.bob += h * 6;
     if (overlaps(otto, OTTO_HALF, player, PLAYER_HALF)) {
         killPlayer();
