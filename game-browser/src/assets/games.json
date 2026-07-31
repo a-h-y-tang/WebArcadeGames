@@ -108,6 +108,15 @@
     "thumbnail": ""
   },
   {
+    "id": "burger-time",
+    "name": "Burger Time",
+    "description": "Stomp burger ingredients onto plates while dodging hot dogs",
+    "category": "Action",
+    "dir": "BurgerTime",
+    "path": "games/BurgerTime/index.html",
+    "thumbnail": "games/BurgerTime/screenshot.png"
+  },
+  {
     "id": "calcudoku",
     "name": "Calcudoku",
     "description": "Math logic puzzle with grid and operations",
