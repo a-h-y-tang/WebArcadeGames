@@ -444,6 +444,44 @@ test.describe('Burger Time', () => {
     });
 
     // -----------------------------------------------------------------------
+    // Playing for real
+    // -----------------------------------------------------------------------
+    test.describe('gameplay', () => {
+        test('walking the whole width of an ingredient knocks it down', async ({ page }) => {
+            const res = await page.evaluate(() => {
+                startGame();
+                enemySpawnTimer = 999;
+                const ing = ingredients.find((i) => i.col === BURGER_COLS[1] && i.floor === 3);
+                placeChef(ing.x - 4, floorY(3));
+                setChefDir(1, 0);
+                for (let i = 0; i < 200; i++) step(0.016);
+                return { floor: ing.floor, falling: ing.falling };
+            });
+            expect(res.falling).toBe(false);
+            expect(res.floor).toBe(4);
+        });
+
+        test('a long unattended run keeps the world consistent', async ({ page }) => {
+            const res = await page.evaluate(() => {
+                startGame();
+                for (let i = 0; i < 1200; i++) step(0.016);
+                return {
+                    state,
+                    lives,
+                    enemies: enemies.length,
+                    inBounds: ingredients.every((i) => i.y >= 0 && i.y <= CANVAS_H),
+                    plated: plates.reduce((n, p) => n + p.count, 0),
+                };
+            });
+            expect(['running', 'over']).toContain(res.state);
+            expect(res.lives).toBeGreaterThanOrEqual(0);
+            expect(res.enemies).toBeLessThanOrEqual(5);
+            expect(res.inBounds).toBe(true);
+            expect(res.plated).toBeGreaterThanOrEqual(0);
+        });
+    });
+
+    // -----------------------------------------------------------------------
     // Level completion
     // -----------------------------------------------------------------------
     test.describe('level completion', () => {
