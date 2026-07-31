@@ -108,6 +108,15 @@
     "thumbnail": ""
   },
   {
+    "id": "burger-time",
+    "name": "Burger Time",
+    "description": "Trample burger ingredients onto the plates while dodging the food that chases you",
+    "category": "Action",
+    "dir": "BurgerTime",
+    "path": "games/BurgerTime/index.html",
+    "thumbnail": ""
+  },
+  {
     "id": "calcudoku",
     "name": "Calcudoku",
     "description": "Math logic puzzle with grid and operations",
