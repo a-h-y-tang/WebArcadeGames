@@ -827,6 +827,7 @@ window.addEventListener('keydown', (e) => {
     if (e.key === ' ' || e.code === 'Space') {
         e.preventDefault();
         if (state === 'running') spray();
+        else if (state === 'paused') togglePause();      // never restart a paused game
         else if (state !== 'clear') startGame();
         return;
     }

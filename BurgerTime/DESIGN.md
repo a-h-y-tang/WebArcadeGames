@@ -123,7 +123,7 @@ The best score is persisted in `localStorage` under `burgertime-best`.
 | Input | Action |
 |---|---|
 | ← / → / ↑ / ↓ or A / D / W / S | Walk and climb |
-| Space | Throw pepper (also starts / restarts the game) |
+| Space | Throw pepper while playing; start, resume or restart otherwise |
 | P | Pause / resume |
 | Start button | Start / resume |
 

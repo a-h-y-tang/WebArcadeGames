@@ -677,6 +677,14 @@ test.describe('BurgerTime', () => {
             expect(moved).toBe(0);
         });
 
+        test('Space resumes a paused game instead of restarting it', async ({ page }) => {
+            await page.evaluate(() => { startGame(); score = 700; });
+            await page.keyboard.press('p');
+            await page.keyboard.press('Space');
+            const r = await page.evaluate(() => ({ state, score }));
+            expect(r).toEqual({ state: 'running', score: 700 });
+        });
+
         test('Space restarts after a game over', async ({ page }) => {
             await page.evaluate(() => { startGame(); score = 500; lives = 0; gameOver(); });
             expect(await page.evaluate(() => state)).toBe('over');
