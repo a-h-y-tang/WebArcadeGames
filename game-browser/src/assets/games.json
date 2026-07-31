@@ -108,6 +108,15 @@
     "thumbnail": ""
   },
   {
+    "id": "burgertime",
+    "name": "Burger Time",
+    "description": "Arcade platformer - stamp burger ingredients down girders while dodging food enemies",
+    "category": "Action",
+    "dir": "BurgerTime",
+    "path": "games/BurgerTime/index.html",
+    "thumbnail": ""
+  },
+  {
     "id": "calcudoku",
     "name": "Calcudoku",
     "description": "Math logic puzzle with grid and operations",
