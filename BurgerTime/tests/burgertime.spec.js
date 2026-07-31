@@ -440,22 +440,32 @@ test.describe('Burger Time', () => {
                 const below = ingredients.find((i) => i.col === 3 && i.floorIndex === 1);
                 startFall(top);
                 for (let i = 0; i < 90; i++) step(1 / 60);
-                return { belowMoving: below.falling || below.plated, topPassed: top.y > FLOOR_Y[1] };
+                return { belowKnocked: below.floorIndex > 1 || below.falling || below.plated, topPassed: top.y > FLOOR_Y[1] };
             });
-            expect(r.belowMoving).toBe(true);
+            expect(r.belowKnocked).toBe(true);
             expect(r.topPassed).toBe(true);
         });
 
-        test('a chain carries the whole column down to the plate', async ({ page }) => {
+        test('a chain cascades every ingredient in the column downward', async ({ page }) => {
             const r = await page.evaluate(() => {
                 startGame();
                 enemies.length = 0;
                 const before = score;
-                startFall(ingredients.find((i) => i.col === 0 && i.floorIndex === 0));
+                const column = ingredients.filter((i) => i.col === 0);
+                const startFloor = new Map(column.map((i) => [i, i.floorIndex]));
+                startFall(column.find((i) => i.floorIndex === 0));
                 for (let i = 0; i < 600; i++) step(1 / 60);
-                return { plated: ingredients.filter((i) => i.col === 0 && i.plated).length, gained: score - before };
+                return {
+                    plated: column.filter((i) => i.plated).length,
+                    allMoved: column.every((i) => i.plated || i.floorIndex > startFloor.get(i)),
+                    settled: column.every((i) => !i.falling),
+                    gained: score - before,
+                };
             });
-            expect(r.plated).toBe(4);
+            expect(r.allMoved).toBe(true);       // every piece was knocked at least one girder down
+            expect(r.plated).toBeGreaterThanOrEqual(2);
+            expect(r.plated).toBeLessThan(4);    // a single run must not plate the whole burger
+            expect(r.settled).toBe(true);
             expect(r.gained).toBeGreaterThanOrEqual(200);
         });
 

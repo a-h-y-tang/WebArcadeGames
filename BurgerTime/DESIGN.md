@@ -10,8 +10,8 @@ around the ladders.
 Four burger stacks hang across five horizontal girders. Each stack is made of four
 ingredients (top bun, lettuce, patty, bottom bun), one per girder. Walking the full
 width of an ingredient makes it drop to the girder below; anything it lands on gets
-knocked loose too, so a well-timed run cascades a whole stack onto the plate at
-once. Plate all sixteen ingredients to clear the level.
+knocked loose too, so a well-timed run sends a cascade rippling down a column.
+Plate all sixteen ingredients to clear the level.
 
 Three food enemies (hot dog, fried egg, pickle) hunt the chef. Touching one costs a
 life. The chef fights back two ways: shaking pepper to freeze enemies for a few
@@ -57,10 +57,13 @@ visibly sags). When all four segments are stepped the ingredient breaks loose:
 
 - It descends at 180 px/s toward the next floor down.
 - On reaching that floor, if another resting ingredient occupies the same column
-  there, that one is knocked loose too — a **chain**. Both are flagged `chained`
-  and ride the rest of the way down to the plate without stopping.
-- An unchained ingredient settles on the first free girder it reaches and its
-  segments reset: it has to be walked all over again from its new floor.
+  there, that one is knocked loose too — a **chain** — and the arriving piece
+  bounces on past it toward the next girder down. Either of them may knock
+  something else loose in turn, so one drop ripples through a stack.
+- An ingredient that reaches a free girder settles there and its segments reset:
+  it has to be walked all over again from its new floor. Walking the top girder
+  end to end therefore cascades a whole column but only plates part of it — the
+  rest is left scattered down the board.
 - Past the bottom girder it lands on the column's plate, stacking on top of
   whatever is already there.
 
@@ -123,7 +126,7 @@ Key globals used by the tests:
 | `state` | `'idle'` \| `'running'` \| `'paused'` \| `'over'` |
 | `score`, `best`, `level`, `lives`, `pepper` | HUD values |
 | `chef` | `{ x, y, floorIndex, ladder, inputX, inputY, facing, invuln }` |
-| `ingredients` | 16 × `{ col, type, floorIndex, x, y, segs, falling, chained, plated }` |
+| `ingredients` | 16 × `{ col, type, floorIndex, x, y, segs, falling, plated }` |
 | `enemies` | `{ type, x, y, floorIndex, ladder, alive, stun, respawn, spawnX }` |
 | `peppers` | short-lived clouds `{ x, y, life }` |
 | `CANVAS_W`, `CANVAS_H`, `FLOOR_Y`, `PLATE_Y`, `COL_X`, `SEG_W`, `ING_W`, `ING_H`, `LADDERS`, `LADDER_W`, `CHEF_SPEED` | geometry / tuning |
@@ -145,12 +148,11 @@ interpretation":
    (`burger-time`), but this session is pinned to the designated development branch
    `claude/loving-euler-uz80b8` and pushing anywhere else is not permitted. The work
    therefore lives on the designated branch.
-2. **A chain rides all the way to the plate.** In the arcade original a knocked
-   ingredient falls one floor at a time; here, once a piece is part of a chain it
-   ignores empty girders and lands on the plate. It keeps the payoff of a cascade
-   obvious and avoids modelling several ingredients resting on each other mid-air.
-   An *unchained* drop still stops on the next girder, so most ingredients take
-   several walks.
+2. **A chain bumps one girder at a time**, as in the arcade original, rather than
+   sweeping a whole column onto the plate. Ingredients never rest on top of one
+   another mid-board: the arriving piece bounces past the one it knocked loose, so
+   pieces leapfrog each other downward. An early version let chains ride straight
+   to the plate, which meant a single pass along the top girder won the level.
 3. **Burger order is not enforced.** Ingredients stack on a plate in arrival order,
    so a burger can end up with the lettuce under the patty. The original behaves the
    same way, and enforcing an order would add rules without adding play.

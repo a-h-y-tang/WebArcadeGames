@@ -124,7 +124,6 @@ function buildIngredients() {
                 y: FLOOR_Y[floorIndex],
                 segs: [false, false, false, false],
                 falling: false,
-                chained: false,
                 plated: false,
                 squashes: 0,
             });
@@ -305,7 +304,6 @@ function markSegments() {
 function startFall(ing) {
     if (ing.falling || ing.plated) return;
     ing.falling = true;
-    ing.chained = false;
     ing.squashes = 0;
     ing.segs = [true, true, true, true];
     score += DROP_POINTS;
@@ -338,7 +336,6 @@ function updateIngredient(ing, h) {
         ing.y = plateRestY(ing.col);
         ing.floorIndex = FLOOR_Y.length;
         ing.falling = false;
-        ing.chained = false;
         ing.plated = true;
         return;
     }
@@ -348,13 +345,11 @@ function updateIngredient(ing, h) {
     );
     ing.floorIndex = next;
     if (resting) {
-        // Knock it loose: both pieces ride the rest of the way to the plate.
+        // Knock it loose and bounce on past it — both now head for the floor
+        // below, where either of them may knock something else loose in turn.
         startFall(resting);
-        resting.chained = true;
-        ing.chained = true;
         return;
     }
-    if (ing.chained) return;
 
     ing.y = FLOOR_Y[next];
     ing.falling = false;

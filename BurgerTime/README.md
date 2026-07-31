@@ -26,9 +26,10 @@ Game**) to begin.
 - Every ingredient is **four slices wide**. Each slice you step on sags; step on
   all four and the whole ingredient breaks loose and falls one girder. Each drop
   scores **50 points**.
-- An ingredient that lands on another one **knocks it loose too**, and the whole
-  chain rides all the way down to the plate. Dropping a full stack in one run is
-  by far the fastest way to build a burger.
+- An ingredient that lands on another one **knocks it loose too** and bounces on
+  past it, so a single drop can ripple through a whole stack — worth 50 points per
+  piece it knocks loose. Pieces still land a girder at a time, so a cascade gets
+  the burger most of the way down, not all of it.
 - A falling ingredient **squashes any enemy under it**: 100 points for the first,
   doubling for each extra enemy caught in the same drop.
 - Touching an enemy costs a chef. You get **3**, plus a moment of invulnerability
