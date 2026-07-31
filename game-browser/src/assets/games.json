@@ -747,6 +747,15 @@
     "thumbnail": ""
   },
   {
+    "id": "slime-volley",
+    "name": "Slime Volley",
+    "description": "Physics volleyball - outjump a slime rival to 7 points",
+    "category": "Sports",
+    "dir": "SlimeVolley",
+    "path": "games/SlimeVolley/index.html",
+    "thumbnail": "games/SlimeVolley/screenshot.png"
+  },
+  {
     "id": "snake",
     "name": "Snake",
     "description": "Classic snake game - eat food and grow longer",
