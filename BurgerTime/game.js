@@ -556,9 +556,14 @@ function drawChef() {
     ctx.fillRect(x - 8, y - 22, 16, 14);
     ctx.fillStyle = '#4d79c7';
     ctx.fillRect(x - 6, y - 15, 12, 7);
-    // arms
+    // arms — both raised while climbing, one swinging while walking
     ctx.fillStyle = '#e6ebf5';
-    ctx.fillRect(x + (chef.facing > 0 ? 8 : -11), y - 21, 3, 9);
+    if (chef.climbing) {
+        ctx.fillRect(x - 11, y - 26, 3, 9);
+        ctx.fillRect(x + 8, y - 26, 3, 9);
+    } else {
+        ctx.fillRect(x + (chef.facing > 0 ? 8 : -11), y - 21, 3, 9);
+    }
     // head
     ctx.fillStyle = '#f0c39a';
     ctx.fillRect(x - 6, y - 30, 12, 8);
