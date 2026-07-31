@@ -828,6 +828,15 @@
     "thumbnail": "games/Tetris/screenshot.png"
   },
   {
+    "id": "tower-defense",
+    "name": "Tower Defense",
+    "description": "Build and upgrade towers to stop ten waves of creeps",
+    "category": "Strategy",
+    "dir": "TowerDefense",
+    "path": "games/TowerDefense/index.html",
+    "thumbnail": "games/TowerDefense/screenshot.png"
+  },
+  {
     "id": "tower-of-hanoi",
     "name": "Tower of Hanoi",
     "description": "Logic puzzle - move disks to solve the tower",
