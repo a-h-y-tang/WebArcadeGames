@@ -486,6 +486,15 @@
     "thumbnail": ""
   },
   {
+    "id": "marble-shooter",
+    "name": "Marble Shooter",
+    "description": "Pop chains of marbles on a spiral track before they reach the pit",
+    "category": "Action",
+    "dir": "MarbleShooter",
+    "path": "games/MarbleShooter/index.html",
+    "thumbnail": "games/MarbleShooter/screenshot.png"
+  },
+  {
     "id": "mastermind",
     "name": "Mastermind",
     "description": "Guess the code with logical deduction",
