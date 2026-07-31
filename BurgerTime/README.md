@@ -29,6 +29,8 @@ Open `index.html` in any modern browser — no build step or server required.
   well-timed drop moves a whole stack toward the plate.
 - Ingredients that reach the plate are finished. Plate all sixteen and the level
   is cleared.
+- Enemies stand still for a moment when they arrive, so you always get a beat to
+  reposition after a level starts or a chef is lost.
 - Touching an enemy costs a chef; you have three. Positions reset but the
   burgers you have already assembled stay put.
 - Pepper freezes any enemy in the cloud for four seconds — you get five shakers

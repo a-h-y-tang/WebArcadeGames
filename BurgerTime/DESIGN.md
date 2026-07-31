@@ -44,7 +44,10 @@ drop** — the column shifts down as a unit rather than collapsing onto the plat
 in one go. Ingredients that reach the plate row stack there and are finished:
 they can no longer be stepped on or dropped.
 
-**Enemies.** Enemies walk toward the chef on their own floor; when the chef is
+**Enemies.** Enemies pause for 1.2 s (drawn faded) whenever they arrive — at the
+start of a level, after a squash, and after the chef loses a life — so the
+player always gets a breath before the chase resumes. After that they walk
+toward the chef on their own floor; when the chef is
 on a different floor, they head for the nearest ladder that leads in the right
 direction and climb it. Touching an unfrozen enemy costs a chef; the board keeps
 its state but the chef and all enemies return to their starting spots and the
@@ -65,7 +68,7 @@ level 1000. The best score is kept in `localStorage` under `burgertime-best`.
 | Input | Action |
 |---|---|
 | `←` `→` / `A` `D` | Walk along a floor |
-| `↑` `↓` / `W` `S` | Climb a ladder (the chef snaps to a ladder within 14 px) |
+| `↑` `↓` / `W` `S` | Climb a ladder (the chef grabs a ladder within 20 px) |
 | `Space` | Throw pepper (starts the game when idle) |
 | `P` | Pause / resume |
 
@@ -119,3 +122,7 @@ simpler reading.
 - **Frozen enemies are walk-through**, matching the arcade behaviour of pepper
   neutralising a pursuer, and they award no points.
 - **No sound.** Consistent with the rest of the repo.
+- **Difficulty tuning.** Enemies start at 46 px/s against the chef's 115 px/s
+  and gain 9 px/s per level up to 110; two enemies on level 1, rising to five.
+  A scripted flee-and-walk bot plates most of a level under those numbers,
+  which was the bar used for "hard but fair".

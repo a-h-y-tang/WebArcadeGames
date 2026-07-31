@@ -42,13 +42,15 @@ const CHEF_W = 22;
 const CHEF_H = 30;
 const CHEF_SPEED = 115;              // px/s, walking and climbing
 const CHEF_START = { x: 320, floor: 4 };
-const CLIMB_SNAP = 14;               // how close to a ladder the chef must be
+// Grab range for a ladder. The rails are 20 px apart, so anything that visually
+// overlaps the ladder counts — a tighter window makes climbing fiddly.
+const CLIMB_SNAP = 20;
 const INVULN = 1.5;                  // seconds of grace after losing a life
 
 // --- Enemies ---
 const ENEMY_W = 22;
 const ENEMY_H = 26;
-const ENEMY_BASE = 52;               // px/s on level 1
+const ENEMY_BASE = 46;               // px/s on level 1
 const ENEMY_STEP = 9;                // px/s added per level
 const ENEMY_MAX_SPEED = 110;
 const ENEMY_KINDS = ['hotdog', 'egg', 'pickle'];
@@ -59,6 +61,7 @@ const SPAWNS = [
     { x: LADDER_X[3], floor: PLATE_FLOOR },
 ];
 const RESPAWN_DELAY = 3;             // seconds before a squashed enemy returns
+const ENEMY_HOLD = 1.2;              // seconds an arriving enemy waits before hunting
 const MAX_ENEMIES = 5;
 
 // --- Pepper ---
@@ -339,13 +342,14 @@ function squashEnemiesUnder(p) {
 // Enemies
 // ---------------------------------------------------------------------------
 
-function spawnEnemy(x, floor, kind) {
+function spawnEnemy(x, floor, kind, hold) {
     const e = {
         x,
         y: FLOORS[floor],
         floor,
         kind: kind || ENEMY_KINDS[enemies.length % ENEMY_KINDS.length],
         stun: 0,
+        hold: hold || 0,
         climbing: false,
         fromFloor: floor,
         targetFloor: floor,
@@ -360,7 +364,7 @@ function spawnWave() {
     respawns.length = 0;
     for (let i = 0; i < enemyCount(); i++) {
         const spot = SPAWNS[i % SPAWNS.length];
-        spawnEnemy(spot.x, spot.floor, ENEMY_KINDS[i % ENEMY_KINDS.length]);
+        spawnEnemy(spot.x, spot.floor, ENEMY_KINDS[i % ENEMY_KINDS.length], ENEMY_HOLD);
     }
 }
 
@@ -377,6 +381,12 @@ function chefFloorForChase() {
 function enemyStep(e, dt) {
     if (e.stun > 0) {
         e.stun = Math.max(0, e.stun - dt);
+        return;
+    }
+    // Freshly placed enemies pause a moment so the chef always gets a breath
+    // after a spawn, a squash or losing a life.
+    if (e.hold > 0) {
+        e.hold = Math.max(0, e.hold - dt);
         return;
     }
     const dist = enemySpeed() * dt;
@@ -434,7 +444,7 @@ function checkEnemyCollisions() {
 // ---------------------------------------------------------------------------
 
 function firePepper() {
-    if (state !== 'running' && state !== 'idle') return false;
+    if (state !== 'running') return false;
     if (peppers <= 0) return false;
     peppers -= 1;
     clouds.push({
@@ -478,6 +488,7 @@ function resetPositions() {
         e.fromFloor = spot.floor;
         e.targetFloor = spot.floor;
         e.stun = 0;
+        e.hold = ENEMY_HOLD;
     });
 }
 
@@ -542,7 +553,7 @@ function step(dt) {
             respawns.splice(i, 1);
             if (enemies.length < MAX_ENEMIES) {
                 const spot = SPAWNS[enemies.length % SPAWNS.length];
-                spawnEnemy(spot.x, spot.floor);
+                spawnEnemy(spot.x, spot.floor, null, ENEMY_HOLD);
             }
         }
     }
@@ -568,6 +579,7 @@ function startGame() {
     respawns.length = 0;
     state = 'running';
     overlay.classList.remove('visible');
+    showBanner('LEVEL 1');
     updateHud();
 }
 
@@ -674,10 +686,23 @@ function drawPiece(p) {
     }
 }
 
+// How high above the girder something standing at (x, floor) is drawn — anyone
+// on a resting ingredient or a plated stack stands on top of it.
+function standOffset(x, floor) {
+    if (floor < 0) return 0;
+    let lift = 0;
+    for (const p of pieces) {
+        if (p.falling || p.floor !== floor) continue;
+        if (Math.abs(x - p.x) > PIECE_W / 2) continue;
+        lift = Math.max(lift, p.onPlate ? FLOORS[PLATE_FLOOR] - p.y + PIECE_H : PIECE_H - 2);
+    }
+    return lift;
+}
+
 function drawChef() {
     if (chef.invuln > 0 && Math.floor(chef.invuln * 12) % 2 === 0) return;
     const x = chef.x;
-    const y = chef.y;
+    const y = chef.y - (chef.climbing ? 0 : standOffset(chef.x, chef.floor));
     const bob = Math.floor(chef.walkPhase / 9) % 2 === 0 ? 0 : 1;
 
     ctx.fillStyle = '#2f3d68';           // legs
@@ -702,8 +727,10 @@ const ENEMY_COLORS = {
 
 function drawEnemy(e) {
     const [body, trim] = ENEMY_COLORS[e.kind] || ENEMY_COLORS.hotdog;
+    ctx.save();
+    if (e.hold > 0) ctx.globalAlpha = 0.45 + 0.25 * Math.sin(e.hold * 12);
     const x = e.x;
-    const y = e.y;
+    const y = e.y - (e.climbing ? 0 : standOffset(e.x, e.floor));
     const bob = Math.floor(e.walkPhase / 9) % 2 === 0 ? 0 : 1;
 
     ctx.fillStyle = e.stun > 0 ? '#7fb0d8' : body;
@@ -720,6 +747,7 @@ function drawEnemy(e) {
         ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
         ctx.fillRect(x - 2, y - ENEMY_H - 8, 4, 4);
     }
+    ctx.restore();
 }
 
 function drawClouds() {
