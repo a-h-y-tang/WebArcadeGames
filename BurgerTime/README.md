@@ -3,8 +3,9 @@
 A platform-and-ladder arcade game, built with plain HTML5 canvas and JavaScript
 — no build step, no dependencies. You're a chef loose in a kitchen made of
 girders and ladders. Walk the full length of an ingredient to knock it down onto
-the one below; knock the whole burger onto the plate, three burgers to a level,
-while hot dogs, eggs and pickles chase you around the kitchen.
+whatever is below it; keep at it until the whole burger reaches the plate, three
+burgers to a level, while hot dogs, eggs and pickles chase you around the
+kitchen.
 
 Inspired by the 1982 Data East classic.
 
@@ -24,9 +25,10 @@ Game**) to begin.
 
 - Each ingredient is four paces wide. You have to walk across **all four** to
   knock it loose — half a pass just leaves a dent.
-- A falling ingredient sweeps along everything it lands on, so treading on an
-  untouched **top bun** sends the entire burger down to the plate in one run.
-  Ingredients that come to rest part-way down have to be trodden on again.
+- A falling ingredient sweeps along everything directly beneath it and the whole
+  pile settles on the first clear girder — so the more of a burger you can line
+  up in a column first, the further one pass takes it. No burger goes all the
+  way down in a single run; each pile has to be trodden on again where it lands.
 - **Serve all three burgers** to clear the level. Every level after that has
   faster and more numerous enemies.
 - **Pepper** (Space) freezes anything in front of you for a few seconds — long

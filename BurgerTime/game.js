@@ -20,7 +20,7 @@ const CANVAS_H = ROWS * TILE;   // 480
 
 // Girder rows, top to bottom. The last one is the plate floor: ingredients that
 // reach it are served, and it doubles as the ground the chef walks on.
-const FLOOR_ROWS = [2, 5, 8, 11, 14];
+const FLOOR_ROWS = [2, 4, 6, 8, 10, 12, 14];
 const PLATE_FLOOR = FLOOR_ROWS.length - 1;
 
 // Ladder columns. Every ladder runs the full height of the kitchen, which
@@ -31,6 +31,17 @@ const LADDER_COLS = [0, 6, 12, 18];
 // stacks occupy columns 1-4, 7-10 and 13-16 — clear of every ladder.
 const STACK_COLS = [1, 7, 13];
 const PIECE_TYPES = ['bunTop', 'lettuce', 'patty', 'bunBottom'];
+
+// Which girder each ingredient of each burger starts on. There are six burger
+// girders for four ingredients, so every stack has gaps: a knocked-down piece
+// only sweeps up the ingredients directly beneath it and then comes to rest on
+// the first clear girder, and has to be trodden on again. That is what turns a
+// burger into several runs rather than one.
+const STACK_HOMES = [
+    [0, 1, 3, 4],
+    [0, 2, 3, 5],
+    [1, 2, 4, 5],
+];
 const PIECE_W = 4 * TILE;
 const PIECE_H = 12;
 
@@ -64,9 +75,9 @@ const LEVEL_BONUS = 1000;
 const CHEF_SPAWN = { x: 320, y: FLOOR_ROWS[PLATE_FLOOR] * TILE };
 const ENEMY_SPAWNS = [
     { x: LADDER_COLS[3] * TILE + TILE / 2, y: FLOOR_ROWS[1] * TILE },
-    { x: LADDER_COLS[0] * TILE + TILE / 2, y: FLOOR_ROWS[2] * TILE },
+    { x: LADDER_COLS[0] * TILE + TILE / 2, y: FLOOR_ROWS[3] * TILE },
     { x: LADDER_COLS[2] * TILE + TILE / 2, y: FLOOR_ROWS[0] * TILE },
-    { x: LADDER_COLS[1] * TILE + TILE / 2, y: FLOOR_ROWS[1] * TILE },
+    { x: LADDER_COLS[1] * TILE + TILE / 2, y: FLOOR_ROWS[4] * TILE },
 ];
 
 // --- DOM ---
@@ -130,13 +141,14 @@ function buildPieces() {
     pieces.length = 0;
     for (let s = 0; s < STACK_COLS.length; s++) {
         for (let t = 0; t < PIECE_TYPES.length; t++) {
+            const home = STACK_HOMES[s][t];
             pieces.push({
                 stack: s,
                 type: PIECE_TYPES[t],
-                home: t,
-                floor: t,
-                target: t,
-                y: floorY(t),
+                home,
+                floor: home,
+                target: home,
+                y: floorY(home),
                 state: 'rest',
                 segs: [false, false, false, false],
                 squashed: 0,
@@ -144,6 +156,11 @@ function buildPieces() {
             });
         }
     }
+}
+
+// The four ingredients of one burger, top bun first.
+function burger(stack) {
+    return pieces.filter((p) => p.stack === stack);
 }
 
 function pieceAt(stack, floor) {
@@ -284,6 +301,11 @@ function dropPiece(p) {
         q.target = target;
         q.squashed = 0;
         q.segs = [false, false, false, false];
+        // Take the piled-up drawing offset into the real position so the pieces
+        // fall as separate bodies. The lowest one then lands first and the
+        // burger rebuilds itself in the right order rather than in array order.
+        q.y -= q.pile * PIECE_H;
+        q.pile = 0;
     }
     score += DROP_POINTS;
     updateHud();

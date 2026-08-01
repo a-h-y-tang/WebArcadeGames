@@ -141,7 +141,7 @@ test.describe('Burger Time', () => {
             const { before, after } = await page.evaluate(() => {
                 startGame();
                 enemies.length = 0;
-                placeChef(300, floorY(4));
+                placeChef(300, floorY(PLATE_FLOOR));
                 const before = chef.x;
                 moveChef(1, 0);
                 for (let i = 0; i < 20; i++) step(0.016);
@@ -154,7 +154,7 @@ test.describe('Burger Time', () => {
             const { before, after } = await page.evaluate(() => {
                 startGame();
                 enemies.length = 0;
-                placeChef(300, floorY(4));
+                placeChef(300, floorY(PLATE_FLOOR));
                 const before = chef.x;
                 moveChef(-1, 0);
                 for (let i = 0; i < 20; i++) step(0.016);
@@ -167,7 +167,7 @@ test.describe('Burger Time', () => {
             const { left, right } = await page.evaluate(() => {
                 startGame();
                 enemies.length = 0;
-                placeChef(300, floorY(4));
+                placeChef(300, floorY(PLATE_FLOOR));
                 moveChef(-1, 0);
                 for (let i = 0; i < 600; i++) step(0.016);
                 const left = chef.x;
@@ -341,8 +341,7 @@ test.describe('Burger Time', () => {
             const both = await page.evaluate(() => {
                 startGame();
                 enemies.length = 0;
-                const top = pieceAt(0, 0);
-                const next = pieceAt(0, 1);
+                const [top, next] = burger(0);
                 dropPiece(top);
                 for (let i = 0; i < 40 && next.state === 'rest'; i++) step(0.016);
                 return next.state;
@@ -350,20 +349,37 @@ test.describe('Burger Time', () => {
             expect(both).not.toBe('rest');
         });
 
+        test('a dropped piece only sweeps along what is directly beneath it', async ({ page }) => {
+            const r = await page.evaluate(() => {
+                startGame();
+                enemies.length = 0;
+                const b = burger(0);            // homes: 0, 1, 3, 4
+                dropPiece(b[0]);
+                for (let i = 0; i < 300 && pieces.some((p) => p.state === 'fall'); i++) step(0.016);
+                return {
+                    floors: b.map((p) => p.floor),
+                    piles: [b[0].pile, b[1].pile],
+                    states: b.map((p) => p.state),
+                };
+            });
+            // top bun + lettuce sweep down together and pile up on the first
+            // clear girder; the patty and bottom bun below are untouched.
+            expect(r.floors).toEqual([2, 2, 3, 4]);
+            expect(r.piles.sort()).toEqual([0, 1]);
+            expect(r.states).toEqual(['rest', 'rest', 'rest', 'rest']);
+        });
+
         test('a piece rests on the next floor when nothing is there', async ({ page }) => {
             const result = await page.evaluate(() => {
                 startGame();
                 enemies.length = 0;
-                const bottom = pieceAt(0, 3);   // clear floor 3 of this stack first
-                dropPiece(bottom);
-                for (let i = 0; i < 200 && bottom.state !== 'plate'; i++) step(0.016);
-                const above = pieceAt(0, 2);
-                dropPiece(above);
-                for (let i = 0; i < 200 && above.state === 'fall'; i++) step(0.016);
-                return { state: above.state, floor: above.floor, y: above.y, expected: floorY(3) };
+                const bottomBun = burger(0)[3];  // home floor 4, floor 5 is clear
+                dropPiece(bottomBun);
+                for (let i = 0; i < 200 && bottomBun.state === 'fall'; i++) step(0.016);
+                return { state: bottomBun.state, floor: bottomBun.floor, y: bottomBun.y, expected: floorY(5) };
             });
             expect(result.state).toBe('rest');
-            expect(result.floor).toBe(3);
+            expect(result.floor).toBe(5);
             expect(result.y).toBeCloseTo(result.expected, 5);
         });
 
@@ -371,9 +387,11 @@ test.describe('Burger Time', () => {
             const s = await page.evaluate(() => {
                 startGame();
                 enemies.length = 0;
-                const p = pieceAt(0, 3);
-                dropPiece(p);
-                for (let i = 0; i < 200 && p.state !== 'plate'; i++) step(0.016);
+                const p = burger(0)[3];
+                for (let pass = 0; pass < 4 && p.state !== 'plate'; pass++) {
+                    dropPiece(p);
+                    for (let i = 0; i < 200 && p.state === 'fall'; i++) step(0.016);
+                }
                 return p.state;
             });
             expect(s).toBe('plate');
@@ -383,14 +401,11 @@ test.describe('Burger Time', () => {
             const clean = await page.evaluate(() => {
                 startGame();
                 enemies.length = 0;
-                const bottom = pieceAt(0, 3);
-                dropPiece(bottom);
-                for (let i = 0; i < 200 && bottom.state !== 'plate'; i++) step(0.016);
-                const above = pieceAt(0, 2);
-                above.segs = [true, true, true, true];
-                dropPiece(above);
-                for (let i = 0; i < 200 && above.state === 'fall'; i++) step(0.016);
-                return above.segs.every((s) => s === false);
+                const p = burger(0)[3];
+                p.segs = [true, true, true, true];
+                dropPiece(p);
+                for (let i = 0; i < 200 && p.state === 'fall'; i++) step(0.016);
+                return p.state === 'rest' && p.segs.every((s) => s === false);
             });
             expect(clean).toBe(true);
         });
@@ -427,9 +442,9 @@ test.describe('Burger Time', () => {
             const s = await page.evaluate(() => {
                 startGame();
                 enemies.length = 0;
-                placeChef(300, floorY(4));
+                placeChef(300, floorY(PLATE_FLOOR));
                 moveChef(1, 0);
-                const e = spawnEnemy(340, floorY(4));
+                const e = spawnEnemy(340, floorY(PLATE_FLOOR));
                 sprayPepper();
                 step(0.016);
                 return e.state;
@@ -441,9 +456,9 @@ test.describe('Burger Time', () => {
             const s = await page.evaluate(() => {
                 startGame();
                 enemies.length = 0;
-                placeChef(300, floorY(4));
+                placeChef(300, floorY(PLATE_FLOOR));
                 moveChef(1, 0);
-                const e = spawnEnemy(220, floorY(4));
+                const e = spawnEnemy(220, floorY(PLATE_FLOOR));
                 sprayPepper();
                 step(0.016);
                 return e.state;
@@ -455,14 +470,14 @@ test.describe('Burger Time', () => {
             const r = await page.evaluate(() => {
                 startGame();
                 enemies.length = 0;
-                placeChef(300, floorY(4));
+                placeChef(300, floorY(PLATE_FLOOR));
                 moveChef(1, 0);
-                const e = spawnEnemy(340, floorY(4));
+                const e = spawnEnemy(340, floorY(PLATE_FLOOR));
                 sprayPepper();
                 step(0.016);
                 const x0 = e.x;
                 moveChef(0, 0);
-                placeChef(340, floorY(4)); // stand right on top of it
+                placeChef(340, floorY(PLATE_FLOOR)); // stand right on top of it
                 for (let i = 0; i < 30; i++) step(0.016);
                 return { moved: Math.abs(e.x - x0), lives };
             });
@@ -474,9 +489,9 @@ test.describe('Burger Time', () => {
             const s = await page.evaluate(() => {
                 startGame();
                 enemies.length = 0;
-                placeChef(300, floorY(4));
+                placeChef(300, floorY(PLATE_FLOOR));
                 moveChef(1, 0);
-                const e = spawnEnemy(340, floorY(4));
+                const e = spawnEnemy(340, floorY(PLATE_FLOOR));
                 sprayPepper();
                 step(0.016);
                 moveChef(0, 0);
@@ -496,8 +511,8 @@ test.describe('Burger Time', () => {
             const { before, after } = await page.evaluate(() => {
                 startGame();
                 enemies.length = 0;
-                placeChef(100, floorY(4));
-                const e = spawnEnemy(500, floorY(4));
+                placeChef(100, floorY(PLATE_FLOOR));
+                const e = spawnEnemy(500, floorY(PLATE_FLOOR));
                 const before = e.x;
                 for (let i = 0; i < 30; i++) step(0.016);
                 return { before, after: e.x };
@@ -509,7 +524,7 @@ test.describe('Burger Time', () => {
             const { before, after } = await page.evaluate(() => {
                 startGame();
                 enemies.length = 0;
-                placeChef(ladderX(1), floorY(4));
+                placeChef(ladderX(1), floorY(PLATE_FLOOR));
                 const e = spawnEnemy(ladderX(1), floorY(2));
                 const before = e.y;
                 for (let i = 0; i < 30; i++) step(0.016);
@@ -538,8 +553,8 @@ test.describe('Burger Time', () => {
             const r = await page.evaluate(() => {
                 startGame();
                 enemies.length = 0;
-                placeChef(300, floorY(4));
-                spawnEnemy(302, floorY(4));
+                placeChef(300, floorY(PLATE_FLOOR));
+                spawnEnemy(302, floorY(PLATE_FLOOR));
                 step(0.016);
                 return { lives, x: chef.x, spawnX: CHEF_SPAWN.x };
             });
@@ -553,8 +568,8 @@ test.describe('Burger Time', () => {
                 enemies.length = 0;
                 lives = 1;
                 enemies.length = 0;
-                placeChef(300, floorY(4));
-                spawnEnemy(302, floorY(4));
+                placeChef(300, floorY(PLATE_FLOOR));
+                spawnEnemy(302, floorY(PLATE_FLOOR));
                 step(0.016);
                 return state;
             });
@@ -596,10 +611,10 @@ test.describe('Burger Time', () => {
             const lives = await page.evaluate(() => {
                 startGame();
                 enemies.length = 0;
-                const e = spawnEnemy(300, floorY(4));
+                const e = spawnEnemy(300, floorY(PLATE_FLOOR));
                 e.state = 'dead';
                 e.timer = 99;
-                placeChef(300, floorY(4));
+                placeChef(300, floorY(PLATE_FLOOR));
                 for (let i = 0; i < 20; i++) step(0.016);
                 return lives;
             });
@@ -611,31 +626,46 @@ test.describe('Burger Time', () => {
     // Level completion
     // -----------------------------------------------------------------------
     test.describe('levels', () => {
-        test('dropping the top bun cascades a whole burger onto the plate', async ({ page }) => {
+        test('repeated passes serve a whole burger onto the plate', async ({ page }) => {
             const r = await page.evaluate(() => {
                 startGame();
                 enemies.length = 0;
-                dropPiece(pieceAt(0, 0));
-                for (let i = 0; i < 300 && pieces.some((p) => p.state === 'fall'); i++) step(0.016);
-                const stack0 = pieces.filter((p) => p.stack === 0);
+                let passes = 0;
+                while (passes < 10 && burger(0).some((p) => p.state !== 'plate')) {
+                    const resting = burger(0).filter((p) => p.state === 'rest');
+                    if (!resting.length) break;
+                    dropPiece(resting.reduce((a, b) => (a.floor <= b.floor ? a : b)));
+                    passes += 1;
+                    for (let i = 0; i < 300 && pieces.some((p) => p.state === 'fall'); i++) step(0.016);
+                }
                 const others = pieces.filter((p) => p.stack !== 0);
                 return {
-                    plated: stack0.every((p) => p.state === 'plate'),
+                    passes,
+                    plated: burger(0).every((p) => p.state === 'plate'),
+                    piles: burger(0).map((p) => p.pile),
                     untouched: others.every((p) => p.state === 'rest' && p.floor === p.home),
-                    piles: stack0.map((p) => p.pile).sort(),
                 };
             });
             expect(r.plated).toBe(true);
+            expect(r.passes).toBeGreaterThan(1);      // one run is never enough
+            // burger(0) is top bun first, so a correctly assembled burger has
+            // the top bun highest on the plate and the bottom bun underneath.
+            expect(r.piles).toEqual([3, 2, 1, 0]);
             expect(r.untouched).toBe(true);
-            expect(r.piles).toEqual([0, 1, 2, 3]);   // served neatly stacked
         });
 
         test('serving every burger completes the level', async ({ page }) => {
             const r = await page.evaluate(() => {
                 startGame();
                 enemies.length = 0;
-                for (let s = 0; s < STACK_COLS.length; s++) dropPiece(pieceAt(s, 0));
-                for (let i = 0; i < 400 && level === 1; i++) step(0.016);
+                for (let pass = 0; pass < 40 && level === 1; pass++) {
+                    const resting = pieces.filter((p) => p.state === 'rest');
+                    if (!resting.length) break;
+                    dropPiece(resting.reduce((a, b) => (a.floor <= b.floor ? a : b)));
+                    for (let i = 0; i < 300 && level === 1 && pieces.some((p) => p.state === 'fall'); i++) {
+                        step(0.016);
+                    }
+                }
                 return { level, resting: pieces.every((p) => p.state === 'rest') };
             });
             expect(r.level).toBe(2);
@@ -787,7 +817,7 @@ test.describe('Burger Time', () => {
     // -----------------------------------------------------------------------
     test.describe('keyboard', () => {
         test('ArrowRight walks the chef right', async ({ page }) => {
-            await page.evaluate(() => { startGame(); placeChef(300, floorY(4)); });
+            await page.evaluate(() => { startGame(); placeChef(300, floorY(PLATE_FLOOR)); });
             const before = await page.evaluate(() => chef.x);
             await page.keyboard.down('ArrowRight');
             await page.evaluate(() => { for (let i = 0; i < 20; i++) step(0.016); });
@@ -796,7 +826,7 @@ test.describe('Burger Time', () => {
         });
 
         test('releasing the key stops the chef', async ({ page }) => {
-            await page.evaluate(() => { startGame(); placeChef(300, floorY(4)); });
+            await page.evaluate(() => { startGame(); placeChef(300, floorY(PLATE_FLOOR)); });
             await page.keyboard.down('ArrowRight');
             await page.evaluate(() => { for (let i = 0; i < 10; i++) step(0.016); });
             await page.keyboard.up('ArrowRight');

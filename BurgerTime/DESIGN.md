@@ -5,9 +5,10 @@
 Burger Time is a platform-and-ladder arcade game inspired by the 1982 Data East
 classic. A chef is loose in a diner kitchen built from girders and ladders, with
 three unfinished burgers spread across it — every ingredient sits on its own
-girder. Walking the full width of an ingredient knocks it down onto the one
-below, which knocks *that* one down, and so on until the whole burger lands on
-the plate at the bottom. Assemble all three burgers to clear the level.
+girder. Walking the full width of an ingredient knocks it down onto whatever is
+directly beneath it, sweeping those pieces along too, until the pile settles on
+the first clear girder. Keep treading and the burger works its way down to the
+plate. Assemble all three to clear the level.
 
 Hot dogs, eggs and pickles chase the chef the whole time. Touching one costs a
 life. The chef's only weapon is a shaker of pepper: a cloud of it freezes
@@ -16,23 +17,30 @@ it outright — and is worth far more than the pepper.
 
 ## Mechanics
 
-- **The kitchen** is a 640×480 canvas on a 20×15 grid of 32px tiles. Five
-  girders (`FLOOR_ROWS`) run the full width; the lowest is the plate floor, which
-  doubles as the ground the chef walks on. Four ladders (`LADDER_COLS`) run the
-  full height and connect every girder.
+- **The kitchen** is a 640×480 canvas on a 20×15 grid of 32px tiles. Seven
+  girders (`FLOOR_ROWS`) run the full width, 64px apart; the lowest is the plate
+  floor, which doubles as the ground the chef walks on. Four ladders
+  (`LADDER_COLS`) run the full height and connect every girder.
 - **Burgers.** Three stacks (`STACK_COLS`), each holding a top bun, lettuce, a
-  patty and a bottom bun. Each piece is four tiles (128px) wide and starts on its
-  own girder, top to bottom.
+  patty and a bottom bun. Each piece is four tiles (128px) wide. `STACK_HOMES`
+  says which girder each ingredient starts on: six burger girders for four
+  ingredients means every stack has gaps in it, and the three stacks are
+  staggered differently.
 - **Treading.** A piece is divided into four segments. Standing on a segment
   marks it; when all four have been trodden the piece drops. Segments are marked
   only while the chef is standing on that piece's own girder, so walking
   underneath one is safe.
-- **Falling and cascading.** A dropped piece heads for the first girder below it
-  that holds no ingredient. Every pile it would pass through is swept along, so
-  treading on the top bun of an untouched burger sends all four ingredients to
-  the plate in one run. The destination is resolved *once*, when the piece is
-  knocked loose, which keeps the fall independent of the order pieces happen to
-  be updated in.
+- **Falling and sweeping.** A dropped piece heads for the first girder below it
+  that holds no ingredient, sweeping along every pile it passes through on the
+  way. The gaps in `STACK_HOMES` are what stop that from being a single run:
+  a burger takes two or three passes to walk down to the plate, and the pile
+  has to be trodden on again each time it settles. The destination is resolved
+  *once*, when the piece is knocked loose, which keeps the fall independent of
+  the order pieces happen to be updated in.
+- **Piling.** Ingredients resting on the same girder form a pile and move as one.
+  A pile is drawn stacked (`pile` is the drawing offset), and when it drops each
+  piece takes that offset into its real position, so the lowest lands first and
+  the burger reassembles in the right order instead of in array order.
 - **Plating.** Reaching the plate floor serves the piece; it stacks up neatly on
   the plate. When every piece of every burger is served the level is complete.
 - **Enemies** walk girders and climb ladders toward the chef. On the chef's own
@@ -117,8 +125,10 @@ taken each time and recorded here:
   floor. The arcade original uses partial ladders, which makes level design a
   reachability puzzle; full-height ladders guarantee every ingredient is
   reachable and every enemy path exists, with no solvability analysis needed.
-- **One fixed level layout.** Later levels reuse the same kitchen with faster and
-  more numerous enemies, rather than introducing new girder arrangements.
+- **One fixed level layout.** Later levels reuse the same kitchen and the same
+  `STACK_HOMES` with faster and more numerous enemies, rather than introducing
+  new girder arrangements. The layout is hand-picked so no burger falls in one
+  pass and no two stacks play the same.
 - **Enemies do not ride ingredients.** In the arcade, an enemy standing on a
   falling ingredient rides it down and pushes it an extra level. Here a caught
   enemy is simply squashed. Squash scoring still rewards chaining several
