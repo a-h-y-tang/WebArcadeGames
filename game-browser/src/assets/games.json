@@ -108,6 +108,15 @@
     "thumbnail": ""
   },
   {
+    "id": "burger-chef",
+    "name": "Burger Chef",
+    "description": "Walk burger ingredients down five floors while dodging the food chasing you",
+    "category": "Action",
+    "dir": "BurgerChef",
+    "path": "games/BurgerChef/index.html",
+    "thumbnail": "games/BurgerChef/screenshot.png"
+  },
+  {
     "id": "calcudoku",
     "name": "Calcudoku",
     "description": "Math logic puzzle with grid and operations",

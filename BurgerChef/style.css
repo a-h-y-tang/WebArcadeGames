@@ -1,0 +1,154 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at 50% 0%, #24304a 0%, #0b1020 60%);
+    color: #e2e8f0;
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+
+.game {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.hud {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.hud h1 {
+    margin: 0;
+    font-size: 26px;
+    letter-spacing: 5px;
+    color: #fbbf24;
+    text-shadow: 0 2px 0 #92400e;
+}
+
+.stats {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 62px;
+    padding: 6px 10px;
+    background: #111a2e;
+    border: 1px solid #26334f;
+    border-radius: 8px;
+}
+
+.stat .label {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #8ea0c0;
+}
+
+.stat span:last-child {
+    font-size: 19px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.board-wrap {
+    position: relative;
+    line-height: 0;
+}
+
+canvas {
+    display: block;
+    border: 2px solid #26334f;
+    border-radius: 10px;
+    background: #0b1020;
+    max-width: 100%;
+}
+
+.overlay {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border-radius: 10px;
+    background: rgba(11, 16, 32, 0.88);
+    line-height: 1.4;
+    text-align: center;
+    padding: 20px;
+}
+
+.overlay.visible {
+    display: flex;
+}
+
+.overlay h2 {
+    margin: 0;
+    font-size: 32px;
+    letter-spacing: 3px;
+    color: #fbbf24;
+}
+
+.overlay p {
+    margin: 0;
+    color: #b8c4dc;
+}
+
+.overlay button {
+    margin-top: 6px;
+    padding: 10px 22px;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #0b1020;
+    background: #fbbf24;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.overlay button:hover {
+    background: #fcd34d;
+}
+
+.help {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    justify-content: center;
+    font-size: 12px;
+    color: #8ea0c0;
+}
+
+.help p {
+    margin: 0;
+}
+
+kbd {
+    display: inline-block;
+    padding: 1px 6px;
+    background: #111a2e;
+    border: 1px solid #33415c;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 11px;
+    color: #cbd5e1;
+}
