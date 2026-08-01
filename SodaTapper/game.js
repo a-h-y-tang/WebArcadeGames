@@ -223,6 +223,10 @@ function nextLevel() {
 
 function loseLife() {
     lives--;
+    // Everyone swept off the bars still owes the level a drink, so put them
+    // back in the queue — otherwise a level whose customers had all walked on
+    // could never be cleared.
+    spawnedThisLevel = servedThisLevel;
     resetRound();
     updateHud();
     if (lives <= 0) endGame();

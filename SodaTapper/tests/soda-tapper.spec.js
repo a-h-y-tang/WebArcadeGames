@@ -567,6 +567,51 @@ test.describe('Soda Tapper', () => {
     // Levels
     // -----------------------------------------------------------------------
     test.describe('levels', () => {
+        test('customers cleared by a lost life are queued to walk on again', async ({ page }) => {
+            const r = await page.evaluate(() => {
+                startGame();
+                // the level has already sent everyone it was going to send
+                spawnedThisLevel = customersThisLevel();
+                servedThisLevel = 0;
+                customers.length = 0;
+                spawnCustomer(0, TAP_X - 10);
+                for (let i = 0; i < 30; i++) step(0.016);
+                return { spawned: spawnedThisLevel, served: servedThisLevel, lives };
+            });
+            expect(r.lives).toBe(2);
+            expect(r.spawned).toBe(r.served);
+        });
+
+        test('the level keeps sending customers after a lost life', async ({ page }) => {
+            const seen = await page.evaluate(() => {
+                startGame();
+                spawnedThisLevel = customersThisLevel();
+                servedThisLevel = 0;
+                customers.length = 0;
+                spawnCustomer(0, TAP_X - 10);
+                let seen = 0;
+                for (let i = 0; i < 400; i++) {
+                    step(0.016);
+                    seen = Math.max(seen, customers.length);
+                }
+                return seen;
+            });
+            expect(seen).toBeGreaterThan(0);
+        });
+
+        test('a level is never cleared while customers are still owed', async ({ page }) => {
+            const r = await page.evaluate(() => {
+                startGame();
+                spawnedThisLevel = customersThisLevel();
+                servedThisLevel = 0;
+                customers.length = 0;
+                spawnCustomer(0, TAP_X - 10);
+                for (let i = 0; i < 60; i++) step(0.016);
+                return level;
+            });
+            expect(r).toBe(1);
+        });
+
         test('serving everyone in the level advances to the next one', async ({ page }) => {
             const r = await page.evaluate(() => {
                 startGame();
