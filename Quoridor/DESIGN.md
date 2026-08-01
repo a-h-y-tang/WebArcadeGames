@@ -99,9 +99,11 @@ start to appear. In practice the computer spends its whole stock over the course
 of a game and plays a genuine race rather than a procession.
 
 Because every candidate fence is filtered through `canPlaceWall` first, the AI
-inherits the "never seal anyone in" guarantee for free. With 128 candidate
-fences and a handful of 81-node searches each, a turn costs well under a
-millisecond.
+inherits the "never seal anyone in" guarantee for free. Scoring 128 candidate
+fences means a few hundred searches over an 81-cell graph per turn, measured at
+roughly 5–8 ms (35 ms on the very first call, before the JIT warms up) — far
+inside the deliberate 420 ms "thinking" pause, so the opponent always feels
+instant.
 
 The AI is fully deterministic — no randomness anywhere in the game — which is
 what lets the test suite play whole games and assert on the outcome.
