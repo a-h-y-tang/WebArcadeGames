@@ -293,7 +293,10 @@ test.describe('Kakuro', () => {
             const res = await page.evaluate(() => ({
                 filled: grid[2][2].value, state, selected, elapsed,
             }));
-            expect(res).toEqual({ filled: 0, state: 'playing', selected: null, elapsed: 0 });
+            expect(res).toMatchObject({ filled: 0, state: 'playing', selected: null });
+            // The clock restarts from zero and is immediately running again, so a
+            // frame may already have been counted by the time it is read back.
+            expect(res.elapsed).toBeLessThan(0.5);
         });
 
         test('restart button works', async ({ page }) => {
