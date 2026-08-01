@@ -56,13 +56,35 @@ A falling ingredient drops toward the next floor down:
 - **Plate** — it is added to the plate stack and is out of play. Completing all
   four pieces of a burger is +1000 points.
 
+### Walking and climbing
+
+The chef walks at 90 px/s and climbs at 130 px/s — comfortably faster than the
+food, which is what makes escaping possible. Climbing only starts within 8 px of
+a ladder, and the chef snaps to a floor the moment he crosses its surface.
+
+Letting go of the climb key mid-ladder leaves the chef hanging there, and a
+sideways press does nothing — the arcade behaviour. The one concession: if he
+stopped within 14 px of a floor, pressing left or right pulls him on to it
+rather than stranding him a few pixels short of a platform he is visibly
+standing next to.
+
 ### Enemies
 
 Three enemies (a hot dog, an egg and a pickle) walk the floors and climb the
 ladders toward the chef using a greedy chase: climb when standing on a ladder
-whose direction takes them nearer the chef's floor, otherwise walk toward him.
-Touching an enemy costs a life; the chef and all enemies reset to their spawn
-points and the burgers stay exactly where they were.
+whose direction takes them nearer the chef's floor, otherwise head for the
+ladder that is both close by and on the way. Touching an enemy costs a life; the
+chef and all enemies reset to their spawn points and the burgers stay exactly
+where they were.
+
+Three details keep the chase from being an unfair dogpile, all of them from the
+original's feel rather than its code:
+
+- Enemies **enter one at a time** (1.8 s apart at the start of a level, 1.2 s
+  after a death) instead of all three converging at once.
+- Each enemy **pauses for 0.3 s** when it steps off a ladder on to a floor.
+- Each enemy carries a small **ladder preference of its own**, so the pack
+  spreads across the board instead of queueing on a single rung.
 
 Enemies are removed two ways:
 

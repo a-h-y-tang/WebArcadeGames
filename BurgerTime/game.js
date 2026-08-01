@@ -27,6 +27,7 @@ var ING_H = 12;
 
 var LADDER_W = 22;
 var LADDER_SNAP = 8;
+var LADDER_STEP_OFF = 14;
 var FLOOR_H = 6;
 
 var CHEF_HW = 9;
@@ -44,6 +45,9 @@ var PEPPER_LIFE = 0.4;
 var STUN_TIME = 4;
 var RESPAWN_TIME = 5;
 var DYING_TIME = 1.2;
+var ENTRY_STAGGER = 1.8;
+var JUNCTION_PAUSE = 0.3;
+var RESPAWN_STAGGER = 1.2;
 var CLEAR_TIME = 2;
 
 var KINDS = ['bunTop', 'lettuce', 'patty', 'bunBottom'];
@@ -121,6 +125,15 @@ function ladderAt(x) {
     return -1;
 }
 
+/** The floor whose surface is closest to the given y. */
+function nearestFloor(y) {
+    var best = 0;
+    for (var f = 1; f < FLOOR_COUNT; f++) {
+        if (Math.abs(y - FLOOR_Y[f]) < Math.abs(y - FLOOR_Y[best])) best = f;
+    }
+    return best;
+}
+
 /**
  * The floor crossed while moving vertically from `prev` to `next`, or -1.
  * `dir` is -1 for up, 1 for down.
@@ -178,7 +191,7 @@ function enemyCountFor(lvl) {
 }
 
 function enemySpeedFor(lvl) {
-    return 55 + (lvl - 1) * 8;
+    return 50 + (lvl - 1) * 8;
 }
 
 function buildEnemies() {
@@ -197,10 +210,18 @@ function buildEnemies() {
             dead: false,
             respawnTimer: 0,
             stunTimer: 0,
+            waitTimer: 0,
+            ladderBias: (i % LADDER_X.length) * 22,
             speed: enemySpeedFor(level),
         });
         placeAtSpawn(enemies[i]);
     }
+    staggerEnemies(ENTRY_STAGGER);
+}
+
+/** Hold the enemies back briefly so they trickle in instead of swarming. */
+function staggerEnemies(gap) {
+    for (var i = 0; i < enemies.length; i++) enemies[i].waitTimer = i * gap;
 }
 
 function placeAtSpawn(e) {
@@ -213,6 +234,7 @@ function placeAtSpawn(e) {
     e.dead = false;
     e.respawnTimer = 0;
     e.stunTimer = 0;
+    e.waitTimer = 0;
     e.dir = spawn.x < CANVAS_W / 2 ? 1 : -1;
 }
 
@@ -292,6 +314,7 @@ function tick(dt) {
             else {
                 resetChef();
                 for (var i = 0; i < enemies.length; i++) placeAtSpawn(enemies[i]);
+                staggerEnemies(RESPAWN_STAGGER);
                 pepper.active = false;
                 clearInput();
                 state = 'running';
@@ -346,7 +369,16 @@ function updateChef(dt) {
         }
     }
 
-    if (chef.climbing) return;
+    // Stepping off a ladder: if the player stopped climbing within a whisker of
+    // a floor, let a sideways press pull him on to it rather than stranding him.
+    if (chef.climbing) {
+        if (!input.left && !input.right) return;
+        var near = nearestFloor(chef.y);
+        if (Math.abs(chef.y - FLOOR_Y[near]) > LADDER_STEP_OFF) return;
+        chef.y = FLOOR_Y[near];
+        chef.floor = near;
+        chef.climbing = false;
+    }
 
     if (input.left) {
         chef.x = clamp(chef.x - step, CHEF_HW, CANVAS_W - CHEF_HW);
@@ -483,6 +515,10 @@ function updateEnemies(dt) {
             if (e.respawnTimer <= 0) respawnEnemy(e);
             continue;
         }
+        if (e.waitTimer > 0) {
+            e.waitTimer = Math.max(0, e.waitTimer - dt);
+            continue;
+        }
         if (e.stunTimer > 0) {
             e.stunTimer = Math.max(0, e.stunTimer - dt);
             continue;
@@ -502,6 +538,7 @@ function moveEnemy(e, dt) {
             e.y = FLOOR_Y[crossed];
             e.floor = crossed;
             e.climbing = false;
+            e.waitTimer = JUNCTION_PAUSE; // a beat at the junction, as in the arcade
         } else {
             e.y = next;
         }
@@ -519,7 +556,7 @@ function moveEnemy(e, dt) {
             e.climbDir = vdir;
             return;
         }
-        var goal = bestLadderX(e.x);
+        var goal = bestLadderX(e);
         e.dir = goal > e.x ? 1 : -1;
         e.x = clamp(e.x + e.dir * step, ENEMY_HW, CANVAS_W - ENEMY_HW);
         return;
@@ -530,13 +567,18 @@ function moveEnemy(e, dt) {
     e.x = clamp(e.x + e.dir * step, ENEMY_HW, CANVAS_W - ENEMY_HW);
 }
 
-/** The ladder that is both close by and roughly on the way to the chef. */
-function bestLadderX(x) {
+/**
+ * The ladder that is close by and roughly on the way to the chef. Each enemy
+ * carries its own bias so the pack spreads across different ladders instead of
+ * queueing up on one.
+ */
+function bestLadderX(e) {
     var bestX = LADDER_X[0];
     var bestCost = Infinity;
     for (var i = 0; i < LADDER_X.length; i++) {
         var lx = LADDER_X[i];
-        var cost = Math.abs(x - lx) + 0.35 * Math.abs(chef.x - lx);
+        var cost = Math.abs(e.x - lx) + 0.35 * Math.abs(chef.x - lx);
+        if (i === e.spawn % LADDER_X.length) cost -= e.ladderBias;
         if (cost < bestCost) {
             bestCost = cost;
             bestX = lx;

@@ -292,6 +292,22 @@ test.describe('Burger Time', () => {
             expect(x).toBe(300);
         });
 
+        test('stopping just past a floor lets the chef step off the ladder', async ({ page }) => {
+            await startAlone(page);
+            const r = await page.evaluate(() => {
+                chef.x = LADDER_X[2];
+                chef.y = FLOOR_Y[3] - 12; // stopped a whisker above floor 3
+                chef.floor = 3;
+                chef.climbing = true;
+                input.right = true;
+                tick(0.05);
+                return { y: chef.y, climbing: chef.climbing, x: chef.x };
+            });
+            expect(r.climbing).toBe(false);
+            expect(r.y).toBe(265);
+            expect(r.x).toBeGreaterThan(300);
+        });
+
         test('arrow keys and WASD both drive the input flags', async ({ page }) => {
             await startAlone(page);
             await page.keyboard.down('ArrowRight');
@@ -510,6 +526,33 @@ test.describe('Burger Time', () => {
             });
             expect(r.wasDead).toBe(true);
             expect(r.dead).toBe(false);
+        });
+
+        test('enemies enter one at a time instead of swarming', async ({ page }) => {
+            await start(page);
+            const waits = await page.evaluate(() => enemies.map((e) => e.waitTimer));
+            expect(waits[0]).toBe(0);
+            for (let i = 1; i < waits.length; i++) expect(waits[i]).toBeGreaterThan(waits[i - 1]);
+        });
+
+        test('a waiting enemy holds still until its turn', async ({ page }) => {
+            await start(page);
+            const r = await page.evaluate(() => {
+                const e = enemies[1];
+                e.x = 100;
+                e.y = FLOOR_Y[5];
+                e.floor = 5;
+                chef.x = 500;
+                chef.y = FLOOR_Y[5];
+                chef.floor = 5;
+                const start = e.x;
+                for (let i = 0; i < 10; i++) tick(0.05); // still inside its wait
+                const held = e.x - start;
+                for (let i = 0; i < 60; i++) tick(0.05);
+                return { held, moved: e.x - start };
+            });
+            expect(r.held).toBe(0);
+            expect(r.moved).toBeGreaterThan(0);
         });
 
         test('enemies chase the chef along a floor', async ({ page }) => {
