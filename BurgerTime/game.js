@@ -730,13 +730,23 @@ function drawChef() {
     ctx.fillRect(x + 2, y - 6 - bob, 4, 6);
 }
 
+// ctx.roundRect is recent enough that a square-cornered fallback is worth
+// keeping — a missing method would otherwise throw on every frame.
+function fillRounded(x, y, w, h, r) {
+    if (typeof ctx.roundRect === 'function') {
+        ctx.beginPath();
+        ctx.roundRect(x, y, w, h, r);
+        ctx.fill();
+    } else {
+        ctx.fillRect(x, y, w, h);
+    }
+}
+
 function drawEnemy(e) {
     const kind = ENEMY_KINDS[e.kind];
     const bob = Math.floor(e.walk / 10) % 2 === 0 ? 1 : 0;
     ctx.fillStyle = e.stun > 0 ? '#8fa2c4' : kind.color;
-    ctx.beginPath();
-    ctx.roundRect(e.x - 9, e.y - 18, 18, 18, 6);
-    ctx.fill();
+    fillRounded(e.x - 9, e.y - 18, 18, 18, 6);
     ctx.fillStyle = e.stun > 0 ? '#6a7ea3' : kind.edge;
     ctx.fillRect(e.x - 9, e.y - 4 + bob, 6, 4);
     ctx.fillRect(e.x + 3, e.y - 4 - bob, 6, 4);
