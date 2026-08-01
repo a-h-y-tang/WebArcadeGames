@@ -609,13 +609,25 @@ function hideOverlay() {
 // ---------------------------------------------------------------------------
 
 function drawBoard() {
-    ctx.fillStyle = '#0b0705';
+    // Kitchen backdrop: a dark tiled wall behind the girders.
+    const grad = ctx.createLinearGradient(0, 0, 0, CANVAS_H);
+    grad.addColorStop(0, '#150e09');
+    grad.addColorStop(1, '#0a0705');
+    ctx.fillStyle = grad;
     ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.025)';
+    ctx.lineWidth = 1;
+    for (let x = TILE; x < CANVAS_W; x += TILE) {
+        ctx.beginPath();
+        ctx.moveTo(x + 0.5, 0);
+        ctx.lineTo(x + 0.5, CANVAS_H);
+        ctx.stroke();
+    }
 
-    // Ladders behind the platforms.
+    // Ladders, behind the platforms.
     for (const c of LADDER_COLS) {
         const x = ladderX(c);
-        ctx.strokeStyle = '#5c6b7a';
+        ctx.strokeStyle = '#6d7f92';
         ctx.lineWidth = 2;
         ctx.beginPath();
         ctx.moveTo(x - 9, MIN_Y);
@@ -623,87 +635,173 @@ function drawBoard() {
         ctx.moveTo(x + 9, MIN_Y);
         ctx.lineTo(x + 9, MAX_Y);
         ctx.stroke();
-        for (let y = MIN_Y + 8; y < MAX_Y; y += 12) {
+        ctx.strokeStyle = '#4f5f70';
+        for (let y = MIN_Y + 9; y < MAX_Y; y += 12) {
             ctx.beginPath();
-            ctx.moveTo(x - 9, y);
-            ctx.lineTo(x + 9, y);
+            ctx.moveTo(x - 9, y + 0.5);
+            ctx.lineTo(x + 9, y + 0.5);
             ctx.stroke();
         }
     }
 
-    // Platforms.
+    // Platforms: a bright walk line over a riveted girder.
     for (const r of FLOOR_ROWS) {
         const y = floorY(r);
-        ctx.fillStyle = '#8fa3b8';
+        ctx.fillStyle = '#9fb4c9';
         ctx.fillRect(0, y, CANVAS_W, 4);
-        ctx.fillStyle = '#4c5c6e';
-        ctx.fillRect(0, y + 4, CANVAS_W, 3);
+        ctx.fillStyle = '#48586a';
+        ctx.fillRect(0, y + 4, CANVAS_W, 4);
+        ctx.fillStyle = '#66788c';
+        for (let x = 6; x < CANVAS_W; x += 20) ctx.fillRect(x, y + 5, 3, 2);
     }
 
     // Plates.
     for (let b = 0; b < BURGER_COLS.length; b++) {
-        const x = BURGER_COLS[b] * TILE;
-        const y = floorY(PLATE_ROW) + 14;
-        ctx.fillStyle = '#e9e2d4';
+        const cx = BURGER_COLS[b] * TILE + INGREDIENT_W / 2;
+        const y = floorY(PLATE_ROW) + 11;
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
         ctx.beginPath();
-        ctx.ellipse(x + INGREDIENT_W / 2, y, INGREDIENT_W / 2 + 6, 8, 0, 0, Math.PI * 2);
+        ctx.ellipse(cx, y + 6, INGREDIENT_W / 2 + 10, 7, 0, 0, Math.PI * 2);
         ctx.fill();
-        ctx.fillStyle = '#c3b9a5';
-        ctx.fillRect(x - 4, y, INGREDIENT_W + 8, 4);
+        ctx.fillStyle = '#efe8da';
+        ctx.beginPath();
+        ctx.ellipse(cx, y, INGREDIENT_W / 2 + 8, 9, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#cbc0aa';
+        ctx.beginPath();
+        ctx.ellipse(cx, y - 2, INGREDIENT_W / 2 - 2, 5, 0, 0, Math.PI * 2);
+        ctx.fill();
     }
+}
+
+// Each ingredient is drawn tile by tile, so a trodden tile can sag on its own.
+function drawIngredientTile(g, s, x, top) {
+    const h = INGREDIENT_H;
+    ctx.fillStyle = g.color;
+
+    if (g.type === 'topbun') {
+        ctx.beginPath();
+        ctx.moveTo(x, top + h);
+        ctx.lineTo(x, top + 4);
+        ctx.quadraticCurveTo(x + TILE / 2, top - 4, x + TILE, top + 4);
+        ctx.lineTo(x + TILE, top + h);
+        ctx.closePath();
+        ctx.fill();
+        ctx.fillStyle = '#f6e3bf';   // sesame seeds
+        ctx.fillRect(x + 7, top + 2, 3, 2);
+        ctx.fillRect(x + 18, top + 4, 3, 2);
+    } else if (g.type === 'lettuce') {
+        ctx.fillRect(x, top + 3, TILE, h - 3);
+        ctx.beginPath();
+        for (let i = 0; i < 3; i++) {
+            ctx.moveTo(x + i * 10, top + 4);
+            ctx.arc(x + i * 10 + 5, top + 4, 5, Math.PI, 0);
+        }
+        ctx.fill();
+    } else if (g.type === 'patty') {
+        ctx.fillRect(x, top + 1, TILE, h - 1);
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
+        ctx.fillRect(x + 5, top + 4, 6, 2);
+        ctx.fillRect(x + 18, top + 6, 5, 2);
+    } else {
+        ctx.fillRect(x, top + 2, TILE, h - 2);
+    }
+
+    ctx.fillStyle = g.edge;
+    ctx.fillRect(x, top + h - 3, TILE, 3);
 }
 
 function drawIngredient(g) {
     const x = g.col * TILE;
     for (let s = 0; s < INGREDIENT_TILES; s++) {
-        // A trodden segment sags a little, the way the arcade sprite does.
+        // A trodden tile sags, the way the arcade sprite does.
         const sag = g.state === 'rest' && !g.onPlate && g.segs[s] ? 4 : 0;
-        const top = g.y - INGREDIENT_H + sag;
-        ctx.fillStyle = g.color;
-        ctx.fillRect(x + s * TILE, top, TILE, INGREDIENT_H);
-        ctx.fillStyle = g.edge;
-        ctx.fillRect(x + s * TILE, top + INGREDIENT_H - 3, TILE, 3);
-        ctx.strokeStyle = 'rgba(0,0,0,0.35)';
-        ctx.lineWidth = 1;
-        ctx.strokeRect(x + s * TILE + 0.5, top + 0.5, TILE - 1, INGREDIENT_H - 1);
+        drawIngredientTile(g, s, x + s * TILE, g.y - INGREDIENT_H + sag);
     }
 }
 
 function drawChef() {
     const x = chef.x, y = chef.y;
-    const bob = Math.sin(chef.walkPhase) * 1.5;
+    const stride = Math.sin(chef.walkPhase) * 3;
+    const bob = Math.abs(Math.sin(chef.walkPhase)) * -1.5;
     // Legs.
     ctx.fillStyle = '#2f3b52';
-    ctx.fillRect(x - 7, y - 8, 5, 8);
-    ctx.fillRect(x + 2, y - 8, 5, 8);
-    // Body.
-    ctx.fillStyle = '#f3e7d8';
+    ctx.fillRect(x - 7 + stride, y - 8, 5, 8);
+    ctx.fillRect(x + 2 - stride, y - 8, 5, 8);
+    ctx.fillStyle = '#1a2233';
+    ctx.fillRect(x - 8 + stride, y - 2, 7, 2);
+    ctx.fillRect(x + 1 - stride, y - 2, 7, 2);
+    // Apron / body.
+    ctx.fillStyle = '#f6ecdd';
     ctx.fillRect(x - CHEF_W / 2, y - CHEF_H + bob, CHEF_W, CHEF_H - 8);
     ctx.fillStyle = '#e2574c';
-    ctx.fillRect(x - CHEF_W / 2, y - CHEF_H + 10 + bob, CHEF_W, 3);
+    ctx.fillRect(x - CHEF_W / 2, y - CHEF_H + 11 + bob, CHEF_W, 3);
+    ctx.fillStyle = '#d9cdb8';
+    ctx.fillRect(x - 3, y - CHEF_H + 2 + bob, 6, CHEF_H - 10);
     // Head and hat.
     ctx.fillStyle = '#f0c9a0';
     ctx.fillRect(x - 6, y - CHEF_H - 7 + bob, 12, 8);
+    ctx.fillStyle = '#151515';
+    ctx.fillRect(x + (chef.facing > 0 ? 1 : -4), y - CHEF_H - 5 + bob, 3, 3);
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(x - 8, y - CHEF_H - 15 + bob, 16, 8);
-    // Nose points where the chef faces.
-    ctx.fillStyle = '#c98f63';
-    ctx.fillRect(x + (chef.facing > 0 ? 5 : -8), y - CHEF_H - 4 + bob, 3, 3);
+    ctx.beginPath();
+    ctx.arc(x - 4, y - CHEF_H - 15 + bob, 5, Math.PI, 0);
+    ctx.arc(x + 4, y - CHEF_H - 15 + bob, 5, Math.PI, 0);
+    ctx.fill();
+    // Pepper shaker, held in the leading hand.
+    ctx.fillStyle = '#b8c2cc';
+    ctx.fillRect(x + (chef.facing > 0 ? 8 : -12), y - CHEF_H + 6 + bob, 4, 7);
 }
 
 function drawEnemy(e) {
     const x = e.x, y = e.y;
-    ctx.fillStyle = e.stun > 0 ? '#7c8794' : e.color;
-    ctx.fillRect(x - ENEMY_W / 2, y - ENEMY_H, ENEMY_W, ENEMY_H);
-    ctx.fillStyle = e.edge;
-    ctx.fillRect(x - ENEMY_W / 2, y - 4, ENEMY_W, 4);
+    const body = e.stun > 0 ? '#8d97a4' : e.color;
+    const edge = e.stun > 0 ? '#6a737e' : e.edge;
+
+    if (e.type === 'hotdog') {
+        ctx.fillStyle = edge;   // bun
+        ctx.fillRect(x - ENEMY_W / 2, y - ENEMY_H + 6, ENEMY_W, ENEMY_H - 6);
+        ctx.fillStyle = body;
+        ctx.beginPath();
+        ctx.ellipse(x, y - ENEMY_H + 9, ENEMY_W / 2, 7, 0, 0, Math.PI * 2);
+        ctx.fill();
+    } else if (e.type === 'egg') {
+        ctx.fillStyle = body;
+        ctx.beginPath();
+        ctx.ellipse(x, y - ENEMY_H / 2, ENEMY_W / 2 + 2, ENEMY_H / 2, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = e.stun > 0 ? '#c9a63f' : '#f5b73d';
+        ctx.beginPath();
+        ctx.arc(x, y - ENEMY_H / 2, 6, 0, Math.PI * 2);
+        ctx.fill();
+    } else {
+        ctx.fillStyle = body;
+        ctx.beginPath();
+        ctx.ellipse(x, y - ENEMY_H / 2, ENEMY_W / 2, ENEMY_H / 2, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = edge;
+        for (let i = 0; i < 4; i++) {
+            ctx.fillRect(x - 6 + (i % 2) * 8, y - ENEMY_H + 6 + i * 4, 3, 3);
+        }
+    }
+
+    // Eyes and little feet.
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(x - 7, y - ENEMY_H + 5, 5, 5);
+    ctx.fillRect(x + 2, y - ENEMY_H + 5, 5, 5);
     ctx.fillStyle = '#101010';
-    ctx.fillRect(x - 6, y - ENEMY_H + 5, 4, 4);
-    ctx.fillRect(x + 2, y - ENEMY_H + 5, 4, 4);
+    ctx.fillRect(x - 6, y - ENEMY_H + 6, 3, 3);
+    ctx.fillRect(x + 3, y - ENEMY_H + 6, 3, 3);
+    ctx.fillStyle = edge;
+    ctx.fillRect(x - 8, y - 3, 6, 3);
+    ctx.fillRect(x + 2, y - 3, 6, 3);
+
     if (e.stun > 0) {
         ctx.strokeStyle = '#f2b134';
+        ctx.lineWidth = 2;
         ctx.beginPath();
-        ctx.arc(x, y - ENEMY_H - 6, 5, 0, Math.PI * 2);
+        ctx.arc(x, y - ENEMY_H - 7, 5, 0, Math.PI * 2);
         ctx.stroke();
     }
 }
@@ -711,10 +809,10 @@ function drawEnemy(e) {
 function drawClouds() {
     for (const c of clouds) {
         ctx.globalAlpha = Math.max(0, Math.min(1, c.life / PEPPER_LIFE));
-        ctx.fillStyle = '#d9d2c4';
+        ctx.fillStyle = '#ded6c6';
         for (let i = 0; i < 5; i++) {
             ctx.beginPath();
-            ctx.arc(c.x + (i + 0.5) * (c.w / 5), c.y + c.h / 2 + (i % 2 ? -4 : 4), 7, 0, Math.PI * 2);
+            ctx.arc(c.x + (i + 0.5) * (c.w / 5), c.y + c.h / 2 + (i % 2 ? -5 : 5), 7, 0, Math.PI * 2);
             ctx.fill();
         }
         ctx.globalAlpha = 1;
@@ -730,8 +828,13 @@ function draw() {
 
     // Remaining lives as little chef hats in the corner.
     for (let i = 0; i < lives; i++) {
+        const x = 12 + i * 18;
         ctx.fillStyle = '#ffffff';
-        ctx.fillRect(8 + i * 16, 8, 12, 8);
+        ctx.fillRect(x - 6, 12, 12, 6);
+        ctx.beginPath();
+        ctx.arc(x - 3, 12, 4, Math.PI, 0);
+        ctx.arc(x + 3, 12, 4, Math.PI, 0);
+        ctx.fill();
     }
 }
 
