@@ -9,6 +9,15 @@
     "thumbnail": ""
   },
   {
+    "id": "eight-ball-pool",
+    "name": "8-Ball Pool",
+    "description": "Two-player pool - pot your group, then sink the 8-ball",
+    "category": "Sports",
+    "dir": "EightBall",
+    "path": "games/EightBall/index.html",
+    "thumbnail": "games/EightBall/screenshot.png"
+  },
+  {
     "id": "air-hockey",
     "name": "Air Hockey",
     "description": "Fast-paced air hockey match against the computer",

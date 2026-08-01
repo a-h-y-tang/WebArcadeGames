@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>8-Ball Pool</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="game">
+        <header class="hud">
+            <h1>8-BALL POOL</h1>
+            <div class="players">
+                <div class="player active" id="player1">
+                    <span class="who">Player 1</span>
+                    <span class="group" id="p1-group">Open</span>
+                    <span class="count"><span id="p1-count">7</span> left</span>
+                </div>
+                <div class="player" id="player2">
+                    <span class="who">Player 2</span>
+                    <span class="group" id="p2-group">Open</span>
+                    <span class="count"><span id="p2-count">7</span> left</span>
+                </div>
+            </div>
+        </header>
+
+        <p id="message" class="message">Break to open the table</p>
+
+        <div class="board-wrap">
+            <canvas id="canvas" width="800" height="440"></canvas>
+            <div id="overlay" class="overlay visible">
+                <h2 id="overlay-title">8-BALL POOL</h2>
+                <p id="overlay-sub">Press Space or click Start to play</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+
+        <div class="power">
+            <span class="power-label">Power</span>
+            <div class="power-bar"><div id="power-fill" class="power-fill"></div></div>
+        </div>
+
+        <div class="help">
+            <p>move the mouse to aim</p>
+            <p>hold <kbd>click</kbd> or <kbd>Space</kbd> to charge, release to shoot</p>
+            <p><kbd>←</kbd> <kbd>→</kbd> fine aim &middot; <kbd>↑</kbd> <kbd>↓</kbd> power</p>
+            <p><kbd>R</kbd> new rack</p>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>
