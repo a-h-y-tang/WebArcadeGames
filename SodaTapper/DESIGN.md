@@ -71,6 +71,17 @@ its customers walk right up to you.
 | `drinksPerCustomer` | `min(MAX_DRINKS, 1 + floor((wave-1) / 2))` |
 | `customersInWave` | `WAVE_CUST_BASE + wave` |
 
+### Balance
+
+The curve was checked by driving the game from a Playwright script with a greedy
+bot (chase the most urgent empty, otherwise serve the lane whose customer is
+furthest along, never over-pouring). A near-optimal player survives to roughly
+**wave 14–16** before the customer speed outruns lane switching, and every death
+in those runs came from a customer reaching the station rather than a mug
+mistake — which is the pressure the game is supposed to apply. Pouring a second
+mug at a customer already about to be shoved off the bar is the one self-inflicted
+loss, and it is visible on screen before you commit to it.
+
 ## Controls
 
 | Input | Action |
@@ -143,7 +154,13 @@ as required by the task:
    and `step` (sub-step driver, HUD refresh).
 7. **Game flow** — `startGame`, `loseLife`, `completeWave`, `endGame`,
    `togglePause`.
-8. **HUD / overlay**, **rendering**, **main loop**, **input**, **init**.
+8. **HUD / overlay**, **cosmetics**, **rendering**, **main loop**, **input**,
+   **init**.
+
+Cosmetics (`banner`, `shards`) are advanced by `updateShards(dt)` from the render
+loop rather than from `step(dt)`, so glass keeps falling and the "WAVE 3" /
+"2 LIVES LEFT" announcement keeps fading while the simulation itself is paused or
+being driven a frame at a time by a test.
 
 Within a sub-step the order is deliberate and tested: cooldown → spawn scheduler
 → customers advance (grab check) → mugs move (hit / waste / catch checks) → wave

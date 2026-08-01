@@ -389,6 +389,12 @@ test.describe('Soda Tapper', () => {
             expect(after).toEqual({ customers: 0, mugs: 0, spawned: 0, wave: 1 });
         });
 
+        test('losing a life is announced on the canvas', async ({ page }) => {
+            await startManual(page);
+            const text = await page.evaluate(() => { loseLife(); return banner.text; });
+            expect(text).toMatch(/life|lives/i);
+        });
+
         test('the HUD shows the remaining lives', async ({ page }) => {
             await startManual(page);
             await page.evaluate(() => { loseLife(); step(0); });
@@ -462,6 +468,31 @@ test.describe('Soda Tapper', () => {
                 return mugs.length;
             });
             expect(mugsLeft).toBe(0);
+        });
+
+        test('clearing a wave announces the next one on the canvas', async ({ page }) => {
+            await startManual(page);
+            const text = await page.evaluate(() => {
+                spawnedThisWave = customersInWave();
+                customers.length = 0;
+                step(0.05);
+                return banner.text;
+            });
+            expect(text).toMatch(/wave 2/i);
+        });
+
+        test('the banner fades away', async ({ page }) => {
+            await startManual(page);
+            const life = await page.evaluate(() => {
+                spawnedThisWave = customersInWave();
+                customers.length = 0;
+                step(0.05);
+                const before = banner.life;
+                updateShards(BANNER_TIME);
+                return { before, after: banner.life };
+            });
+            expect(life.before).toBeGreaterThan(0);
+            expect(life.after).toBeLessThanOrEqual(0);
         });
 
         test('later waves are harder and pay more', async ({ page }) => {

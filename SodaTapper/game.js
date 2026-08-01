@@ -38,6 +38,7 @@ const PUSH_BACK = 96;         // px a customer is knocked back per drink
 const EMPTY_SPEED = 210;      // px/s of a returning empty mug
 const SERVE_COOLDOWN = 0.22;  // s between pours
 const SPAWN_GRACE = 1.2;      // s of calm after a life loss or a cleared wave
+const BANNER_TIME = 1.4;      // s an on-canvas announcement stays up
 
 // --- Difficulty scaling (all pure functions of `wave`) ---
 const MUG_BASE = 280, MUG_STEP = 6;                        // full-mug speed
@@ -95,7 +96,8 @@ let autoStep = true; // the rAF loop advances the sim (tests switch this off)
 const player = { lane: 1 };
 const customers = [];
 const mugs = [];
-const shards = []; // purely cosmetic broken-glass particles
+const shards = [];                              // broken-glass particles
+const banner = { text: '', life: 0 };           // transient on-canvas announcement
 
 // ---------------------------------------------------------------------------
 // Difficulty helpers
@@ -291,6 +293,8 @@ function startGame() {
     customers.length = 0;
     mugs.length = 0;
     shards.length = 0;
+    banner.text = '';
+    banner.life = 0;
     player.lane = 1;
     hideOverlay();
     updateHud();
@@ -307,6 +311,8 @@ function loseLife() {
     if (lives <= 0) {
         lives = 0;
         endGame();
+    } else {
+        announce(lives === 1 ? 'Last life!' : lives + ' lives left');
     }
     updateHud();
 }
@@ -318,6 +324,7 @@ function completeWave() {
     spawnedThisWave = 0;
     spawnTimer = SPAWN_GRACE;
     mugs.length = 0;
+    announce('Wave ' + wave);
     updateHud();
 }
 
@@ -369,6 +376,11 @@ function hideOverlay() {
 // Broken-glass particles (cosmetic only — never touches game state)
 // ---------------------------------------------------------------------------
 
+function announce(text) {
+    banner.text = text;
+    banner.life = BANNER_TIME;
+}
+
 function spawnShards(x, y) {
     for (let i = 0; i < 10; i++) {
         shards.push({
@@ -380,7 +392,10 @@ function spawnShards(x, y) {
     }
 }
 
+// Cosmetic timers, advanced by the render loop rather than the simulation so
+// they keep running (and fading) while the world itself is paused.
 function updateShards(dt) {
+    if (banner.life > 0) banner.life -= dt;
     for (let i = shards.length - 1; i >= 0; i--) {
         const s = shards[i];
         s.x += s.vx * dt;
@@ -530,6 +545,17 @@ function draw() {
         ctx.fillRect(s.x - 2, s.y - 2, 4, 4);
     }
     ctx.globalAlpha = 1;
+
+    // Transient announcement (wave cleared / life lost).
+    if (banner.life > 0) {
+        ctx.globalAlpha = Math.min(1, banner.life / 0.4);
+        ctx.fillStyle = '#f4a734';
+        ctx.font = 'bold 34px "Segoe UI", system-ui, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(banner.text.toUpperCase(), CANVAS_W / 2, CANVAS_H / 2 + 10);
+        ctx.textAlign = 'left';
+        ctx.globalAlpha = 1;
+    }
 
     // Wave progress strip along the bottom.
     if (state !== 'idle') {
