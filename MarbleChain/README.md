@@ -53,7 +53,7 @@ Your best score is kept in the browser's `localStorage`.
 | `style.css` | Presentation |
 | `game.js` | Track, chain, turret, matching, rendering |
 | `DESIGN.md` | How the code works and why |
-| `tests/marble-chain.spec.js` | Playwright suite (68 tests) |
+| `tests/marble-chain.spec.js` | Playwright suite (69 tests) |
 
 ## Tests
 

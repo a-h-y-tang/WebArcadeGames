@@ -47,7 +47,8 @@ whenever the tail has travelled at least `SPACING` clear of the spawner.
 `fire()` spawns a projectile along the aim angle and promotes the preview.
 A short cooldown stops a single keypress from emptying the turret. Turret
 colours are drawn from the colours actually present in the chain, so the player
-is never handed a dead colour.
+is never handed a dead colour — and if a burst wipes the last marble of a
+colour the player is already holding, that marble is re-rolled on the spot.
 
 **Insertion.** A projectile that overlaps a chain marble is removed and inserted
 into the queue. Which side it lands on is decided by projecting the offset onto
@@ -92,7 +93,9 @@ simulate frames deterministically and never race the wall clock.
 Key seams used by the tests: `startGame()`, `step(dt)`, `pathPoint(d)`,
 `pathTangent(d)`, `setChain(colors, frontDist)`, `insertBall(index, color)`,
 `resolveMatches(index)`, `spawnProjectile(p)`, `fire()`, `setAimDir(d)`,
-`aimAt(x, y)`, `swapNext()`, `togglePause()`, `endGame()`.
+`aimAt(x, y)`, `swapNext()`, `reloadTurret()`, `chainSpeed()`, `colorCount()`,
+`togglePause()`, `endGame()`, plus the `balls`, `projectiles` and `shooter`
+state and the `score` / `level` / `combo` / `spawnRemaining` counters.
 
 ## Assumptions
 

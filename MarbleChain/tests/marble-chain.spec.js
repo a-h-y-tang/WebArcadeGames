@@ -658,6 +658,21 @@ test.describe('Marble Chain', () => {
             expect(r.late).toBeLessThanOrEqual(r.palette);
         });
 
+        test('a level-up banner is shown and then fades', async ({ page }) => {
+            const r = await page.evaluate(() => {
+                startGame();
+                spawnRemaining = 0;
+                balls.length = 0;
+                step(0.016);
+                const shown = { text: banner, time: bannerTime };
+                for (let i = 0; i < 200; i++) step(0.016);
+                return { shown, after: bannerTime };
+            });
+            expect(r.shown.text).toContain('2');
+            expect(r.shown.time).toBeGreaterThan(0);
+            expect(r.after).toBe(0);
+        });
+
         test('the level indicator updates in the HUD', async ({ page }) => {
             await page.evaluate(() => {
                 startGame();

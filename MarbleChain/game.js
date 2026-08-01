@@ -61,6 +61,7 @@ const btnStart = document.getElementById('btn-start');
 // --- State ---
 // state: 'idle' | 'running' | 'paused' | 'over'
 let state, score, best, level, combo, spawnRemaining, reloadTimer, aimDir, flash;
+let banner = '', bannerTime = 0;
 const balls = [];              // front (largest dist) first
 const projectiles = [];
 const particles = [];
@@ -227,10 +228,20 @@ function resolveMatches(index) {
     combo++;
     score += n * POINTS_PER_BALL * combo;
     for (let i = s; i <= e; i++) burstParticles(balls[i]);
-    if (combo > 1) flash = 0.5;
+    flash = combo > 1 ? 0.7 : 0.35;
     balls.splice(s, n);
+    refreshDeadColors();
     updateHud();
     return n;
+}
+
+// A burst can wipe the last marble of a colour off the track, leaving the
+// turret holding something unplayable. Re-roll anything that just died.
+function refreshDeadColors() {
+    if (!balls.length) return;
+    const live = colorsOnTrack();
+    if (!live.includes(shooter.color)) shooter.color = pickColor();
+    if (!live.includes(shooter.next)) shooter.next = pickColor();
 }
 
 function advanceChain(dt) {
@@ -386,6 +397,7 @@ function startGame() {
     combo = 0;
     aimDir = 0;
     flash = 0;
+    bannerTime = 0;
     particles.length = 0;
     setupLevel();
     hideOverlay();
@@ -394,6 +406,8 @@ function startGame() {
 function nextLevel() {
     level++;
     score += LEVEL_BONUS * (level - 1);
+    banner = `LEVEL ${level}`;
+    bannerTime = 1.8;
     setupLevel();
 }
 
@@ -430,6 +444,7 @@ function step(dt) {
     reloadTimer = Math.max(0, reloadTimer - dt);
     if (aimDir) shooter.angle = clampAim(shooter.angle + aimDir * AIM_SPEED * dt);
     if (flash > 0) flash = Math.max(0, flash - dt);
+    if (bannerTime > 0) bannerTime = Math.max(0, bannerTime - dt);
 
     updateProjectiles(dt);
     advanceChain(dt);
@@ -640,12 +655,27 @@ function draw() {
     drawShooter();
     drawParticles();
 
-    if (combo > 1 && state === 'running') {
+    // Tied to the burst flash so it fades out instead of lingering until the
+    // next shot resets the counter.
+    if (combo > 1 && flash > 0 && state === 'running') {
         ctx.fillStyle = '#4dd6c1';
         ctx.font = 'bold 20px "Segoe UI", sans-serif';
         ctx.textAlign = 'center';
         ctx.fillText(`COMBO ×${combo}`, CANVAS_W / 2, 40);
         ctx.textAlign = 'left';
+    }
+
+    if (bannerTime > 0 && state === 'running') {
+        ctx.save();
+        ctx.globalAlpha = Math.min(1, bannerTime / 0.6);
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#4dd6c1';
+        ctx.font = 'bold 34px "Segoe UI", sans-serif';
+        ctx.fillText(banner, CANVAS_W / 2, CANVAS_H / 2 - 40);
+        ctx.fillStyle = 'rgba(200, 220, 240, 0.75)';
+        ctx.font = '14px "Segoe UI", sans-serif';
+        ctx.fillText(`${spawnRemaining} marbles incoming`, CANVAS_W / 2, CANVAS_H / 2 - 14);
+        ctx.restore();
     }
 }
 
