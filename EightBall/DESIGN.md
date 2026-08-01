@@ -63,6 +63,8 @@ Each sub-step:
 1. **Integrate** — `x += vx*dt`, `y += vy*dt` for every un-potted ball.
 2. **Cushions** — a ball crossing a rail is pushed back inside and its normal
    velocity component is negated and scaled by `CUSHION_RESTITUTION` (0.92).
+   The rails are checked a second time after the collision pass, since a
+   collision can nudge a ball into one.
 3. **Ball collisions** — equal-mass elastic response along the contact normal.
    Overlap is resolved positionally first (each ball backs off half the
    penetration) so balls never stick together. Tangential velocity is
@@ -106,7 +108,11 @@ Outcomes:
 | Legal shot with no pot | turn passes |
 
 After a scratch the cue ball is returned to the table and the incoming player
-places it (`ballInHand`).
+places it (`ballInHand`). The re-spot uses `findFreeSpot()`, which starts at the
+head spot and searches outward in widening rings for a position that is inside
+the play area, clear of every other ball and clear of the pockets — otherwise
+the cue ball can land inside a resting ball. `placeCue()` validates the player's
+own click against the same rule and refuses an illegal spot.
 
 ## Controls
 
@@ -142,8 +148,8 @@ in the HUD rather than canvas drawing, so tests can assert on them as text.
 
 ## Testing
 
-`EightBall/tests/eightball.spec.js` drives the page through Playwright. To keep
-simulations deterministic the render loop only advances the world while the
+`EightBall/tests/eightball.spec.js` drives the page through Playwright (52
+tests). To keep simulations deterministic the render loop only advances while the
 global `autoStep` is `true`; tests set `autoStep = false` and then call
 `step(dt)` or the `settle()` helper (which runs fixed 1/240 s steps until the
 table stops or a step budget is exhausted) directly. Rules tests set up exact
@@ -164,7 +170,9 @@ each time.
 3. **Simplified break.** Real 8-ball requires four balls to reach a rail on the
    break; that rule is not enforced. Any break that contacts the rack is legal.
 4. **Ball in hand is anywhere.** After a foul the cue ball may be placed
-   anywhere on the table, not just behind the head string.
+   anywhere on the table, not just behind the head string. Placing it is
+   mandatory: `shoot()` refuses while `ballInHand` is set, so the incoming
+   player always clicks a spot first (clicking the re-spot itself is fine).
 5. **No called shots or called pockets.** Any pot of your own group counts.
 6. **No spin.** English/draw/follow are not modelled; collisions are pure
    equal-mass elastic responses, which keeps the physics deterministic and

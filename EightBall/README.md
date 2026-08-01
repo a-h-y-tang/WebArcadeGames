@@ -52,7 +52,7 @@ or cushion in its path.
 | `style.css` | table-side styling |
 | `game.js` | physics, rules engine and rendering |
 | `DESIGN.md` | how the code works, and the assumptions behind it |
-| `tests/eightball.spec.js` | Playwright suite (50 tests) |
+| `tests/eightball.spec.js` | Playwright suite (52 tests) |
 
 ## Tests
 

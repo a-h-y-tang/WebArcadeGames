@@ -170,7 +170,12 @@ function subStep(dt) {
         for (let j = i + 1; j < live.length; j++) collide(live[i], live[j]);
     }
 
-    for (const b of live) checkPockets(b);
+    // A collision can nudge a ball into a rail, so the cushions get a second
+    // look before anything is checked against the pockets.
+    for (const b of live) {
+        bounceCushions(b);
+        checkPockets(b);
+    }
 
     const decay = Math.pow(FRICTION_DECAY, dt);
     for (const b of live) {
@@ -293,15 +298,33 @@ function shoot() {
     return true;
 }
 
-function placeCue(x, y) {
-    if (!ballInHand || state === 'rolling' || state === 'over') return false;
+function isFreeSpot(x, y) {
     if (x < LEFT + BALL_R || x > RIGHT - BALL_R) return false;
     if (y < TOP + BALL_R || y > BOTTOM - BALL_R) return false;
-    const clash = balls.some(
-        (b) => !b.potted && b.n !== 0 && Math.hypot(b.x - x, b.y - y) < BALL_R * 2
-    );
-    if (clash) return false;
-    if (pockets.some((p) => Math.hypot(p.x - x, p.y - y) <= POCKET_R)) return false;
+    if (balls.some((b) => !b.potted && b.n !== 0 && Math.hypot(b.x - x, b.y - y) < BALL_R * 2)) {
+        return false;
+    }
+    return !pockets.some((p) => Math.hypot(p.x - x, p.y - y) <= POCKET_R);
+}
+
+// Nearest clear spot to (x, y), searched in widening rings. Used to re-spot the
+// cue ball after a scratch so it never lands inside a resting ball.
+function findFreeSpot(x, y) {
+    if (isFreeSpot(x, y)) return { x, y };
+    for (let r = BALL_R; r <= Math.max(CANVAS_W, CANVAS_H); r += BALL_R) {
+        for (let i = 0; i < 24; i++) {
+            const a = (i / 24) * Math.PI * 2;
+            const px = x + Math.cos(a) * r;
+            const py = y + Math.sin(a) * r;
+            if (isFreeSpot(px, py)) return { x: px, y: py };
+        }
+    }
+    return { x, y };
+}
+
+function placeCue(x, y) {
+    if (!ballInHand || state === 'rolling' || state === 'over') return false;
+    if (!isFreeSpot(x, y)) return false;
 
     const cue = getBall(0);
     cue.x = x;
@@ -369,8 +392,9 @@ function resolveShot() {
         cue.potted = false;
         cue.vx = 0;
         cue.vy = 0;
-        cue.x = LEFT + (RIGHT - LEFT) * 0.25;
-        cue.y = CANVAS_H / 2;
+        const spot = findFreeSpot(LEFT + (RIGHT - LEFT) * 0.25, CANVAS_H / 2);
+        cue.x = spot.x;
+        cue.y = spot.y;
     }
 
     let keepsTable = false;

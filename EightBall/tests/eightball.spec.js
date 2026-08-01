@@ -256,6 +256,26 @@ test.describe('8-Ball Pool', () => {
             expect(s.potted).toBe(true);
         });
 
+        test('balls never come to rest inside each other', async ({ page }) => {
+            await startDeterministic(page);
+            const worst = await page.evaluate(() => {
+                setAim(0.06);
+                setPower(1);
+                shoot();
+                settle();
+                const live = balls.filter((b) => !b.potted);
+                let pen = 0;
+                for (let i = 0; i < live.length; i++) {
+                    for (let j = i + 1; j < live.length; j++) {
+                        const d = Math.hypot(live[i].x - live[j].x, live[i].y - live[j].y);
+                        pen = Math.max(pen, BALL_R * 2 - d);
+                    }
+                }
+                return pen;
+            });
+            expect(worst).toBeLessThan(0.01);
+        });
+
         test('potted balls are ignored by collisions', async ({ page }) => {
             await startDeterministic(page);
             const s = await page.evaluate(() => {
@@ -550,6 +570,36 @@ test.describe('8-Ball Pool', () => {
             expect(s.cuePotted).toBe(false);
             expect(s.turn).toBe(1);
             expect(s.ballInHand).toBe(true);
+        });
+
+        test('a re-spotted cue ball never lands inside another ball', async ({ page }) => {
+            await startDeterministic(page);
+            await setupTable(page, {
+                cue: { x: MIDDLE_POCKET.x, y: 200 },
+                // Parked exactly on the head spot, where the cue ball is re-spotted.
+                objects: [{ n: 2, x: 213, y: 220 }],
+                groups: ['solid', 'stripe'],
+            });
+            const s = await page.evaluate(() => {
+                setAim(Math.PI / 2);
+                setPower(0.4);
+                shoot();
+                settle();
+                const cue = getBall(0);
+                const two = getBall(2);
+                return {
+                    scratched: shotInfo.potted.includes(0),
+                    gap: Math.hypot(cue.x - two.x, cue.y - two.y),
+                    onTable:
+                        cue.x >= CUSHION + BALL_R &&
+                        cue.x <= CANVAS_W - CUSHION - BALL_R &&
+                        cue.y >= CUSHION + BALL_R &&
+                        cue.y <= CANVAS_H - CUSHION - BALL_R,
+                };
+            });
+            expect(s.scratched).toBe(true);
+            expect(s.gap).toBeGreaterThanOrEqual(20);
+            expect(s.onTable).toBe(true);
         });
 
         test('a scratch cannot be followed by a shot until the cue ball is placed', async ({ page }) => {
