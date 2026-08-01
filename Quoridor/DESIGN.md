@@ -75,11 +75,28 @@ score = shortestPath(human) - shortestPath(computer)
 ```
 
 It scores every legal pawn step and every legal fence placement, then takes the
-best. Ties go to *stepping*, so a fence is only spent when it strictly beats
-walking — which works out to "only when the fence costs the human at least two
-extra steps", since a step is always worth one point of progress. A move that
-lands on the goal row scores `Infinity` so the AI never passes up an immediate
-win.
+best. A move that lands on the goal row scores `Infinity`, so the AI never passes
+up an immediate win.
+
+Ties normally go to *stepping*: a fence is a finite resource and a step is not,
+so the fence is only spent when it strictly beats walking — which works out to
+"when it costs the human at least two extra steps", since a step is always worth
+one point of progress.
+
+**The tempo exception.** That rule alone produces an AI that never places a
+fence, and the reason is worth writing down. Both actions shift the margin by
+exactly one — a step cuts the computer's own distance, a one-step fence adds to
+the human's — so on an open board no fence ever *strictly* beats walking, and the
+game degenerates into a pure race. But the human moves first, so a level race is
+one the computer loses by a single tempo; walking alone can never claw that back.
+
+So when the computer is behind on tempo — when stepping would still leave the
+human on move needing no more steps than it does (`losingTheRace()`) — it breaks
+ties toward the fence instead, provided the fence actually costs the human
+something. Each such fence buys a tangle rather than an immediate gain, and it is
+in that tangle that the two-step opportunities its ordinary rule is waiting for
+start to appear. In practice the computer spends its whole stock over the course
+of a game and plays a genuine race rather than a procession.
 
 Because every candidate fence is filtered through `canPlaceWall` first, the AI
 inherits the "never seal anyone in" guarantee for free. With 128 candidate
@@ -118,7 +135,7 @@ The only timer in the game is the AI's "thinking" delay, so tests set the global
 `autoAI = false` and call `aiMove()` themselves when they want a deterministic
 turn order; one test leaves it on to prove the automatic turn works.
 
-The suite (`tests/quoridor.spec.js`, 55 tests) was written before the
+The suite (`tests/quoridor.spec.js`, 58 tests) was written before the
 implementation and covers: the idle/start states, all movement and jump cases,
 every fence-legality rule, pathfinding, win detection, the AI, and the
 click/keyboard mapping onto canvas coordinates.

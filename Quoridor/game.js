@@ -246,6 +246,7 @@ function endTurn() {
     updateHud();
     if (turn === 1 && state === 'playing' && autoAI) {
         clearTimeout(aiTimer);
+        setStatus('The computer is thinking…');
         aiTimer = setTimeout(() => { aiTimer = null; aiMove(); }, AI_DELAY);
     }
 }
@@ -285,8 +286,14 @@ function startGame() {
 //
 // One-ply greedy search. Every candidate action is scored by how the race looks
 // afterwards: `opponentDistance - ownDistance`. Pawn steps are preferred on a
-// tie, so a fence is only spent when it buys strictly more than walking does —
-// in practice, when it costs the human at least two extra steps.
+// tie, so a fence is normally only spent when it buys strictly more than walking
+// does — in practice, when it costs the human at least two extra steps.
+//
+// The one exception is turn order. The human moves first, so a dead-even race is
+// a race the computer loses: stepping and fencing both shift the margin by one,
+// which means walking alone can never claw back the tempo. When the computer is
+// behind in that sense it breaks ties toward the fence instead, spending its
+// stock to build the tangle that later yields the two-step gains it needs.
 // ---------------------------------------------------------------------------
 
 function evaluateForAI() {
@@ -311,6 +318,7 @@ function bestPawnMove() {
 
 function bestWall() {
     if (wallsLeft[1] <= 0) return null;
+    const base = shortestPath(0);
     let best = null;
     for (let r = 0; r < SLOT_SIZE; r++) {
         for (let c = 0; c < SLOT_SIZE; c++) {
@@ -318,12 +326,22 @@ function bestWall() {
                 if (!canPlaceWall(r, c, o)) continue;
                 walls.push({ r, c, o });
                 const score = evaluateForAI();
+                const gain = shortestPath(0) - base;
                 walls.pop();
-                if (!best || score > best.score) best = { wall: { r, c, o }, score };
+                if (!best || score > best.score) best = { wall: { r, c, o }, score, gain };
             }
         }
     }
     return best;
+}
+
+// True when simply walking leaves the human still ahead on the clock: after the
+// computer steps, the human is on move and needs no more steps than it does.
+function losingTheRace() {
+    const mine = shortestPath(1);
+    const theirs = shortestPath(0);
+    if (mine === null || theirs === null) return false;
+    return mine - 1 >= theirs;
 }
 
 function aiMove() {
@@ -332,8 +350,10 @@ function aiMove() {
 
     const move = bestPawnMove();
     const wall = bestWall();
+    const breakTieWithWall = wall && move
+        && wall.score === move.score && wall.gain >= 1 && losingTheRace();
 
-    if (wall && (!move || wall.score > move.score)) {
+    if (wall && (!move || wall.score > move.score || breakTieWithWall)) {
         setStatus('The computer drops a fence.');
         placeWall(wall.wall.r, wall.wall.c, wall.wall.o);
         return;
@@ -467,13 +487,14 @@ function draw() {
         }
     }
 
-    // Legal destinations for the human player.
+    // Legal destinations for the human player, brightened under the pointer.
     if (state === 'playing' && turn === 0) {
         for (const m of legalMoves(0)) {
+            const hot = hoverCell && hoverCell.r === m.r && hoverCell.c === m.c;
             const p = cellCenter(m.r, m.c);
-            ctx.fillStyle = 'rgba(56, 189, 248, 0.28)';
+            ctx.fillStyle = hot ? 'rgba(56, 189, 248, 0.55)' : 'rgba(56, 189, 248, 0.28)';
             ctx.beginPath();
-            ctx.arc(p.x, p.y, 11, 0, Math.PI * 2);
+            ctx.arc(p.x, p.y, hot ? 15 : 11, 0, Math.PI * 2);
             ctx.fill();
         }
     }

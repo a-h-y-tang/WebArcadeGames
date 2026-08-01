@@ -467,11 +467,58 @@ test.describe('Quoridor', () => {
             expect(await page.evaluate(() => pawns[1].r !== 0 || walls.length === 1)).toBe(true);
         });
 
+        test('the AI spends fences when a straight race would lose it the tempo', async ({ page }) => {
+            // The human moves first, so a level race is one the computer loses by
+            // walking. Against an opponent that only ever advances it has to start
+            // trading fences for tempo.
+            const s = await page.evaluate(() => {
+                startGame();
+                for (let i = 0; i < 4 && state === 'playing'; i++) {
+                    const best = legalMoves(0)
+                        .map((m) => {
+                            const save = { ...pawns[0] };
+                            pawns[0] = m;
+                            const d = shortestPath(0);
+                            pawns[0] = save;
+                            return { m, d };
+                        })
+                        .sort((a, b) => a.d - b.d)[0];
+                    movePawn(best.m.r, best.m.c);
+                    if (state === 'playing') aiMove();
+                }
+                return { walls: walls.length, left: [...wallsLeft] };
+            });
+            expect(s.walls).toBeGreaterThan(0);
+            expect(s.left[1]).toBe(10 - s.walls);
+            expect(s.left[0]).toBe(10);
+        });
+
+        test('the AI runs instead of fencing once it is ahead', async ({ page }) => {
+            const s = await page.evaluate(() => {
+                startGame();
+                pawns[1] = { r: 6, c: 4 }; // computer is two steps from home
+                aiMove();
+                return { walls: walls.length, pawn: { ...pawns[1] } };
+            });
+            expect(s.walls).toBe(0);
+            expect(s.pawn.r).toBe(7);
+        });
+
+        test('the status line reports that the computer is thinking', async ({ page }) => {
+            const text = await page.evaluate(() => {
+                autoAI = true;
+                startGame();
+                movePawn(7, 4);
+                return document.getElementById('status').textContent;
+            });
+            expect(text).toMatch(/thinking/i);
+        });
+
         test('a full self-played game keeps both players connected to their goals', async ({ page }) => {
             const res = await page.evaluate(() => {
                 startGame();
                 let connected = true;
-                for (let i = 0; i < 40 && state === 'playing'; i++) {
+                for (let i = 0; i < 90 && state === 'playing'; i++) {
                     // The human side simply walks its own shortest path.
                     const best = legalMoves(0)
                         .map((m) => {
