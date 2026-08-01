@@ -486,6 +486,15 @@
     "thumbnail": ""
   },
   {
+    "id": "marble-loop",
+    "name": "Marble Loop",
+    "description": "Spiral marble shooter - burst three of a colour before the chain reaches the pit",
+    "category": "Puzzle",
+    "dir": "MarbleLoop",
+    "path": "games/MarbleLoop/index.html",
+    "thumbnail": "games/MarbleLoop/screenshot.png"
+  },
+  {
     "id": "mastermind",
     "name": "Mastermind",
     "description": "Guess the code with logical deduction",
