@@ -99,7 +99,7 @@ will meet, and the cue stick pulls back as power builds.
 | `index.html` | Table markup, HUD, power meter, overlay |
 | `style.css` | Dark felt-green theme matching the rest of the arcade |
 | `game.js` | Geometry constants, rack, physics, rules, rendering, input |
-| `tests/pool.spec.js` | 51 Playwright tests |
+| `tests/pool.spec.js` | 53 Playwright tests |
 
 `game.js` is a classic (non-module) script, so its state and functions are
 plain globals — the same convention as Kaboom, Snake and Tetris in this repo.
@@ -117,8 +117,9 @@ Tests were written first, then the implementation was built until they passed
 - initial/idle state, canvas size, pocket count
 - rack legality: 7 solids, 7 stripes, the 8 centred, nothing overlapping,
   everything inside the cushions
-- aiming, power clamping, charge-and-release, rejecting shots at zero power or
-  while the table is rolling
+- aiming with the mouse and the arrow keys, power clamping, charge-and-release
+  on both mouse and `Space`, rejecting shots at zero power or while the table
+  is rolling
 - physics: friction to a dead stop, cushion bounces, staying in bounds,
   momentum transfer, potting, `allStopped`
 - rules: group assignment from an open table, keeping/losing the turn, all

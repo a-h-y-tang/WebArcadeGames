@@ -250,6 +250,28 @@ test.describe('8-Ball Pool', () => {
             expect(left).toBeLessThan(right);
         });
 
+        test('moving the mouse aims the cue at the pointer', async ({ page }) => {
+            await page.evaluate(run(`startGame(); setAim(0);`));
+            const box = await page.locator('#canvas').boundingBox();
+            await page.mouse.move(box.x + 300, box.y + 400);
+            const aim = await page.evaluate(() => aimAngle);
+            expect(aim).toBeCloseTo(Math.atan2(400 - 220, 300 - 220), 1);
+        });
+
+        test('pressing and releasing the mouse charges and takes the shot', async ({ page }) => {
+            await page.evaluate(run(`startGame(); setPower(0);`));
+            const box = await page.locator('#canvas').boundingBox();
+            await page.mouse.move(box.x + 600, box.y + 220);
+            await page.mouse.down();
+            await page.waitForTimeout(400);
+            const charged = await page.evaluate(() => ({ power, charging }));
+            await page.mouse.up();
+            const after = await page.evaluate(() => state);
+            expect(charged.charging).toBe(true);
+            expect(charged.power).toBeGreaterThan(0);
+            expect(after).toBe('rolling');
+        });
+
         test('holding Space charges power and releasing takes the shot', async ({ page }) => {
             await page.evaluate(run(`startGame(); setAim(0); setPower(0);`));
             await page.keyboard.down('Space');
