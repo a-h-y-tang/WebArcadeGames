@@ -88,7 +88,7 @@ let deathTimer = 0;
 let clearTimer = 0;
 let AUTO_STEP = true;
 
-const chef = { x: 0, y: 0, dir: null, facing: 'right', walk: 0 };
+const chef = { x: 0, y: 0, dir: null, lastMove: null, facing: 'right', walk: 0 };
 let burgers = [];
 let pieces = [];
 let enemies = [];
@@ -207,6 +207,7 @@ function resetActors() {
     chef.x = nodeX(2);
     chef.y = nodeY(FLOOR_ROWS.length - 1);
     chef.dir = null;
+    chef.lastMove = null;
     chef.facing = 'right';
     chef.walk = 0;
     for (const p of pieces) p.riders = [];
@@ -304,24 +305,43 @@ function setChefDir(dir) {
     if (dir) chef.facing = dir;
 }
 
+// Try to travel `dist` px in `dir`, snapping onto the girder / ladder rail that
+// direction needs. Returns false when there is no such rail within reach or the
+// move would not actually get anywhere.
+function tryMoveChef(dir, dist) {
+    if (dir === 'left' || dir === 'right') {
+        const fy = snapFloorY(chef.y);
+        if (fy === null) return false;
+        const raw = chef.x + (dir === 'left' ? -dist : dist);
+        const nx = Math.max(TILE / 2, Math.min(CANVAS_W - TILE / 2, raw));
+        if (nx === chef.x) return false;
+        chef.x = nx;
+        chef.y = fy;
+    } else {
+        const lx = snapLadderX(chef.x);
+        if (lx === null) return false;
+        const raw = chef.y + (dir === 'up' ? -dist : dist);
+        const ny = Math.max(ladderTopY(), Math.min(ladderBottomY(), raw));
+        if (ny === chef.y) return false;
+        chef.y = ny;
+        chef.x = lx;
+    }
+    chef.walk += dist;
+    return true;
+}
+
 function moveChef(dt) {
     const d = chef.dir;
     if (!d) return;
     const dist = CHEF_SPEED * dt;
-    if (d === 'left' || d === 'right') {
-        const fy = snapFloorY(chef.y);
-        if (fy === null) return;
-        chef.y = fy;
-        const nx = chef.x + (d === 'left' ? -dist : dist);
-        chef.x = Math.max(TILE / 2, Math.min(CANVAS_W - TILE / 2, nx));
-    } else {
-        const lx = snapLadderX(chef.x);
-        if (lx === null) return;
-        chef.x = lx;
-        const ny = chef.y + (d === 'up' ? -dist : dist);
-        chef.y = Math.max(ladderTopY(), Math.min(ladderBottomY(), ny));
+    if (tryMoveChef(d, dist)) {
+        chef.lastMove = d;
+        return;
     }
-    chef.walk += dist;
+    // The requested rail is not here yet — e.g. Down pressed halfway between two
+    // ladders. Keep going the way we were until it shows up, instead of dying on
+    // the spot the way a strict single-direction control would.
+    if (chef.lastMove && chef.lastMove !== d) tryMoveChef(chef.lastMove, dist);
 }
 
 // Standing on an ingredient tile presses that segment down; press all four and

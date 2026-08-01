@@ -291,6 +291,37 @@ test.describe('BurgerTime', () => {
             expect(s.mid).not.toBeCloseTo(s.y, 3);
         });
 
+        test('holding a blocked direction keeps the chef walking until a ladder appears', async ({ page }) => {
+            const s = await page.evaluate(() => {
+                startGame(); enemies.length = 0;
+                chef.x = ladderX(LADDER_COLS[0]);
+                chef.y = floorY(FLOOR_ROWS[0]);
+                setChefDir('right');
+                for (let i = 0; i < 30; i++) step(1 / 60);   // walk clear of the ladder
+                const midX = chef.x;
+                setChefDir('down');                          // nothing to climb here yet
+                for (let i = 0; i < 120; i++) step(1 / 60);
+                return { midX, x: chef.x, y: chef.y, ladder: ladderX(LADDER_COLS[1]), top: floorY(FLOOR_ROWS[0]) };
+            });
+            expect(s.midX).toBeGreaterThan(s.top);           // sanity: it did start walking
+            expect(s.x).toBeCloseTo(s.ladder, 3);            // carried on to the next ladder
+            expect(s.y).toBeGreaterThan(s.top);              // and then climbed down it
+        });
+
+        test('a blocked direction on the bottom girder does not stall the chef', async ({ page }) => {
+            const s = await page.evaluate(() => {
+                startGame(); enemies.length = 0;
+                setChefDir('right');
+                for (let i = 0; i < 30; i++) step(1 / 60);
+                const x0 = chef.x;
+                setChefDir('down');                          // already as low as it gets
+                for (let i = 0; i < 30; i++) step(1 / 60);
+                return { x0, x1: chef.x, y: chef.y, bottom: floorY(FLOOR_ROWS[FLOOR_ROWS.length - 1]) };
+            });
+            expect(s.x1).toBeGreaterThan(s.x0);
+            expect(s.y).toBeCloseTo(s.bottom, 5);
+        });
+
         test('arrow keys drive the chef', async ({ page }) => {
             await page.evaluate(() => startGame());
             const x0 = await page.evaluate(() => chef.x);

@@ -46,6 +46,13 @@ ladder therefore drops the chef back onto the girder just below and walks off
 it, which is how the arcade original feels without needing a queued-input
 system.
 
+`tryMoveChef()` reports whether a direction actually got anywhere. When it does
+not — Down pressed halfway between two ladders, say — `moveChef()` falls back to
+the direction the chef was already travelling, so the chef keeps walking until
+the requested rail comes into range rather than stalling on the spot. Holding
+Down while running along a girder therefore drops the chef down the next ladder
+it reaches.
+
 ### Knocking ingredients down
 
 Each frame, `updatePress()` finds the girder the chef is standing on and the
@@ -131,7 +138,7 @@ in this repo, so state and logic are reachable from Playwright as plain globals.
 | `index.html` | HUD, canvas, overlay, on-screen help |
 | `style.css` | Layout and the diner-sign look |
 | `game.js` | Constants, level construction, simulation, rendering, input |
-| `tests/burgertime.spec.js` | 64 Playwright specs |
+| `tests/burgertime.spec.js` | 66 Playwright specs |
 
 `game.js` sections, in order: geometry helpers → level construction → game flow
 → chef → ingredients → enemies → pepper → `step(dt)` → rendering → HUD → input
