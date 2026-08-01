@@ -64,8 +64,8 @@ deterministic rotation of spawn points, up to a per-level concurrent cap.
 rectangle extending `PEPPER_RANGE` px in the chef's facing direction on the
 chef's floor. Stunned enemies are frozen for `STUN_TIME` seconds.
 
-**Scoring.** 50 per ingredient landed, 100 per enemy squashed, 500 for clearing
-a level. The best score is persisted to `localStorage` under `burgertime-best`.
+**Scoring.** 50 per ingredient landed, 100 per enemy squashed (rising by 100 for
+each extra enemy the same piece catches), 500 for clearing a level. The best score is persisted to `localStorage` under `burgertime-best`.
 
 **Lives.** Three. A death resets the chef and enemies to their starting
 positions but keeps burger progress; losing the last life ends the game.
@@ -124,3 +124,22 @@ here per the task instructions.
 `game.js` is a classic (non-module) script, so all state and helpers are
 reachable from `page.evaluate` as plain globals — the same convention used by
 Kaboom, Dino Run, Snake and Tetris in this repo.
+
+## Testing
+
+The Playwright suite (62 tests) was written before the implementation and drives
+the simulation directly rather than through the render loop: it calls
+`startGame()`, positions actors with `placeChef()` / `spawnEnemyAt()`, and
+advances time with explicit `step(0.016)` calls.
+
+Two helpers exist for the tests: `placeChef(x, y)` teleports the chef onto a
+spot, and `clearEnemies()` empties the board and holds off the next spawn so a
+long simulation can measure one rule in isolation (without it, a test that
+simulates ten seconds of movement is legitimately interrupted by an enemy
+catching the chef).
+
+Beyond the per-rule tests, a `long run` group simulates a full minute of play
+with a bot chef and asserts the invariants that unit tests can't see: every
+actor stays inside the lattice, the enemy count never exceeds the level cap, the
+piece count stays at 16 across level rebuilds, and no plate ever holds more than
+four pieces.

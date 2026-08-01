@@ -279,8 +279,9 @@ function squashEnemiesUnder(ing) {
         if (Math.abs(e.x - cx) > ING_W / 2) continue;
         if (Math.abs(e.y - ing.y) > 12) continue;
         enemies.splice(i, 1);
+        // Each extra enemy caught by the same piece is worth more.
         ing.riders++;
-        score += SQUASH_POINTS;
+        score += SQUASH_POINTS * ing.riders;
     }
 }
 

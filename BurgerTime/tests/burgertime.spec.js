@@ -342,6 +342,35 @@ test.describe('Burger Time', () => {
         });
     });
 
+    test.describe('walking a piece off its platform', () => {
+        test('walking the full width of a piece drops it', async ({ page }) => {
+            const r = await page.evaluate(() => {
+                startGame();
+                clearEnemies();
+                const ing = ingredients.find((i) => i.col === 1 && i.row === 2);
+                placeChef(ing.x - 6, ing.y);
+                setChefDir(1, 0);
+                // Walk across the whole piece and a little past it.
+                for (let i = 0; i < 90; i++) step(0.016);
+                return { state: ing.state, segments: ing.segments.slice() };
+            });
+            expect(r.segments.every(Boolean)).toBe(true);
+            expect(r.state).not.toBe('idle');
+        });
+
+        test('a chained drop empties a whole column onto its plate', async ({ page }) => {
+            const r = await page.evaluate(() => {
+                startGame();
+                clearEnemies();
+                const top = ingredients.find((i) => i.col === 3 && i.row === 0);
+                dropIngredient(top);
+                for (let i = 0; i < 400; i++) step(0.016);
+                return { landed: columnLanded(3), col: ingredients.filter((i) => i.col === 3).length };
+            });
+            expect(r.landed).toBe(r.col);
+        });
+    });
+
     // -----------------------------------------------------------------------
     // Enemies
     // -----------------------------------------------------------------------
@@ -644,6 +673,59 @@ test.describe('Burger Time', () => {
             await expect(page.locator('#score')).toHaveText('700');
             await expect(page.locator('#lives')).toHaveText('2');
             await expect(page.locator('#pepper')).toHaveText('1');
+        });
+    });
+
+    // -----------------------------------------------------------------------
+    // Whole-run invariants
+    // -----------------------------------------------------------------------
+    test.describe('long run', () => {
+        test('a minute of play keeps every actor and piece legal', async ({ page }) => {
+            const r = await page.evaluate(() => {
+                const errors = [];
+                startGame();
+                let dir = 1;
+                for (let i = 0; i < 3750; i++) {   // ~60 s at 1/60 s per step
+                    // Crude bot: walk back and forth, climb every so often.
+                    if (i % 240 === 0) { dir = -dir; setChefDir(dir, 0); }
+                    else if (i % 240 === 120) setChefDir(0, i % 480 === 120 ? -1 : 1);
+                    step(0.016);
+
+                    if (chef.x < 0 || chef.x > CANVAS_W) errors.push(`chef x ${chef.x}`);
+                    if (chef.y < FLOOR_YS[0] || chef.y > FLOOR_YS[FLOOR_YS.length - 1]) {
+                        errors.push(`chef y ${chef.y}`);
+                    }
+                    for (const e of enemies) {
+                        if (e.x < 0 || e.x > CANVAS_W) errors.push(`enemy x ${e.x}`);
+                        if (e.y < FLOOR_YS[0] || e.y > FLOOR_YS[FLOOR_YS.length - 1]) {
+                            errors.push(`enemy y ${e.y}`);
+                        }
+                    }
+                    if (enemies.length > maxEnemiesFor(level)) errors.push('too many enemies');
+                    if (ingredients.length !== COLUMN_XS.length * ING_PER_COLUMN) {
+                        errors.push('ingredient count changed');
+                    }
+                    for (let c = 0; c < COLUMN_XS.length; c++) {
+                        if (columnLanded(c) > ING_PER_COLUMN) errors.push('over-filled plate');
+                    }
+                    if (state !== 'running') break;
+                }
+                return { errors: errors.slice(0, 5), score, state, lives };
+            });
+            expect(r.errors).toEqual([]);
+            expect(['running', 'over']).toContain(r.state);
+        });
+
+        test('landed pieces never sit below their plate', async ({ page }) => {
+            const lowest = await page.evaluate(() => {
+                startGame();
+                clearEnemies();
+                ingredients.forEach(dropIngredient);
+                for (let i = 0; i < 400; i++) step(0.016);
+                // After the level rebuild every piece is back on its platform.
+                return Math.max(...ingredients.map((i) => i.y));
+            });
+            expect(lowest).toBeLessThanOrEqual(430);
         });
     });
 

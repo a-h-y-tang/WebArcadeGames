@@ -30,7 +30,7 @@ Game**) to begin.
 - A falling piece knocks loose any piece it lands on, so a well-timed drop can
   chain a whole stack down onto the plate at once.
 - Any enemy caught under a falling piece is squashed for **100 points** and
-  rides it down.
+  rides it down — a second enemy on the same piece is worth 200, a third 300.
 - **Pepper** stuns everything directly in front of you for a few seconds. You
   start with five shakers and earn one more per level — spend them when you're
   cornered on a ladder.
