@@ -9,6 +9,15 @@
     "thumbnail": ""
   },
   {
+    "id": "pool",
+    "name": "8-Ball Pool",
+    "description": "Two-player 8-ball pool with cue physics and pocket play",
+    "category": "Sports",
+    "dir": "Pool",
+    "path": "games/Pool/index.html",
+    "thumbnail": "games/Pool/screenshot.png"
+  },
+  {
     "id": "air-hockey",
     "name": "Air Hockey",
     "description": "Fast-paced air hockey match against the computer",
