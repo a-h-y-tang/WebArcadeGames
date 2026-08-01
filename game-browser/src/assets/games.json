@@ -666,6 +666,15 @@
     "thumbnail": ""
   },
   {
+    "id": "quoridor",
+    "name": "Quoridor",
+    "description": "Race your pawn across the board while fencing off the computer",
+    "category": "Board Game",
+    "dir": "Quoridor",
+    "path": "games/Quoridor/index.html",
+    "thumbnail": "games/Quoridor/screenshot.png"
+  },
+  {
     "id": "reversi",
     "name": "Reversi",
     "description": "Othello strategy game - flip opponent's pieces",
