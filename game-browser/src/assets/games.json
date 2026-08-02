@@ -108,6 +108,15 @@
     "thumbnail": ""
   },
   {
+    "id": "burgertime",
+    "name": "BurgerTime",
+    "description": "Run the ladders and stomp burger ingredients onto the plates",
+    "category": "Action",
+    "dir": "BurgerTime",
+    "path": "games/BurgerTime/index.html",
+    "thumbnail": "games/BurgerTime/screenshot.png"
+  },
+  {
     "id": "calcudoku",
     "name": "Calcudoku",
     "description": "Math logic puzzle with grid and operations",
