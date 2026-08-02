@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marble Loop</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="game">
+        <header class="hud">
+            <h1>MARBLE LOOP</h1>
+            <div class="stats">
+                <div class="stat"><span class="label">Score</span><span id="score">0</span></div>
+                <div class="stat"><span class="label">Level</span><span id="level">1</span></div>
+                <div class="stat"><span class="label">Marbles</span><span id="marbles">0</span></div>
+                <div class="stat"><span class="label">Best</span><span id="best">0</span></div>
+            </div>
+        </header>
+
+        <div class="board-wrap">
+            <canvas id="canvas" width="640" height="480"></canvas>
+            <div id="overlay" class="overlay visible">
+                <h2 id="overlay-title">MARBLE LOOP</h2>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Click or press Space to start</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+
+        <div class="help">
+            <p>move mouse to aim</p>
+            <p>click or <kbd>Space</kbd> to fire</p>
+            <p><kbd>S</kbd> swap marble</p>
+            <p><kbd>P</kbd> pause</p>
+            <p><kbd>R</kbd> restart</p>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>

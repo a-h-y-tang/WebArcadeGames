@@ -486,6 +486,15 @@
     "thumbnail": ""
   },
   {
+    "id": "marble-loop",
+    "name": "Marble Loop",
+    "description": "Shoot marbles into a crawling chain and pop three in a row",
+    "category": "Action",
+    "dir": "MarbleLoop",
+    "path": "games/MarbleLoop/index.html",
+    "thumbnail": "games/MarbleLoop/screenshot.png"
+  },
+  {
     "id": "mastermind",
     "name": "Mastermind",
     "description": "Guess the code with logical deduction",
