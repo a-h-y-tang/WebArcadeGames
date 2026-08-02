@@ -934,5 +934,14 @@
     "dir": "Yahtzee",
     "path": "games/Yahtzee/index.html",
     "thumbnail": ""
+  },
+  {
+    "id": "zuma",
+    "name": "Zuma",
+    "description": "Marble shooter - pop runs of three before the chain reaches the hole",
+    "category": "Action",
+    "dir": "Zuma",
+    "path": "games/Zuma/index.html",
+    "thumbnail": "games/Zuma/screenshot.png"
   }
 ]
