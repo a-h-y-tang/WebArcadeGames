@@ -237,10 +237,17 @@ function resolveMatches(index) {
     return count;
 }
 
+// Marbles at a negative distance are still inside the feed tunnel behind the
+// start of the track: they are neither drawn nor shootable until they emerge.
+function inTunnel(m) {
+    return m.t < 0;
+}
+
 function hitTest(x, y) {
     let best = -1;
     let bestD = MARBLE_R * 2;
     for (let i = 0; i < chain.length; i++) {
+        if (inTunnel(chain[i])) continue;
         const p = pointAt(chain[i].t);
         const d = Math.hypot(p.x - x, p.y - y);
         if (d < bestD) { bestD = d; best = i; }
@@ -468,12 +475,17 @@ function hideOverlay() {
 // Particles (purely cosmetic)
 // ---------------------------------------------------------------------------
 
+const MAX_PARTICLES = 140;
+
 function burst(p, color) {
     for (let i = 0; i < 7; i++) {
         const a = Math.random() * Math.PI * 2;
-        const sp = 40 + Math.random() * 140;
+        const sp = 30 + Math.random() * 110;
         particles.push({ x: p.x, y: p.y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: 0.45, color });
     }
+    // A tab that is not painting still runs the simulation through step(), so
+    // cap the pool rather than letting stale sparks accumulate.
+    if (particles.length > MAX_PARTICLES) particles.splice(0, particles.length - MAX_PARTICLES);
 }
 
 function updateParticles(dt) {
@@ -525,6 +537,18 @@ function drawTrack() {
     ctx.strokeStyle = 'rgba(103,232,249,0.07)';
     ctx.lineWidth = 2;
     ctx.stroke();
+
+    // The feed tunnel the marbles roll out of.
+    const start = pointAt(0);
+    const dir = tangentAt(0);
+    const mx = start.x - dir.x * 5, my = start.y - dir.y * 5;
+    const mouth = ctx.createRadialGradient(mx, my, 2, mx, my, MARBLE_R + 7);
+    mouth.addColorStop(0, '#02040a');
+    mouth.addColorStop(1, 'rgba(103,232,249,0.22)');
+    ctx.fillStyle = mouth;
+    ctx.beginPath();
+    ctx.arc(mx, my, MARBLE_R + 7, 0, Math.PI * 2);
+    ctx.fill();
 
     // The pit at the end of the line — it glows redder as the head closes in.
     const end = pointAt(path.length);
@@ -590,6 +614,7 @@ function draw() {
     drawTrack();
 
     for (const m of chain) {
+        if (inTunnel(m)) continue;
         const p = pointAt(m.t);
         drawMarble(p.x, p.y, m.color, MARBLE_R);
     }
@@ -597,9 +622,12 @@ function draw() {
     for (const s of projectiles) drawMarble(s.x, s.y, s.color, MARBLE_R);
 
     for (const p of particles) {
-        ctx.globalAlpha = Math.max(0, p.life / 0.45);
+        const t = Math.max(0, p.life / 0.45);
+        ctx.globalAlpha = t;
         ctx.fillStyle = (MARBLE_SKIN[p.color] || MARBLE_SKIN.blue)[0];
-        ctx.fillRect(p.x - 2, p.y - 2, 4, 4);
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 1 + 2.5 * t, 0, Math.PI * 2);
+        ctx.fill();
     }
     ctx.globalAlpha = 1;
 

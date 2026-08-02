@@ -68,10 +68,25 @@ for i in 1..n-1:
     else:                    chain[i].t += catchupSpeed * dt, clamped to target
 ```
 
-A marble whose gap closed exactly this frame reports its index, and
-`resolveMatches()` runs at that junction — that is how a removal cascades into a
-combo. New marbles enter at `t = 0` whenever `pending > 0` and the tail has
-rolled far enough forward to leave room.
+A marble only counts as *detached* once it trails by more than `GAP_EPS` (1 px).
+This matters: the head's own advance opens a sub-pixel gap behind every marble on
+every frame, so without the threshold the whole chain would be re-tested for
+matches continuously and any run of three would pop the instant it formed,
+without ever being shot at. Only a genuine gap — left by a pop, or by a marble
+entering at the tail — arms a junction, and the frame it closes is the frame its
+match is tested.
+
+New marbles enter at `t = 0` whenever `pending > 0` and the tail has rolled far
+enough forward to leave room.
+
+### The tunnel
+
+Insertion pushes the marbles behind it back, so a busy chain can be shoved past
+the start of the track into negative `t`. Those marbles are treated as still
+inside the feed tunnel: `inTunnel()` excludes them from both rendering and
+`hitTest()`, so they are neither drawn stacked on the entrance nor shootable, and
+they roll out of the tunnel mouth as the chain advances. A backed-up tunnel is
+the visible cost of bad shots.
 
 ### Shooting and insertion
 
@@ -139,3 +154,15 @@ recorded here rather than escalated.
    rather than hand-authored per level.
 8. **Fixed 640×480 canvas**, CSS-scaled for narrow viewports — consistent with
    the other games in the repo, which all use a fixed backing store.
+9. **The tunnel is unbounded.** Nothing caps how far the chain can be pushed
+   behind the start of the track; a player who keeps missing simply builds a
+   longer backlog rather than hitting a wall.
+
+## Verification
+
+Beyond the 66 Playwright specs, the game was soak-tested with a scripted bot
+(aim at a visible marble matching the loaded colour, swap if none, fire) driving
+`step()` at 60 Hz for six simulated minutes. It cleared levels 1–3 and lost on
+level 4 at 4170 points, with no uncaught errors and no frame in which the
+non-overlap invariant was violated — confirming both that a level is actually
+clearable and that the difficulty curve eventually bites.

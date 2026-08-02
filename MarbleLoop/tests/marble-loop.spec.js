@@ -440,6 +440,37 @@ test.describe('Marble Loop', () => {
             expect(s.last).toBe('green');
         });
 
+        test('marbles pushed behind the start wait in the tunnel', async ({ page }) => {
+            const s = await page.evaluate(() => {
+                startGame();
+                pending = 0;
+                chain.length = 0;
+                chain.push({ t: SPACING, color: 'red' });
+                chain.push({ t: 0, color: 'blue' });
+                insertAt(1, 'green');
+                return {
+                    tail: chain[chain.length - 1].t,
+                    tunnelled: chain.filter(inTunnel).length,
+                    ordered: chain.every((m, i) => i === 0 || chain[i - 1].t - m.t >= SPACING - 0.01),
+                };
+            });
+            expect(s.tail).toBeLessThan(0);
+            expect(s.tunnelled).toBe(1);
+            expect(s.ordered).toBe(true);
+        });
+
+        test('marbles still in the tunnel cannot be shot', async ({ page }) => {
+            const s = await page.evaluate(() => {
+                startGame();
+                pending = 0;
+                chain.length = 0;
+                chain.push({ t: -SPACING, color: 'red' });
+                const p = pointAt(0);
+                return { hit: hitTest(p.x, p.y) };
+            });
+            expect(s.hit).toBe(-1);
+        });
+
         test('a fired marble that reaches the chain is inserted into it', async ({ page }) => {
             const s = await page.evaluate(() => {
                 startGame();
