@@ -810,6 +810,15 @@
     "thumbnail": ""
   },
   {
+    "id": "tank-battle",
+    "name": "Tank Battle",
+    "description": "Defend the eagle base and blast every enemy tank",
+    "category": "Action",
+    "dir": "TankBattle",
+    "path": "games/TankBattle/index.html",
+    "thumbnail": "games/TankBattle/screenshot.png"
+  },
+  {
     "id": "tempest",
     "name": "Tempest",
     "description": "Arcade action game - navigate tube mazes",
