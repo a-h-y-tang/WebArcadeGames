@@ -655,15 +655,26 @@ function drawEnemy(e) {
     const top = e.y - h;
 
     ctx.globalAlpha = e.stunned > 0 ? 0.55 : 1;
+
+    // Rounded body with a contrasting belly band.
+    const r = e.squashed ? 3 : 8;
     ctx.fillStyle = colors.body;
-    ctx.fillRect(e.x - w / 2, top, w, h);
+    ctx.beginPath();
+    ctx.roundRect(e.x - w / 2, top, w, h, r);
+    ctx.fill();
     ctx.fillStyle = colors.trim;
-    ctx.fillRect(e.x - w / 2, top + h - 3, w, 3);
+    ctx.fillRect(e.x - w / 2 + 2, top + h - 6, w - 4, 3);
 
     if (!e.squashed) {
-        ctx.fillStyle = '#1a1020';
-        ctx.fillRect(e.x - 6, top + 6, 4, 4);
-        ctx.fillRect(e.x + 2, top + 6, 4, 4);
+        ctx.fillStyle = '#f7f3ea';                       // eye whites
+        ctx.fillRect(e.x - 7, top + 5, 5, 5);
+        ctx.fillRect(e.x + 2, top + 5, 5, 5);
+        ctx.fillStyle = '#1a1020';                       // pupils, looking ahead
+        ctx.fillRect(e.x - 6 + (e.dir > 0 ? 2 : 0), top + 6, 3, 3);
+        ctx.fillRect(e.x + 3 + (e.dir > 0 ? 2 : 0), top + 6, 3, 3);
+        ctx.fillStyle = colors.trim;                     // feet
+        ctx.fillRect(e.x - w / 2 - 1, e.y - 3, 6, 3);
+        ctx.fillRect(e.x + w / 2 - 5, e.y - 3, 6, 3);
         if (e.stunned > 0) {
             ctx.fillStyle = '#f6a623';
             ctx.fillRect(e.x - 5, top - 5, 10, 3);

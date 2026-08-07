@@ -108,6 +108,15 @@
     "thumbnail": ""
   },
   {
+    "id": "burger-time",
+    "name": "Burger Time",
+    "description": "Walk burger ingredients down platforms and ladders while dodging chasing foods",
+    "category": "Action",
+    "dir": "BurgerTime",
+    "path": "games/BurgerTime/index.html",
+    "thumbnail": "games/BurgerTime/screenshot.png"
+  },
+  {
     "id": "calcudoku",
     "name": "Calcudoku",
     "description": "Math logic puzzle with grid and operations",
