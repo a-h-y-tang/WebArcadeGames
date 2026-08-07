@@ -133,3 +133,11 @@ Decisions made without a human to ask; the simpler reading was taken each time.
   and speed multiplier only; none of the original's type-specific tricks
   (Mr. Egg's flight, Mr. Pickle's kick) are modelled.
 - **No sound.** Consistent with the rest of the repo.
+- **Browser integration verified without the Angular dev server.** The game is
+  registered in `game-browser/src/assets/games.json` (and the hard-coded game
+  counts in `game-browser/e2e/game-browser.spec.ts` and
+  `game-browser/README.md` were bumped to 105). The Angular CLI refuses to run
+  on the container's Node v22.22.2 (it wants ≥ 22.22.3), so that suite could not
+  be executed here; instead the entry was checked against the `Game` interface
+  and the game was loaded over HTTP at exactly the path the browser links to
+  (`games/BurgerTime/index.html`, served by `game-browser/dev-server.js`).
