@@ -422,12 +422,15 @@ test.describe('BurgerTime', () => {
     // -----------------------------------------------------------------------
     test.describe('enemies', () => {
         test('enemies appear over time once the game is running', async ({ page }) => {
-            const count = await page.evaluate(`(() => {
+            // Tracks the high-water mark: a spawned enemy may reach the chef and
+            // be cleared by the life-lost reset before the window ends.
+            const seen = await page.evaluate(`(() => {
                 startGame();
-                ${FRAMES(600)}
-                return enemies.length;
+                let seen = 0;
+                for (let i = 0; i < 600; i++) { step(1 / 60); seen = Math.max(seen, enemies.length); }
+                return seen;
             })()`);
-            expect(count).toBeGreaterThan(0);
+            expect(seen).toBeGreaterThan(0);
         });
 
         test('the number of enemies never exceeds the level cap', async ({ page }) => {
@@ -504,15 +507,30 @@ test.describe('BurgerTime', () => {
                 spawnEnemy({ x: COLUMN_X[0], floor: 1 });
                 const before = score;
                 const ing = ingredientAt(0, 0);
-                placeChef(COLUMN_X[0] - ING_W / 2 - 6, 0);
-                setChefInput(1, 0);
-                for (let i = 0; i < 900 && (ing.level === 0 || ing.falling); i++) step(1 / 60);
-                ${FRAMES(30)}
+                dropIngredient(ing);
+                for (let i = 0; i < 300 && ing.falling; i++) step(1 / 60);
+                ${FRAMES(10)}
                 return { enemies: enemies.length, gained: score - before, lives };
             })()`);
             expect(s.enemies).toBe(0);
             expect(s.gained).toBeGreaterThanOrEqual(500);
             expect(s.lives).toBe(3);
+        });
+
+        test('an enemy off to the side is not squashed', async ({ page }) => {
+            const s = await page.evaluate(`(() => {
+                startGame();
+                enemies.length = 0;
+                ingredients = ingredients.filter((i) => !(i.col === 0 && i.level > 0));
+                const e = spawnEnemy({ x: COLUMN_X[0] + ING_W, floor: 1 });
+                e.stun = 5;
+                const ing = ingredientAt(0, 0);
+                dropIngredient(ing);
+                for (let i = 0; i < 300 && ing.falling; i++) step(1 / 60);
+                return { enemies: enemies.length, riding: !!e.rideBy };
+            })()`);
+            expect(s.enemies).toBe(1);
+            expect(s.riding).toBe(false);
         });
 
         test('squashing two enemies with one ingredient scores a rising bonus', async ({ page }) => {
@@ -524,13 +542,31 @@ test.describe('BurgerTime', () => {
                 spawnEnemy({ x: COLUMN_X[0] + 10, floor: 1 });
                 const before = score;
                 const ing = ingredientAt(0, 0);
-                placeChef(COLUMN_X[0] - ING_W / 2 - 6, 0);
-                setChefInput(1, 0);
-                for (let i = 0; i < 900 && (ing.level === 0 || ing.falling); i++) step(1 / 60);
-                ${FRAMES(30)}
+                dropIngredient(ing);
+                for (let i = 0; i < 300 && ing.falling; i++) step(1 / 60);
+                ${FRAMES(10)}
                 return score - before;
             })()`);
             expect(gained).toBeGreaterThan(500 + 500);
+        });
+
+        test('a ridden enemy is carried down with the ingredient', async ({ page }) => {
+            const s = await page.evaluate(`(() => {
+                startGame();
+                enemies.length = 0;
+                ingredients = ingredients.filter((i) => !(i.col === 0 && i.level > 0));
+                const e = spawnEnemy({ x: COLUMN_X[0], floor: 1 });
+                const before = e.y;
+                const ing = ingredientAt(0, 0);
+                dropIngredient(ing);
+                let riddenY = before;
+                for (let i = 0; i < 300 && ing.falling; i++) {
+                    step(1 / 60);
+                    if (e.rideBy) riddenY = e.y;
+                }
+                return { before, riddenY };
+            })()`);
+            expect(s.riddenY).toBeGreaterThan(s.before);
         });
     });
 
