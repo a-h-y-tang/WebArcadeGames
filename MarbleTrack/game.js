@@ -402,19 +402,25 @@ function advanceShot(dt) {
     shot.x += shot.vx * dt;
     shot.y += shot.vy * dt;
 
+    // stick to the *nearest* marble in reach, not merely the first one found —
+    // the spiral often puts two turns of the chain within range of a shot
+    let hit = -1;
+    let hitDist = MARBLE_R * 2;
     for (let i = 0; i < chain.length; i++) {
         const p = marblePos(i);
-        if (Math.hypot(shot.x - p.x, shot.y - p.y) <= MARBLE_R * 2) {
-            const t = marbleT(i);
-            const front = pointAt(t + SPACING / 2);
-            const back = pointAt(t - SPACING / 2);
-            const dFront = Math.hypot(shot.x - front.x, shot.y - front.y);
-            const dBack = Math.hypot(shot.x - back.x, shot.y - back.y);
-            const color = shot.color;
-            shot = null;
-            insertMarble(dFront <= dBack ? i : i + 1, color);
-            return;
-        }
+        const d = Math.hypot(shot.x - p.x, shot.y - p.y);
+        if (d <= hitDist) { hit = i; hitDist = d; }
+    }
+    if (hit >= 0) {
+        const t = marbleT(hit);
+        const front = pointAt(t + SPACING / 2);
+        const back = pointAt(t - SPACING / 2);
+        const dFront = Math.hypot(shot.x - front.x, shot.y - front.y);
+        const dBack = Math.hypot(shot.x - back.x, shot.y - back.y);
+        const color = shot.color;
+        shot = null;
+        insertMarble(dFront <= dBack ? hit : hit + 1, color);
+        return;
     }
 
     const m = MARBLE_R * 2;
