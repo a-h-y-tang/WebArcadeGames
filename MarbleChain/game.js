@@ -182,6 +182,15 @@ function rollColor() {
     return randInt(paletteSize());
 }
 
+// A colour can disappear from the track while the player is still holding it —
+// that marble would be unusable, so quietly restock the turret with a live one.
+function refreshShooterColors() {
+    const live = colorsInPlay();
+    if (live.length === 0) return;
+    if (!live.includes(shooter.current)) shooter.current = rollColor();
+    if (!live.includes(shooter.next)) shooter.next = rollColor();
+}
+
 // Release queued marbles at the tail whenever the track has room for them.
 function releaseMarbles() {
     while (spawnsRemaining > 0 && ballDist(chain.balls.length) >= 0) {
@@ -211,6 +220,11 @@ function resolveMatches(index) {
 
         for (let i = start; i <= end; i++) spawnPop(ballPos(i), color);
         chain.balls.splice(start, run);
+        // Marbles behind the blast roll forward to close the gap. When the blast
+        // took the leading marbles there is nothing in front to close up to, so
+        // pull the head back instead — otherwise the survivors would teleport
+        // toward the pit as a reward for a good shot.
+        if (start === 0) chain.head = Math.max(0, chain.head - run * BALL_SPACING);
         combo += 1;
         const points = POINTS_PER_BALL * run * combo;
         score += points;
@@ -420,6 +434,7 @@ function step(dt) {
 
     updateProjectiles(dt);
     updateParticles(dt);
+    refreshShooterColors();
 
     if (shooter.recoil > 0) shooter.recoil = Math.max(0, shooter.recoil - dt * 5);
     if (shooter.aimDir !== 0) setAim(shooter.angle + shooter.aimDir * AIM_SPEED * dt);

@@ -62,7 +62,11 @@ release.
   angle, then promotes `next` to `current` and rolls a fresh `next`.
 - New turret colours are only ever drawn from colours **still present in the chain**
   (falling back to the level's palette when the chain is empty), so the player can
-  never be handed a dead marble.
+  never be handed a dead marble. A colour can also *stop* being present while the
+  player is holding it, so `refreshShooterColors()` runs every step and quietly
+  restocks any loaded marble whose colour has left the track. Without it a player
+  can end up holding two extinct colours and swapping between them forever — the
+  autopilot used to sanity-check the balance did exactly that.
 - Each step, a projectile is tested against every visible chain marble. On contact
   (centre distance < `2 · BALL_R`) it is absorbed: the nearest chain marble is found,
   and the projectile is inserted either in front of or behind it depending on which
@@ -75,6 +79,13 @@ After an insertion at index `i`, `resolveMatches(i)` walks outward from `i` whil
 colour matches. A run of three or more is removed with `splice`, which makes the two
 marbles that flanked the run adjacent — so the function then re-checks that seam and
 loops, incrementing a combo counter each time. Scoring is
+
+Because positions are derived from the index, a `splice` moves everything behind the
+blast forward by `run · BALL_SPACING` — the gap closing, which is what Zuma does. But
+when the blast takes the *leading* marbles there is nothing in front to close up to,
+and the survivors would teleport toward the pit as a reward for a good shot. So a
+removal at index 0 pulls `chain.head` back by the same amount instead (clamped at the
+tunnel mouth so the chain never reverses out of sight).
 
 ```
 points = 10 · runLength · combo         (combo = 1 for the first blast, 2 for the
@@ -135,7 +146,9 @@ Decisions taken without asking, always choosing the simpler reading:
    chain closer to the pit; the extra length appears at the back. This is friendlier
    than the arcade original and removes a whole class of unfair deaths.
 4. **No post-match backward slide.** Clearing marbles does not shove the front of
-   the chain away from the pit — the head keeps its position.
+   the chain away from the pit — the head keeps its position. The one exception is
+   the front-of-chain case above, where the head is pulled back purely so the rest
+   of the chain stays put rather than jumping forward.
 5. **No power-ups.** No slow-down, reverse, accuracy or bomb marbles; scoring and
    combos carry the depth instead.
 6. **Levels advance immediately.** Clearing a level starts the next one on the same

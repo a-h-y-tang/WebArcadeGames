@@ -290,6 +290,48 @@ test.describe('Marble Chain', () => {
         });
     });
 
+    test.describe('restocking the turret', () => {
+        test('a loaded marble whose colour has left the track is replaced', async ({ page }) => {
+            const s = await page.evaluate(() => {
+                startGame();
+                spawnsRemaining = 0;
+                setChain([2, 2, 2, 2], 400);
+                shooter.current = 0;
+                shooter.next = 1;
+                step(0.016);
+                return { cur: shooter.current, next: shooter.next };
+            });
+            expect(s.cur).toBe(2);
+            expect(s.next).toBe(2);
+        });
+
+        test('a loaded marble whose colour is still on the track is kept', async ({ page }) => {
+            const s = await page.evaluate(() => {
+                startGame();
+                spawnsRemaining = 0;
+                setChain([2, 3, 2, 3], 400);
+                shooter.current = 3;
+                shooter.next = 2;
+                step(0.016);
+                return { cur: shooter.current, next: shooter.next };
+            });
+            expect(s.cur).toBe(3);
+            expect(s.next).toBe(2);
+        });
+
+        test('an empty chain leaves the turret alone', async ({ page }) => {
+            const cur = await page.evaluate(() => {
+                startGame();
+                spawnsRemaining = 3;
+                chain.balls.length = 0;
+                shooter.current = 4;
+                refreshShooterColors();
+                return shooter.current;
+            });
+            expect(cur).toBe(4);
+        });
+    });
+
     // -----------------------------------------------------------------------
     // Insertion
     // -----------------------------------------------------------------------
@@ -436,6 +478,27 @@ test.describe('Marble Chain', () => {
                 return chain.balls.map((b) => b.color);
             });
             expect(colors).toEqual([1]);
+        });
+
+        test('clearing the leading marbles leaves the survivors where they were', async ({ page }) => {
+            const { before, after } = await page.evaluate(() => {
+                startGame();
+                setChain([0, 0, 0, 1, 1], 400);
+                const before = ballDist(3);       // first survivor
+                resolveMatches(0);
+                return { before, after: ballDist(0) };
+            });
+            expect(after).toBeCloseTo(before, 5);
+        });
+
+        test('the chain never reverses back behind the tunnel mouth', async ({ page }) => {
+            const head = await page.evaluate(() => {
+                startGame();
+                setChain([0, 0, 0, 1], 10);
+                resolveMatches(0);
+                return chain.head;
+            });
+            expect(head).toBe(0);
         });
 
         test('a match at the very back of the chain is removed', async ({ page }) => {
