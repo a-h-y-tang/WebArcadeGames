@@ -47,8 +47,8 @@ while the score ticked up from catches alone. One per bar makes every mug count.
 
 - `Space` (or a click) pours a full mug at the tap in the current lane, subject
   to a `POUR_COOLDOWN = 0.25` s tap cooldown.
-- A full mug slides left at 300 px/s. It hits the customer **nearest the tap**
-  in its lane and is consumed.
+- A full mug slides left at `MUG_SPEED = 360` px/s. It hits the customer
+  **nearest the tap** in its lane and is consumed.
 - A full mug that reaches the door end with nobody to catch it smashes on the
   floor: one life.
 
@@ -62,7 +62,7 @@ while the score ticked up from catches alone. One per bar makes every mug count.
 ### Waves
 
 - A wave is `CUSTOMERS_PER_WAVE = 6` customers. Arrivals are spread out by
-  `spawnInterval()` seconds into a lane whose doorway is currently clear.
+  `spawnInterval()` seconds into a bar that currently has no customer on it.
 - The wave ends when all six have been *resolved* — served or slipped past.
   Tracking "resolved" rather than only "served" matters: if the wave ended only
   on serves, a single customer walking through to the tap would leave the wave
@@ -127,9 +127,13 @@ low frame rates, and — more importantly for the tests — lets a spec simulate
 exact frame counts without depending on `requestAnimationFrame` wall-clock
 timing. `requestAnimationFrame` only feeds `step()` a real `dt` and then draws.
 
-Because any mishap clears the mug and empty arrays mid-scan, each phase of
-`substep()` returns immediately after calling `loseLife()` rather than
-continuing to iterate a list that has just been emptied.
+Two things clear the mug and empty arrays out from under a scan in progress:
+`loseLife()` and, less obviously, `completeWave()` — reached from a mug hit that
+serves the last customer of a wave. Each phase of `substep()` therefore returns
+rather than continuing to iterate a list that has just been emptied, and the mug
+phase re-checks that the next index it will read still exists. Missing that
+second case crashed the whole `requestAnimationFrame` chain, freezing the game,
+whenever a wave-completing hit landed with another mug in flight.
 
 ### Test seams
 
@@ -141,7 +145,7 @@ seconds without random customers wandering into the scenario.
 
 ## Testing
 
-`tests/sodatapper.spec.js` — 65 Playwright tests covering the initial state,
+`tests/sodatapper.spec.js` — 66 Playwright tests covering the initial state,
 starting, bartender movement, pouring and the tap cooldown, customer walking and
 arrival, serving and push-back, mug misses, empty catches, wave progression and
 difficulty scaling, impatience, lives and game over, scoring and the persisted

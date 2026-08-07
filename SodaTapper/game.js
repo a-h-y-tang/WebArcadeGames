@@ -271,7 +271,11 @@ function substep(h) {
         if (target !== -1) {
             mugs.splice(i, 1);
             hitCustomer(target);
-            if (state !== 'running') return;
+            // Serving can complete the wave, which sweeps every array clear —
+            // including the list we are half-way through scanning. The next
+            // index this loop reads is i-1, so it is only safe to carry on
+            // while that index still exists.
+            if (state !== 'running' || i > mugs.length) return;
             continue;
         }
 

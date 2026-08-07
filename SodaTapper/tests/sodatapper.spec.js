@@ -509,6 +509,27 @@ test.describe('Soda Tapper', () => {
             expect(r.lives).toBe(r.max);
         });
 
+        test('a hit that completes a wave is safe with other mugs in flight', async ({ page }) => {
+            // Completing a wave sweeps every array clear, including the mug list
+            // the simulation is part-way through scanning.
+            const r = await page.evaluate(() => {
+                startGame();
+                stopSpawning();
+                servedThisWave = CUSTOMERS_PER_WAVE - 1;
+                resolvedThisWave = CUSTOMERS_PER_WAVE - 1;
+                customers.length = 0;
+                mugs.length = 0;
+                spawnCustomer({ lane: 3, x: LANE_LEFT });
+                spawnMug({ lane: 0, x: 300 });               // nowhere near a customer
+                spawnMug({ lane: 3, x: LANE_LEFT + 40 });    // this one ends the wave
+                for (let i = 0; i < 20; i++) step(0.016);
+                return { wave, state, mugs: mugs.length };
+            });
+            expect(r.wave).toBe(2);
+            expect(r.state).toBe('running');
+            expect(r.mugs).toBe(0);
+        });
+
         test('a wave still ends when a customer slips through to the tap', async ({ page }) => {
             const r = await page.evaluate(() => {
                 startGame();

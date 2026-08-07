@@ -65,7 +65,7 @@ Your best score is kept in `localStorage`.
 
 Design notes and the full mechanics breakdown are in [DESIGN.md](DESIGN.md).
 
-Run the Playwright suite (65 tests):
+Run the Playwright suite (66 tests):
 
 ```powershell
 npx playwright test SodaTapper/tests/
