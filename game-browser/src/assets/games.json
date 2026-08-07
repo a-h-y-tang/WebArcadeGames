@@ -486,6 +486,15 @@
     "thumbnail": ""
   },
   {
+    "id": "marble-popper",
+    "name": "Marble Popper",
+    "description": "Fire marbles into a spiral chain and pop colour matches",
+    "category": "Action",
+    "dir": "MarblePopper",
+    "path": "games/MarblePopper/index.html",
+    "thumbnail": "games/MarblePopper/screenshot.png"
+  },
+  {
     "id": "mastermind",
     "name": "Mastermind",
     "description": "Guess the code with logical deduction",
