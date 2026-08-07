@@ -486,6 +486,15 @@
     "thumbnail": ""
   },
   {
+    "id": "marble-spiral",
+    "name": "Marble Spiral",
+    "description": "Shoot marbles into the chain and pop three of a colour before it reaches the pit",
+    "category": "Puzzle",
+    "dir": "MarbleSpiral",
+    "path": "games/MarbleSpiral/index.html",
+    "thumbnail": "games/MarbleSpiral/screenshot.png"
+  },
+  {
     "id": "mastermind",
     "name": "Mastermind",
     "description": "Guess the code with logical deduction",
