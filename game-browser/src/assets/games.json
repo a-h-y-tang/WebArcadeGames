@@ -486,6 +486,15 @@
     "thumbnail": ""
   },
   {
+    "id": "marble-track",
+    "name": "Marble Track",
+    "description": "Shoot marbles into the rolling chain and match three to clear the track",
+    "category": "Action",
+    "dir": "MarbleTrack",
+    "path": "games/MarbleTrack/index.html",
+    "thumbnail": "games/MarbleTrack/screenshot.png"
+  },
+  {
     "id": "mastermind",
     "name": "Mastermind",
     "description": "Guess the code with logical deduction",
