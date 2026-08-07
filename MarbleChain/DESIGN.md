@@ -80,19 +80,19 @@ colour matches. A run of three or more is removed with `splice`, which makes the
 marbles that flanked the run adjacent — so the function then re-checks that seam and
 loops, incrementing a combo counter each time. Scoring is
 
-Because positions are derived from the index, a `splice` moves everything behind the
-blast forward by `run · BALL_SPACING` — the gap closing, which is what Zuma does. But
-when the blast takes the *leading* marbles there is nothing in front to close up to,
-and the survivors would teleport toward the pit as a reward for a good shot. So a
-removal at index 0 pulls `chain.head` back by the same amount instead (clamped at the
-tunnel mouth so the chain never reverses out of sight).
-
 ```
 points = 10 · runLength · combo         (combo = 1 for the first blast, 2 for the
                                          chain reaction it triggers, and so on)
 ```
 
 Clearing the level awards `250 · level`.
+
+Because positions are derived from the index, a `splice` moves everything behind the
+blast forward by `run · BALL_SPACING` — the gap closing, which is what Zuma does. But
+when the blast takes the *leading* marbles there is nothing in front to close up to,
+and the survivors would teleport toward the pit as a reward for a good shot. So a
+removal at index 0 pulls `chain.head` back by the same amount instead (clamped at the
+tunnel mouth so the chain never reverses out of sight).
 
 ## Levels
 
