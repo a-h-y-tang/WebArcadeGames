@@ -46,7 +46,7 @@ Game**) to begin.
 | `style.css` | Dark arcade styling shared with the rest of the repo |
 | `game.js` | Path table, chain model, simulation, rendering and input |
 | `DESIGN.md` | How the code works, and the assumptions behind it |
-| `tests/marblespiral.spec.js` | 62 Playwright specs |
+| `tests/marblespiral.spec.js` | 64 Playwright specs |
 
 ## Tests
 

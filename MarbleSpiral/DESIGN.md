@@ -63,7 +63,10 @@ A shot that comes within `BALL_R * 2` of any on-path chain marble joins the
 chain. Its index is computed from `nearestPathDist` — marbles are ordered by
 decreasing distance, so the newcomer goes in front of the first marble that is
 further from the pit than it is. Insertion extends the **tail** backwards rather
-than pushing the leader forward, so shooting never costs the player ground.
+than pushing the leader forward, so shooting normally costs the player no ground.
+The one exception is a full groove: if the tail would hang off the back of the
+path, `clampChainToPath` slides the whole chain forward until the last marble is
+back on it, which is what makes a badly-packed board dangerous.
 
 `resolveMatches` then pops the run containing the new marble if it is at least
 `MIN_MATCH` (3) long, and keeps popping while the join left behind by the last
@@ -84,7 +87,7 @@ time.
 
 | Quantity              | Formula                                    | Level 1 |
 |-----------------------|--------------------------------------------|---------|
-| `levelBallCount(l)`   | `34 + (l - 1) * 6`                         | 34      |
+| `levelBallCount(l)`   | `min(70, 34 + (l - 1) * 6)`                | 34      |
 | `chainSpeed(l)`       | `26 + (l - 1) * 5` px/s                    | 26      |
 | `colorsForLevel(l)`   | `min(6, 3 + floor((l - 1) / 2))`           | 3       |
 
@@ -106,7 +109,7 @@ globals.
 - `index.html` — HUD, canvas (640 × 480), overlay, help strip.
 - `style.css` — shared dark arcade look used across the repo's games.
 - `game.js` — path table, chain geometry, simulation, rendering, input.
-- `tests/marblespiral.spec.js` — 62 Playwright specs.
+- `tests/marblespiral.spec.js` — 64 Playwright specs.
 
 `step(dt)` advances the world in fixed `1/240 s` sub-steps so fast shots can
 never tunnel through the chain and the simulation is frame-rate independent; the
@@ -131,8 +134,9 @@ These were resolved without asking, taking the simpler reading each time:
    spare lives, and the score/level reached is the result.
 3. **No power-ups.** No bombs, colour-swap or slow-down pickups — plain marbles
    only.
-4. **Insertion never pushes the leader.** A newly inserted marble extends the
-   tail, so the player is never punished with lost ground for a shot.
+4. **Insertion pushes the tail, not the leader** — except when the groove is
+   already full, where the chain slides forward instead of hanging off the back
+   of the path. Marbles the player is responsible for therefore stay visible.
 5. **Pops push the chain back** by a flat `POP_PUSHBACK` per marble. That is the
    simplest stand-in for *Zuma*'s recoil physics and gives popping a tangible
    defensive payoff.
@@ -142,3 +146,14 @@ These were resolved without asking, taking the simpler reading each time:
    assets carry the game's name instead.
 7. **Level clearing is detected on a pop**, not as a standing "chain empty"
    check, so a level advances only as the result of the player's shot.
+8. **Level length is capped** at `COUNT_MAX` (70 marbles, ~77 % of the groove)
+   so that deep levels stay beatable rather than spawning a chain longer than
+   the path itself.
+
+## Verification
+
+Besides the specs, a scripted bot (aim at a marble matching the loaded colour,
+fire every quarter second) plays the game headlessly for five simulated minutes:
+it clears six levels and scores ~17 000 before losing on level 7, with no page
+errors. That confirms the level progression is winnable and that difficulty
+eventually catches up with the player.

@@ -260,6 +260,16 @@ test.describe('Marble Spiral', () => {
             expect(s.count4).toBeGreaterThan(s.count1);
             expect(s.speed4).toBeGreaterThan(s.speed1);
         });
+
+        test('a level never queues more marbles than the groove holds', async ({ page }) => {
+            const s = await page.evaluate(() => ({
+                deep: levelBallCount(99),
+                cap: COUNT_MAX,
+                capacity: Math.floor(pathLength() / BALL_SPACING),
+            }));
+            expect(s.deep).toBe(s.cap);
+            expect(s.cap).toBeLessThan(s.capacity);
+        });
     });
 
     // -----------------------------------------------------------------------
@@ -419,6 +429,24 @@ test.describe('Marble Spiral', () => {
             });
             expect(s.newFront).toBeCloseTo(s.front, 1);
             expect(s.newTail).toBeLessThan(s.tail);
+        });
+
+        test('a chain that fills the groove slides forward instead of hanging off the back', async ({ page }) => {
+            const s = await page.evaluate(() => {
+                startGame();
+                pending = 0;
+                chainFront = 200;          // only room for ~9 marbles behind the leader
+                chain.length = 0;
+                for (let i = 0; i < 9; i++) chain.push({ color: COLORS[i % 2] });
+                const before = chainFront;
+                const p = ballPos(4);
+                fireTestShot(COLORS[2], p.x, p.y);
+                step(0.001);
+                return { before, after: chainFront, tail: ballDist(chain.length - 1), len: chain.length };
+            });
+            expect(s.len).toBe(10);
+            expect(s.after).toBeGreaterThan(s.before);
+            expect(s.tail).toBeGreaterThanOrEqual(0);
         });
 
         test('a shot passing through empty space does not join the chain', async ({ page }) => {

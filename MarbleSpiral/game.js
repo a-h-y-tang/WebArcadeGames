@@ -41,7 +41,7 @@ const LEVEL_BONUS = 250;
 const POP_PUSHBACK = 6;     // px the chain is shoved back per popped marble
 
 // --- Difficulty scaling (all pure functions of `level`) ---
-const COUNT_BASE = 34, COUNT_STEP = 6;
+const COUNT_BASE = 34, COUNT_STEP = 6, COUNT_MAX = 70; // capped so a level always fits the groove
 const SPEED_BASE = 26, SPEED_STEP = 5;
 
 const COLORS = ['#ef4444', '#38bdf8', '#22c55e', '#f59e0b', '#a855f7', '#ec4899'];
@@ -146,7 +146,7 @@ function ballPos(i) { return pathPoint(ballDist(i)); }
 // Difficulty
 // ---------------------------------------------------------------------------
 
-function levelBallCount(l) { return COUNT_BASE + (l - 1) * COUNT_STEP; }
+function levelBallCount(l) { return Math.min(COUNT_MAX, COUNT_BASE + (l - 1) * COUNT_STEP); }
 function chainSpeed(l) { return SPEED_BASE + (l - 1) * SPEED_STEP; }
 function colorsForLevel(l) { return Math.min(COLORS.length, 3 + Math.floor((l - 1) / 2)); }
 
@@ -254,10 +254,21 @@ function resolveMatches(index) {
     return combo;
 }
 
+// The chain can never hang off the back of the groove: if insertions have
+// pushed the tail past the entry point, the whole chain slides forward until
+// the last marble sits on the path again. That keeps every marble the player is
+// responsible for visible, at the cost of ground when the groove is full.
+function clampChainToPath() {
+    if (chain.length === 0) return;
+    const tail = ballDist(chain.length - 1);
+    if (tail < 0) chainFront -= tail;
+}
+
 function insertShot(shot) {
     const index = insertIndexFor(shot.x, shot.y);
     chain.splice(index, 0, { color: shot.color });
     resolveMatches(index);
+    clampChainToPath();
 }
 
 // ---------------------------------------------------------------------------
@@ -289,6 +300,7 @@ function substep(h) {
     // Shots fly, and join the chain when they touch it.
     for (let i = shots.length - 1; i >= 0; i--) {
         const s = shots[i];
+        if (!s) continue;   // a level change during this pass emptied the list
         s.x += s.vx * h;
         s.y += s.vy * h;
 
