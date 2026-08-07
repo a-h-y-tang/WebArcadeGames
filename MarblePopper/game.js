@@ -42,6 +42,9 @@ const FIRE_COOLDOWN = 0.16;    // seconds between player-driven shots
 const POINTS_PER_BALL = 10;
 const LEVEL_BONUS = 100;
 
+// --- Presentation ---
+const DANGER_LEN = 160;         // track length before the pit shown as danger
+
 // --- Palette (colour index -> fill / highlight) ---
 const PALETTE = [
     { fill: '#ef4444', lit: '#fca5a5' },
@@ -481,6 +484,16 @@ function drawTrack() {
     ctx.strokeStyle = '#0d1b27';
     ctx.lineWidth = 2;
     ctx.stroke();
+
+    // The last stretch before the pit is tinted as a warning.
+    ctx.strokeStyle = 'rgba(127, 29, 29, 0.55)';
+    ctx.lineWidth = BALL_D + 6;
+    ctx.beginPath();
+    for (let d = Math.max(0, PATH_LEN - DANGER_LEN); d <= PATH_LEN; d += 6) {
+        const p = pathPos(d);
+        if (d === Math.max(0, PATH_LEN - DANGER_LEN)) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
+    }
+    ctx.stroke();
 }
 
 function drawPit() {
@@ -543,13 +556,22 @@ function drawLauncher() {
     ctx.arc(LAUNCHER.x, LAUNCHER.y, LAUNCHER_R + 6, 0, Math.PI * 2);
     ctx.fill();
     if (state !== 'idle') drawMarble(LAUNCHER.x, LAUNCHER.y, launcher.current, launcher.angle);
+}
 
-    // On-deck marble.
-    if (state !== 'idle') {
-        ctx.globalAlpha = 0.75;
-        drawMarble(LAUNCHER.x, LAUNCHER.y + LAUNCHER_R + 26, launcher.next, 0);
-        ctx.globalAlpha = 1;
-    }
+// The on-deck marble sits in its own corner slot, clear of the track and pit.
+function drawOnDeck() {
+    if (state === 'idle') return;
+    const x = 44, y = CANVAS_H - 44;
+    ctx.fillStyle = '#0f1d29';
+    ctx.beginPath();
+    ctx.arc(x, y, BALL_R + 8, 0, Math.PI * 2);
+    ctx.fill();
+    drawMarble(x, y, launcher.next, 0);
+    ctx.fillStyle = '#7a91a3';
+    ctx.font = '10px "Segoe UI", system-ui, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('NEXT', x, y + BALL_R + 20);
+    ctx.textAlign = 'left';
 }
 
 function draw() {
@@ -580,9 +602,10 @@ function draw() {
     }
 
     drawLauncher();
+    drawOnDeck();
 
     // Danger flash when the head of the chain is close to the pit.
-    if (state === 'running' && balls.length > 0 && balls[0].d > PATH_LEN - 160) {
+    if (state === 'running' && balls.length > 0 && balls[0].d > PATH_LEN - DANGER_LEN) {
         ctx.strokeStyle = 'rgba(239, 68, 68, 0.5)';
         ctx.lineWidth = 6;
         ctx.strokeRect(3, 3, CANVAS_W - 6, CANVAS_H - 6);
