@@ -486,6 +486,15 @@
     "thumbnail": ""
   },
   {
+    "id": "marble-chain",
+    "name": "Marble Chain",
+    "description": "Shoot marbles into a crawling chain and match three to pop",
+    "category": "Puzzle",
+    "dir": "MarbleChain",
+    "path": "games/MarbleChain/index.html",
+    "thumbnail": "games/MarbleChain/screenshot.png"
+  },
+  {
     "id": "mastermind",
     "name": "Mastermind",
     "description": "Guess the code with logical deduction",
