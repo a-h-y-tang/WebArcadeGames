@@ -486,6 +486,15 @@
     "thumbnail": ""
   },
   {
+    "id": "marble-serpent",
+    "name": "Marble Serpent",
+    "description": "Shoot marbles into a crawling chain and match three to clear it",
+    "category": "Action",
+    "dir": "MarbleSerpent",
+    "path": "games/MarbleSerpent/index.html",
+    "thumbnail": "games/MarbleSerpent/screenshot.png"
+  },
+  {
     "id": "mastermind",
     "name": "Mastermind",
     "description": "Guess the code with logical deduction",
