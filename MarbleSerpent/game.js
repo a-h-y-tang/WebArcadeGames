@@ -257,7 +257,9 @@ function resolveMatchAt(index, combo) {
 }
 
 // Splices a marble into the chain at array index `index`. Existing marbles are
-// only ever pushed backwards, so a shot can never shove the serpent into the pit.
+// only ever pushed backwards; a shot never drives the serpent forward. The one
+// exception is a marble landing ahead of the head, which has nowhere to go but
+// the slot in front of it.
 function insertMarble(color, index) {
     const k = Math.max(0, Math.min(index, marbles.length));
     let d;
@@ -412,12 +414,15 @@ function nextLevel() {
     level++;
     score += LEVEL_BONUS;
     resetLevel();
+    popups.push({ x: CANVAS_W / 2, y: 250, life: 2, text: `LEVEL ${level}  +${LEVEL_BONUS}`, color: '#4dd2ff' });
     updateHud();
 }
 
 function loseLife() {
     lives--;
-    burst(pathPoint(pathLength()), '#ffffff');
+    const pit = pathPoint(pathLength());
+    burst(pit, '#ffffff');
+    popups.push({ x: pit.x, y: pit.y - 34, life: 2, text: 'LIFE LOST', color: '#f87171' });
     updateHud();
     if (lives <= 0) {
         endGame();

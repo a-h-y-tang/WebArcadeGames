@@ -17,7 +17,7 @@ moving line to inject a colour and how to set up cascades.
 
 ## Board
 
-- Canvas is 720 × 520, drawn with a dark board and a stone-grey track.
+- Canvas is 720 × 520, drawn with a dark board and a deep navy track.
 - The track is a serpentine path defined by 13 control points, smoothed with a
   Catmull–Rom spline and sampled into a polyline. The polyline is turned into an
   arc-length table so any distance `d` along the path maps to an `(x, y)` point
@@ -30,7 +30,7 @@ moving line to inject a colour and how to set up cascades.
 
 The serpent is a single array `marbles`, ordered **front first**: `marbles[0]` is
 the marble nearest the pit and has the largest distance `d`. Each marble is
-`{ d, color }`.
+`{ d, color, chasing }`.
 
 Movement each `step(dt)`:
 
