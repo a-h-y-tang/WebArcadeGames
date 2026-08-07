@@ -486,6 +486,15 @@
     "thumbnail": ""
   },
   {
+    "id": "marble-loop",
+    "name": "Marble Loop",
+    "description": "Fire marbles into a spiral chain and match three before it reaches the hole",
+    "category": "Action",
+    "dir": "MarbleLoop",
+    "path": "games/MarbleLoop/index.html",
+    "thumbnail": "games/MarbleLoop/screenshot.png"
+  },
+  {
     "id": "mastermind",
     "name": "Mastermind",
     "description": "Guess the code with logical deduction",
