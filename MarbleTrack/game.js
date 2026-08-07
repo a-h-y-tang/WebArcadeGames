@@ -127,6 +127,7 @@ var shot = null;       // the marble in flight, or null
 var shooterColor, nextColor;
 var aimAngle = -Math.PI / 2;
 var particles = [];
+var popups = [];      // floating "+points" labels
 var dangerPulse = 0;
 var levelFlash = 0;   // seconds left on the "LEVEL n" banner
 
@@ -188,6 +189,8 @@ function startGame() {
     startLevel(1);
     state = 'running';
     particles = [];
+    popups = [];
+    levelFlash = 0;
     hideOverlay();
     updateHud();
 }
@@ -304,10 +307,18 @@ function resolveMatches(index) {
         const run = end - start + 1;
         if (run < MATCH_MIN) break;
 
+        const at0 = pointAt(marbleT(start));
         popRun(start, run);
         combo++;
         cleared += run;
-        score += run * POINTS_PER_MARBLE * combo;
+        const points = run * POINTS_PER_MARBLE * combo;
+        score += points;
+        popups.push({
+            x: at0.x,
+            y: at0.y,
+            text: combo > 1 ? `+${points} x${combo}` : `+${points}`,
+            life: 0.9,
+        });
 
         // The marbles either side of the gap are now neighbours: if they share a
         // colour the cascade continues from there.
@@ -376,8 +387,18 @@ function step(dt) {
     updateHud();
 }
 
+/**
+ * Move the shot in sub-steps no longer than a marble radius, so a slow frame
+ * cannot let it tunnel straight through the chain.
+ */
 function stepShot(dt) {
     if (!shot) return;
+    const travel = Math.hypot(shot.vx, shot.vy) * dt;
+    const parts = Math.max(1, Math.ceil(travel / MARBLE_R));
+    for (let i = 0; i < parts && shot; i++) advanceShot(dt / parts);
+}
+
+function advanceShot(dt) {
     shot.x += shot.vx * dt;
     shot.y += shot.vy * dt;
 
@@ -424,6 +445,12 @@ function stepParticles(dt) {
         p.life -= dt;
     }
     particles = particles.filter((p) => p.life > 0);
+
+    for (const p of popups) {
+        p.y -= 26 * dt;
+        p.life -= dt;
+    }
+    popups = popups.filter((p) => p.life > 0);
 }
 
 // ---------------------------------------------------------------------------
@@ -461,8 +488,21 @@ function draw() {
     drawParticles();
     if (shot) drawMarble(shot.x, shot.y, shot.color, MARBLE_R);
     drawShooter();
+    drawPopups();
     if (dangerPulse > 0) drawDanger();
     if (levelFlash > 0) drawLevelFlash();
+}
+
+function drawPopups() {
+    ctx.save();
+    ctx.textAlign = 'center';
+    ctx.font = 'bold 15px "Segoe UI", system-ui, sans-serif';
+    for (const p of popups) {
+        ctx.globalAlpha = Math.min(1, p.life / 0.4);
+        ctx.fillStyle = '#e6f2f0';
+        ctx.fillText(p.text, p.x, p.y);
+    }
+    ctx.restore();
 }
 
 function drawLevelFlash() {
