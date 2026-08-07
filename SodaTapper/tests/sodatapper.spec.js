@@ -391,17 +391,17 @@ test.describe('Soda Tapper', () => {
             const r = await page.evaluate(() => {
                 startGame();
                 stopSpawning();
-                spawnCustomer({ lane: 1, x: 200 });
-                spawnCustomer({ lane: 1, x: 400 });
-                spawnMug({ lane: 1, x: 440 });
+                spawnCustomer({ lane: 1, x: 120 });
+                spawnCustomer({ lane: 1, x: 460 });
+                spawnMug({ lane: 1, x: 500 });
                 for (let i = 0; i < 20; i++) step(0.016);
                 return { back: customers[0].x, front: customers[1].x };
             });
-            // Only the customer closest to the tap (the one that started at 400)
+            // Only the customer closest to the tap (the one that started at 460)
             // is pushed back; the one further down the bar keeps walking.
             expect(r.front).toBeLessThan(300);
-            expect(r.back).toBeGreaterThanOrEqual(200);
-            expect(r.back).toBeLessThan(230);
+            expect(r.back).toBeGreaterThanOrEqual(120);
+            expect(r.back).toBeLessThan(150);
         });
 
         test('a mug that slides off the end of the bar costs a life', async ({ page }) => {
@@ -546,6 +546,29 @@ test.describe('Soda Tapper', () => {
                 return { slow, fast };
             });
             expect(fast).toBeGreaterThan(slow);
+        });
+
+        test('customers get impatient when a wave drags on', async ({ page }) => {
+            const r = await page.evaluate(() => {
+                startGame();
+                stopSpawning();
+                const calm = customerSpeed();
+                for (let i = 0; i < 60 * 40; i++) step(1 / 60);
+                return { calm, impatient: customerSpeed() };
+            });
+            expect(r.impatient).toBeGreaterThan(r.calm);
+        });
+
+        test('a fresh wave calms the crowd back down', async ({ page }) => {
+            const r = await page.evaluate(() => {
+                startGame();
+                stopSpawning();
+                for (let i = 0; i < 60 * 40; i++) step(1 / 60);
+                const impatient = customerSpeed();
+                completeWave();
+                return { impatient, calmed: customerSpeed(), wave };
+            });
+            expect(r.calmed).toBeLessThan(r.impatient);
         });
 
         test('customers arrive more often in later waves', async ({ page }) => {

@@ -25,18 +25,28 @@ const BAR_X = 540;             // x of the tap end of every bar
 // --- Customers ---
 const CUST_W = 26;
 const CUST_H = 44;
-const PUSH_BACK = 140;         // how far one mug shoves a customer back
-const DRINK_TIME = 0.5;        // seconds a customer stands still after drinking
+const PUSH_BACK = 190;         // how far one mug shoves a customer back
+const DRINK_TIME = 0.35;       // seconds a customer stands still after drinking
 
 // --- Mugs ---
 const MUG_R = 8;
-const MUG_SPEED = 300;         // full mugs sliding away from the tap (px/s)
+const MUG_SPEED = 360;         // full mugs sliding away from the tap (px/s)
 const EMPTY_SPEED = 170;       // empties sliding back toward the tap (px/s)
 const POUR_COOLDOWN = 0.25;    // seconds between pours
 
 // --- Difficulty scaling (all pure functions of `wave`) ---
-const CUST_BASE = 26, CUST_STEP = 7;                        // walk speed
-const SPAWN_BASE = 3.0, SPAWN_STEP = 0.3, SPAWN_MIN = 1.0;  // seconds between arrivals
+// Walk speed ramps but is capped: a customer who outruns the mug economy makes
+// the bar unwinnable rather than hard, so late waves press with volume instead.
+const CUST_BASE = 30, CUST_STEP = 9, CUST_MAX = 140;
+const SPAWN_BASE = 3.0, SPAWN_STEP = 0.3, SPAWN_MIN = 0.8;  // seconds between arrivals
+
+// Impatience. A wave normally runs 10–25 s. A good enough player can otherwise
+// juggle four customers just short of the tap indefinitely — every mug pushes
+// somebody back, nobody is ever served, and the wave never ends. After the grace
+// period the remaining crowd gets restless and speeds up without limit, so a
+// wave always resolves one way or the other.
+const IMPATIENCE_GRACE = 22;   // seconds of a wave before the crowd gets restless
+const IMPATIENCE_RATE = 8;     // extra px/s of walk speed per second after that
 
 const CUSTOMERS_PER_WAVE = 6;  // serve this many to clear a wave
 const START_LIVES = 3;
@@ -64,7 +74,7 @@ let state, score, best, wave, lives;
 // `servedThisWave` counts happy customers (it drives the score); `resolvedThisWave`
 // counts every customer the wave is finished with — served *or* walked through to
 // the tap — so a wave can never stall on a customer who slipped past.
-let servedThisWave, resolvedThisWave, spawnedThisWave, spawnTimer, pourTimer;
+let servedThisWave, resolvedThisWave, spawnedThisWave, spawnTimer, pourTimer, waveElapsed;
 const player = { lane: 0 };
 const customers = [];   // { lane, x, drink }  — walking right, toward the tap
 const mugs = [];        // { lane, x }         — full, sliding left
@@ -77,7 +87,11 @@ const splashes = [];    // cosmetic only
 
 function laneY(i) { return LANE_TOP + i * LANE_H + LANE_H / 2; }
 
-function customerSpeed() { return CUST_BASE + (wave - 1) * CUST_STEP; }
+function impatience() { return Math.max(0, waveElapsed - IMPATIENCE_GRACE) * IMPATIENCE_RATE; }
+
+function customerSpeed() {
+    return Math.min(CUST_MAX, CUST_BASE + (wave - 1) * CUST_STEP) + impatience();
+}
 function spawnInterval() { return Math.max(SPAWN_MIN, SPAWN_BASE - (wave - 1) * SPAWN_STEP); }
 function pointsPerServe() { return SERVE_POINTS * wave; }
 function pointsPerCatch() { return CATCH_POINTS * wave; }
@@ -179,6 +193,7 @@ function completeWave() {
     mugs.length = 0;
     empties.length = 0;
     spawnTimer = spawnInterval();
+    waveElapsed = 0;
     lives = Math.min(MAX_LIVES, lives + 1);
 }
 
@@ -186,19 +201,25 @@ function completeWave() {
 // Simulation
 // ---------------------------------------------------------------------------
 
-// Picks a lane whose doorway is clear, so arrivals never stack on top of
-// a customer who is still standing by the door.
+// Picks an empty lane for the next arrival — one customer per bar at a time.
+//
+// This is deliberate, not just tidiness. Two customers sharing a bar livelock:
+// a mug is spent on whichever is nearest the tap, so each customer only gets
+// every other mug while both walk forward the whole time. Past a certain walk
+// speed the pair settles into an orbit that is never served and never reaches
+// the tap, and the wave can never end. One per bar makes every mug count, so a
+// bar the player is actively working always converges.
 function pickSpawnLane() {
     const free = [];
     for (let i = 0; i < LANE_COUNT; i++) {
-        const busy = customers.some((c) => c.lane === i && c.x < LANE_LEFT + CUST_W * 2);
-        if (!busy) free.push(i);
+        if (!customers.some((c) => c.lane === i)) free.push(i);
     }
     if (free.length === 0) return -1;
     return free[Math.floor(Math.random() * free.length)];
 }
 
 function substep(h) {
+    waveElapsed += h;
     if (pourTimer > 0) pourTimer = Math.max(0, pourTimer - h);
 
     // New arrivals.
@@ -311,6 +332,7 @@ function startGame() {
     player.lane = 0;
     spawnTimer = 1.0;
     pourTimer = 0;
+    waveElapsed = 0;
     hideOverlay();
     updateHud();
 }
@@ -434,6 +456,13 @@ function drawCustomer(c) {
     ctx.fillStyle = '#2b1d14';
     ctx.fillRect(c.x + 1, y - CUST_H / 2 + 3, 2, 3);
     ctx.fillRect(c.x + 5, y - CUST_H / 2 + 3, 2, 3);
+
+    // Once the crowd turns restless, mark it so the speed-up isn't a mystery.
+    if (impatience() > 0) {
+        ctx.fillStyle = '#ffcf5c';
+        ctx.fillRect(c.x - 1, y - CUST_H / 2 - 16, 3, 8);
+        ctx.fillRect(c.x - 1, y - CUST_H / 2 - 6, 3, 3);
+    }
 }
 
 function drawMug(x, y, full) {
@@ -601,5 +630,6 @@ resolvedThisWave = 0;
 spawnedThisWave = 0;
 spawnTimer = SPAWN_BASE;
 pourTimer = 0;
+waveElapsed = 0;
 updateHud();
 requestAnimationFrame(frame);

@@ -25,9 +25,13 @@ Open `index.html` in any browser. No build step, no server.
 ## How it works
 
 Customers walk in through the doors on the left of each bar and head for your
-tap. A full mug slid down a bar shoves the nearest customer back 140 px and holds
-them there while they drink. Push someone all the way back out of the door and
-they leave happy — that's a serve.
+tap. A full mug slid down a bar shoves the nearest customer back and holds them
+there while they drink. Push someone all the way back out of the door and they
+leave happy — that's a serve. Someone who has walked most of the bar takes three
+mugs to clear.
+
+Only one customer works a bar at a time, so the pressure comes from all four
+bars going at once — not from a queue on any one of them.
 
 Every mug they drink comes back at you as an empty, so pouring is a commitment:
 you have to be standing at that bar when the empty reaches the tap.
@@ -49,14 +53,19 @@ immediately cascade.
 | Empty mug caught at the tap | 5 × wave |
 
 Six customers make a wave. Clear one and you get a bonus life (up to 5), but the
-next crowd walks in faster and more often. Your best score is kept in
-`localStorage`.
+next crowd walks in faster and more often.
+
+Don't get comfortable juggling: if a wave drags past about 22 seconds the crowd
+gets restless — impatient customers are marked with a `!` and speed up every
+second until the wave breaks one way or the other.
+
+Your best score is kept in `localStorage`.
 
 ## Development
 
 Design notes and the full mechanics breakdown are in [DESIGN.md](DESIGN.md).
 
-Run the Playwright suite (63 tests):
+Run the Playwright suite (65 tests):
 
 ```powershell
 npx playwright test SodaTapper/tests/
