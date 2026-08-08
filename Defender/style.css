@@ -1,0 +1,149 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at 50% 0%, #131a2c 0%, #05060c 70%);
+    color: #d7e3ff;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.game {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+}
+
+.hud {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+h1 {
+    margin: 0;
+    font-size: 26px;
+    letter-spacing: 6px;
+    color: #6cf3ff;
+    text-shadow: 0 0 12px rgba(108, 243, 255, 0.6);
+}
+
+.stats {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 54px;
+    padding: 4px 8px;
+    border: 1px solid rgba(108, 243, 255, 0.25);
+    border-radius: 6px;
+    background: rgba(10, 18, 34, 0.7);
+    font-variant-numeric: tabular-nums;
+    font-size: 18px;
+}
+
+.stat .label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #7f92b8;
+}
+
+.board-wrap {
+    position: relative;
+    line-height: 0;
+}
+
+canvas {
+    display: block;
+    border: 2px solid #2a3d63;
+    border-radius: 8px;
+    background: #05060c;
+    box-shadow: 0 0 30px rgba(30, 90, 160, 0.35);
+    max-width: 100%;
+}
+
+.overlay {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: 8px;
+    background: rgba(4, 7, 16, 0.86);
+    text-align: center;
+    line-height: 1.5;
+}
+
+.overlay.visible {
+    display: flex;
+}
+
+.overlay h2 {
+    margin: 0;
+    font-size: 34px;
+    letter-spacing: 5px;
+    color: #6cf3ff;
+}
+
+.overlay p {
+    margin: 0;
+    color: #a9bbdd;
+}
+
+button {
+    margin-top: 8px;
+    padding: 10px 22px;
+    font-size: 16px;
+    letter-spacing: 2px;
+    color: #05060c;
+    background: #6cf3ff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #9df8ff;
+}
+
+.help {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    justify-content: center;
+    color: #8ea2c8;
+    font-size: 13px;
+}
+
+.help p {
+    margin: 0;
+}
+
+kbd {
+    padding: 1px 6px;
+    border: 1px solid #3d537f;
+    border-bottom-width: 2px;
+    border-radius: 4px;
+    background: #131c30;
+    font-family: inherit;
+    font-size: 12px;
+    color: #d7e3ff;
+}

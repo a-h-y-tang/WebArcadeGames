@@ -171,6 +171,15 @@
     "thumbnail": ""
   },
   {
+    "id": "defender",
+    "name": "Defender",
+    "description": "Patrol a scrolling planet and stop landers abducting your colonists",
+    "category": "Action",
+    "dir": "Defender",
+    "path": "games/Defender/index.html",
+    "thumbnail": "games/Defender/screenshot.png"
+  },
+  {
     "id": "dig-dug",
     "name": "Dig Dug",
     "description": "Dig tunnels and defeat underground creatures",
