@@ -72,6 +72,7 @@ const btnStart = document.getElementById('btn-start');
 let state;                          // 'idle' | 'running' | 'paused' | 'over'
 let score, best, lives, level, pepper;
 let chef, enemies, ingredients, peppers;
+let flash;                          // { ms, color } — brief full-screen tint
 let lastTime, animId;
 const keys = { left: false, right: false, up: false, down: false };
 
@@ -79,7 +80,7 @@ function clamp(v, lo, hi) { return v < lo ? lo : v > hi ? hi : v; }
 
 // --- Difficulty ---
 function enemySpeed(lvl) { return Math.min(0.112, 0.058 + (lvl - 1) * 0.013); }
-function enemyCount(lvl) { return Math.min(MAX_ENEMIES, 2 + lvl); }
+function enemyCount(lvl) { return Math.min(MAX_ENEMIES, 1 + lvl); }
 
 // --- Pure geometry helpers ---
 
@@ -199,6 +200,7 @@ function startGame() {
     lives = 3;
     level = 1;
     pepper = PEPPER_START;
+    flash = { ms: 0, color: '255, 255, 255' };
     buildLevel();
     spawnEnemies();
     resetPositions();
@@ -209,6 +211,7 @@ function startGame() {
 }
 
 function nextLevel() {
+    flash = { ms: 500, color: '255, 207, 107' };
     score += LEVEL_BONUS;
     level += 1;
     pepper = PEPPER_START;
@@ -219,6 +222,7 @@ function nextLevel() {
 }
 
 function loseLife() {
+    flash = { ms: 450, color: '210, 75, 58' };
     lives -= 1;
     updateHud();
     if (lives <= 0) {
@@ -456,6 +460,7 @@ function stepChef(dt) {
 // --- The stepper ---
 function update(dt) {
     if (state !== 'running') return;
+    if (flash.ms > 0) flash.ms -= dt;
 
     stepChef(dt);
     stepIngredients(dt);
@@ -628,14 +633,19 @@ function drawEnemy(e) {
 function drawPeppers() {
     for (const p of peppers) {
         const alpha = clamp(p.life / PEPPER_LIFE, 0, 1);
-        ctx.fillStyle = `rgba(230, 230, 235, ${0.15 + alpha * 0.35})`;
+        const puff = PEPPER_RADIUS * (1.15 - alpha * 0.35);       // billows as it fades
+        ctx.fillStyle = `rgba(246, 231, 212, ${0.10 + alpha * 0.30})`;
         ctx.beginPath();
-        ctx.arc(p.x, p.y - 12, PEPPER_RADIUS * 0.8, 0, Math.PI * 2);
+        ctx.arc(p.x, p.y - 13, puff, 0, Math.PI * 2);
         ctx.fill();
-        ctx.fillStyle = `rgba(60, 45, 40, ${alpha})`;
-        for (let i = 0; i < 8; i++) {
-            const a = (i / 8) * Math.PI * 2 + p.life / 120;
-            ctx.fillRect(p.x + Math.cos(a) * 14 - 1, p.y - 12 + Math.sin(a) * 10 - 1, 3, 3);
+        ctx.strokeStyle = `rgba(255, 207, 107, ${alpha * 0.55})`;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        for (let i = 0; i < 10; i++) {
+            const a = (i / 10) * Math.PI * 2 + p.life / 90;
+            const r = 9 + (i % 3) * 6;
+            ctx.fillStyle = `rgba(40, 28, 24, ${alpha})`;
+            ctx.fillRect(p.x + Math.cos(a) * r - 1, p.y - 13 + Math.sin(a) * r * 0.7 - 1, 3, 3);
         }
     }
 }
@@ -646,6 +656,11 @@ function draw() {
     drawPeppers();
     for (const e of enemies) drawEnemy(e);
     drawChef();
+
+    if (flash.ms > 0) {
+        ctx.fillStyle = `rgba(${flash.color}, ${Math.min(0.32, flash.ms / 1600)})`;
+        ctx.fillRect(0, 0, WIDTH, HEIGHT);
+    }
 }
 
 // --- Main loop ---
@@ -704,6 +719,7 @@ function init() {
     lives = 3;
     level = 1;
     pepper = PEPPER_START;
+    flash = { ms: 0, color: '255, 255, 255' };
     state = 'idle';
     buildLevel();
     spawnEnemies();

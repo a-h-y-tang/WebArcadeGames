@@ -174,6 +174,18 @@ test.describe('BurgerTime', () => {
             await expect(page.locator('#lives')).toHaveText('0');
         });
 
+        test('losing a life flashes the screen and clears the flash over time', async ({ page }) => {
+            await startAndPark(page);
+            const res = await page.evaluate(() => {
+                loseLife();
+                const lit = flash.ms;
+                for (let t = 0; t < 60; t++) update(16);
+                return { lit, faded: flash.ms };
+            });
+            expect(res.lit).toBeGreaterThan(0);
+            expect(res.faded).toBeLessThanOrEqual(0);
+        });
+
         test('game over stores the best score', async ({ page }) => {
             await startAndPark(page);
             const best = await page.evaluate(() => {
@@ -547,6 +559,10 @@ test.describe('BurgerTime', () => {
         test('enemies get faster on later levels', async ({ page }) => {
             const faster = await page.evaluate(() => enemySpeed(4) > enemySpeed(1));
             expect(faster).toBe(true);
+        });
+
+        test('level 1 opens with two enemies', async ({ page }) => {
+            expect(await page.evaluate(() => enemyCount(1))).toBe(2);
         });
 
         test('enemy count grows with the level but is capped', async ({ page }) => {

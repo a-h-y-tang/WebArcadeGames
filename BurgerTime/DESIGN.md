@@ -26,8 +26,8 @@ restarts with faster, more numerous enemies and the score carries over.
 | Constant | Value | Meaning |
 |---|---|---|
 | `WIDTH` × `HEIGHT` | 560 × 560 | canvas size |
-| `FLOOR_Y` | `[96, 182, 268, 354, 440]` | y of each floor's walking surface, top → bottom |
-| `PLATE_Y` | 508 | y of the plate surface, below the bottom floor |
+| `FLOOR_Y` | `[76, 162, 248, 334, 420]` | y of each floor's walking surface, top → bottom |
+| `PLATE_Y` | 506 | y of the plate surface, below the bottom floor |
 | `LADDER_X` | `[16, 144, 272, 400, 528]` | ladder centre x — every ladder spans all five floors |
 | `COL_X` | `[80, 208, 336, 464]` | burger column centres |
 | `BURGER_W` / `SEG_W` | 96 / 24 | ingredient width and the width of one of its four segments |
@@ -63,6 +63,8 @@ independent and tests can drive the simulation directly instead of waiting on
   points, the ingredient's fall extends one extra floor, and the enemy respawns
   at the top of the kitchen after `RESPAWN_MS`.
 * All ingredients plated → `LEVEL_BONUS` (1000) and the next level.
+* Losing a life or clearing a level tints the canvas for a few hundred
+  milliseconds (`flash`), so both read at a glance without stopping play.
 
 ### Enemies
 
@@ -111,7 +113,9 @@ Made autonomously while building; the simpler reading was taken each time.
    or be crushed; here only enemies interact with falling food, which keeps the
    only death condition "an enemy touched you".
 6. **One level layout.** Later levels reuse the layout and raise enemy speed and
-   count (capped at `MAX_ENEMIES`) rather than introducing new maps.
+   count — `enemyCount(lvl) = min(MAX_ENEMIES, 1 + lvl)`, so level 1 opens with
+   two chasers and level 4 onward runs the cap of five — rather than
+   introducing new maps.
 7. **Pepper is a floor-local cloud** with a fixed radius, not a projectile.
 8. **Scoring** is 50 per ingredient drop, 500 per squashed enemy, 1000 per level
    cleared. Best score persists in `localStorage` under `burgertime.best`.
@@ -124,3 +128,4 @@ Made autonomously while building; the simpler reading was taken each time.
 | `style.css` | kitchen-diner styling |
 | `game.js` | constants, state, `update(dt)`, input, rendering — plain globals so tests can poke them |
 | `tests/burgertime.spec.js` | Playwright suite driving `update(dt)` and the pure helpers |
+| `screenshot.png` | card art for the Angular game browser |

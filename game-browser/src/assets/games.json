@@ -114,7 +114,7 @@
     "category": "Action",
     "dir": "BurgerTime",
     "path": "games/BurgerTime/index.html",
-    "thumbnail": ""
+    "thumbnail": "games/BurgerTime/screenshot.png"
   },
   {
     "id": "calcudoku",
