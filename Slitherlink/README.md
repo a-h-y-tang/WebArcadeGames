@@ -4,8 +4,8 @@ Draw a single closed loop around the grid so that every numbered cell touches
 exactly that many loop segments.
 
 Slitherlink — also called *Loop the Loop* or *Fences* — is a classic Japanese
-logic puzzle. There is no guessing required: every puzzle here has exactly one
-solution reachable by pure deduction.
+logic puzzle. Every puzzle here has been checked to have exactly one solution,
+so there is always a single right answer to work towards.
 
 ![Slitherlink](screenshot.png)
 
