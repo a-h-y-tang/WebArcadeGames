@@ -140,6 +140,24 @@ function ladderNear(x, from, to) {
     return best;
 }
 
+function nearestFloorIndex(y) {
+    const f = Math.round((y - FLOOR_TOP) / FLOOR_GAP);
+    return Math.max(0, Math.min(PLATE_FLOOR, f));
+}
+
+// How far a continuous ladder run at column `x` reaches above / below `y`.
+function shaftTop(x, y) {
+    let f = Math.max(0, Math.min(PLATE_FLOOR, Math.floor((y - FLOOR_TOP) / FLOOR_GAP)));
+    while (f > 0 && hasLadder(x, f, f - 1)) f -= 1;
+    return f;
+}
+
+function shaftBottom(x, y) {
+    let f = Math.max(0, Math.min(PLATE_FLOOR, Math.ceil((y - FLOOR_TOP) / FLOOR_GAP)));
+    while (f < PLATE_FLOOR && hasLadder(x, f, f + 1)) f += 1;
+    return f;
+}
+
 function nearestLadderX(x, from, to) {
     let best = null;
     for (const lx of LADDER_XS) {
@@ -285,21 +303,27 @@ function setChefTo(x, floor) {
 // ladder when there is vertical intent and a ladder within reach.
 function moveActor(a, dt, speed, climbSpeed) {
     if (a.climbing) {
-        // Reversing direction mid-climb swaps the destination girder.
-        if (a.dirY !== 0) {
-            const want = a.dirY > 0 ? Math.max(a.climbFrom, a.climbTo) : Math.min(a.climbFrom, a.climbTo);
-            if (a.climbTo !== want) {
-                const from = a.climbTo;
-                a.climbTo = a.climbFrom;
-                a.climbFrom = from;
-            }
+        // Vertical intent keeps the climb going — hold "up" and you ride the
+        // ladder girder after girder. Releasing it settles onto whichever girder
+        // is nearest, so a climb always ends somewhere you can walk.
+        const settleY = floorY(nearestFloorIndex(a.y));
+        const dir = a.dirY !== 0 ? a.dirY : Math.sign(settleY - a.y);
+        if (dir === 0) {
+            a.floor = nearestFloorIndex(a.y);
+            a.climbing = false;
+            return;
         }
-        const targetY = floorY(a.climbTo);
-        const dir = targetY > a.y ? 1 : -1;
-        a.y += dir * climbSpeed * dt;
-        if ((targetY - a.y) * dir <= 0) {
-            a.y = targetY;
-            a.floor = a.climbTo;
+        const prevY = a.y;
+        const top = floorY(shaftTop(a.x, a.y));
+        const bottom = floorY(shaftBottom(a.x, a.y));
+        a.y = Math.max(top, Math.min(bottom, a.y + dir * climbSpeed * dt));
+
+        // Reaching a girder ends the climb; if the key is still held the ladder
+        // is grabbed again on the next sub-step and the climb carries on.
+        const gy = floorY(nearestFloorIndex(a.y));
+        if (prevY !== gy && (prevY - gy) * (a.y - gy) <= 0) {
+            a.y = gy;
+            a.floor = nearestFloorIndex(gy);
             a.climbing = false;
         }
         return;
@@ -667,18 +691,6 @@ function draw() {
     // Burger layers.
     for (const ing of ingredients) drawLayer(ing);
 
-    // Pepper clouds.
-    for (const cloud of peppers) {
-        ctx.globalAlpha = Math.max(0.15, cloud.life / PEPPER_LIFE);
-        ctx.fillStyle = '#f6f2d0';
-        for (let i = 0; i < 8; i++) {
-            const px = cloud.x - cloud.w / 2 + ((i * 7 + 3) % cloud.w);
-            const py = cloud.y - cloud.h / 2 + ((i * 11 + 5) % cloud.h);
-            ctx.fillRect(px, py, 3, 3);
-        }
-        ctx.globalAlpha = 1;
-    }
-
     // Enemies.
     for (const e of enemies) {
         if (e.dead) continue;
@@ -687,6 +699,19 @@ function draw() {
 
     // Chef.
     drawChef();
+
+    // Pepper clouds.
+    for (const cloud of peppers) {
+        const fade = Math.max(0.2, cloud.life / PEPPER_LIFE);
+        ctx.globalAlpha = fade;
+        for (let i = 0; i < 22; i++) {
+            const px = cloud.x - cloud.w / 2 + ((i * 13 + 5) % cloud.w);
+            const py = cloud.y - cloud.h + ((i * 17 + 7) % cloud.h);
+            ctx.fillStyle = i % 3 === 0 ? '#fff8dc' : '#cbb98a';
+            ctx.fillRect(px, py, 4, 4);
+        }
+        ctx.globalAlpha = 1;
+    }
 }
 
 function drawLadder(x, yTop, yBottom) {
@@ -753,6 +778,23 @@ function drawEnemy(e) {
     const y = e.y;
     ctx.fillStyle = e.stun > 0 ? '#9aa4bd' : (ENEMY_STYLE[e.kind] || '#e0674a');
     ctx.fillRect(x - 9, y - 18, 18, 15);
+
+    // A little shape per kind: the hot dog gets a bun, the egg a white top, the
+    // pickle its bumps.
+    if (e.stun === 0) {
+        if (e.kind === 'dog') {
+            ctx.fillStyle = '#e8b57a';
+            ctx.fillRect(x - 9, y - 8, 18, 4);
+        } else if (e.kind === 'egg') {
+            ctx.fillStyle = '#f7c948';
+            ctx.fillRect(x - 4, y - 16, 8, 5);
+        } else {
+            ctx.fillStyle = '#4d7f38';
+            ctx.fillRect(x - 7, y - 17, 3, 3);
+            ctx.fillRect(x + 1, y - 12, 3, 3);
+        }
+    }
+
     ctx.fillStyle = '#1b2135';
     ctx.fillRect(x - 5, y - 14, 3, 3);
     ctx.fillRect(x + 2, y - 14, 3, 3);

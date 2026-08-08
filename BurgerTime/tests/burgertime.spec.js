@@ -252,7 +252,7 @@ test.describe('Burger Time', () => {
             expect(c.y).toBeCloseTo(c.target, 3);
         });
 
-        test('a climb finishes on the girder when the player lets go', async ({ page }) => {
+        test('letting go early in a climb settles back onto the girder below', async ({ page }) => {
             const c = await page.evaluate(() => {
                 startGame();
                 enemies.length = 0;
@@ -261,11 +261,46 @@ test.describe('Burger Time', () => {
                 for (let i = 0; i < 5; i++) step(0.016);
                 moveChef(0, 0);
                 for (let i = 0; i < 200; i++) step(0.016);
+                return { floor: chef.floor, y: chef.y, target: floorY(PLATE_FLOOR), climbing: chef.climbing };
+            });
+            expect(c.floor).toBe(await page.evaluate(() => PLATE_FLOOR));
+            expect(c.y).toBeCloseTo(c.target, 3);
+            expect(c.climbing).toBe(false);
+        });
+
+        test('letting go late in a climb settles onto the girder above', async ({ page }) => {
+            const c = await page.evaluate(() => {
+                startGame();
+                enemies.length = 0;
+                setChefTo(LADDER_XS[0], PLATE_FLOOR);
+                moveChef(0, -1);
+                for (let i = 0; i < 40; i++) step(0.016);
+                moveChef(0, 0);
+                for (let i = 0; i < 200; i++) step(0.016);
                 return { floor: chef.floor, y: chef.y, target: floorY(PLATE_FLOOR - 1), climbing: chef.climbing };
             });
             expect(c.floor).toBe((await page.evaluate(() => PLATE_FLOOR)) - 1);
             expect(c.y).toBeCloseTo(c.target, 3);
             expect(c.climbing).toBe(false);
+        });
+
+        test('a chef who stops climbing can walk again', async ({ page }) => {
+            const moved = await page.evaluate(() => {
+                startGame();
+                enemies.length = 0;
+                setChefTo(LADDER_XS[0], PLATE_FLOOR);
+                moveChef(0, -1);
+                // Climb one girder, then react a frame late — as a player would.
+                let guard = 0;
+                while (chef.floor === PLATE_FLOOR && guard++ < 300) step(0.016);
+                step(0.016);
+                moveChef(1, 0);
+                const x0 = chef.x;
+                for (let i = 0; i < 60; i++) step(0.016);
+                return { dx: chef.x - x0, floor: chef.floor, climbing: chef.climbing };
+            });
+            expect(moved.climbing).toBe(false);
+            expect(moved.dx).toBeGreaterThan(20);
         });
 
         test('the chef snaps onto the ladder column while climbing', async ({ page }) => {
@@ -1086,6 +1121,26 @@ test.describe('Burger Time', () => {
                 return false;
             });
             expect(painted).toBe(true);
+        });
+
+        test('a pepper cloud is painted in front of the chef', async ({ page }) => {
+            const diff = await page.evaluate(() => {
+                startGame();
+                enemies.length = 0;
+                setChefTo(300, 2);
+                moveChef(1, 0);
+                step(0.016);
+                draw();
+                const box = [320, floorY(2) - PEPPER_H, 60, PEPPER_H];
+                const before = ctx.getImageData(...box).data.slice();
+                firePepper();
+                draw();
+                const after = ctx.getImageData(...box).data;
+                let changed = 0;
+                for (let i = 0; i < after.length; i += 4) if (after[i] !== before[i]) changed += 1;
+                return changed;
+            });
+            expect(diff).toBeGreaterThan(0);
         });
 
         test('no console errors during play', async ({ page }) => {

@@ -24,6 +24,11 @@ an enemy squashes it for a large bonus.
   interpolates between girders while climbing. `moveActor()` is shared by the
   chef and the enemies: walk when there is horizontal intent, grab a ladder when
   there is vertical intent and a ladder within `LADDER_SNAP` pixels.
+- Holding a climb key rides the ladder girder after girder: reaching a girder
+  ends the climb, and the ladder is grabbed again on the next sub-step while the
+  key is still down. **Releasing** it settles onto whichever girder is nearest,
+  so a climb always ends somewhere the actor can walk — a player who reacts a
+  frame late still stops on the girder they aimed for instead of overshooting.
 
 ### Burger layers
 
@@ -77,7 +82,7 @@ an enemy squashes it for a large bonus.
   advanced through `step(dt)`, which runs fixed 1/240 s sub-steps; the render
   loop and the tests call the same `step()`, so tests are deterministic and never
   depend on `requestAnimationFrame` timing.
-- `tests/burgertime.spec.js` — 88 Playwright tests written before the
+- `tests/burgertime.spec.js` — 91 Playwright tests written before the
   implementation, covering the idle screen, movement, ladders, treading and
   dropping, pile stacking, plating, pepper, enemy chase/stun/squash, lives,
   levels, HUD, scoring, pause/restart and a rendering smoke test.
