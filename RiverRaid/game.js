@@ -63,6 +63,7 @@ var distance = 0;
 var terrain = [];                      // [{ left, right, bridge }]
 var entities = [];
 var missiles = [];
+var blasts = [];                       // purely decorative explosion rings
 
 var player = {
     x: CANVAS_W / 2,
@@ -300,11 +301,24 @@ function hits(missile, e) {
         && Math.abs(missile.x - e.x) < (missile.w + e.w) / 2;
 }
 
+function addBlast(x, worldY, size) {
+    blasts.push({ x: x, worldY: worldY, size: size, life: 0.45, max: 0.45 });
+}
+
 function destroy(e) {
     var index = entities.indexOf(e);
     if (index >= 0) entities.splice(index, 1);
     score += POINTS[e.type] || 0;
+    addBlast(e.x, e.worldY, Math.max(e.w, e.h) * (e.type === 'bridge' ? 0.5 : 0.9));
     if (e.type === 'bridge') section++;
+}
+
+/** Decorative only, so it ages on the render clock rather than inside step(). */
+function ageBlasts(dt) {
+    for (var i = blasts.length - 1; i >= 0; i--) {
+        blasts[i].life -= dt;
+        if (blasts[i].life <= 0) blasts.splice(i, 1);
+    }
 }
 
 function updateMissiles(dt) {
@@ -369,6 +383,7 @@ function resolvePlayer(dt) {
 
 function crash() {
     missiles.length = 0;
+    addBlast(player.x, distance, 34);
     lives--;
 
     if (lives <= 0) {
@@ -436,6 +451,7 @@ function startGame() {
     distance = 0;
     entities = [];
     missiles = [];
+    blasts = [];
     resetTerrain();
 
     player.vx = 0;
@@ -553,6 +569,29 @@ function draw() {
     for (var i = 0; i < entities.length; i++) drawEntity(entities[i]);
     for (var j = 0; j < missiles.length; j++) drawMissile(missiles[j]);
     if (state !== 'idle') drawPlayer();
+    for (var k = 0; k < blasts.length; k++) drawBlast(blasts[k]);
+}
+
+function drawBlast(b) {
+    var t = 1 - b.life / b.max;
+    var y = screenYFor(b.worldY);
+    ctx.save();
+    ctx.fillStyle = '#f97316';
+    ctx.globalAlpha = 1 - t;
+    ctx.beginPath();
+    ctx.arc(b.x, y, b.size * (0.35 + 0.55 * t), 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#fde047';
+    ctx.beginPath();
+    ctx.arc(b.x, y, b.size * 0.45 * (1 - t), 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalAlpha = (1 - t) * 0.8;
+    ctx.strokeStyle = '#fef3c7';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(b.x, y, b.size * (0.5 + 0.7 * t), 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
 }
 
 function drawEntity(e) {
@@ -620,6 +659,7 @@ function drawPlayer() {
 
     ctx.save();
     ctx.translate(player.x, PLAYER_Y);
+    ctx.rotate(player.vx * 0.14);      // bank into the turn
     ctx.fillStyle = '#e2e8f0';
     ctx.beginPath();
     ctx.moveTo(0, -player.h / 2);
@@ -684,6 +724,7 @@ function frame(now) {
     var dt = (now - lastTime) / 1000;
     lastTime = now;
     step(dt);
+    ageBlasts(Math.min(dt, 0.05));
     draw();
     window.requestAnimationFrame(frame);
 }
