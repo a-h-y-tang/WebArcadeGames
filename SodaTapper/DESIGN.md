@@ -29,7 +29,10 @@ time. Lane *i*'s vertical centre is `laneY(i)`.
 ### Customers
 
 - Customers spawn at the doors (`x = BAR_LEFT`) on a repeating timer
-  (`spawnInterval()`) in a random lane, and walk right at `customerSpeed()`.
+  (`spawnInterval()`) in a random lane whose doorway is clear, and walk right at
+  `customerSpeed()`.
+- At most `MAX_ACTIVE` customers are at the counter at once; while the counter is
+  full, the queue outside simply waits.
 - A customer that reaches `BAR_RIGHT` grabs the bartender: **lose a life**, and
   that customer is removed.
 
@@ -39,17 +42,21 @@ time. Lane *i*'s vertical centre is `laneY(i)`.
   `BAR_RIGHT` and slides **left** at `MUG_SPEED`. Pouring is rate-limited by
   `POUR_COOLDOWN` seconds so the key can't be spammed into a wall of foam.
 - A mug that overlaps a customer serves them: the mug disappears, the customer is
-  knocked back `KNOCKBACK` pixels toward the doors, the player scores
-  `POINTS_HIT`, and an **empty mug** appears at the point of impact sliding
-  **right** at `EMPTY_SPEED`.
+  knocked back `KNOCKBACK` pixels toward the doors, stops for `DRINK_TIME`
+  seconds to drink, and the player scores `POINTS_HIT`.
 - When a mug overlaps more than one customer, the **rightmost** one (the one the
   mug meets first) is served.
 - A knockback that pushes a customer to `BAR_LEFT` or beyond means they leave
-  happy: the customer is removed and the player scores `POINTS_SERVED`.
+  happy: the customer is removed, the player scores `POINTS_SERVED`, and the
+  customer slides their **empty mug** back down the lane.
 - A mug that reaches `BAR_LEFT` without hitting anybody smashes: **lose a life**.
+  Pouring more mugs than the crowd in a lane can absorb is therefore the main way
+  a hurried player kills themselves.
 
 ### Empty mugs
 
+- One empty comes back per customer *served* — not per mug thrown — so the
+  catching workload is bounded by the level's customer count.
 - An empty that reaches `BAR_RIGHT` while the bartender is standing **in that
   lane** is caught for `POINTS_EMPTY`.
 - An empty that reaches `BAR_RIGHT` in **any other lane** smashes: **lose a
@@ -156,4 +163,25 @@ simpler reading, and recorded here:
    unwinnable.
 6. **Difficulty ceiling.** `customerSpeed()` and `spawnInterval()` scale linearly
    with `level` but are clamped (`CUSTOMER_MAX`, `SPAWN_MIN`) so very late levels
-   stay playable rather than becoming instantly fatal.
+   stay playable rather than becoming instantly fatal. A flawless player can
+   therefore keep going indefinitely, which is the normal arcade contract.
+
+## Balance
+
+Two rules exist purely to keep the game *finishable*, and both were added after
+an autoplaying bot found the failure they prevent. Without them the game reaches
+a stable equilibrium: the crowd's forward walk exactly absorbs the knockback a
+player can apply, so a level can be held indefinitely but never cleared — the
+player is stuck, unable to win or lose, scoring forever.
+
+1. **The drink pause** (`DRINK_TIME`). A served customer stops walking while they
+   drink, so every mug that lands is guaranteed net backward progress rather than
+   progress the customer can walk off during the next mug's flight.
+2. **The crowd cap** (`MAX_ACTIVE`). Total forward pressure is bounded at
+   `MAX_ACTIVE × CUSTOMER_MAX` px/s, comfortably under the knockback rate a
+   player pouring steadily can apply. Without the cap the crowd simply grows
+   until no pour rate can keep up.
+
+`tests/soda-tapper.spec.js` guards both: *"steady service always pushes a
+customer out of the doors"* pins rule 1, and *"a competent autoplaying bartender
+clears levels"* plays a full game and fails if the equilibrium ever comes back.

@@ -30,7 +30,11 @@ const HIT_DIST = (CUSTOMER_W + MUG_W) / 2;  // mug/customer overlap threshold
 // --- Speeds (px per second) ---
 const MUG_SPEED = 380;             // full mugs sliding toward the doors
 const EMPTY_SPEED = 210;           // empties sliding back toward the taps
-const KNOCKBACK = 90;              // how far one mug pushes a customer back
+const KNOCKBACK = 130;             // how far one mug pushes a customer back
+// A served customer stops to drink. This is what guarantees the level can
+// always be cleared: without it a crowd walking forward at customerSpeed can
+// exactly absorb the player's knockbacks and stalemate forever.
+const DRINK_TIME = 0.55;
 
 // --- Pouring ---
 const POUR_COOLDOWN = 0.22;        // seconds between mugs
@@ -46,7 +50,13 @@ const POINTS_EMPTY = 25;           // an empty mug caught
 const POINTS_LEVEL = 100;          // × level, for clearing a level
 
 // --- Difficulty scaling (all pure functions of `level`) ---
-const CUSTOMER_BASE = 34, CUSTOMER_STEP = 7, CUSTOMER_MAX = 95;
+const CUSTOMER_BASE = 34, CUSTOMER_STEP = 7, CUSTOMER_MAX = 88;
+// How many customers may be at the counter at once. This is the balance
+// guarantee: total forward pressure is capped at MAX_ACTIVE × CUSTOMER_MAX,
+// which stays comfortably below the knockback a player pouring steadily can
+// apply. Without it the crowd grows until no pour rate can clear the level and
+// it stalls, unwinnable and unloseable, forever.
+const MAX_ACTIVE = 4;
 const SPAWN_BASE = 2.2, SPAWN_STEP = 0.18, SPAWN_MIN = 0.8;
 const SPAWN_LEAD = 1.0;            // grace period before the first customer
 const LEVEL_CUSTOMER_BASE = 4, LEVEL_CUSTOMER_STEP = 2;
@@ -88,7 +98,11 @@ function customersForLevel() { return LEVEL_CUSTOMER_BASE + LEVEL_CUSTOMER_STEP 
 // ---------------------------------------------------------------------------
 
 function spawnCustomer(lane, x) {
-    const customer = { lane, x, bob: Math.random() * Math.PI * 2, tint: Math.floor(Math.random() * 4) };
+    const customer = {
+        lane, x, drink: 0,
+        bob: Math.random() * Math.PI * 2,
+        tint: Math.floor(Math.random() * 4),
+    };
     customers.push(customer);
     return customer;
 }
@@ -137,24 +151,28 @@ function pourMug() {
 // The customer a mug is currently touching, or null. When a mug overlaps more
 // than one, it serves the rightmost — the one it would physically meet first.
 function mugTarget(mug) {
-    let best = null;
+    let nearest = null;
     for (const customer of customers) {
         if (customer.lane !== mug.lane) continue;
         if (Math.abs(mug.x - customer.x) >= HIT_DIST) continue;
-        if (!best || customer.x > best.x) best = customer;
+        if (!nearest || customer.x > nearest.x) nearest = customer;
     }
-    return best;
+    return nearest;
 }
 
 function serveCustomer(customer) {
     score += POINTS_HIT;
-    spawnEmpty(customer.lane, customer.x);
     addSplash(customer.lane, customer.x, '#f0a828');
+    customer.drink = DRINK_TIME;
     customer.x -= KNOCKBACK;
     if (customer.x <= BAR_LEFT) {
         customers.splice(customers.indexOf(customer), 1);
         score += POINTS_SERVED;
         servedThisLevel++;
+        // The empty comes back only when the customer actually leaves, so the
+        // number of empties to catch is bounded by the level's customer count
+        // rather than by how many mugs were thrown.
+        spawnEmpty(customer.lane, BAR_LEFT + 20);
     }
 }
 
@@ -205,7 +223,7 @@ function step(dt) {
     if (spawnedThisLevel < customersForLevel()) {
         spawnTimer -= dt;
         if (spawnTimer <= 0) {
-            const lane = freeSpawnLane();
+            const lane = customers.length < MAX_ACTIVE ? freeSpawnLane() : -1;
             if (lane >= 0) {
                 spawnCustomer(lane, BAR_LEFT);
                 spawnedThisLevel++;
@@ -225,7 +243,11 @@ function step(dt) {
     const walk = customerSpeed() * dt;
     for (let i = customers.length - 1; i >= 0; i--) {
         const customer = customers[i];
-        customer.x += walk;
+        if (customer.drink > 0) {
+            customer.drink -= dt;       // busy with their drink — no ground gained
+        } else {
+            customer.x += walk;
+        }
         customer.bob += dt * 9;
         if (customer.x >= BAR_RIGHT) {
             customers.splice(i, 1);
@@ -420,10 +442,19 @@ function drawCustomer(customer) {
     ctx.fillStyle = '#e8c9a0';
     ctx.fillRect(x - 9, base - 40, 18, 16);                        // head
     ctx.fillStyle = '#241505';
-    ctx.fillRect(x + 1, base - 35, 3, 3);                          // eyes, facing the taps
-    ctx.fillRect(x + 6, base - 35, 3, 3);
-    ctx.fillStyle = '#e8c9a0';
-    ctx.fillRect(x + CUSTOMER_W / 2 - 2, base - 18, 8, 5);         // outstretched hand
+    if (customer.drink > 0) {
+        ctx.fillRect(x + 1, base - 35, 3, 2);                      // eyes shut, happy
+        ctx.fillRect(x + 6, base - 35, 3, 2);
+        ctx.fillStyle = '#d8dde6';                                 // mug raised to drink
+        ctx.fillRect(x + 8, base - 34, 10, 12);
+        ctx.fillStyle = '#c2701c';
+        ctx.fillRect(x + 10, base - 30, 6, 6);
+    } else {
+        ctx.fillRect(x + 1, base - 35, 3, 3);                      // eyes, facing the taps
+        ctx.fillRect(x + 6, base - 35, 3, 3);
+        ctx.fillStyle = '#e8c9a0';
+        ctx.fillRect(x + CUSTOMER_W / 2 - 2, base - 18, 8, 5);     // outstretched hand
+    }
 }
 
 function drawMug(mug, full) {

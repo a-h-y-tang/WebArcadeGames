@@ -338,7 +338,23 @@ test.describe('Soda Tapper', () => {
             expect(result.score).toBeGreaterThan(0);
         });
 
-        test('serving a customer sends an empty mug back', async ({ page }) => {
+        test('a departing customer sends an empty mug back', async ({ page }) => {
+            const result = await page.evaluate(() => {
+                startGame();
+                customers.length = 0;
+                mugs.length = 0;
+                empties.length = 0;
+                spawnCustomer(2, BAR_LEFT + 5);
+                spawnMug(2, BAR_LEFT + 15);
+                for (let i = 0; i < 5; i++) step(0.016);
+                return { customers: customers.length, count: empties.length, lane: empties[0] && empties[0].lane };
+            });
+            expect(result.customers).toBe(0);
+            expect(result.count).toBe(1);
+            expect(result.lane).toBe(2);
+        });
+
+        test('a hit that does not finish a customer sends no empty back', async ({ page }) => {
             const result = await page.evaluate(() => {
                 startGame();
                 customers.length = 0;
@@ -347,10 +363,10 @@ test.describe('Soda Tapper', () => {
                 spawnCustomer(2, 400);
                 spawnMug(2, 410);
                 for (let i = 0; i < 5; i++) step(0.016);
-                return { count: empties.length, lane: empties[0] && empties[0].lane };
+                return { customers: customers.length, empties: empties.length };
             });
-            expect(result.count).toBe(1);
-            expect(result.lane).toBe(2);
+            expect(result.customers).toBe(1);
+            expect(result.empties).toBe(0);
         });
 
         test('a mug only serves a customer in its own lane', async ({ page }) => {
@@ -412,6 +428,64 @@ test.describe('Soda Tapper', () => {
             // the left-hand customer was untouched — only its own walking moved it
             expect(result[1]).toBeGreaterThanOrEqual(300);
             expect(result[1]).toBeLessThan(305);
+        });
+
+        test('a served customer stops to drink instead of advancing', async ({ page }) => {
+            const result = await page.evaluate(() => {
+                startGame();
+                customers.length = 0;
+                mugs.length = 0;
+                spawnCustomer(0, 400);
+                spawnMug(0, 410);
+                step(0.016);                       // the hit lands
+                const afterHit = customers[0].x;
+                for (let i = 0; i < 10; i++) step(0.016);
+                return { afterHit, afterWait: customers[0].x, drinking: customers[0].drink > 0 };
+            });
+            expect(result.drinking).toBe(true);
+            expect(result.afterWait).toBe(result.afterHit);
+        });
+
+        test('a customer walks again once the drink is finished', async ({ page }) => {
+            const moved = await page.evaluate(() => {
+                startGame();
+                customers.length = 0;
+                mugs.length = 0;
+                spawnCustomer(0, 400);
+                spawnMug(0, 410);
+                step(0.016);
+                const afterHit = customers[0].x;
+                for (let i = 0; i < 80; i++) step(0.016);   // well past DRINK_TIME
+                return customers[0].x > afterHit;
+            });
+            expect(moved).toBe(true);
+        });
+
+        // Regression guard: without the drink pause, a crowd walking forward can
+        // absorb the player's knockbacks exactly and stalemate — the level then
+        // becomes impossible to clear no matter how well the player plays.
+        test('steady service always pushes a customer out of the doors', async ({ page }) => {
+            const result = await page.evaluate(() => {
+                startGame();
+                level = 8;                     // fast walkers
+                spawnedThisLevel = customersForLevel();   // no new arrivals
+                customers.length = 0;
+                mugs.length = 0;
+                spawnCustomer(0, BAR_RIGHT - 30);
+                setLane(0);
+                let frames = 0;
+                let minLives = lives;
+                for (; frames < 2000 && customers.length; frames++) {
+                    pourMug();
+                    step(0.016);
+                    // keep the counter clear of hazards this test isn't about
+                    empties.length = 0;
+                    minLives = Math.min(minLives, lives);
+                }
+                return { customers: customers.length, minLives, frames };
+            });
+            expect(result.customers).toBe(0);      // served, not lost to the taps
+            expect(result.minLives).toBe(3);       // no life was lost getting there
         });
 
         test('a mug that reaches the doors untouched costs a life', async ({ page }) => {
@@ -754,27 +828,38 @@ test.describe('Soda Tapper', () => {
             expect(finalState).toBe('over');
         });
 
-        test('an autoplaying bartender can serve customers and score', async ({ page }) => {
+        // A competent player must be able to climb, not merely hold the line. An
+        // earlier tuning of this game reached a stable equilibrium where the
+        // crowd could be held back forever but never cleared, leaving the level
+        // both unwinnable and unloseable. This bot plays the way the game asks
+        // to be played — catch inbound empties, and pour only as many mugs as
+        // the lane's crowd can actually absorb — and must make real progress.
+        test('a competent autoplaying bartender clears levels', async ({ page }) => {
             const run = await page.evaluate(() => {
                 startGame();
                 let frames = 0;
-                for (let i = 0; i < 3000 && state === 'running'; i++) {
-                    // greedily chase whatever is most urgent: an inbound empty,
-                    // otherwise the customer closest to the taps whose lane does
-                    // not already have a mug on the way.
-                    const empty = empties.slice().sort((a, b) => b.x - a.x)[0];
-                    const customer = customers
-                        .filter((c) => !mugs.some((m) => m.lane === c.lane))
+                for (; frames < 20000 && state === 'running'; frames++) {
+                    const urgent = empties
+                        .filter((e) => (BAR_RIGHT - e.x) / EMPTY_SPEED < 0.55)
                         .sort((a, b) => b.x - a.x)[0];
-                    if (empty && empty.x > BAR_RIGHT - 140) setLane(empty.lane);
-                    else if (customer) { setLane(customer.lane); pourMug(); }
+                    if (urgent) {
+                        setLane(urgent.lane);
+                    } else {
+                        const target = customers.slice().sort((a, b) => b.x - a.x).find((c) => {
+                            const inFlight = mugs.filter((m) => m.lane === c.lane).length;
+                            const needed = customers
+                                .filter((k) => k.lane === c.lane)
+                                .reduce((n, k) => n + Math.ceil((k.x - BAR_LEFT) / KNOCKBACK), 0);
+                            return inFlight < needed;
+                        });
+                        if (target) { setLane(target.lane); pourMug(); }
+                    }
                     step(0.016);
-                    frames++;
                 }
                 return { frames, score, level };
             });
-            expect(run.frames).toBeGreaterThan(600);
-            expect(run.score).toBeGreaterThan(200);
+            expect(run.score).toBeGreaterThan(500);
+            expect(run.level).toBeGreaterThanOrEqual(4);
         });
 
         test('the canvas actually draws something', async ({ page }) => {

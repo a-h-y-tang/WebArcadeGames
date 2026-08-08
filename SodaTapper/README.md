@@ -23,11 +23,14 @@ Game**) to begin.
 | Click a lane | Jump to that lane and pour |
 | P | Pause / resume |
 
-- A mug knocks the customer it reaches back toward the doors and scores **10**
-  points. Knock a customer all the way to the doors and they leave satisfied for
-  another **50**.
-- Every mug that connects sends an **empty** sliding back at you. Catch it by
+- A mug knocks the customer it reaches back toward the doors, stops them for a
+  moment while they drink, and scores **10** points. Knock a customer all the way
+  to the doors and they leave satisfied for another **50**.
+- A departing customer slides their **empty** back down the lane. Catch it by
   standing in that lane when it arrives for **25** points.
+- Don't over-pour. A mug thrown at a customer who has already left has nothing to
+  hit, and it will smash at the doors — count the mugs a customer still needs
+  before you pour the next one.
 - You lose a life when a customer reaches the taps, when a mug slides down an
   empty lane and smashes at the doors, or when an empty comes back to a lane you
   aren't standing in. Losing a life sweeps every mug off the counter so you can
