@@ -108,6 +108,15 @@
     "thumbnail": ""
   },
   {
+    "id": "burgertime",
+    "name": "BurgerTime",
+    "description": "Stomp burger ingredients down a kitchen maze while dodging the chasing food",
+    "category": "Action",
+    "dir": "BurgerTime",
+    "path": "games/BurgerTime/index.html",
+    "thumbnail": ""
+  },
+  {
     "id": "calcudoku",
     "name": "Calcudoku",
     "description": "Math logic puzzle with grid and operations",

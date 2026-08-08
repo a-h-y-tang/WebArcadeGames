@@ -1,0 +1,108 @@
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    padding: 24px 12px 32px;
+    background: radial-gradient(circle at 50% 0%, #3a2a24 0%, #1b1210 65%, #120c0b 100%);
+    color: #f6e7d4;
+    font-family: "Trebuchet MS", "Segoe UI", system-ui, sans-serif;
+    display: flex;
+    justify-content: center;
+}
+
+#container {
+    width: min(560px, 100%);
+}
+
+h1 {
+    margin: 0 0 12px;
+    text-align: center;
+    font-size: 34px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #ffcf6b;
+    text-shadow: 0 3px 0 #a5401f, 0 5px 14px rgba(0, 0, 0, .6);
+}
+
+#hud {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px 16px;
+    margin-bottom: 10px;
+    padding: 8px 12px;
+    background: rgba(0, 0, 0, .35);
+    border: 2px solid #58382b;
+    border-radius: 8px;
+    font-size: 15px;
+    letter-spacing: 1px;
+}
+
+#hud strong { color: #ffcf6b; }
+
+#canvas-wrapper {
+    position: relative;
+    line-height: 0;
+}
+
+canvas {
+    width: 100%;
+    height: auto;
+    display: block;
+    background: #140f10;
+    border: 3px solid #58382b;
+    border-radius: 8px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, .55);
+}
+
+#overlay {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 20px;
+    text-align: center;
+    line-height: 1.4;
+    background: rgba(12, 8, 8, .82);
+    border-radius: 8px;
+}
+
+#overlay.visible { display: flex; }
+
+#overlay-title {
+    margin: 0;
+    font-size: 30px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #ffcf6b;
+}
+
+#overlay-score { margin: 0; font-size: 18px; }
+#overlay-sub { margin: 0; font-size: 15px; opacity: .85; max-width: 22em; }
+
+#btn-start {
+    margin-top: 6px;
+    padding: 10px 26px;
+    font: inherit;
+    font-size: 16px;
+    letter-spacing: 1px;
+    color: #2a1a12;
+    background: #ffcf6b;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: transform .08s ease, background .15s ease;
+}
+
+#btn-start:hover { background: #ffe0a0; }
+#btn-start:active { transform: translateY(1px); }
+
+#controls-hint {
+    margin: 12px 0 0;
+    text-align: center;
+    font-size: 13px;
+    opacity: .7;
+}
