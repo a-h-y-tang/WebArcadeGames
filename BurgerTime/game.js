@@ -198,6 +198,7 @@ function resetPositions() {
     enemies.length = 0;
     peppers.length = 0;
     spawnTimer = SPAWN_DELAY;
+    refreshInput(); // keep walking if the player is still holding a key
 }
 
 function startGame() {
@@ -363,8 +364,20 @@ function landingY(ing, nextFloor) {
     return FLOOR_YS[nextFloor];
 }
 
+/**
+ * Falling layers resolve bottom-of-the-pile first: lowest on screen, and for
+ * layers sharing a y (a cascade moves as one) the one that started lower in
+ * the burger. That ordering is what makes a pile land on the plate in burger
+ * order rather than upside down.
+ */
+function fallOrder() {
+    return ingredients
+        .filter((i) => i.state === 'fall')
+        .sort((a, b) => b.y - a.y || b.index - a.index);
+}
+
 function updateIngredients(dt) {
-    for (const ing of ingredients) {
+    for (const ing of fallOrder()) {
         if (ing.state !== 'fall') continue;
         ing.y += FALL_SPEED * dt;
         squashCheck(ing);
@@ -384,12 +397,14 @@ function updateIngredients(dt) {
             continue;
         }
 
-        // Landing on a resting ingredient knocks it loose and both keep going.
-        const below = ingredients.find(
-            (o) => o !== ing && o.col === ing.col && o.state === 'rest' && o.floor === ing.floor
+        // Anything already on this floor keeps the pile moving: a resting layer
+        // is knocked loose, and a layer that is itself falling is simply part of
+        // the same cascade. Either way this one carries on down.
+        const met = ingredients.find(
+            (o) => o !== ing && o.col === ing.col && o.floor === ing.floor && o.state !== 'plated'
         );
-        if (below) {
-            dropIngredient(below);
+        if (met) {
+            dropIngredient(met); // no-op unless it was resting
         } else {
             ing.state = 'rest';
             ing.pieces.forEach((p) => {

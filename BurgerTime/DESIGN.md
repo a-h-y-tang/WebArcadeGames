@@ -124,6 +124,19 @@ does its stepping inside a single `page.evaluate()` so the manual ticks cannot
 interleave with real frames. Tests that need to run for many simulated seconds
 raise `lives` so a stray auto-spawned enemy cannot end the run mid-assertion.
 
+One test closes the loop end to end: a small bot repeatedly walks the highest
+resting layer across its column and asserts the level is actually cleared, so
+stepping, cascading, plating and level completion are proven to work together
+and not just in isolation.
+
+## Game browser integration
+
+The Angular game browser reads `game-browser/src/assets/games.json` and serves
+each game straight out of the repo root, so listing the game is a single entry:
+id `burger-time`, category `Action`, path `games/BurgerTime/index.html`, with
+`screenshot.png` as the card thumbnail. The browser's e2e specs assert the total
+card count, so that number moves from 104 to 105 alongside the new entry.
+
 ## Assumptions
 
 These were resolved by picking the simpler reading, as instructed:

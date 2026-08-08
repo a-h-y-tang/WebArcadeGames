@@ -108,6 +108,15 @@
     "thumbnail": ""
   },
   {
+    "id": "burger-time",
+    "name": "Burger Time",
+    "description": "Walk burger layers down the girders onto the plates while dodging the food",
+    "category": "Action",
+    "dir": "BurgerTime",
+    "path": "games/BurgerTime/index.html",
+    "thumbnail": "games/BurgerTime/screenshot.png"
+  },
+  {
     "id": "calcudoku",
     "name": "Calcudoku",
     "description": "Math logic puzzle with grid and operations",

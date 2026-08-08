@@ -423,6 +423,25 @@ test.describe('Burger Time', () => {
             expect(new Set(ys).size).toBe(5);
         });
 
+        test('a cascade plates the layers in burger order, bun bottom first', async ({ page }) => {
+            const order = await page.evaluate(() => {
+                startGame();
+                lives = 99;
+                const col = 1;
+                const top = ingredients.find((i) => i.col === col && i.floor === 0);
+                dropIngredient(top);
+                for (let i = 0; i < 2000; i++) {
+                    step(0.016);
+                    if (ingredients.filter((i2) => i2.col === col).every((i2) => i2.state === 'plated')) break;
+                }
+                return ingredients
+                    .filter((i) => i.col === col && i.state === 'plated')
+                    .sort((a, b) => b.y - a.y) // bottom of the stack first
+                    .map((i) => i.type);
+            });
+            expect(order).toEqual(['bunBottom', 'cheese', 'patty', 'lettuce', 'bunTop']);
+        });
+
         test('a falling ingredient squashes an enemy and scores a bonus', async ({ page }) => {
             const res = await page.evaluate(() => {
                 startGame();
@@ -671,6 +690,32 @@ test.describe('Burger Time', () => {
             });
             expect(res.score).toBeGreaterThanOrEqual(1000);
             expect(res.pepper).toBe(5);
+        });
+
+        test('a chef who walks every layer down actually clears the level', async ({ page }) => {
+            // Full-loop integration check: a simple bot repeatedly walks the
+            // highest resting layer across its column until the burgers are
+            // built. Proves stepping, cascading and plating hang together.
+            const res = await page.evaluate(() => {
+                startGame();
+                lives = 99;
+                const startLevel = level;
+                let current = null;
+                for (let guard = 0; guard < 20000; guard++) {
+                    if (level > startLevel) break;
+                    enemies.length = 0; // this bot does not dodge
+                    const target = ingredients.find((i) => i.state === 'rest');
+                    if (target && (target !== current || chef.floor !== target.floor)) {
+                        setChefTo(target.floor, columnX(target.col) - 4);
+                        setInput(1, 0);
+                        current = target;
+                    }
+                    step(0.016);
+                }
+                return { level, startLevel, score };
+            });
+            expect(res.level).toBe(res.startLevel + 1);
+            expect(res.score).toBeGreaterThan(1000);
         });
 
         test('enemies move faster on later levels', async ({ page }) => {
