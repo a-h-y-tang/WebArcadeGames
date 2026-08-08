@@ -75,7 +75,7 @@ const btnStart = document.getElementById('btn-start');
 // --- State ---
 // state: 'idle' | 'running' | 'paused' | 'over'
 let state, score, best, level, lives, served, spawnTimer, pourTimer;
-const bartender = { lane: 0, bob: 0 };
+const bartender = { lane: 0 };
 const mugs = [];
 const customers = [];
 const splashes = [];
@@ -252,7 +252,6 @@ function startGame() {
     customers.length = 0;
     splashes.length = 0;
     bartender.lane = 0;
-    bartender.bob = 0;
     spawnTimer = spawnInterval();
     pourTimer = 0;
     hideOverlay();
@@ -489,7 +488,9 @@ function drawShadow(x, y, w) {
 }
 
 function drawMug(mug) {
-    const y = barY(mug.lane) - MUG_H + 2;
+    // A little jiggle as the mug skids along the polished counter.
+    const jiggle = Math.sin(mug.wobble * 26) * 1.5;
+    const y = barY(mug.lane) - MUG_H + 2 + jiggle;
     const x = mug.x - MUG_W / 2;
     drawShadow(mug.x, barY(mug.lane), MUG_W + 6);
     // Glass.
