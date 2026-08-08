@@ -73,8 +73,9 @@ reach zero the game ends.
 - Level *n* sends `customersForLevel()` = `4 + 2n` customers through the doors.
 - The level is complete once every customer for that level has **spawned** and
   the counter is **empty of customers** — whether they left happy or grabbed you.
-  Clearing a level awards `POINTS_LEVEL × level` bonus points and, every level,
-  restores one life up to `MAX_LIVES`.
+  Clearing a level awards `POINTS_LEVEL × level` bonus points, restores one life
+  up to `MAX_LIVES`, and sweeps the counter clean — an empty still on its way
+  back is forgiven rather than carried into the next level.
 - Each level customers walk faster (`customerSpeed()`) and arrive more often
   (`spawnInterval()`), both derived purely from `level`.
 

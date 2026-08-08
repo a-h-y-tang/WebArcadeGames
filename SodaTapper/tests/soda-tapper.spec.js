@@ -234,6 +234,24 @@ test.describe('Soda Tapper', () => {
             expect(await page.evaluate(() => mugs.length)).toBe(1);
         });
 
+        test('clicking a lane jumps to it and pours', async ({ page }) => {
+            await page.evaluate(() => { startGame(); setLane(0); mugs.length = 0; });
+            const box = await page.locator('#canvas').boundingBox();
+            const target = await page.evaluate(() => laneY(2) / CANVAS_H);
+            await page.mouse.click(box.x + box.width / 2, box.y + box.height * target);
+            const result = await page.evaluate(() => ({ lane: player.lane, mugs: mugs.length }));
+            expect(result.lane).toBe(2);
+            expect(result.mugs).toBe(1);
+        });
+
+        test('clicking does nothing before the game starts', async ({ page }) => {
+            const box = await page.locator('#canvas').boundingBox();
+            await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+            const result = await page.evaluate(() => ({ state, mugs: mugs.length }));
+            expect(result.state).toBe('idle');
+            expect(result.mugs).toBe(0);
+        });
+
         test('no mug can be poured while paused', async ({ page }) => {
             const count = await page.evaluate(() => {
                 startGame();
