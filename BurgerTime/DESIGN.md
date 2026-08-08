@@ -98,9 +98,11 @@ Made autonomously while building; the simpler reading was taken each time.
    (`burger-time`), but the session's standing git instruction pins all work to
    `claude/loving-euler-grpvtj` and forbids pushing elsewhere. The standing
    instruction wins; the game name lives in the folder and commit messages.
-2. **`DESIGN.md` vs `design.md`.** Existing games ship a lowercase `design.md`;
-   the task asked for `DESIGN.md`. This game has `DESIGN.md` (task wording) and
-   a player-facing `README.md` like every other game.
+2. **`DESIGN.md` vs `design.md`.** The root README asks for `design.md`, but 84
+   of the 105 games use `DESIGN.md` and a past commit removed lowercase copies
+   because the two collide on Windows' case-insensitive filesystem. This game
+   follows the majority (and the task wording) with `DESIGN.md`, plus a
+   player-facing `README.md` like every other game.
 3. **Full-width floors.** Every floor is walkable edge to edge and every ladder
    spans all five floors, rather than the arcade original's partial platforms
    and stubby ladders. Navigation stays legible and the enemy chase needs no
