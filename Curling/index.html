@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curling</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="game">
+        <header class="hud">
+            <h1>CURLING</h1>
+            <div class="stats">
+                <div class="stat team-you">
+                    <span class="label">You</span><span id="score-you">0</span>
+                </div>
+                <div class="stat team-cpu">
+                    <span class="label">CPU</span><span id="score-cpu">0</span>
+                </div>
+                <div class="stat">
+                    <span class="label">End</span><span id="end">1</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="board-wrap">
+            <canvas id="canvas" width="460" height="700"></canvas>
+            <div id="overlay" class="overlay visible">
+                <h2 id="overlay-title">CURLING</h2>
+                <p id="overlay-msg">Press Enter or click Start to play</p>
+                <button id="btn-start">Start Match</button>
+            </div>
+        </div>
+
+        <section class="panel">
+            <p id="turn" class="turn">Your stone</p>
+            <div class="rack">
+                <span class="label">Stones</span>
+                <span class="dots"><span id="stones-you">4</span> you</span>
+                <span class="dots"><span id="stones-cpu">4</span> cpu</span>
+            </div>
+            <div class="meter">
+                <span class="label">Weight</span>
+                <div class="bar"><div id="power-fill"></div></div>
+                <span id="power-value" class="value">55</span>
+            </div>
+            <div class="readouts">
+                <span class="label">Handle</span><span id="spin-value" class="value">Straight</span>
+                <span class="label">Line</span><span id="aim-value" class="value">0.0&deg;</span>
+            </div>
+
+            <table id="linescore" class="linescore">
+                <thead>
+                    <tr><th class="label">End</th><th class="label">You</th><th class="label">CPU</th></tr>
+                </thead>
+                <tbody>
+                    <tr class="end-1"><td>1</td><td>&ndash;</td><td>&ndash;</td></tr>
+                    <tr class="end-2"><td>2</td><td>&ndash;</td><td>&ndash;</td></tr>
+                    <tr class="end-3"><td>3</td><td>&ndash;</td><td>&ndash;</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <div class="help">
+            <p><kbd>Mouse</kbd> or <kbd>&larr;</kbd> <kbd>&rarr;</kbd> line</p>
+            <p><kbd>&uarr;</kbd> <kbd>&darr;</kbd> or wheel for weight</p>
+            <p><kbd>Q</kbd> curl left &middot; <kbd>W</kbd> straight</p>
+            <p><kbd>E</kbd> curl right</p>
+            <p><kbd>Space</kbd> or click to deliver</p>
+            <p><kbd>Enter</kbd> next end &middot; <kbd>R</kbd> restart</p>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>

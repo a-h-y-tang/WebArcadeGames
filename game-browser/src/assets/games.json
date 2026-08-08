@@ -162,6 +162,15 @@
     "thumbnail": ""
   },
   {
+    "id": "curling",
+    "name": "Curling",
+    "description": "Slide stones down the ice and outscore the computer in the house",
+    "category": "Sports",
+    "dir": "Curling",
+    "path": "games/Curling/index.html",
+    "thumbnail": ""
+  },
+  {
     "id": "darts",
     "name": "Darts",
     "description": "Aim and throw darts at the board",
