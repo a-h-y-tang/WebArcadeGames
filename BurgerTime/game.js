@@ -706,6 +706,11 @@ document.addEventListener('keyup', (ev) => {
     }
 });
 
+// Losing focus mid-stride would otherwise leave a key stuck down.
+window.addEventListener('blur', () => {
+    keys.left = keys.right = keys.up = keys.down = false;
+});
+
 btnStart.addEventListener('click', () => {
     if (state === 'paused') togglePause();
     else startGame();

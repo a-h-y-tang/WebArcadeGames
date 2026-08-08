@@ -255,6 +255,16 @@ test.describe('BurgerTime', () => {
             expect(await page.evaluate(() => chef.x)).toBeGreaterThan(before);
         });
 
+        test('losing window focus releases every held key', async ({ page }) => {
+            await startAndPark(page);
+            const released = await page.evaluate(() => {
+                keys.right = keys.up = true;
+                window.dispatchEvent(new Event('blur'));
+                return Object.values(keys).every(v => v === false);
+            });
+            expect(released).toBe(true);
+        });
+
         test('ArrowUp on a ladder climbs to the floor above', async ({ page }) => {
             await startAndPark(page);
             const res = await page.evaluate(() => {
