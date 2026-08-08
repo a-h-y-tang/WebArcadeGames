@@ -199,13 +199,19 @@ function serveCustomer(custIndex, mugIndex) {
     spawnSparkle(cust.x + 10, barY(cust.lane) - 16, '#ffd166');
 }
 
+// Returns true when this departure cleared the level — the caller must stop
+// walking the customer/mug arrays, because `nextLevel()` has emptied them.
 function leaveCustomer(index) {
     const cust = customers[index];
     customers.splice(index, 1);
     score += leavePoints();
     served += 1;
     spawnEmpty({ lane: cust.lane, x: BAR_LEFT });
-    if (served >= CUSTOMERS_PER_LEVEL) nextLevel();
+    if (served >= CUSTOMERS_PER_LEVEL) {
+        nextLevel();
+        return true;
+    }
+    return false;
 }
 
 // ---------------------------------------------------------------------------
@@ -294,7 +300,8 @@ function substep(h) {
             c.x -= PUSHBACK_SPEED * h;
             c.drinkTimer -= h;
             if (c.x <= BAR_LEFT) {
-                leaveCustomer(i);       // out of the door — an empty comes back
+                // Out of the door — an empty comes back down the bar.
+                if (leaveCustomer(i)) return;   // level cleared: bars are wiped
                 continue;
             }
             if (c.drinkTimer <= 0) c.state = 'advancing';

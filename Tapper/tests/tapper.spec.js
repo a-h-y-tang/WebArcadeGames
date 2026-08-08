@@ -471,6 +471,21 @@ test.describe('Tapper', () => {
             expect(s).toEqual({ level: 2, served: 0 });
         });
 
+        test('a level-up mid-step does not disturb the other customers on the bars', async ({ page }) => {
+            const s = await page.evaluate(() => {
+                startGame();
+                spawnTimer = 1e9;
+                served = CUSTOMERS_PER_LEVEL - 1;
+                spawnCustomer({ lane: 0, x: 200 });
+                const last = spawnCustomer({ lane: 1, x: BAR_LEFT + 4 });
+                last.state = 'drinking';
+                last.drinkTimer = DRINK_TIME;
+                step(0.2);
+                return { level, served, customers: customers.length, mugs: mugs.length, state };
+            });
+            expect(s).toEqual({ level: 2, served: 0, customers: 0, mugs: 0, state: 'running' });
+        });
+
         test('customers, mugs and empties all speed up with the level', async ({ page }) => {
             const s = await page.evaluate(() => {
                 startGame();
