@@ -747,6 +747,15 @@
     "thumbnail": ""
   },
   {
+    "id": "slitherlink",
+    "name": "Slitherlink",
+    "description": "Loop logic puzzle - draw one closed loop that fits every clue",
+    "category": "Puzzle",
+    "dir": "Slitherlink",
+    "path": "games/Slitherlink/index.html",
+    "thumbnail": "games/Slitherlink/screenshot.png"
+  },
+  {
     "id": "snake",
     "name": "Snake",
     "description": "Classic snake game - eat food and grow longer",
