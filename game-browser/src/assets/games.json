@@ -486,6 +486,15 @@
     "thumbnail": ""
   },
   {
+    "id": "marble-blaster",
+    "name": "Marble Blaster",
+    "description": "Shoot marbles into the crawling chain and match three before it reaches the pit",
+    "category": "Puzzle",
+    "dir": "MarbleBlaster",
+    "path": "games/MarbleBlaster/index.html",
+    "thumbnail": "games/MarbleBlaster/screenshot.png"
+  },
+  {
     "id": "mastermind",
     "name": "Mastermind",
     "description": "Guess the code with logical deduction",
