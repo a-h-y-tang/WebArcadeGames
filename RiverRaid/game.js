@@ -406,6 +406,7 @@ function crash() {
         if (e.type !== 'bridge' && Math.abs(e.worldY - distance) < 160) entities.splice(i, 1);
     }
 
+    syncKeys();   // keys still held should take effect again immediately
     updateHud();
 }
 
@@ -458,11 +459,13 @@ function startGame() {
     player.throttle = 0;
     player.invuln = 0;
 
+    // running before generating: traffic only spawns for a live run, so the very
+    // first game must not be flown down an empty river
+    state = 'running';
     ensureTerrain(VIEW_AHEAD);
     var b = riverBoundsAt(0);
     player.x = (b.left + b.right) / 2;
 
-    state = 'running';
     hideOverlay();
     updateHud();
 }
