@@ -844,6 +844,39 @@ test.describe('Defender', () => {
             await expect(page.locator('#humans')).toHaveText('7');
         });
 
+        test('a long unattended game stays consistent', async ({ page }) => {
+            const errors = [];
+            page.on('pageerror', (e) => errors.push(String(e)));
+            const report = await page.evaluate(() => {
+                startGame();
+                lives = 99;                       // survive long enough to see many waves
+                const finite = (v) => Number.isFinite(v);
+                let bad = null;
+                for (let i = 0; i < 9000; i++) {  // ~2.5 minutes of play
+                    input.right = i % 240 < 120;
+                    input.left = !input.right;
+                    input.up = i % 130 < 60;
+                    input.down = !input.up;
+                    if (i % 20 === 0) fire();
+                    if (i % 900 === 0) useSmartBomb();
+                    update(1 / 60);
+                    draw();
+                    const all = [...landers, ...mutants, ...humanoids, ...bullets, ...enemyBullets];
+                    for (const e of all) {
+                        if (!finite(e.x) || !finite(e.y) || e.x < 0 || e.x >= WORLD_W) { bad = { i, e }; break; }
+                    }
+                    if (bad) break;
+                    if (humanoids.length > 10) { bad = { i, humans: humanoids.length }; break; }
+                    if (!finite(player.x) || !finite(player.y) || player.y < PLAY_TOP - 1) { bad = { i, player: { ...player } }; break; }
+                }
+                return { bad, wave, state, humans: humanoids.length };
+            });
+            expect(errors).toEqual([]);
+            expect(report.bad).toBe(null);
+            expect(report.state).toBe('running');
+            expect(report.wave).toBeGreaterThan(1);
+        });
+
         test('the canvas is actually painted', async ({ page }) => {
             const painted = await page.evaluate(() => {
                 startGame();

@@ -94,6 +94,11 @@ let mutants = [];
 let humanoids = [];
 let explosions = [];
 let stars = [];
+let banner = { text: '', t: 0 };
+
+function setBanner(text) {
+    banner = { text, t: 1.8 };
+}
 
 // ---------------------------------------------------------------------------
 // DOM
@@ -291,6 +296,7 @@ function nextWave() {
     bullets = [];
     enemyBullets = [];
     spawnWave();
+    setBanner(`WAVE ${wave}`);
     updateHud();
 }
 
@@ -440,7 +446,10 @@ function update(dt) {
 
     if (state !== 'running') return;
 
+    if (banner.t > 0) banner.t = Math.max(0, banner.t - dt);
+
     if (landers.length === 0 && mutants.length === 0) {
+        if (clearTimer === 0) setBanner('WAVE CLEARED');
         clearTimer += dt;
         if (clearTimer >= WAVE_DELAY) nextWave();
     } else {
@@ -489,6 +498,7 @@ function updatePlayer(dt) {
         h.vy = 0;
         player.carrying = null;
         score += SCORE_RESCUE;
+        setBanner(`RESCUED  +${SCORE_RESCUE}`);
         updateHud();
     }
 }
@@ -738,6 +748,19 @@ function draw() {
     drawExplosions();
     drawShip();
     drawRadar();
+    drawBanner();
+}
+
+function drawBanner() {
+    if (banner.t <= 0 || !banner.text) return;
+    const fade = Math.min(1, banner.t / 0.6);
+    ctx.save();
+    ctx.globalAlpha = fade;
+    ctx.fillStyle = '#6cf3ff';
+    ctx.font = 'bold 24px "Segoe UI", Tahoma, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(banner.text, CANVAS_W / 2, PLAY_TOP + 52);
+    ctx.restore();
 }
 
 function drawStars() {
@@ -855,6 +878,15 @@ function drawShip() {
     if (input.left || input.right) {
         ctx.fillStyle = '#ffb347';
         ctx.fillRect(sx - d * 20, player.y - 2, 6, 4);
+    }
+    if (player.carrying) {
+        // Tractor line down to the humanoid riding under the ship.
+        ctx.strokeStyle = 'rgba(255, 209, 102, 0.7)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(sx, player.y + 4);
+        ctx.lineTo(sx, player.y + 12);
+        ctx.stroke();
     }
 }
 
