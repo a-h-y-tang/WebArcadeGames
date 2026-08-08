@@ -56,9 +56,13 @@ const ENEMY_BASE_SPEED = 62;
 const ENEMY_SPEED_STEP = 8;
 const ENEMY_MIN = 2;
 const ENEMY_MAX = 5;
+// Spawn points alternate between the top and the bottom floor, so a monster
+// coming back from a squashing never all pile onto the floor the player is
+// working on.
 const ENEMY_SPAWNS = [
-    { x: 16, row: 0 }, { x: 624, row: 0 }, { x: 320, row: 0 },
-    { x: 16, row: 1 }, { x: 624, row: 1 },
+    { x: 16, row: 0 }, { x: 624, row: 0 },
+    { x: 16, row: FLOOR_ROWS - 1 }, { x: 624, row: FLOOR_ROWS - 1 },
+    { x: 320, row: 0 },
 ];
 const RESPAWN_TIME = 3;
 const STUN_TIME = 4;
@@ -766,28 +770,22 @@ function drawSegment(ing, s) {
     const first = s === 0;
     const last = s === ING_SEGS - 1;
 
+    // Buns get a rounded crust on their outer ends — as a clipped path, so the
+    // corners stay transparent whatever the slice happens to be drawn over.
+    const radii = [0, 0, 0, 0];             // top-left, top-right, bottom-right, bottom-left
+    if (ing.type === 'bunTop' || ing.type === 'bunBottom') {
+        const domeUp = (ing.type === 'bunTop') !== flipped;
+        if (first) radii[domeUp ? 0 : 3] = 7;
+        if (last) radii[domeUp ? 1 : 2] = 7;
+    }
+
     ctx.save();
     ctx.beginPath();
-    ctx.rect(x, y, w, h);
+    ctx.roundRect(x, y, w, h, radii);
     ctx.clip();
 
     ctx.fillStyle = flipped ? colors.edge : colors.face;
     ctx.fillRect(x, y, w, h);
-
-    // rounded crust on the outer ends of the buns
-    if (ing.type === 'bunTop' || ing.type === 'bunBottom') {
-        const domeUp = (ing.type === 'bunTop') !== flipped;
-        ctx.fillStyle = '#120c18';
-        if (first || last) {
-            const cx = first ? x + 7 : x + w - 7;
-            ctx.beginPath();
-            ctx.moveTo(first ? x : x + w, domeUp ? y : y + h);
-            ctx.lineTo(first ? x : x + w, domeUp ? y + 7 : y + h - 7);
-            ctx.quadraticCurveTo(first ? x : x + w, domeUp ? y : y + h, cx, domeUp ? y : y + h);
-            ctx.closePath();
-            ctx.fill();
-        }
-    }
 
     if (ing.type === 'lettuce') {
         // scalloped leaf edge on the exposed side

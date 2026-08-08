@@ -525,6 +525,26 @@ test.describe('Burger Time', () => {
             expect(resumed.after).toBeGreaterThan(resumed.start);
         });
 
+        test('spawn points are spread over more than one floor', async ({ page }) => {
+            const rows = await page.evaluate(() => [...new Set(ENEMY_SPAWNS.map((s) => s.row))]);
+            expect(rows.length).toBeGreaterThan(1);
+        });
+
+        test('a squashed monster comes back at its own spawn point', async ({ page }) => {
+            const back = await page.evaluate(() => {
+                startGame();
+                enemies.length = 0;
+                const e = spawnEnemy({ x: 300, row: 2, spawnIndex: 3 });
+                killEnemy(e);
+                // stop the moment it is back, before it can walk anywhere
+                for (let i = 0; i < Math.ceil(RESPAWN_TIME / 0.016) + 5 && e.dead; i++) step(0.016);
+                const spot = ENEMY_SPAWNS[3];
+                return { x: e.x, row: e.row, spot };
+            });
+            expect(back.x).toBe(back.spot.x);
+            expect(back.row).toBe(back.spot.row);
+        });
+
         test('monsters split between two ladder habits so they do not clump', async ({ page }) => {
             const dirs = await page.evaluate(() => {
                 startGame();
@@ -890,6 +910,23 @@ test.describe('Burger Time', () => {
             expect(fresh.layers).toBe(16);
             expect(fresh.plated).toBe(0);
             expect(fresh.monsters).toBe(2);
+        });
+
+        test('a long unattended session never throws', async ({ page }) => {
+            const errors = [];
+            page.on('pageerror', (e) => errors.push(String(e)));
+            const after = await page.evaluate(() => {
+                startGame();
+                // two minutes of simulated time: monsters chase, layers fall,
+                // lives are lost, the game ends and the board keeps drawing
+                for (let i = 0; i < 7200; i++) {
+                    step(0.016);
+                    if (i % 60 === 0) draw();
+                }
+                return { state, lives };
+            });
+            expect(errors).toEqual([]);
+            expect(['running', 'over']).toContain(after.state);
         });
 
         test('the simulation does not advance when the game is over', async ({ page }) => {
