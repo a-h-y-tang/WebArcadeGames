@@ -15,8 +15,8 @@ Game**) to begin.
 
 | Input | Action |
 |---|---|
-| Mouse move | Aim the launcher |
-| Click / Space | Fire the loaded marble |
+| Pointer move (mouse or touch) | Aim the launcher |
+| Click / tap / Space | Fire the loaded marble |
 | ← / → | Swing the aim |
 | S | Swap the loaded marble with the next one |
 | P | Pause / resume |

@@ -9,11 +9,15 @@ const CANVAS_H = 480;
 const MARBLE_R = 12;          // marble radius
 const SPACING = 24;           // centre-to-centre distance of packed marbles
 const BASE_SPEED = 26;        // chain crawl speed (px/s) on level 1
-const SPEED_PER_LEVEL = 0.18; // fraction added per extra level
+const SPEED_PER_LEVEL = 0.15; // fraction added per extra level
+const MAX_SPEED_SCALE = 2.4;  // ...up to this much of the level 1 crawl
+const MARBLES_PER_LEVEL = 4;  // extra marbles each level sends
+const MAX_TRACK_FILL = 0.45;  // a level never sends more chain than this much track
 const FEED_MULTIPLIER = 4;    // marbles still queued push the chain along faster
-const PULL_SPEED = 260;       // px/s a detached tail closes a gap at
+const MAX_FEED_SPEED = 140;   // ...but the stream never outruns the eye (px/s)
+const PULL_SPEED = 260;       // px/s a detached tail closes a gap at (floor)
 const SHOT_SPEED = 620;       // px/s a fired marble travels
-const RELOAD = 0.35;          // seconds between shots
+const RELOAD = 0.30;          // seconds between shots
 const AIM_SPEED = 2.4;        // radians/s when swinging with the arrow keys
 const DANGER_ZONE = 220;      // distance from the pit that counts as danger
 const LEVEL_BONUS = 250;      // per-level bonus for clearing every marble
@@ -109,8 +113,12 @@ function pointAt(dist) {
 // Level shape
 // ---------------------------------------------------------------------------
 
+// Levels send more marbles, but never so many that the chain alone would fill
+// the track - past that point a level would be unwinnable however well it is
+// played, so the difficulty rides on speed and colour count instead.
 function marblesForLevel(l) {
-    return 30 + (l - 1) * 6;
+    const cap = Math.floor((pathLength() * MAX_TRACK_FILL) / SPACING);
+    return Math.min(cap, 30 + (l - 1) * MARBLES_PER_LEVEL);
 }
 
 function colorsForLevel(l) {
@@ -118,13 +126,21 @@ function colorsForLevel(l) {
 }
 
 function chainSpeed() {
-    return BASE_SPEED * (1 + SPEED_PER_LEVEL * (level - 1));
+    return BASE_SPEED * Math.min(MAX_SPEED_SCALE, 1 + SPEED_PER_LEVEL * (level - 1));
 }
 
 // While marbles are still queued they stream out under pressure, so the whole
 // chain runs fast; once the queue is empty it settles into its slow crawl.
 function frontSpeed() {
-    return chainSpeed() * (toSpawn > 0 ? FEED_MULTIPLIER : 1);
+    const crawl = chainSpeed();
+    if (toSpawn <= 0) return crawl;
+    return Math.max(crawl, Math.min(MAX_FEED_SPEED, crawl * FEED_MULTIPLIER));
+}
+
+// A gap must always close faster than the head runs away, or the chain would
+// stretch out instead of packing once the later levels get quick.
+function pullSpeed() {
+    return Math.max(PULL_SPEED, frontSpeed() * 1.6);
 }
 
 function activeColors() {
@@ -163,7 +179,7 @@ function advanceChain(dt) {
         const target = chain[i - 1].dist - SPACING;
         chain[i].dist = chain[i].dist > target
             ? target
-            : Math.min(target, chain[i].dist + PULL_SPEED * dt);
+            : Math.min(target, chain[i].dist + pullSpeed() * dt);
     }
 }
 
@@ -291,8 +307,14 @@ function insertMarble(index, color) {
     if (k === 0) {
         dist = chain[0].dist + SPACING;
     } else {
+        // Make room by shoving the tail back - but only as far as the entrance.
+        // Once the track behind is full the rest of the shove drives the head
+        // forward instead, so no marble is ever pushed off the back.
+        const room = Math.min(SPACING, Math.max(0, chain[chain.length - 1].dist));
+        const forward = SPACING - room;
+        for (let j = k; j < chain.length; j++) chain[j].dist -= room;
+        for (let j = 0; j < k; j++) chain[j].dist += forward;
         dist = chain[k - 1].dist - SPACING;
-        for (let j = k; j < chain.length; j++) chain[j].dist -= SPACING;
     }
     chain.splice(k, 0, { color, dist });
     resolveMatches(k);
@@ -635,15 +657,24 @@ window.addEventListener('keyup', (e) => {
     keys[e.key] = false;
 });
 
-canvas.addEventListener('mousemove', (e) => {
-    const rect = canvas.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * CANVAS_W;
-    const y = ((e.clientY - rect.top) / rect.height) * CANVAS_H;
-    aimAt(x, y);
+window.addEventListener('blur', () => {
+    for (const k of Object.keys(keys)) keys[k] = false;
 });
 
-canvas.addEventListener('mousedown', (e) => {
+// Pointer events cover mouse, touch and pen with one code path.
+function pointerAim(e) {
+    const rect = canvas.getBoundingClientRect();
+    aimAt(
+        ((e.clientX - rect.left) / rect.width) * CANVAS_W,
+        ((e.clientY - rect.top) / rect.height) * CANVAS_H,
+    );
+}
+
+canvas.addEventListener('pointermove', pointerAim);
+
+canvas.addEventListener('pointerdown', (e) => {
     e.preventDefault();
+    pointerAim(e);
     if (state === 'running' && !paused) fire();
 });
 

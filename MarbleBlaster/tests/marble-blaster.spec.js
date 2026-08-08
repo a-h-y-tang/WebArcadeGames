@@ -207,6 +207,22 @@ test.describe('Marble Blaster', () => {
             expect(worst).toBeLessThan(0.5);
         });
 
+        test('the chain still packs up on fast late levels', async ({ page }) => {
+            const worst = await page.evaluate(() => {
+                startGame();
+                level = 15;
+                chain.length = 0;
+                toSpawn = 20;
+                for (let i = 0; i < 60 * 20; i++) step(1 / 60);
+                let worst = 0;
+                for (let i = 1; i < chain.length; i++) {
+                    worst = Math.max(worst, Math.abs(chain[i - 1].dist - chain[i].dist - SPACING));
+                }
+                return worst;
+            });
+            expect(worst).toBeLessThan(0.5);
+        });
+
         test('a detached tail catches up to the marble in front of it', async ({ page }) => {
             const gap = await page.evaluate(() => {
                 startGame();
@@ -234,6 +250,20 @@ test.describe('Marble Blaster', () => {
                 return { streaming, crawling: chain[0].dist - b0 };
             });
             expect(r.streaming).toBeGreaterThan(r.crawling * 2);
+        });
+
+        test('the incoming stream never outruns its speed cap', async ({ page }) => {
+            const r = await page.evaluate(() => {
+                startGame();
+                toSpawn = 10;
+                level = 1;
+                const early = frontSpeed();
+                level = 40;
+                const late = frontSpeed();
+                return { early, late, cap: MAX_FEED_SPEED };
+            });
+            expect(r.early).toBeLessThanOrEqual(r.cap);
+            expect(r.late).toBeLessThanOrEqual(r.cap);
         });
 
         test('the chain moves faster on later levels', async ({ page }) => {
@@ -366,6 +396,38 @@ test.describe('Marble Blaster', () => {
             expect(n).toBe(0);
         });
 
+        test('moving the pointer over the canvas aims the launcher', async ({ page }) => {
+            await page.evaluate(() => { startGame(); setAim(-Math.PI / 2); });
+            const box = await page.locator('#canvas').boundingBox();
+            await page.mouse.move(box.x + 700, box.y + 255);
+            const a = await page.evaluate(() => aim);
+            expect(Math.abs(a)).toBeLessThan(0.2); // pointing right
+        });
+
+        test('clicking the canvas fires a marble', async ({ page }) => {
+            await page.evaluate(() => {
+                startGame();
+                chain.length = 0;
+                toSpawn = 0;
+                projectiles.length = 0;
+            });
+            const box = await page.locator('#canvas').boundingBox();
+            await page.mouse.click(box.x + 360, box.y + 40);
+            expect(await page.evaluate(() => projectiles.length)).toBeGreaterThan(0);
+        });
+
+        test('S swaps the loaded marble', async ({ page }) => {
+            await page.evaluate(() => {
+                startGame();
+                currentColor = COLORS[0];
+                nextColor = COLORS[3];
+            });
+            await page.keyboard.press('KeyS');
+            const r = await page.evaluate(() => ({ currentColor, nextColor, palette: COLORS }));
+            expect(r.currentColor).toBe(r.palette[3]);
+            expect(r.nextColor).toBe(r.palette[0]);
+        });
+
         test('swapping exchanges the current and next marbles', async ({ page }) => {
             const r = await page.evaluate(() => {
                 startGame();
@@ -430,6 +492,33 @@ test.describe('Marble Blaster', () => {
             });
             expect(r.tailAfter).toBeCloseTo(r.tailBefore - 24, 3);
             expect(r.inserted).toBeCloseTo(r.tailBefore, 3);
+        });
+
+        test('an insertion never pushes a marble back past the entrance', async ({ page }) => {
+            const minDist = await page.evaluate(() => {
+                startGame();
+                chain.length = 0;
+                toSpawn = 0;
+                // chain packed right up against the entrance
+                for (let i = 0; i < 5; i++) addMarble(i % 3, SPACING * (4 - i));
+                insertMarble(3, COLORS[4]);
+                return Math.min(...chain.map((m) => m.dist));
+            });
+            expect(minDist).toBeGreaterThanOrEqual(0);
+        });
+
+        test('with no room behind, an insertion drives the head forward', async ({ page }) => {
+            const r = await page.evaluate(() => {
+                startGame();
+                chain.length = 0;
+                toSpawn = 0;
+                for (let i = 0; i < 4; i++) addMarble(i % 3, SPACING * (3 - i)); // tail sits at 0
+                const headBefore = chain[0].dist;
+                insertMarble(2, COLORS[4]);
+                return { headBefore, headAfter: chain[0].dist, tail: chain[chain.length - 1].dist };
+            });
+            expect(r.headAfter).toBeCloseTo(r.headBefore + 24, 3);
+            expect(r.tail).toBeCloseTo(0, 3);
         });
 
         test('the chain stays ordered front-to-back after an insertion', async ({ page }) => {
@@ -594,6 +683,28 @@ test.describe('Marble Blaster', () => {
         test('later levels send more marbles', async ({ page }) => {
             const r = await page.evaluate(() => ({ l1: marblesForLevel(1), l5: marblesForLevel(5) }));
             expect(r.l5).toBeGreaterThan(r.l1);
+        });
+
+        test('a level never sends more chain than the track can hold', async ({ page }) => {
+            const r = await page.evaluate(() => ({
+                longest: marblesForLevel(99) * SPACING,
+                track: pathLength(),
+            }));
+            expect(r.longest).toBeLessThan(r.track * 0.75);
+        });
+
+        test('the chain speed stops climbing once it hits its cap', async ({ page }) => {
+            const r = await page.evaluate(() => {
+                startGame();
+                level = 12;
+                const a = chainSpeed();
+                level = 60;
+                const b = chainSpeed();
+                level = 1;
+                return { a, b, base: chainSpeed() };
+            });
+            expect(r.b).toBe(r.a);
+            expect(r.a).toBeGreaterThan(r.base);
         });
 
         test('later levels use more colours, capped at the palette size', async ({ page }) => {

@@ -53,7 +53,8 @@ has cleared the entrance by a full diameter, so marbles never overlap.
 ### Shooting
 
 The launcher holds a current marble and a next marble, and can be aimed in any
-direction (mouse, or the arrow keys). `fire()` launches the current marble at
+direction — by pointer (`pointermove`/`pointerdown` covers mouse, touch and pen
+in one path) or with the arrow keys. `fire()` launches the current marble at
 `SHOT_SPEED`, promotes the next one, and starts a `RELOAD` cooldown. A shot in
 flight is advanced in sub-steps of at most half a marble radius so a fast marble
 cannot tunnel through the chain.
@@ -66,11 +67,15 @@ entering the track are drawn freely from the level palette.
 
 When a shot overlaps a chain marble, the marble it hit decides where it lands:
 the game compares the shot's position against the points half a spacing in
-front of and behind that marble, and inserts on the closer side. Inserting at
-index `k > 0` shoves everything from `k` back by one spacing (the tail then
-closes up at `PULL_SPEED`); inserting at the very front pushes the new marble
-one spacing ahead instead — unless there is no track left in front, in which
-case it tucks in behind so a shot can never itself push a marble into the pit.
+front of and behind that marble, and inserts on the closer side.
+
+Making room is where the edges live. Inserting at index `k > 0` shoves
+everything from `k` backwards by one spacing (the tail then closes up again at
+`pullSpeed()`) — but only as far as the track entrance, since a marble pushed
+past it would have nowhere to be. When the chain is already backed up to the
+entrance, whatever is left of the shove drives the head forward instead.
+Inserting at the very front pushes the new marble one spacing ahead; if there is
+no track left in front of the head, it tucks in behind instead.
 
 ### Matching
 
@@ -84,17 +89,34 @@ than two separate matches.
 ### Levels and losing
 
 A level ends when the queue is empty and the chain is clear: the player banks
-`250 × level`, and the next level sends 6 more marbles, moves ~18% faster, and
-adds a colour every second level (capped at the six-colour palette). The game
-ends the moment the lead marble reaches the end of the track. The last stretch
-before the pit is flagged as danger, which throbs the pit and the border.
+`250 × level`, and the next level sends 4 more marbles, moves 15% faster, and
+adds a colour every second level. The game ends the moment the lead marble
+reaches the end of the track. The last stretch before the pit is flagged as
+danger, which throbs the pit and the border.
+
+Every one of those ramps is capped, because each is unbounded on its own and
+each becomes unfair at a different threshold:
+
+- **Marble count** (`MAX_TRACK_FILL`) — a level never queues more chain than 45%
+  of the track. Without this, around level 15 the chain alone is longer than the
+  track, so the level cannot be cleared however well it is played. A scripted
+  playtest starting at level 15 found exactly this.
+- **Crawl speed** (`MAX_SPEED_SCALE`) — tops out at 2.4× the level 1 crawl.
+- **Stream speed** (`MAX_FEED_SPEED`) — the fast feed phase is capped at
+  140 px/s, so a late level opens quickly but still readably.
+- **Gap closing** (`pullSpeed()`) — always at least 1.6× the head speed, or the
+  chain would stretch instead of packing once the head gets quick.
+
+Difficulty past those caps rides on colour count, which is what actually makes
+matches scarce. With near-optimal scripted play the run reaches around level 7
+in about three minutes; ordinary play clears two or three levels.
 
 ## Controls
 
 | Input | Action |
 |---|---|
-| Mouse move | Aim the launcher |
-| Click / `Space` | Fire |
+| Pointer move (mouse or touch) | Aim the launcher |
+| Click / tap / `Space` | Fire |
 | `←` `→` | Swing the aim |
 | `S` | Swap the current and next marble |
 | `P` | Pause / resume |
@@ -107,7 +129,7 @@ before the pit is flagged as danger, which throbs the pit and the border.
 | `index.html` | HUD, canvas, overlay, help bar |
 | `style.css` | Presentation only — no layout logic in JS |
 | `game.js` | Constants, path maths, chain, shooting, matching, flow, rendering, input |
-| `tests/marble-blaster.spec.js` | 66 Playwright specs |
+| `tests/marble-blaster.spec.js` | 75 Playwright specs |
 
 `game.js` keeps every piece of state and every rule in plain top-level
 functions (`step`, `insertMarble`, `resolveMatches`, `pointAt`, …). Rendering
@@ -133,9 +155,11 @@ reading.
   marbles facing each other, the follow-up match fires immediately rather than
   waiting for the gap to physically close. Same outcome, far simpler to reason
   about and to test.
-- **Insertion pushes backwards.** A shot landing mid-chain shoves the marbles
-  behind it back rather than driving the front of the chain toward the pit, so a
-  shot can never directly cause a loss.
+- **Insertion pushes backwards where it can.** A shot landing mid-chain shoves
+  the marbles behind it back rather than driving the head toward the pit, so a
+  shot normally cannot cost the run. The exception is a chain already backed up
+  to the entrance, where there is nowhere left to push: then the shove carries
+  into the head, and a badly-timed shot on a full track can end it.
 - **No lives and no power-ups.** One track, one chain, and the run ends when a
   marble reaches the pit. Levels are endless rather than a fixed campaign.
 - **Colour count over difficulty curve.** Levels grow by marble count, speed and
