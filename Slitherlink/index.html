@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slitherlink</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="game">
+        <header class="hud">
+            <h1>SLITHERLINK</h1>
+            <div class="stats">
+                <div class="stat"><span class="label">Level</span><span id="difficulty">Easy</span></div>
+                <div class="stat"><span class="label">Time</span><span id="timer">00:00</span></div>
+                <div class="stat"><span class="label">Moves</span><span id="moves">0</span></div>
+                <div class="stat"><span class="label">Hints</span><span id="hints">0</span></div>
+                <div class="stat"><span class="label">Best</span><span id="best">--:--</span></div>
+            </div>
+        </header>
+
+        <div class="levels">
+            <button id="btn-easy" class="chip active">Easy 5&times;5</button>
+            <button id="btn-medium" class="chip">Medium 7&times;7</button>
+            <button id="btn-hard" class="chip">Hard 9&times;9</button>
+        </div>
+
+        <div class="board-wrap">
+            <canvas id="canvas" width="560" height="560"></canvas>
+            <div id="overlay" class="overlay">
+                <h2 id="overlay-title">Solved!</h2>
+                <p id="overlay-sub"></p>
+                <button id="btn-again">New Puzzle</button>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button id="btn-new">New Puzzle</button>
+            <button id="btn-undo">Undo</button>
+            <button id="btn-reset">Reset</button>
+            <button id="btn-hint">Hint</button>
+        </div>
+
+        <div class="help">
+            <p>Draw a single closed loop through the dots. Each number says how many
+               of that cell's four edges the loop uses.</p>
+            <p><kbd>Click</kbd> line &rarr; cross &rarr; empty &nbsp;&middot;&nbsp;
+               <kbd>Right-click</kbd> cycles the other way</p>
+            <p><kbd>N</kbd> new &nbsp;<kbd>U</kbd> undo &nbsp;<kbd>R</kbd> reset &nbsp;
+               <kbd>H</kbd> hint &nbsp;<kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> difficulty</p>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>
