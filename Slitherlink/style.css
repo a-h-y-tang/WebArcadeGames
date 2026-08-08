@@ -1,0 +1,147 @@
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    background: #101823;
+    color: #e9f1ff;
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+
+#container {
+    padding: 20px;
+    text-align: center;
+}
+
+h1 {
+    margin: 8px 0 12px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    font-size: 28px;
+    color: #ffd166;
+}
+
+#hud {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    margin-bottom: 12px;
+    font-size: 16px;
+    color: #9fb1cd;
+}
+
+#hud strong { color: #6fd3ff; }
+
+#levels {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+
+.level-btn {
+    background: #1a2536;
+    color: #e9f1ff;
+    border: 1px solid #2c405c;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.level-btn:hover { background: #24344c; }
+
+.level-btn.active {
+    background: #e08b1f;
+    border-color: #ffb84f;
+    color: #17202c;
+    font-weight: 600;
+}
+
+#canvas-wrapper {
+    position: relative;
+    width: 560px;
+    max-width: 92vw;
+    margin: 0 auto;
+}
+
+#canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+    background: #16202e;
+    border-radius: 10px;
+    touch-action: none;
+    cursor: crosshair;
+}
+
+#overlay {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: rgba(10, 16, 24, 0.92);
+    border-radius: 10px;
+    padding: 20px;
+}
+
+#overlay.visible { display: flex; }
+
+#overlay-title {
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0 0 8px;
+    color: #ffd166;
+}
+
+#overlay-score {
+    font-size: 18px;
+    color: #6fd3ff;
+    margin: 0 0 8px;
+    min-height: 22px;
+}
+
+#overlay-sub {
+    font-size: 15px;
+    color: #a9bce0;
+    margin: 0 0 18px;
+    max-width: 400px;
+    line-height: 1.5;
+}
+
+#btn-start {
+    background: #e08b1f;
+    color: #17202c;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 28px;
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+#btn-start:hover { background: #ffb84f; }
+
+#controls-hint {
+    margin-top: 14px;
+    font-size: 13px;
+    color: #7f92b8;
+}
+
+kbd {
+    background: #1a2536;
+    border: 1px solid #2c405c;
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-family: inherit;
+    font-size: 12px;
+}
