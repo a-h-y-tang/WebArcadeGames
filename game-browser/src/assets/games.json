@@ -747,6 +747,15 @@
     "thumbnail": ""
   },
   {
+    "id": "slitherlink",
+    "name": "Slitherlink",
+    "description": "Draw a single closed loop that satisfies every numbered cell",
+    "category": "Puzzle",
+    "dir": "Slitherlink",
+    "path": "games/Slitherlink/index.html",
+    "thumbnail": "games/Slitherlink/screenshot.png"
+  },
+  {
     "id": "snake",
     "name": "Snake",
     "description": "Classic snake game - eat food and grow longer",
