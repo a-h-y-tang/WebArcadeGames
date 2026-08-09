@@ -603,6 +603,19 @@ function drawAim() {
     ctx.strokeStyle = 'rgba(255,255,255,0.7)';
     ctx.stroke();
 
+    // where the object ball will set off: along the line of centres
+    if (contact.ball) {
+        const dx = contact.ball.x - contact.x;
+        const dy = contact.ball.y - contact.y;
+        const len = Math.hypot(dx, dy) || 1;
+        ctx.strokeStyle = 'rgba(240, 196, 106, 0.75)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(contact.ball.x, contact.ball.y);
+        ctx.lineTo(contact.ball.x + (dx / len) * 46, contact.ball.y + (dy / len) * 46);
+        ctx.stroke();
+    }
+
     // cue stick, pulled back by the charge
     const back = 16 + power * 48;
     const ox = Math.cos(aimAngle);
