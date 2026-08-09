@@ -36,6 +36,15 @@
     "thumbnail": ""
   },
   {
+    "id": "barrel-climb",
+    "name": "Barrel Climb",
+    "description": "Climb girders and ladders to the prize while dodging rolling barrels",
+    "category": "Action",
+    "dir": "BarrelClimb",
+    "path": "games/BarrelClimb/index.html",
+    "thumbnail": "games/BarrelClimb/screenshot.png"
+  },
+  {
     "id": "battleship",
     "name": "Battleship",
     "description": "Naval strategy game - find and sink opponent's ships",
@@ -106,6 +115,15 @@
     "dir": "BubbleShooter",
     "path": "games/BubbleShooter/index.html",
     "thumbnail": ""
+  },
+  {
+    "id": "burger-time",
+    "name": "BurgerTime",
+    "description": "Trip burger ingredients down the girders while food-monsters chase you",
+    "category": "Action",
+    "dir": "BurgerTime",
+    "path": "games/BurgerTime/index.html",
+    "thumbnail": "games/BurgerTime/screenshot.png"
   },
   {
     "id": "calcudoku",
