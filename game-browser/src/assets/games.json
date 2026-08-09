@@ -45,6 +45,15 @@
     "thumbnail": ""
   },
   {
+    "id": "billiards",
+    "name": "Billiards",
+    "description": "Break the rack, pot the colours, then sink the 8 ball",
+    "category": "Sports",
+    "dir": "Billiards",
+    "path": "games/Billiards/index.html",
+    "thumbnail": "games/Billiards/screenshot.png"
+  },
+  {
     "id": "blackjack",
     "name": "Blackjack",
     "description": "Classic card game - beat the dealer to 21",
