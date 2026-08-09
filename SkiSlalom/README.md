@@ -28,13 +28,13 @@ Each **run** is a course of 12 slalom gates ending at a finish banner.
 - **Hit a tree** and you go down: you lose a life and 1.1 seconds sprawled in
   the snow. Three crashes and the day is over.
 - **Cross the finish line** for a 500 point bonus, a time bonus of 25 points per
-  second saved against par (~14.1s), and 300 more for a clean run with no gates
+  second saved against par (~15.8s), and 300 more for a clean run with no gates
   missed. You also get a life back, up to five.
 
 Every run after the first has narrower gates and more trees. Score carries over
 between runs; your best is saved in the browser.
 
-Tucking raises your top speed from 300 to 430, but carving a turn costs speed —
+Tucking raises your top speed from 260 to 380, but carving a turn costs speed —
 so the fast line is the one that needs the fewest corrections.
 
 ## Development

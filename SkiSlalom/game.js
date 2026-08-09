@@ -19,7 +19,10 @@
 const CANVAS_W = 600;
 const CANVAS_H = 400;
 const COURSE_W = 600;          // lateral width of the piste (== canvas width)
-const SKIER_SCREEN_Y = 285;    // y the skier is drawn at; the world scrolls past
+// The skier rides high on the canvas so most of the screen is hill *ahead* of
+// them — obstacles rise into view from the bottom, as in the classic skiing
+// games. At cruising speed that is a little over a second of reaction time.
+const SKIER_SCREEN_Y = 120;
 const SKIER_R = 9;
 
 // --- Course layout ---
@@ -41,8 +44,8 @@ const TREE_MIN_GAP = 30;       // keep trees from stacking on top of each other
 const TREE_START_CLEAR = 160;  // no trees in the first stretch of the course
 
 // --- Skiing physics (all per second) ---
-const BASE_MAX = 300;          // cruising top speed
-const TUCK_MAX = 430;          // top speed while tucked
+const BASE_MAX = 260;          // cruising top speed
+const TUCK_MAX = 380;          // top speed while tucked
 const ACCEL = 220;
 const BRAKE = 420;
 const STEER_SPEED = 230;       // lateral speed while carving
@@ -447,7 +450,7 @@ function draw() {
         ctx.fillStyle = '#0d3c61';
         ctx.font = 'bold 30px system-ui, sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillText(`RUN ${run - 1} CLEARED`, CANVAS_W / 2, 90);
+        ctx.fillText(`RUN ${run - 1} CLEARED`, CANVAS_W / 2, 240);
         ctx.globalAlpha = 1;
         ctx.textAlign = 'left';
     }

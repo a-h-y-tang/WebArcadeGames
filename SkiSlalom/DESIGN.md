@@ -21,7 +21,10 @@ ground.
 The world is a vertical strip 600 units wide (the canvas width) and
 `courseLength()` units tall. The skier is always drawn at a fixed screen `y`
 (`SKIER_SCREEN_Y`) and the world scrolls past them, so the camera is just
-`worldTop = skier.y - SKIER_SCREEN_Y`.
+`worldTop = skier.y - SKIER_SCREEN_Y`. That fixed `y` is 120 — high on the
+canvas — so roughly 280px of the screen is hill *ahead* of the skier and
+obstacles rise into view from the bottom. At cruising speed that is a little
+over a second of reaction time.
 
 A course is `GATES_PER_RUN` (12) gates spaced `GATE_SPACING` (260) apart, with a
 `RUN_OUT` of 220 after the last gate before the finish banner — 3320 units in
@@ -47,7 +50,7 @@ reproducible in tests, and difficulty can be a pure function of the seed:
 All motion is per second and advanced by `step(dt)`:
 
 - Speed climbs toward a target at `ACCEL` and falls toward it at `BRAKE`.
-- The target is `BASE_MAX` (300), or `TUCK_MAX` (430) while tucking, minus
+- The target is `BASE_MAX` (260), or `TUCK_MAX` (380) while tucking, minus
   `STEER_DRAG` (70) whenever the skier is carving. Straight-lining is fast;
   turning costs you.
 - Carving moves the skier sideways at `STEER_SPEED` (230), clamped to the piste.
@@ -75,7 +78,7 @@ Crossing `courseLength()` calls `finishRun()`: it pays `FINISH_BONUS` (500), a
 awarded up to `MAX_LIVES` (5), the clock resets, and a fresh course is built
 with the skier back at the top.
 
-Par time is `courseLength() / BASE_MAX + PAR_SLACK` — about 14.1s, i.e. slightly
+Par time is `courseLength() / BASE_MAX + PAR_SLACK` — about 15.8s, i.e. slightly
 more than a perfect straight-line descent at cruising speed, so beating par
 means tucking somewhere.
 
