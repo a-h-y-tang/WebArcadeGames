@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curling</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="game">
+        <header class="hud">
+            <h1>CURLING</h1>
+            <div class="stats">
+                <div class="stat"><span class="label">End</span><span id="end">1</span></div>
+                <div class="stat"><span class="label">You</span><span id="score-player">0</span></div>
+                <div class="stat"><span class="label">CPU</span><span id="score-cpu">0</span></div>
+                <div class="stat"><span class="label">Stones</span><span id="stones-left">4</span></div>
+                <div class="stat"><span class="label">Record</span><span id="record">0-0</span></div>
+            </div>
+        </header>
+
+        <div class="board-wrap">
+            <canvas id="canvas" width="420" height="720"></canvas>
+            <div id="overlay" class="overlay visible">
+                <h2 id="overlay-title">CURLING</h2>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Press Space or click Start to play</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+
+        <p id="turn" class="turn">Your turn — take aim</p>
+
+        <div class="help">
+            <p>move mouse or <kbd>←</kbd> <kbd>→</kbd> to aim</p>
+            <p><kbd>A</kbd> / <kbd>S</kbd> / <kbd>D</kbd> curl left · straight · right</p>
+            <p>hold <kbd>Space</kbd> or click, release to throw</p>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>
