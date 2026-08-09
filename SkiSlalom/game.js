@@ -280,8 +280,9 @@ function checkTrees() {
 function crash() {
     skier.crashTimer = CRASH_TIME;
     skier.speed = 0;
-    steerDir = 0;
-    tucking = false;
+    // steerDir and tucking are left alone: they mirror the keys being held, and
+    // zeroing them here would ignore that input until the player let go and
+    // pressed again. Nothing moves while crashTimer is running anyway.
     lives = Math.max(0, lives - 1);
     spray(skier.x, 26, '#ffffff');
     if (lives <= 0) endGame();
@@ -667,7 +668,8 @@ function drawSkier() {
     // body
     ctx.fillStyle = '#e23b3b';
     ctx.beginPath();
-    ctx.roundRect(-8, -8 + crouch, 16, 18 - crouch, 5);
+    if (ctx.roundRect) ctx.roundRect(-8, -8 + crouch, 16, 18 - crouch, 5);
+    else ctx.rect(-8, -8 + crouch, 16, 18 - crouch);
     ctx.fill();
     // arms holding poles
     ctx.strokeStyle = '#1b2a3a';
