@@ -301,15 +301,26 @@ function pocketBall(b) {
 // line if something is already parked there.
 function respotCue() {
     const spot = headSpot();
+    const isClear = (x, y) => objectBalls().every((b) =>
+        b.pocketed || Math.hypot(b.x - x, b.y - y) >= 2 * BALL_R + 1);
+
     let x = spot.x;
-    const y = spot.y;
-    for (let tries = 0; tries < 40; tries++) {
-        const clash = objectBalls().some((b) =>
-            !b.pocketed && Math.hypot(b.x - x, b.y - y) < 2 * BALL_R + 1);
-        if (!clash) break;
-        x -= BALL_R;
-        if (x < LEFT + BALL_R) x = LEFT + BALL_R;
+    let y = spot.y;
+    // Slide left along the baulk line first, then step up and down it, so a
+    // crowded head spot always finds somewhere legal to drop the cue ball.
+    outer:
+    for (let dy = 0; dy <= 6; dy++) {
+        for (const sy of dy === 0 ? [0] : [-dy, dy]) {
+            const cy = spot.y + sy * (2 * BALL_R + 2);
+            if (cy < TOP + BALL_R || cy > BOTTOM - BALL_R) continue;
+            for (let dx = 0; dx <= 16; dx++) {
+                const cx = spot.x - dx * BALL_R;
+                if (cx < LEFT + BALL_R) break;
+                if (isClear(cx, cy)) { x = cx; y = cy; break outer; }
+            }
+        }
     }
+
     cueBall.x = Math.max(LEFT + BALL_R, Math.min(RIGHT - BALL_R, x));
     cueBall.y = y;
     cueBall.vx = 0;

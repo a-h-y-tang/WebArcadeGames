@@ -477,6 +477,31 @@ test.describe('Billiards', () => {
             expect(ok).toBe(true);
         });
 
+        test('a crowded baulk line still finds room for the cue ball', async ({ page }) => {
+            const ok = await page.evaluate(() => {
+                startGame();
+                // park balls all the way along the baulk line to the left cushion
+                const y = (TOP + BOTTOM) / 2;
+                const spot = LEFT + (RIGHT - LEFT) * 0.25;
+                objectBalls().slice(0, 9).forEach((b, i) => {
+                    b.x = Math.max(LEFT + BALL_R, spot - i * (2 * BALL_R));
+                    b.y = y;
+                });
+                shoot(0, 0.3);
+                pocketBall(cueBall);
+                balls.forEach((b) => { b.vx = 0; b.vy = 0; });
+                step(0.016);
+                const inside = cueBall.x >= LEFT + BALL_R && cueBall.x <= RIGHT - BALL_R &&
+                    cueBall.y >= TOP + BALL_R && cueBall.y <= BOTTOM - BALL_R;
+                const clear = objectBalls().every((b) =>
+                    b.pocketed || Math.hypot(b.x - cueBall.x, b.y - cueBall.y) >= 2 * BALL_R);
+                return { inside, clear, pocketed: cueBall.pocketed };
+            });
+            expect(ok.pocketed).toBe(false);
+            expect(ok.inside).toBe(true);
+            expect(ok.clear).toBe(true);
+        });
+
         test('a potted ball stops taking part in the game', async ({ page }) => {
             const s = await page.evaluate(() => {
                 startGame();
