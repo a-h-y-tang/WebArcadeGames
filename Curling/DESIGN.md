@@ -79,7 +79,9 @@ then passes to whichever team conceded the last end. A blank end leaves it where
 it is. The team *without* the hammer leads off the next end.
 
 A match is four ends. If the scores are level after the fourth, extra ends are
-played until someone leads.
+played until someone leads, up to a cap of `MAX_ENDS` (ten) so a run of blank
+ends can never keep a match going forever; a match still level at the cap is a
+draw.
 
 ### CPU opponent
 
@@ -115,7 +117,7 @@ human does. The CPU always throws a straight handle.
   Dino Run and Tetris in this repo. All motion is per-second and advanced by
   `step(dt)`, so tests simulate frames deterministically instead of waiting on
   `requestAnimationFrame`.
-- `tests/curling.spec.js` — 61 Playwright tests covering the aim controls,
+- `tests/curling.spec.js` — 62 Playwright tests covering the aim controls,
   delivery physics, curl, collisions, out-of-play rules, turn order, scoring,
   hammer handling, match flow and the CPU.
 
@@ -146,7 +148,8 @@ recorded here.
   rather than through modelled ice-reading, which keeps it beatable and its
   behaviour easy to test.
 - **Ties.** A level match plays extra ends rather than being declared a draw, so
-  a game always produces a winner. `endGame()` still handles a draw defensively
-  if it is ever called with level scores.
+  in practice a game always produces a winner. The cap at `MAX_ENDS` is a
+  safety net rather than an expected outcome — across 30 simulated matches the
+  longest went to seven ends.
 - **Persistence.** Only the win/loss record is stored (`curling-record` in
   `localStorage`); a match in progress is not saved across reloads.

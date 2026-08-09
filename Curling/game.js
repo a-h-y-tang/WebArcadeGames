@@ -48,6 +48,7 @@ const CHARGE_PERIOD = 1.6;     // seconds for a full up-and-down power sweep
 // --- Match format ---
 const TOTAL_ENDS = 4;
 const STONES_PER_TEAM = 4;
+const MAX_ENDS = TOTAL_ENDS + 6;   // hard stop so extra ends can't run forever
 
 // --- CPU ---
 const CPU_DELAY = 0.5;         // seconds of "thinking" before the CPU throws
@@ -326,8 +327,9 @@ function finishEnd() {
     end += 1;
     updateHud();
 
-    // A tied match after the scheduled ends goes to extra ends.
-    if (end > TOTAL_ENDS && scores[0] !== scores[1]) {
+    // A tied match after the scheduled ends goes to extra ends, up to a cap so
+    // a run of blank ends can never keep the match going indefinitely.
+    if (end > TOTAL_ENDS && (scores[0] !== scores[1] || end > MAX_ENDS)) {
         endGame();
         return;
     }

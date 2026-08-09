@@ -47,6 +47,7 @@ Every delivery is three decisions:
   to whoever conceded the previous end. It is worth having: the last stone often
   decides the count.
 - A match is **4 ends**. Level scores go to extra ends until someone leads.
+  A match still tied after ten ends is a draw.
 - Your win/loss record is saved in the browser's `localStorage`.
 
 The dashed ring on the sheet marks the **shot rock** — the stone currently

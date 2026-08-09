@@ -655,6 +655,20 @@ test.describe('Curling', () => {
             expect(s.end).toBe(5);
         });
 
+        test('extra ends stop at the cap and the match is declared a draw', async ({ page }) => {
+            const s = await page.evaluate(() => {
+                autoCpu = false;
+                startGame();
+                end = MAX_ENDS;
+                scores[0] = 3;
+                scores[1] = 3;
+                finishEnd();
+                return { state, title: document.getElementById('overlay-title').textContent };
+            });
+            expect(s.state).toBe('over');
+            expect(s.title).toMatch(/draw/i);
+        });
+
         test('the overlay announces the winner', async ({ page }) => {
             await page.evaluate(() => {
                 autoCpu = false;
