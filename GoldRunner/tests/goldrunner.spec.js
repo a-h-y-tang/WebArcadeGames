@@ -1024,14 +1024,11 @@ test.describe('Gold Runner', () => {
                         for (let c = 0; c < COLS; c++) if (grid[0][c] === 'S') col = c;
                         driveTo(col, 0, 4000);
                     }
-                    return { goldLeft, state, score, missed, at: [player.x, player.y] };
+                    return { goldLeft, state, score, missed };
                 }, n);
 
-                expect({ left: out.goldLeft, missed: out.missed, at: out.at }).toEqual({
-                    left: 0,
-                    missed: [],
-                    at: out.at,
-                });
+                expect(out.missed).toEqual([]); // names any bar it could not reach
+                expect(out.goldLeft).toBe(0);
                 expect(out.state).toBe('levelclear');
                 expect(out.score).toBeGreaterThan(1500);
             });
