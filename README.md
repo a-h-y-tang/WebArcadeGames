@@ -113,7 +113,7 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Marble Spiral | [MarbleSpiral/](MarbleSpiral/) | Complete |
 | Barrel Climb | [BarrelClimb/](BarrelClimb/) | Complete |
 | BurgerTime | [BurgerTime/](BurgerTime/) | Complete |
-| Canyon Raider | [CanyonRaider/](CanyonRaider/) | In Progress |
+| Canyon Raider | [CanyonRaider/](CanyonRaider/) | Complete |
 
 ## Playing
 
