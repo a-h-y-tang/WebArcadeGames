@@ -765,6 +765,15 @@
     "thumbnail": "games/SkeetShooter/screenshot.png"
   },
   {
+    "id": "ski-slalom",
+    "name": "Ski Slalom",
+    "description": "Downhill slalom time trial - carve through the gates, dodge the trees",
+    "category": "Sports",
+    "dir": "SkiSlalom",
+    "path": "games/SkiSlalom/index.html",
+    "thumbnail": "games/SkiSlalom/screenshot.png"
+  },
+  {
     "id": "sliding-puzzle",
     "name": "Sliding Puzzle",
     "description": "Slide tiles into the correct order",
