@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curling</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="game">
+        <header class="hud">
+            <h1>CURLING</h1>
+            <div class="stats">
+                <div class="stat"><span class="label">End</span><span id="end">1</span></div>
+                <div class="stat"><span class="label">You</span><span id="score-you">0</span></div>
+                <div class="stat"><span class="label">CPU</span><span id="score-cpu">0</span></div>
+                <div class="stat"><span class="label">Stones</span><span id="stones">6</span></div>
+                <div class="stat"><span class="label">Weight</span><span id="weight">59</span></div>
+                <div class="stat"><span class="label">Handle</span><span id="handle">In-turn</span></div>
+                <div class="stat"><span class="label">Best</span><span id="best">0</span></div>
+            </div>
+        </header>
+
+        <div class="board-wrap">
+            <canvas id="canvas" width="760" height="380"></canvas>
+            <div id="overlay" class="overlay visible">
+                <h2 id="overlay-title">CURLING</h2>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Press Space or click Start to play</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+
+        <div class="help">
+            <p><kbd>↑</kbd> <kbd>↓</kbd> aim</p>
+            <p><kbd>←</kbd> <kbd>→</kbd> weight</p>
+            <p><kbd>H</kbd> handle</p>
+            <p><kbd>Space</kbd> throw, then hold to sweep</p>
+            <p><kbd>P</kbd> pause</p>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>

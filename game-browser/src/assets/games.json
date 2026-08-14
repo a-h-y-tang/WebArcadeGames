@@ -180,6 +180,15 @@
     "thumbnail": ""
   },
   {
+    "id": "curling",
+    "name": "Curling",
+    "description": "Draw, guard and take out against a computer skip over four ends",
+    "category": "Sports",
+    "dir": "Curling",
+    "path": "games/Curling/index.html",
+    "thumbnail": "games/Curling/screenshot.png"
+  },
+  {
     "id": "darts",
     "name": "Darts",
     "description": "Aim and throw darts at the board",
