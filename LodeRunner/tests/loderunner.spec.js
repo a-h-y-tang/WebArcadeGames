@@ -601,7 +601,8 @@ test.describe('Lode Runner', () => {
                 placeRunner(exit.c, exit.r);
                 input.y = -1;
             });
-            await advance(page, 180);
+            // Stops on the escape: staying any longer rolls into the next level.
+            await advance(page, 60);
             expect(await page.evaluate(() => Math.round(runner.y))).toBe(0);
             expect(await page.evaluate(() => state)).toBe('levelclear');
         });
@@ -749,9 +750,23 @@ test.describe('Lode Runner', () => {
             });
             await advance(page, 40);
             expect(await page.evaluate(() => guards[0].state)).toBe('trapped');
-            await advance(page, Math.ceil((await page.evaluate(() => GUARD_TRAP)) * 60) + 60);
-            expect(await page.evaluate(() => guards[0].state)).toBe('active');
-            expect(await page.evaluate(() => Math.round(guards[0].y))).toBeLessThan(3);
+            // Stops the moment the guard is loose: once free it hunts the
+            // runner again and may well drop straight back into the hole.
+            const result = await page.evaluate(() => {
+                let elapsed = 0;
+                while (elapsed < 6 && guards[0].state === 'trapped') {
+                    step(1 / 60);
+                    elapsed += 1 / 60;
+                }
+                const leaving = guards[0].state;
+                for (let i = 0; i < Math.ceil(GUARD_CLIMB * 60) + 2; i++) step(1 / 60);
+                return { leaving, state: guards[0].state, y: guards[0].y, elapsed };
+            });
+            expect(result.leaving).toBe('climbing');
+            // The 40 frames above already burned two thirds of a second of it.
+            expect(result.elapsed).toBeGreaterThan(1.4);
+            expect(result.state).toBe('active');
+            expect(result.y).toBeLessThan(3);
         });
 
         test('a healing hole buries a trapped guard', async ({ page }) => {
