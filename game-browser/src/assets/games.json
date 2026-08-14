@@ -18,6 +18,15 @@
     "thumbnail": "games/AirHockey/screenshot.png"
   },
   {
+    "id": "air-traffic-control",
+    "name": "Air Traffic Control",
+    "description": "Draw flight paths to land jets and helicopters without collisions",
+    "category": "Strategy",
+    "dir": "AirTrafficControl",
+    "path": "games/AirTrafficControl/index.html",
+    "thumbnail": "games/AirTrafficControl/screenshot.png"
+  },
+  {
     "id": "artillery-duel",
     "name": "Artillery Duel",
     "description": "Strategic turn-based artillery combat game",
