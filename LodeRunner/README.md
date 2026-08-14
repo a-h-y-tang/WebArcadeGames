@@ -6,6 +6,8 @@ guards who never get tired chase you through the floors.
 You cannot jump and you cannot fight. You carry a shovel, and a hole in a brick
 floor is the only thing standing between you and a guard.
 
+![Lode Runner](screenshot.png)
+
 Open `index.html` in a browser. No build step, no server.
 
 ## How to play

@@ -88,6 +88,12 @@ A dug tile becomes empty and is recorded in `holes` with a timer. After
 render as a flashing outline. Anything standing in a hole when it heals is
 crushed: the runner loses a life, a guard is buried and scores points.
 
+A hole treats the two kinds of entity differently, which is what makes it a
+weapon rather than a trapdoor. The runner drops straight through — digging down
+is how you descend in a hurry — while a guard that falls in *rests* there and is
+stuck. `restsAt()` takes an `isGuard` flag for exactly this reason, and while a
+guard is trapped its cell counts as support for whoever is standing above it.
+
 ## Guards
 
 Guards use breadth-first search over the same movement graph the runner obeys
@@ -152,8 +158,13 @@ These were resolved without asking, choosing the simpler reading each time:
   simply passable air.
 - **Death restarts the level.** Losing a life restores the level completely,
   gold included, rather than resuming mid-sweep. The score is kept.
-- **Three hand-authored levels** cycle forever, with guard speed and count
-  scaling by level number, instead of shipping the original's 150 levels.
+- **Three hand-authored levels** cycle forever, with guard *speed* rising by
+  level number, instead of shipping the original's 150 levels. Guard count is
+  whatever the map author placed and does not scale.
+- **Holes catch guards, not the runner.** The original is ambiguous about
+  whether a pit holds you; here the runner falls through and guards are caught,
+  which keeps both the dig-to-descend technique and the trap-a-guard mechanic
+  without ever letting a player dig themselves into an unwinnable pit.
 - **Escape means the top row.** Reaching row 0 by any means clears the level
   once the exit ladder is open; the game does not require the runner to be on
   the ladder itself at that moment.
