@@ -231,12 +231,10 @@ test.describe('Lode Runner', () => {
             await startQuiet(page);
             const hidden = await page.evaluate(() => ({
                 revealed,
-                tile: tileAt(0, 1),
-                raw: grid[1][0],
+                isHidden: grid[1][0] === HIDDEN,
+                readsAsEmpty: tileAt(0, 1) === EMPTY,
             }));
-            expect(hidden.revealed).toBe(false);
-            expect(hidden.raw).toBe(HIDDEN);
-            expect(hidden.tile).toBe(EMPTY);
+            expect(hidden).toEqual({ revealed: false, isHidden: true, readsAsEmpty: true });
         });
     });
 
@@ -410,11 +408,15 @@ test.describe('Lode Runner', () => {
         });
 
         test('pressing down drops off the rope', async ({ page }) => {
+            // Let go of down straight away: held, it would carry on down the
+            // ladder that stands under the landing.
             await place(page, 15, 5);
             await hold(page, 'ArrowDown');
-            await advanceSeconds(page, 2);
+            await advanceSeconds(page, 0.1);
             await release(page, 'ArrowDown');
+            await advanceSeconds(page, 2);
             expect(await cell(page)).toEqual({ c: 15, r: 8 });
+            expect(await page.evaluate(() => player.falling)).toBe(false);
         });
     });
 
@@ -596,7 +598,9 @@ test.describe('Lode Runner', () => {
                 guards[0].x = 3;
                 guards[0].y = 5;
             });
-            await advanceSeconds(page, 4);
+            // Short window on purpose: given longer the guard catches the
+            // runner, the level resets and the guard is back at its spawn.
+            await advanceSeconds(page, 1.2);
             const guard = await page.evaluate(() => ({
                 c: Math.round(guards[0].x),
                 r: Math.round(guards[0].y),
