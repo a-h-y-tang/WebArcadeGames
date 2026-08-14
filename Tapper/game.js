@@ -281,7 +281,7 @@ function stepMugs(dt) {
             }
             updateHud();
         } else if (mug.x <= BAR_LEFT) {
-            mugs = mugs.filter((m) => m !== mug);
+            // loseLife clears every bar, this mug included.
             loseLife('SMASH!', mug.lane, BAR_LEFT + 40);
             return;
         }
@@ -324,7 +324,6 @@ function stepEmptyMugs(dt) {
             flash(`+${SCORE_CATCH}`, BAR_RIGHT - 70, laneY(mug.lane) - 60);
             updateHud();
         } else {
-            emptyMugs = emptyMugs.filter((m) => m !== mug);
             loseLife('CRASH!', mug.lane, BAR_RIGHT - 90);
             return;
         }
@@ -339,8 +338,10 @@ function stepEmptyMugs(dt) {
 function draw() {
     ctx.save();
     if (shakeTimer > 0) {
+        // Math.random rather than rng(): the screen shake must not disturb the
+        // seeded stream the waves are drawn from.
         const mag = shakeTimer * 10;
-        ctx.translate((rng() - 0.5) * mag, (rng() - 0.5) * mag);
+        ctx.translate((Math.random() - 0.5) * mag, (Math.random() - 0.5) * mag);
     }
 
     drawRoom();
@@ -415,6 +416,9 @@ function drawCustomer(c) {
     const top = y - CUSTOMER_H + bob;
     const facing = c.state === 'leaving' ? -1 : 1;
 
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
+    ctx.fillRect(c.x - 2, y - 3, CUSTOMER_W + 4, 3);
+
     // Body.
     ctx.fillStyle = c.shirt;
     ctx.fillRect(c.x, top + 14, CUSTOMER_W, CUSTOMER_H - 22);
@@ -462,6 +466,13 @@ function drawMug(mug, full) {
 
     ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
     ctx.fillRect(mug.x - 1, y + MUG_H - 2, MUG_W + 4, 3);
+
+    // Sud trail, streaming out behind whichever way the mug is travelling.
+    ctx.fillStyle = full ? 'rgba(255, 246, 226, 0.22)' : 'rgba(190, 170, 140, 0.16)';
+    for (let i = 1; i <= 3; i++) {
+        const tx = full ? mug.x + MUG_W + i * 7 : mug.x - i * 7;
+        ctx.fillRect(tx, y + 4 + Math.sin(mug.spin + i) * 2, 4, 3);
+    }
 
     ctx.fillStyle = full ? '#e59a1f' : '#6f5a3f';
     ctx.fillRect(mug.x, y + wobble, MUG_W, MUG_H - 2);
