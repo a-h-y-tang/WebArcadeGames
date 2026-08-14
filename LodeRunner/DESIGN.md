@@ -46,9 +46,9 @@ always cover exactly one second of motion regardless of how the cells line up.
 
 Rules, applied in this order every time an actor becomes aligned:
 
-1. **Support.** An actor is supported when it stands on a ladder or rope tile,
-   when the tile below is brick/solid/ladder, when a trapped guard fills the
-   cell below, or when it is on the bottom row. Unsupported actors fall, and a
+1. **Support.** An actor is supported when it stands on a ladder, rope or hole
+   tile, when the tile below is brick/solid/ladder, when a trapped guard fills
+   the cell below, or when it is on the bottom row. Unsupported actors fall, and a
    falling actor accepts no steering — the classic "commit to your drop" rule.
 2. **Climb.** Up is legal only from a ladder tile; down is legal into any
    enterable cell (climbing a ladder down, or deliberately dropping).
@@ -68,6 +68,13 @@ and no actor is standing in that cell. The brick becomes a hole for
 `HOLE_TIME` (5 s); when the timer expires the brick reforms and anything inside
 the cell is crushed — a guard dies and respawns, the runner loses a life.
 
+A hole is a **pit, not a shaft**: `supported()` treats a hole tile as standable,
+so whatever drops in lands *in* it even where the floor is a single tile thick
+with open space below. Without that rule the trap mechanic would not exist —
+guards would fall clean through every drilled brick, which is exactly what the
+first implementation did — and it is what makes a hole dangerous to the runner
+too, who can only leave one if a neighbouring cell happens to be enterable.
+
 ### Guards
 
 Guards path with a breadth-first search over the *reverse* movement graph seeded
@@ -81,6 +88,17 @@ A guard that lands in a hole is trapped for `TRAP_TIME` (2.6 s), then climbs out
 toward the runner's side. While trapped it is a platform: the runner can stand
 and run across its head. Touching a guard in any other way costs a life and
 resets the level layout.
+
+### Level construction
+
+Every level is walked by a connectivity check in the suite before it ships. The
+rule the maps follow: each ladder spans from the standing row of the platform
+below to the standing row of the platform above, and any gap that sits *between*
+two ladders on a walking row is bridged with rope tiles on that row — otherwise
+the gap silently severs the route and strands chests behind it. Gaps outside a
+walking run are left open on purpose as one-way drop shafts, usually onto a rope.
+The first draft of all three levels failed exactly this check, which is why it is
+a test rather than a review step.
 
 ### Scoring and flow
 
@@ -129,8 +147,20 @@ The suite drives the simulation rather than watching it, using these globals:
 - `setPlayerCell(c, r)` / `setGuardCell(i, c, r)` — teleport an actor to a cell
   so a rule can be tested in isolation.
 - `input` — `{ left, right, up, down }`, the same object the key handlers write.
-- `tileAt(c, r)`, `digLeft()`, `digRight()`, plus `player`, `guards`, `holes`,
-  `gold`, `goldRemaining`, `state`, `score`, `lives`, `level`.
+- `tileAt(c, r)`, `canEnter(c, r)`, `supported(c, r)`, `digLeft()`, `digRight()`,
+  `revealEscape()`, `killPlayer()`, `resetInput()`, `render()`, plus `player`,
+  `guards`, `holes`, `gold`, `goldRemaining`, `escapeCells`, `state`, `score`,
+  `lives`, `level`, `LEVELS`.
+
+Two specs use those hooks to check the whole game rather than one rule:
+
+- **Solvability** floods each shipped level with the game's own movement rules
+  and asserts every chest is reachable, the top of an escape ladder is reachable,
+  and no chest strands the runner.
+- **Playthrough** drives an autopilot that plans with the same flood and then
+  plays by holding the ordinary direction keys — steering from the cell the
+  runner is *about to* reach, since that is the moment the engine reads input.
+  It has to clear all three levels and land in the `won` state.
 
 ## Assumptions
 

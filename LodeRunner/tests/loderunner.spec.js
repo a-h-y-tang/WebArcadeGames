@@ -131,6 +131,62 @@ test.describe('Lode Runner', () => {
                 expect(level.escapes).toBeGreaterThan(0);
             }
         });
+
+        test('every shipped level can actually be finished', async ({ page }) => {
+            // Flood the level with the game's own movement rules (no digging) and
+            // check the runner can reach every chest, reach the top of an escape
+            // ladder, and is never stranded after taking a chest.
+            const report = await page.evaluate(() => {
+                function reachable(sc, sr) {
+                    const seen = new Set([sr * COLS + sc]);
+                    const queue = [[sc, sr]];
+                    while (queue.length) {
+                        const [c, r] = queue.shift();
+                        const moves = [[c, r + 1]];
+                        if (supported(c, r)) {
+                            moves.push([c - 1, r], [c + 1, r]);
+                            if (tileAt(c, r) === 'ladder') moves.push([c, r - 1]);
+                        }
+                        for (const [mc, mr] of moves) {
+                            if (!canEnter(mc, mr)) continue;
+                            const key = mr * COLS + mc;
+                            if (seen.has(key)) continue;
+                            seen.add(key);
+                            queue.push([mc, mr]);
+                        }
+                    }
+                    return seen;
+                }
+
+                const out = [];
+                for (let i = 0; i < LEVELS.length; i++) {
+                    loadLevel(i);
+                    autoStep = false;
+                    const spawn = { c: player.c, r: player.r };
+                    const chests = gold.map((g) => ({ c: g.c, r: g.r }));
+                    const beforeReveal = reachable(spawn.c, spawn.r);
+                    revealEscape();
+                    const exits = escapeCells.filter((e) => e.r === 0).map((e) => e.r * COLS + e.c);
+                    const fromSpawn = reachable(spawn.c, spawn.r);
+                    out.push({
+                        level: i + 1,
+                        unreachableChests: chests.filter((g) => !beforeReveal.has(g.r * COLS + g.c)),
+                        exitReachable: exits.length > 0 && exits.some((k) => fromSpawn.has(k)),
+                        strandedAt: chests.filter((g) => {
+                            const from = reachable(g.c, g.r);
+                            return !exits.some((k) => from.has(k));
+                        }),
+                    });
+                }
+                return out;
+            });
+
+            for (const level of report) {
+                expect(level.unreachableChests, `level ${level.level}`).toEqual([]);
+                expect(level.strandedAt, `level ${level.level}`).toEqual([]);
+                expect(level.exitReachable, `level ${level.level}`).toBe(true);
+            }
+        });
     });
 
     // -----------------------------------------------------------------------
@@ -509,6 +565,40 @@ test.describe('Lode Runner', () => {
             expect(await cellOf(page)).toMatchObject({ c: 5, r: 4 });
         });
 
+        // A drilled brick becomes a pit with a floor, even where the level has
+        // open space underneath — otherwise nothing could ever be trapped in it.
+        const THIN_FLOOR = [
+            '..........',
+            '..........',
+            '....@.....',
+            '##########',
+            '..........',
+            '==========',
+        ];
+
+        test('a hole holds the runner instead of dropping them through', async ({ page }) => {
+            await load(page, THIN_FLOOR);
+            await page.evaluate(() => digRight());
+            await press(page, 'right');
+            await advance(page, 60);
+            expect(await cellOf(page)).toMatchObject({ c: 5, r: 3 });
+        });
+
+        test('a hole in a thin floor still traps a guard', async ({ page }) => {
+            await load(page, [
+                '..........',
+                '..........',
+                '....@..X..',
+                '##########',
+                '..........',
+                '==========',
+            ]);
+            await page.evaluate(() => digRight());
+            await advance(page, 90);
+            const g = await page.evaluate(() => ({ c: guards[0].c, r: guards[0].r, trapped: guards[0].trapped }));
+            expect(g).toMatchObject({ c: 5, r: 3, trapped: true });
+        });
+
         test('a refilling hole crushes the runner', async ({ page }) => {
             await load(page, DIG);
             await page.evaluate(() => { lives = 3; digRight(); setPlayerCell(5, 4); });
@@ -598,6 +688,89 @@ test.describe('Lode Runner', () => {
             await advance(page, 20);
             expect(await page.evaluate(() => state)).toBe('gameover');
             await expect(page.locator('#overlay')).toHaveClass(/visible/);
+        });
+    });
+
+    // -----------------------------------------------------------------------
+    // Full playthrough
+    // -----------------------------------------------------------------------
+    test.describe('playthrough', () => {
+        test('an autopilot clears every level using only the real controls', async ({ page }) => {
+            test.setTimeout(60_000);
+            const result = await page.evaluate(() => {
+                // Shortest route to any of `targets`, using the game's movement rules.
+                function pathTo(sc, sr, targets) {
+                    const goal = new Set(targets.map((t) => t.r * COLS + t.c));
+                    const prev = new Map();
+                    const seen = new Set([sr * COLS + sc]);
+                    const queue = [[sc, sr]];
+                    while (queue.length) {
+                        const [c, r] = queue.shift();
+                        if (goal.has(r * COLS + c) && !(c === sc && r === sr)) {
+                            const out = [];
+                            let k = r * COLS + c;
+                            while (k !== sr * COLS + sc) { out.unshift(k); k = prev.get(k); }
+                            return out.map((k) => ({ c: k % COLS, r: (k - (k % COLS)) / COLS }));
+                        }
+                        const moves = [[c, r + 1]];
+                        if (supported(c, r)) {
+                            moves.push([c - 1, r], [c + 1, r]);
+                            if (tileAt(c, r) === 'ladder') moves.push([c, r - 1]);
+                        }
+                        for (const [mc, mr] of moves) {
+                            if (!canEnter(mc, mr)) continue;
+                            const key = mr * COLS + mc;
+                            if (seen.has(key)) continue;
+                            seen.add(key);
+                            prev.set(key, r * COLS + c);
+                            queue.push([mc, mr]);
+                        }
+                    }
+                    return null;
+                }
+
+                // Hold the key for the cell the runner is about to arrive on: that
+                // is the moment the engine reads input, exactly like a human would.
+                function steer() {
+                    const c = player.moving ? player.tc : player.c;
+                    const r = player.moving ? player.tr : player.r;
+                    const targets = goldRemaining > 0
+                        ? gold.filter((g) => !g.taken)
+                        : escapeCells.filter((e) => e.r === 0);
+                    const plan = pathTo(c, r, targets);
+                    resetInput();
+                    const next = plan && plan[0];
+                    if (!next) return;
+                    if (next.c < c) input.left = true;
+                    else if (next.c > c) input.right = true;
+                    else if (next.r < r) input.up = true;
+                    else if (next.r > r) input.down = true;
+                }
+
+                startGame();
+                autoStep = false;
+                const cleared = [];
+                let frames = 0;
+                let seen = level;
+                guards.length = 0;   // a solo run: this is about the levels, not the chase
+                while (frames < 60 * 240 && state === 'playing') {
+                    steer();
+                    step(1 / 60);
+                    frames++;
+                    if (level !== seen) {
+                        cleared.push(seen);
+                        seen = level;
+                        guards.length = 0;
+                    }
+                }
+                if (state === 'won') cleared.push(seen);
+                resetInput();
+                return { cleared, state, score, seconds: frames / 60 };
+            });
+
+            expect(result.cleared).toEqual([1, 2, 3]);
+            expect(result.state).toBe('won');
+            expect(result.score).toBeGreaterThan(0);
         });
     });
 
