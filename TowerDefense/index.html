@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tower Defense</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="game">
+        <header class="hud">
+            <h1>TOWER DEFENSE</h1>
+            <div class="stats">
+                <div class="stat"><span class="label">Wave</span><span id="wave">1</span></div>
+                <div class="stat"><span class="label">Lives</span><span id="lives">20</span></div>
+                <div class="stat"><span class="label">Gold</span><span id="gold">100</span></div>
+                <div class="stat"><span class="label">Score</span><span id="score">0</span></div>
+                <div class="stat"><span class="label">Best</span><span id="best">0</span></div>
+            </div>
+        </header>
+
+        <div class="board-wrap">
+            <canvas id="canvas" width="560" height="420"></canvas>
+            <div id="overlay" class="overlay visible">
+                <h2 id="overlay-title">TOWER DEFENSE</h2>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Press Space or click Start to play</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+
+        <div class="shop">
+            <button id="tower-gun" class="tower-btn selected" data-type="gun">
+                <span class="swatch gun"></span>
+                <span class="name">1 · Gun</span>
+                <span class="cost">20g</span>
+            </button>
+            <button id="tower-frost" class="tower-btn" data-type="frost">
+                <span class="swatch frost"></span>
+                <span class="name">2 · Frost</span>
+                <span class="cost">30g</span>
+            </button>
+            <button id="tower-cannon" class="tower-btn" data-type="cannon">
+                <span class="swatch cannon"></span>
+                <span class="name">3 · Cannon</span>
+                <span class="cost">45g</span>
+            </button>
+            <button id="btn-wave" class="wave-btn">Send Wave</button>
+        </div>
+
+        <p id="status" class="status">Press Space to begin</p>
+
+        <div class="help">
+            <p><kbd>Click</kbd> build / upgrade</p>
+            <p><kbd>Right click</kbd> sell</p>
+            <p><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> pick turret</p>
+            <p><kbd>Space</kbd> send wave</p>
+            <p><kbd>P</kbd> pause</p>
+            <p><kbd>R</kbd> restart</p>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>
