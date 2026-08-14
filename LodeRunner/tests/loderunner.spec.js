@@ -165,6 +165,31 @@ test.describe('Lode Runner', () => {
             expect(missing).toEqual([]);
         });
 
+        test('no reachable cell can strand the runner', async ({ page }) => {
+            // A pocket the runner can drop into but neither walk nor dig out of
+            // would soft-lock the game, so every reachable cell has to lead
+            // back to the start — digging allowed.
+            const stranded = await page.evaluate(() => {
+                const out = [];
+                for (let i = 0; i < LEVELS.length; i++) {
+                    loadLevel(i);
+                    const startKey = `${Math.round(player.x)},${Math.round(player.y)}`;
+                    for (const key of reachableFrom(Math.round(player.x), Math.round(player.y))) {
+                        const [c, r] = key.split(',').map(Number);
+                        const pocket = reachableFrom(c, r);
+                        if (pocket.has(startKey)) continue;
+                        const diggable = [...pocket].some((k) => {
+                            const [pc, pr] = k.split(',').map(Number);
+                            return canDig(pc, pr, -1) || canDig(pc, pr, 1);
+                        });
+                        if (!diggable) out.push(`level ${i} cell ${key}`);
+                    }
+                }
+                return out;
+            });
+            expect(stranded).toEqual([]);
+        });
+
         test('the escape ladders reach the top row once revealed', async ({ page }) => {
             const blocked = await page.evaluate(() => {
                 const out = [];
@@ -179,6 +204,65 @@ test.describe('Lode Runner', () => {
                 return out;
             });
             expect(blocked).toEqual([]);
+        });
+    });
+
+    test.describe('playability', () => {
+        test('a scripted runner can clear every level', async ({ page }) => {
+            // Drives the real physics — walking, climbing, falling and digging
+            // its way to every piece of gold and then to the top row. If a
+            // level cannot actually be played to the end, this fails.
+            const results = await page.evaluate(() => {
+                const play = (index) => {
+                    startGame();
+                    guardsEnabled = false;
+                    loadLevel(index);
+                    const dt = 1 / 60;
+                    let t = 0;
+                    let digs = 0;
+
+                    const nextStep = (c, r) => {
+                        const targets = golds.length
+                            ? golds
+                                  .slice()
+                                  .sort(
+                                      (a, b) =>
+                                          Math.abs(a.c - c) + Math.abs(a.r - r) -
+                                          (Math.abs(b.c - c) + Math.abs(b.r - r))
+                                  )
+                            : [...Array(COLS).keys()].map((col) => ({ c: col, r: 0 }));
+                        for (const target of targets) {
+                            const s = firstStepTowards(c, r, target.c, target.r);
+                            if (s) return s;
+                        }
+                        return null;
+                    };
+
+                    while (t < 180 && state === 'running') {
+                        const c = Math.round(player.x);
+                        const r = Math.round(player.y);
+                        if (Math.abs(player.x - c) < 1e-6 && Math.abs(player.y - r) < 1e-6) {
+                            const s = nextStep(c, r);
+                            player.dir.x = s ? Math.sign(s.c - c) : 0;
+                            player.dir.y = s ? Math.sign(s.r - r) : 0;
+                            if (!s && (dig(-1) || dig(1))) digs++;
+                        }
+                        step(dt);
+                        t += dt;
+                    }
+                    player.dir.x = 0;
+                    player.dir.y = 0;
+                    return { state, gold: goldRemaining, digs };
+                };
+                return LEVELS.map((_, i) => play(i));
+            });
+
+            for (const result of results) {
+                expect(result.state).toBe('levelclear');
+                expect(result.gold).toBe(0);
+            }
+            // Level 3 walls gold into a pit that can only be left by digging.
+            expect(results[2].digs).toBeGreaterThan(0);
         });
     });
 
@@ -531,13 +615,34 @@ test.describe('Lode Runner', () => {
         });
 
         test('the runner cannot dig while falling', async ({ page }) => {
-            await page.evaluate(() => {
+            // Set the flag and dig in one evaluate: the animation loop would
+            // otherwise land the runner between the two.
+            const after = await page.evaluate(() => {
                 player.falling = true;
+                dig(1);
+                return { tile: tileAt(10, 6), holes: holes.length };
             });
-            await page.keyboard.press('x');
-            const after = await page.evaluate(() => ({ tile: tileAt(10, 6), holes: holes.length }));
             expect(after.tile).toBe(await page.evaluate(() => BRICK));
             expect(after.holes).toBe(0);
+        });
+
+        test('digging mid-stride snaps the runner to the cell and digs', async ({ page }) => {
+            await place(page, 8, 5);
+            await hold(page, 'ArrowRight');
+            await page.evaluate(() => {
+                // Part-way between column 8 and 9, as a real keypress would be.
+                while (Math.abs(player.x - 9) > 0.3) step(1 / 60);
+            });
+            await release(page, 'ArrowRight');
+            await page.keyboard.press('x');
+            const after = await page.evaluate(() => ({
+                tile: tileAt(10, 6),
+                x: player.x,
+                holes: holes.length,
+            }));
+            expect(after.tile).toBe(await page.evaluate(() => EMPTY));
+            expect(after.holes).toBe(1);
+            expect(after.x).toBe(9);
         });
 
         test('a dug hole lets the runner drop through the floor', async ({ page }) => {

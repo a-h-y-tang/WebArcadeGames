@@ -89,7 +89,7 @@ const LEVELS = [
         '....G........H.........G....',
         '###H#####...############H###',
         '...H....................H...',
-        '...H.....#$#.....$......H...',
+        '...H.....#$.#....$......H...',
         '###############H############',
         '...............H............',
         '.....$.........H......$.....',
@@ -112,6 +112,7 @@ const GUARD_CAP = 5.8;
 
 // --- Rules ---------------------------------------------------------------
 const HOLE_TIME = 5;      // seconds a dug hole stays open
+const HOLE_WARN = 1.5;    // seconds of "about to close" warning
 const TRAP_CLIMB = 3;     // seconds a guard needs to climb back out
 const RESPAWN_DELAY = 1.5;
 const DEATH_PAUSE = 1.5;
@@ -129,6 +130,7 @@ const COLOR_BRICK_TOP = '#b3623d';
 const COLOR_MORTAR = '#2a1710';
 const COLOR_SOLID = '#4a5468';
 const COLOR_LADDER = '#c9a227';
+const COLOR_ESCAPE = '#7ef09a';
 const COLOR_ROPE = '#9a7b4f';
 const COLOR_GOLD = '#f5d033';
 const COLOR_RUNNER = '#5ad1f5';
@@ -402,23 +404,34 @@ function firstStepTowards(c, r, tc, tr) {
 // Digging
 // ---------------------------------------------------------------------------
 
+// How far off the grid the runner may be and still dig; the shovel snaps them
+// onto the cell, so a dig pressed mid-stride still lands.
+const DIG_SNAP = 0.35;
+
+// Whether the brick diagonally below (c, r) could be dug from there. Also used
+// by the level checks, which need to know a pocket can be dug out of.
+function canDig(c, r, dir) {
+    if (tileAt(c, r) === LADDER || tileAt(c, r) === ROPE) return false;
+    if (!firmBelow(c, r)) return false;
+    if (tileAt(c + dir, r + 1) !== BRICK) return false;
+    if (tileAt(c + dir, r) !== EMPTY) return false;
+    return goldIndexAt(c + dir, r + 1) < 0;
+}
+
 function dig(dir) {
     if (state !== 'running') return false;
     const c = Math.round(player.x);
     const r = Math.round(player.y);
-    if (Math.abs(player.x - c) > EPS || Math.abs(player.y - r) > EPS) return false;
+    if (Math.abs(player.x - c) > DIG_SNAP || Math.abs(player.y - r) > DIG_SNAP) return false;
     if (player.falling) return false;
-    if (tileAt(c, r) === LADDER || tileAt(c, r) === ROPE) return false;
-    if (!firmBelow(c, r)) return false;
+    if (!canDig(c, r, dir)) return false;
 
     const tc = c + dir;
     const tr = r + 1;
-    if (tileAt(tc, tr) !== BRICK) return false;
-    if (tileAt(tc, r) !== EMPTY) return false;
-    if (goldIndexAt(tc, tr) >= 0) return false;
-
     grid[tr][tc] = EMPTY;
     holes.push({ c: tc, r: tr, timer: HOLE_TIME });
+    player.x = c;
+    player.y = r;
     player.facing = dir;
     return true;
 }
@@ -698,8 +711,8 @@ function drawSolid(x, y) {
     ctx.strokeRect(x + 0.5, y + 0.5, TILE - 1, TILE - 1);
 }
 
-function drawLadder(x, y, faint) {
-    ctx.strokeStyle = faint ? 'rgba(201, 162, 39, 0.35)' : COLOR_LADDER;
+function drawLadder(x, y, escape) {
+    ctx.strokeStyle = escape ? COLOR_ESCAPE : COLOR_LADDER;
     ctx.lineWidth = 3;
     ctx.beginPath();
     ctx.moveTo(x + 5, y);
@@ -732,6 +745,31 @@ function drawRope(x, y) {
         ctx.lineTo(rx, y + 10);
     }
     ctx.stroke();
+}
+
+// A dug hole: an excavated pit with the broken ends of the course still
+// showing, and the brick creeping back once it is about to close.
+function drawHole(hole) {
+    const x = hole.c * TILE;
+    const y = hole.r * TILE;
+    ctx.fillStyle = '#180d08';
+    ctx.fillRect(x, y, TILE, TILE);
+    ctx.fillStyle = COLOR_BRICK;
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x + 6, y);
+    ctx.lineTo(x, y + 9);
+    ctx.moveTo(x + TILE, y);
+    ctx.lineTo(x + TILE - 6, y);
+    ctx.lineTo(x + TILE, y + 9);
+    ctx.fill();
+
+    if (hole.timer >= HOLE_WARN) return;
+    const closing = 1 - hole.timer / HOLE_WARN;
+    ctx.save();
+    ctx.globalAlpha = 0.2 + 0.6 * closing;
+    drawBrick(x, y);
+    ctx.restore();
 }
 
 function drawGold(x, y) {
@@ -810,10 +848,11 @@ function draw() {
             else if (raw === SOLID) drawSolid(x, y);
             else if (raw === LADDER) drawLadder(x, y, false);
             else if (raw === ROPE) drawRope(x, y);
-            else if (raw === HIDDEN && revealed) drawLadder(x, y, false);
+            else if (raw === HIDDEN && revealed) drawLadder(x, y, true);
         }
     }
 
+    for (const hole of holes) drawHole(hole);
     for (const g of golds) drawGold(g.c * TILE, g.r * TILE);
     for (const g of guards) {
         if (g.dead > 0) continue;
