@@ -86,7 +86,8 @@ depot refills at `FUEL_REFILL` (42/s), capped at full. Running dry is a crash.
 Depots are the one thing in the river you can safely touch, which is the central
 tension: they sit in the water lane, so refuelling means lining up with an
 obstacle instead of dodging it, and a depot you shoot for points is a depot you
-cannot drink from.
+cannot drink from. Below `LOW_FUEL` (25) the HUD gauge flashes red and a pulsing
+`LOW FUEL` warning appears on the canvas, where your eyes already are.
 
 ### Weapons
 
@@ -115,7 +116,9 @@ in the centre of the river with a full tank, and the stretch ahead is swept:
 entities within `CLEAR_AHEAD` (520 px) are removed and no new ones spawn until
 you have flown past that point. The same sweep gives the start of a run a
 `START_SAFE` (700 px) run-up. Without it a respawn could drop you straight back
-into the gunboat that killed you.
+into the gunboat that killed you. A bridge that falls inside a sweep is simply
+never built, so you coast through that section boundary without a toll — a small
+consolation prize for having just died.
 
 With `START_LIVES` (3) gone the run ends, the best score is written to
 `localStorage` under `canyon-raider-best`, and the overlay reports the final
@@ -144,7 +147,7 @@ throttle.
 | `index.html` | HUD (score, best, lives, section, distance, fuel gauge), canvas, overlay, help line |
 | `style.css` | Canyon-toned palette, HUD/overlay layout, fuel gauge |
 | `game.js` | Everything else, as one classic script |
-| `tests/canyonraider.spec.js` | 46 Playwright specs |
+| `tests/canyonraider.spec.js` | 47 Playwright specs |
 
 `game.js` is a plain (non-module) script, matching Slime Volley, Kaboom and
 Tetris in this repo: `state`, `plane`, `rows`, `entities`, `bullets`, `fuel`,
@@ -169,7 +172,7 @@ never perturbs generation.
 ## Testing
 
 Test-driven: `tests/canyonraider.spec.js` was written and committed red before
-`game.js` existed, then the implementation was built until all 46 specs passed.
+`game.js` existed, then the implementation was built until all 47 specs passed.
 Coverage:
 
 - idle screen, HUD defaults, `localStorage` best score

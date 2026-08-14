@@ -27,7 +27,8 @@ Run**) to take off.
 - The **canyon walls are solid**. So are gunboats, helicopters and bridges —
   touching any of them costs one of your three lives.
 - **Fuel drains constantly**, and faster the harder you push the throttle. Fly
-  *over* an orange **fuel depot** to fill the tank. Running dry is a crash.
+  *over* an orange **fuel depot** to fill the tank. Running dry is a crash —
+  below a quarter tank the gauge flashes and the canyon warns you.
 - You can **shoot a depot** for 80 points, but then you cannot drink from it —
   a bad trade when the gauge is low.
 - **Bridges seal each section.** Destroying one scores 500, advances the section
@@ -54,7 +55,7 @@ npx playwright install chromium
 npx playwright test CanyonRaider/tests/
 ```
 
-The 46 specs in `tests/canyonraider.spec.js` drive the game through its globals
+The 47 specs in `tests/canyonraider.spec.js` drive the game through its globals
 (`step`, `startGame`, `plane`, `entities`, `fuel`, …) and seed the canyon so
 every run is reproducible. See [DESIGN.md](DESIGN.md) for how the world model,
 canyon generation and collision handling work.
