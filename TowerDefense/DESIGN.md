@@ -59,6 +59,9 @@ The game alternates between two phases:
   interval, walk the road, and get shot. The wave ends when the spawn queue is
   empty and no creep is left alive on the board.
 
+Building, upgrading and selling are allowed during a wave as well, so kill gold can
+be spent the moment it lands. What the build phase really provides is *time*.
+
 Waves are **only** started by the player (`Space`, or the *Send Wave* button).
 There is no build-phase countdown timer. This is the deliberately simpler reading
 of "waves come at you": it removes a timer from the simulation, makes the whole
@@ -71,7 +74,7 @@ the board:
 
 | Type | Cost | Range | Damage | Cooldown | Special |
 |---|---|---|---|---|---|
-| Gun | 20 | 78 px (≈2.8 cells) | 4 | 0.45 s | fast single-target bullet |
+| Gun | 20 | 84 px (3 cells) | 5 | 0.40 s | fast single-target bullet |
 | Frost | 30 | 70 px (2.5 cells) | 1 | 0.90 s | hitscan beam, slows the target to 50 % for 1.8 s |
 | Cannon | 45 | 95 px (≈3.4 cells) | 14 | 1.40 s | slow shell, 40 px splash on impact |
 
@@ -89,18 +92,30 @@ invested in it, so a misplaced turret is a setback rather than a dead run.
 
 | Creep | HP | Speed | Gold | Lives lost on leak | Points |
 |---|---|---|---|---|---|
-| Grunt | 18 | 60 px/s | 6 | 1 | 10 |
-| Runner | 10 | 105 px/s | 5 | 1 | 12 |
-| Tank | 70 | 38 px/s | 14 | 2 | 25 |
-| Boss | 320 | 42 px/s | 60 | 5 | 100 |
+| Grunt | 18 | 60 px/s | 4 | 1 | 10 |
+| Runner | 10 | 105 px/s | 4 | 1 | 12 |
+| Tank | 70 | 38 px/s | 9 | 2 | 25 |
+| Boss | 90 | 42 px/s | 40 | 5 | 100 |
 
 Twelve hand-written waves introduce the types in order: grunts alone, then
 runners, then tanks from wave 5, then a boss on wave 12. On top of the table, each
-creep's HP is multiplied by `1 + 0.15 * (wave - 1)`, so a wave-12 grunt has about
-2.6× the HP of a wave-1 grunt and the same layout keeps getting harder.
+creep's HP is multiplied by `1.32 ^ (wave - 1)`, so a wave-12 grunt has about 21×
+the HP of a wave-1 grunt. Growth has to be exponential because the player's damage
+is too: turret count grows with income *and* each turret can reach level 3, which
+is 2.25× its base damage.
 
-Clearing a wave pays an income bonus of `15 + 3 * wave` gold and 25 score, which is
+Clearing a wave pays an income bonus of `10 + 2 * wave` gold and 25 score, which is
 what funds the next round of building.
+
+### Tuning
+
+The three numbers that set the difficulty — HP growth per wave, kill rewards and
+the boss's base HP — were picked by simulating scripted players against the real
+`step(dt)` rather than by feel. Two players were run for each candidate setting: a
+strong one that builds on the cells covering the most road and upgrades whenever it
+can afford to, and a weak one that drops un-upgraded guns on random grass. The
+shipped numbers are the ones where the strong player survives all twelve waves, the
+weak player falls around wave 11, and an empty board falls on wave 3.
 
 ### Win, loss and scoring
 

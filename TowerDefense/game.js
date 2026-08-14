@@ -119,8 +119,6 @@ const segmentStart = segments.reduce(
     [0]
 );
 
-const PATH_LENGTH = segmentStart[segments.length];
-
 const roadCells = (() => {
     const set = new Set();
     for (let i = 0; i < WAYPOINTS.length - 1; i++) {
@@ -409,12 +407,12 @@ function leakCreep(creep) {
 
 // Standard "first" targeting: the creep furthest along the road wins.
 function pickTarget(tower) {
-    let best = null;
+    let first = null;
     for (const creep of creeps) {
         if (!inTowerRange(tower, creep)) continue;
-        if (!best || progress(creep) > progress(best)) best = creep;
+        if (!first || progress(creep) > progress(first)) first = creep;
     }
-    return best;
+    return first;
 }
 
 function fire(tower, target) {
@@ -452,6 +450,7 @@ function stepSpawns(dt) {
     while (spawnQueue.length > 0 && spawnTimer <= 0) {
         creeps.push(spawnCreep(spawnQueue.shift()));
         spawnTimer += SPAWN_GAP;
+        updateHud();
     }
     if (spawnQueue.length === 0) spawnTimer = Math.max(0, spawnTimer);
 }
