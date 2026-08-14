@@ -579,6 +579,17 @@ test.describe('Gold Runner', () => {
             expect(dug.ok).toBe(false);
         });
 
+        test('the player can dig on the run', async ({ page }) => {
+            const dug = await page.evaluate(() => {
+                placePlayer(5, 3);
+                keys.right = true;
+                step(1 / 60); // now in transit, which must not block the drill
+                return { moving: !!player.move, ok: dig(1) };
+            });
+            expect(dug.moving).toBe(true);
+            expect(dug.ok).toBe(true);
+        });
+
         test('the player cannot dig while falling', async ({ page }) => {
             const dug = await page.evaluate(() => {
                 placePlayer(13, 3);

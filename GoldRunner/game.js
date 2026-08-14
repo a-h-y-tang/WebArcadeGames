@@ -394,9 +394,12 @@ function updatePlayer(dt) {
 // Digging
 // ---------------------------------------------------------------------------
 
+// Digging works off the cell the player is nearest to rather than requiring a
+// dead stop: moves chain while a direction key is held, so a rest-only rule
+// would mean letting go of the controls before every dig.
 function dig(dir) {
     if (state !== 'running') return false;
-    if (player.move || player.falling) return false;
+    if (player.falling) return false;
     if (player.digCooldown > 0) return false;
 
     const c = Math.round(player.x);
