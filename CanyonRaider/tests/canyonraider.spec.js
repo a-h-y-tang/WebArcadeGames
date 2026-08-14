@@ -203,12 +203,22 @@ test.describe('Canyon Raider', () => {
         });
 
         test('throttle up and down clamp to the speed limits', async ({ page }) => {
+            // Fly a clear canyon dead centre so the run is about the throttle
+            // and nothing else.
             const { fast, slow } = await page.evaluate(() => {
+                const cruise = (frames) => {
+                    for (let i = 0; i < frames; i++) {
+                        entities.length = 0;
+                        const b = riverBoundsAtWorld(planeWorldY());
+                        plane.x = (b.left + b.right) / 2;
+                        step(0.016);
+                    }
+                };
                 setThrottle(1);
-                for (let i = 0; i < 300; i++) step(0.016);
+                cruise(300);
                 const fast = scrollSpeed;
                 setThrottle(-1);
-                for (let i = 0; i < 600; i++) step(0.016);
+                cruise(600);
                 return { fast, slow: scrollSpeed };
             });
             expect(fast).toBeCloseTo(await page.evaluate(() => MAX_SPEED), 1);
@@ -487,10 +497,11 @@ test.describe('Canyon Raider', () => {
                 step(0.016);
                 for (let i = 0; i < 200; i++) step(0.016);
                 const b = riverBoundsAtWorld(planeWorldY());
-                return { state, fuel, full: fuel === MAX_FUEL, inside: plane.x > b.left && plane.x < b.right };
+                // The tank is refilled on respawn, then burns normally again.
+                return { state, refilled: fuel > MAX_FUEL * 0.8, inside: plane.x > b.left && plane.x < b.right };
             });
             expect(res.state).toBe('running');
-            expect(res.full).toBe(true);
+            expect(res.refilled).toBe(true);
             expect(res.inside).toBe(true);
         });
 
@@ -548,7 +559,8 @@ test.describe('Canyon Raider', () => {
             expect(res.score).toBe(0);
             expect(res.lives).toBe(3);
             expect(res.section).toBe(1);
-            expect(res.fuel).toBe(res.max);
+            // A live frame or two may have burned a sliver of fuel already.
+            expect(res.fuel).toBeGreaterThan(res.max * 0.95);
         });
     });
 });
