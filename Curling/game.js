@@ -259,8 +259,8 @@ function collideStones() {
             a.vy -= imp * ny;
             b.vx += imp * nx;
             b.vy += imp * ny;
-            // A struck stone keeps its own handle but stops curling much: it is
-            // sliding, not rotating, so give it a neutral handle.
+            // A struck stone is sliding rather than rotating, so it no longer
+            // curls; only the delivery keeps its handle.
             for (const s of [a, b]) {
                 if (Math.hypot(s.vx, s.vy) > STOP_SPEED) s.moving = true;
                 if (s !== delivered) s.handle = 0;
@@ -287,7 +287,9 @@ function endDelivery() {
         finishEnd();
         return;
     }
-    turn = other(turn);
+    // Teams alternate, but a team with no stones left is skipped rather than
+    // handed a turn it cannot take.
+    turn = stonesLeft[other(turn)] > 0 ? other(turn) : turn;
     state = 'aiming';
     aiTimer = AI_THINK;
     if (turn === 'player') resetPlayerAim();
@@ -610,17 +612,44 @@ function drawScoreboard() {
     ctx.fillText(`${label} to throw`, CANVAS_W - 12, 20);
 
     // Remaining stones for each team, drawn as small counters.
-    ctx.textAlign = 'left';
+    const row = CANVAS_H - 15;
     for (const team of ['player', 'cpu']) {
-        const row = team === 'player' ? CANVAS_H - 12 : CANVAS_H - 12;
-        const baseX = team === 'player' ? 12 : CANVAS_W / 2 + 12;
+        const baseX = team === 'player' ? 12 : CANVAS_W / 2 - 90;
         ctx.fillStyle = TEAM_COLOR[team];
         for (let i = 0; i < stonesLeft[team]; i++) {
             ctx.beginPath();
-            ctx.arc(baseX + i * 16, row - 3, 6, 0, Math.PI * 2);
+            ctx.arc(baseX + i * 16, row, 6, 0, Math.PI * 2);
             ctx.fill();
         }
     }
+
+    if (state === 'aiming' && turn === 'player') drawWeightGauge(row);
+}
+
+// A gauge under the hack, with a tick at the weight that draws to the button
+// and shading over the range that runs out the back of the house.
+function drawWeightGauge(row) {
+    const x0 = CANVAS_W - 200;
+    const w = 180;
+    ctx.fillStyle = 'rgba(140, 170, 190, 0.35)';
+    ctx.fillRect(x0, row - 5, w, 10);
+
+    const backWeight =
+        ((HACK_X - BACK_LINE_X - MIN_DIST) / (MAX_DIST - MIN_DIST)) * 100;
+    ctx.fillStyle = 'rgba(224, 82, 74, 0.35)';
+    ctx.fillRect(x0 + (backWeight / 100) * w, row - 5, w * (1 - backWeight / 100), 10);
+
+    const drawWeight = ((HACK_X - TEE_X - MIN_DIST) / (MAX_DIST - MIN_DIST)) * 100;
+    ctx.fillStyle = '#dceaf4';
+    ctx.fillRect(x0 + (drawWeight / 100) * w - 1, row - 9, 2, 18);
+
+    ctx.fillStyle = TEAM_COLOR.player;
+    ctx.fillRect(x0, row - 5, (clamp(weight, 0, 100) / 100) * w, 10);
+
+    ctx.fillStyle = '#dceaf4';
+    ctx.font = '10px "Segoe UI", sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText('WEIGHT', x0 - 8, row + 4);
 }
 
 function draw() {
@@ -668,6 +697,9 @@ function showOverlay(title, score, sub) {
     overlayScore.textContent = score;
     overlaySub.textContent = sub;
     overlay.classList.add('visible');
+    // Between ends the result is a strip across the top, so the counting stones
+    // stay in view instead of being hidden behind a full-sheet overlay.
+    overlay.classList.toggle('banner', state === 'endover');
     btnStart.textContent = state === 'paused' ? 'Resume' : 'Start Game';
     btnStart.style.display = state === 'endover' ? 'none' : '';
 }

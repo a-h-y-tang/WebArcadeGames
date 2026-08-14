@@ -593,6 +593,21 @@ test.describe('Curling', () => {
             expect(kept).toBeGreaterThan(0);
         });
 
+        test('a team with no stones left is not handed the turn', async ({ page }) => {
+            await startQuiet(page);
+            await page.evaluate(() => {
+                stonesLeft.player = 2;
+                stonesLeft.cpu = 0;
+                aim = 0;
+                handle = 0;
+                weight = DEFAULT_WEIGHT;
+                throwStone();
+            });
+            await settle(page);
+            expect(await page.evaluate(() => turn)).toBe('player');
+            expect(await page.evaluate(() => state)).toBe('aiming');
+        });
+
         test('an end finishes when both teams run out of stones', async ({ page }) => {
             await startQuiet(page);
             await page.evaluate(() => {
@@ -671,6 +686,17 @@ test.describe('Curling', () => {
             await expect(page.locator('#score-you')).toHaveText('2');
         });
 
+        test('the result shows as a banner so the stones stay visible', async ({ page }) => {
+            await page.evaluate(() => {
+                placeStone('player', TEE_X, CENTER_Y);
+                stonesLeft.player = 0;
+                stonesLeft.cpu = 0;
+                finishEnd();
+            });
+            await expect(page.locator('#overlay')).toHaveClass(/banner/);
+            await expect(page.locator('#btn-start')).toBeHidden();
+        });
+
         test('the hammer passes to the team that was scored on', async ({ page }) => {
             await page.evaluate(() => {
                 placeStone('player', TEE_X, CENTER_Y);
@@ -742,6 +768,18 @@ test.describe('Curling', () => {
             await advance(page, Math.ceil(60 * (await page.evaluate(() => ENDOVER_TIME))) + 5);
             expect(await page.evaluate(() => state)).toBe('over');
             await expect(page.locator('#overlay')).toHaveClass(/visible/);
+        });
+
+        test('the final overlay covers the sheet rather than banners it', async ({ page }) => {
+            await page.evaluate(() => {
+                end = TOTAL_ENDS;
+                stonesLeft.player = 0;
+                stonesLeft.cpu = 0;
+                finishEnd();
+            });
+            await advance(page, Math.ceil(60 * (await page.evaluate(() => ENDOVER_TIME))) + 5);
+            await expect(page.locator('#overlay')).not.toHaveClass(/banner/);
+            await expect(page.locator('#btn-start')).toBeVisible();
         });
 
         test('the winner is named on the overlay', async ({ page }) => {

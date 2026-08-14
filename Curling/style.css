@@ -96,6 +96,17 @@ canvas {
 
 .overlay.visible { display: flex; }
 
+/* Between ends: a strip across the top, leaving the sheet visible. */
+.overlay.banner {
+    inset: 0 0 auto 0;
+    padding: 10px;
+    border-radius: 10px 10px 0 0;
+    background: rgba(5, 18, 28, 0.92);
+}
+
+.overlay.banner h2 { font-size: 16px; letter-spacing: 3px; }
+.overlay.banner #overlay-score { font-size: 15px; }
+
 .overlay h2 {
     margin: 0;
     font-size: 30px;

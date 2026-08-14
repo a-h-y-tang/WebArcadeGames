@@ -105,6 +105,15 @@ A dotted guide shows the predicted path of the current aim, weight and handle
 would come to rest. It ignores other stones on purpose — a guard is meant to
 block the shot you were shown.
 
+Under the hack a weight gauge shows the current setting, with a tick at the
+weight that draws to the button and a red band over the range that runs out the
+back of the house.
+
+Between ends the result appears as a strip across the top of the sheet rather
+than a full overlay, with a ring drawn around each counting stone, so the score
+can be read off the ice that produced it. The full overlay comes back for pause
+and for the end of the match.
+
 ## Files
 
 | File | Contents |
@@ -112,7 +121,7 @@ block the shot you were shown.
 | `index.html` | HUD, canvas, overlay, control legend |
 | `style.css` | Layout and the dark-panel/ice palette used by the repo |
 | `game.js` | Geometry, physics, scoring, computer skip, rendering, input |
-| `tests/curling.spec.js` | 78 Playwright specs |
+| `tests/curling.spec.js` | 81 Playwright specs |
 
 ## State machine
 
