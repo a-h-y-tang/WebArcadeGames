@@ -47,7 +47,10 @@ const startQuiet = (page) =>
         enemies.length = 0;
     });
 
-// Put a tank on the field ready to act (no spawn flash).
+// Put a tank on the field ready to act (no spawn flash). Giving it a facing
+// also pins it in place and holds its trigger, so the live animation loop
+// cannot drive or fire it out of the arrangement a spec just set up; such
+// specs shoot with fireTank() themselves.
 const placeEnemy = (page, type, col, row, facing) =>
     page.evaluate(([t, c, r, f]) => {
         const e = spawnEnemy(t, c, r);
@@ -55,6 +58,8 @@ const placeEnemy = (page, type, col, row, facing) =>
         if (f) {
             e.facing = { x: f.x, y: f.y };
             e.dir = { x: 0, y: 0 };
+            e.frozen = true;
+            e.shootTimer = 99;
         }
         return e;
     }, [type, col, row, facing || null]);
@@ -114,7 +119,7 @@ test.describe('Tank Battle', () => {
         });
 
         test('the arena grid is 18 rows of 20 columns', async ({ page }) => {
-            expect(await page.evaluate(() => grid.length)).toBe(ROWS);
+            expect(await page.evaluate(() => grid.length)).toBe(18);
             expect(await page.evaluate(() => ROWS)).toBe(18);
             expect(await page.evaluate(() => COLS)).toBe(20);
             const widths = await page.evaluate(() => grid.map((r) => r.length));
@@ -135,6 +140,12 @@ test.describe('Tank Battle', () => {
                 tileAt(8, 16), tileAt(11, 16), tileAt(8, 17), tileAt(11, 17),
             ]);
             expect(walls).toEqual(Array(8).fill('#'));
+        });
+
+        test('every arena seals the lane straight above the base with steel', async ({ page }) => {
+            const sealed = await page.evaluate(() =>
+                MAPS.every((m) => [13, 14].every((r) => m[r][9] === '@' && m[r][10] === '@')));
+            expect(sealed).toBe(true);
         });
 
         test('the player tank waits on its spawn tile', async ({ page }) => {
@@ -295,8 +306,10 @@ test.describe('Tank Battle', () => {
 
         test('the base blocks the tank', async ({ page }) => {
             await page.evaluate(() => {
+                // Open the sealed lane above the base so the base itself is the
+                // only thing left in the way.
+                [13, 14, 15].forEach((r) => setTile(9, r, '.'));
                 placePlayer(9, 13);
-                setTile(9, 15, '.');
             });
             await hold(page, 'ArrowDown');
             await advance(page, 180);
@@ -410,8 +423,16 @@ test.describe('Tank Battle', () => {
                 for (let c = 2; c < 10; c++) setTile(c, 10, '.');
             });
             await placeEnemy(page, 'basic', 8, 10, { x: -1, y: 0 });
-            await page.evaluate(() => { fire(); fireTank(enemies[0]); });
-            expect(await page.evaluate(() => bullets.length)).toBe(2);
+            // Fire and count in one go — the live animation loop can resolve the
+            // clash between two evaluate() calls.
+            const inTheAir = await page.evaluate(() => {
+                fire();
+                fireTank(enemies[0]);
+                enemies[0].frozen = true;
+                enemies[0].shootTimer = 99;   // no follow-up shot to muddy the result
+                return bullets.length;
+            });
+            expect(inTheAir).toBe(2);
             await advance(page, 60);
             expect(await page.evaluate(() => bullets.length)).toBe(0);
             expect(await page.evaluate(() => enemies.length)).toBe(1);
@@ -539,10 +560,25 @@ test.describe('Tank Battle', () => {
         });
 
         test('a tank shoots when it lines up with the player', async ({ page }) => {
-            await page.evaluate(() => { placePlayer(9, 10); });
+            // A tank holds its fire against a shielded target, so drop the
+            // spawn shield before lining the two up.
+            await page.evaluate(() => { placePlayer(9, 10); player.invuln = 0; });
             await placeEnemy(page, 'basic', 9, 2, { x: 0, y: 1 });
             await page.evaluate(() => { enemies[0].frozen = true; enemies[0].shootTimer = 0; step(1 / 60); });
             expect(await page.evaluate(() => bullets.filter((b) => b.side === 'enemy').length)).toBeGreaterThan(0);
+        });
+
+        test('a tank does not take aim through a wall', async ({ page }) => {
+            await page.evaluate(() => { placePlayer(9, 10); player.invuln = 0; });
+            await placeEnemy(page, 'basic', 9, 2, { x: 0, y: 1 });
+            expect(await page.evaluate(() => enemyAimed(enemies[0]))).toBe(true);
+            await page.evaluate(() => setTile(9, 6, '#'));
+            expect(await page.evaluate(() => enemyAimed(enemies[0]))).toBe(false);
+        });
+
+        test('a tank cannot line up on the base from the top of the arena', async ({ page }) => {
+            await placeEnemy(page, 'basic', 9, 0, { x: 0, y: 1 });
+            expect(await page.evaluate(() => enemyAimed(enemies[0]))).toBe(false);
         });
 
         test('losing the last life ends the game', async ({ page }) => {
@@ -573,7 +609,9 @@ test.describe('Tank Battle', () => {
     test.describe('the base', () => {
         test.beforeEach(async ({ page }) => {
             await startQuiet(page);
-            await page.evaluate(() => setTile(9, 15, '.'));
+            // Clear the steel plug and brick wall above the base to open a
+            // straight firing lane onto it.
+            await page.evaluate(() => [13, 14, 15].forEach((r) => setTile(9, r, '.')));
         });
 
         test('an enemy shell destroys the base and ends the game', async ({ page }) => {
@@ -703,7 +741,15 @@ test.describe('Tank Battle', () => {
         });
 
         test('score carries into the next level', async ({ page }) => {
-            await page.evaluate(() => { score = 1000; });
+            // Set the score and empty the field in one go: the live animation
+            // loop would otherwise clear the level before the score is set.
+            await page.evaluate(() => {
+                startGame();
+                spawnEnabled = false;
+                enemies.length = 0;
+                score = 1000;
+                enemiesToSpawn = 0;
+            });
             await advance(page, 60 * 4);
             expect(await page.evaluate(() => score)).toBeGreaterThan(1000);
         });

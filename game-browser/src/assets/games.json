@@ -846,6 +846,15 @@
     "thumbnail": ""
   },
   {
+    "id": "tank-battle",
+    "name": "Tank Battle",
+    "description": "Defend your base in a destructible arena of brick, steel and water",
+    "category": "Action",
+    "dir": "TankBattle",
+    "path": "games/TankBattle/index.html",
+    "thumbnail": "games/TankBattle/screenshot.png"
+  },
+  {
     "id": "tempest",
     "name": "Tempest",
     "description": "Arcade action game - navigate tube mazes",
