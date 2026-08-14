@@ -135,6 +135,15 @@
     "thumbnail": ""
   },
   {
+    "id": "canyon-raider",
+    "name": "Canyon Raider",
+    "description": "Fly a river canyon - shoot the traffic, blow the bridges, don't run dry",
+    "category": "Action",
+    "dir": "CanyonRaider",
+    "path": "games/CanyonRaider/index.html",
+    "thumbnail": "games/CanyonRaider/screenshot.png"
+  },
+  {
     "id": "centipede",
     "name": "Centipede",
     "description": "Classic arcade shooter - defeat the centipede",
