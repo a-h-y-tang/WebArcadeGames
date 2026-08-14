@@ -543,6 +543,41 @@ test.describe('Air Traffic Control', () => {
             expect(res.traffic).toBe(1);
         });
 
+        test('a landing leaves a brief marker on the pad', async ({ page }) => {
+            const res = await page.evaluate(() => {
+                const d = destinationFor('jet');
+                spawnAircraft({ type: 'jet', x: d.x, y: d.y, heading: 0 });
+                step(0.016);
+                return { count: flashes.length, at: flashes[0] && { x: flashes[0].x, y: flashes[0].y } };
+            });
+            expect(res.count).toBe(1);
+            expect(res.at).toEqual(await page.evaluate(() => ({
+                x: destinationFor('jet').x, y: destinationFor('jet').y,
+            })));
+        });
+
+        test('landing markers fade away', async ({ page }) => {
+            const left = await page.evaluate(() => {
+                const d = destinationFor('heli');
+                spawnAircraft({ type: 'heli', x: d.x, y: d.y, heading: 0 });
+                step(0.016);
+                for (let i = 0; i < 60; i++) step(0.05);
+                return flashes.length;
+            });
+            expect(left).toBe(0);
+        });
+
+        test('a fresh shift starts with no landing markers', async ({ page }) => {
+            const left = await page.evaluate(() => {
+                const d = destinationFor('jet');
+                spawnAircraft({ type: 'jet', x: d.x, y: d.y, heading: 0 });
+                step(0.016);
+                startGame();
+                return flashes.length;
+            });
+            expect(left).toBe(0);
+        });
+
         test('landings raise the best score', async ({ page }) => {
             await page.evaluate(() => {
                 const d = destinationFor('jet');

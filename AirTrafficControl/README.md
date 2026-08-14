@@ -40,7 +40,7 @@ Your best score is kept in the browser's local storage.
 | `style.css` | Dark radar-scope theme |
 | `game.js` | Aircraft, path following, landings, separation, rendering |
 | `DESIGN.md` | How the code works, and the design assumptions made |
-| `tests/` | Playwright suite (74 tests) |
+| `tests/` | Playwright suite (78 tests) |
 
 ## Tests
 

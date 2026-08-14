@@ -39,6 +39,9 @@ const SPAWN_INTERVAL_MIN = 1.8;     // ...and the floor once it has ramped up
 const SPAWN_RAMP = 0.12;            // seconds shaved off per landing
 const SPAWN_INSET = 14;             // how far inside the edge arrivals appear
 
+// --- Feedback ---
+const FLASH_TIME = 0.7;             // seconds a landing ripple stays on the pad
+
 // --- The airfield ---
 const DESTINATIONS = [
     { type: 'jet', x: 156, y: 396, angle: 0, label: 'RWY 09' },
@@ -73,6 +76,7 @@ let spawnTimer = 0;
 let nextId = 1;
 let drawing = null;                 // { id, points } while a path is being drawn
 let crashAt = null;                 // { x, y } marker for the last collision
+let flashes = [];                   // { x, y, t, type } ripples left by landings
 let pulse = 0;                      // drives the alert-ring animation
 let lastFrame = 0;
 
@@ -237,6 +241,9 @@ function step(dt) {
 
     pulse += dt;
 
+    for (const f of flashes) f.t += dt;
+    flashes = flashes.filter((f) => f.t < FLASH_TIME);
+
     spawnTimer -= dt;
     if (spawnTimer <= 0) {
         spawnAircraft();
@@ -257,6 +264,7 @@ function handleLandings() {
         if (dest && dist(craft.x, craft.y, dest.x, dest.y) <= LANDING_RADIUS) {
             aircraft.splice(i, 1);
             if (drawing && drawing.id === craft.id) drawing = null;
+            flashes.push({ x: dest.x, y: dest.y, t: 0, type: craft.type });
             score++;
             recordBest();
         }
@@ -305,6 +313,7 @@ function startGame() {
     aircraft = [];
     drawing = null;
     crashAt = null;
+    flashes = [];
     score = 0;
     pulse = 0;
     spawnTimer = spawnInterval();
@@ -409,6 +418,7 @@ function hideOverlay() {
 function draw() {
     drawScope();
     for (const dest of DESTINATIONS) drawDestination(dest);
+    for (const f of flashes) drawFlash(f);
     for (const craft of aircraft) drawPath(craft);
     if (drawing) drawPendingPath();
     for (const craft of aircraft) drawAircraft(craft);
@@ -494,6 +504,23 @@ function drawDestination(dest) {
     ctx.textAlign = 'left';
     ctx.textBaseline = 'alphabetic';
     ctx.fillText(dest.label, -18, -18);
+    ctx.restore();
+}
+
+/** A ripple that expands out of a pad for a moment after an aircraft lands. */
+function drawFlash(f) {
+    const k = f.t / FLASH_TIME;
+    ctx.save();
+    ctx.globalAlpha = 1 - k;
+    ctx.strokeStyle = COLORS[f.type];
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(f.x, f.y, LANDING_RADIUS + k * 26, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.font = 'bold 11px "Segoe UI", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = COLORS[f.type];
+    ctx.fillText('+1', f.x, f.y - 26 - k * 14);
     ctx.restore();
 }
 

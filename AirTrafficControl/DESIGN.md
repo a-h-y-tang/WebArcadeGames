@@ -93,13 +93,19 @@ this repo, so state and helpers are reachable from Playwright as plain globals.
 - `style.css` — dark radar-scope theme shared with the rest of the arcade
 - `game.js`
   - constants (geometry, radii, speeds, arrival pacing)
-  - state: `state`, `aircraft`, `score`, `best`, `spawnTimer`, `drawing`
+  - state: `state`, `aircraft`, `score`, `best`, `spawnTimer`, `drawing`,
+    `crashAt`, `flashes`
   - `spawnAircraft(opts)` / `setPath(craft, points)` / `destinationFor(type)`
   - `step(dt)` — arrivals, movement, landings, separation
   - `beginDraw/dragDraw/endDraw` — pointer-independent path drawing, called by
     the pointer handlers so tests can drive either level
   - `draw()` — scope, destinations, paths, aircraft, alerts
-- `tests/air-traffic-control.spec.js` — Playwright suite, written first
+- `tests/air-traffic-control.spec.js` — Playwright suite (78 tests), written
+  first
+
+A landing pushes a short-lived ripple onto `flashes`, aged in `step(dt)` like
+everything else, so the visual feedback replays identically in a seeded run
+rather than depending on wall-clock time.
 
 ## Assumptions
 
