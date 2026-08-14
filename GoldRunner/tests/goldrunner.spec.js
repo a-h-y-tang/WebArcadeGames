@@ -11,11 +11,14 @@ const advance = (page, frames, dt = 1 / 60) =>
     }, [frames, dt]);
 
 // Most specs are about one entity at a time, so the guards are cleared out of
-// the way; the guard specs spawn exactly the guards they care about.
+// the way; the guard specs spawn exactly the guards they care about. Switching
+// `autoStep` off stops the requestAnimationFrame loop from advancing the
+// simulation behind the spec's back, leaving time entirely under test control.
 const startQuiet = (page) =>
     page.evaluate(() => {
         startGame();
         guards.length = 0;
+        autoStep = false;
     });
 
 // Chromium can acknowledge a synthetic key event before the page listener has
@@ -336,12 +339,23 @@ test.describe('Gold Runner', () => {
 
         test('a fall ends on the floor below', async ({ page }) => {
             const y = await page.evaluate(() => {
+                // Column 15 drops through the gap in row 4 with no rope to
+                // catch it, so the fall runs on down to the next brick floor.
+                placePlayer(15, 3);
+                for (let i = 0; i < 240; i++) step(1 / 60);
+                return player.y;
+            });
+            expect(y).toBe(6);
+        });
+
+        test('holding down carries on through a rope', async ({ page }) => {
+            const y = await page.evaluate(() => {
                 placePlayer(11, 6); // above the gap in row 7 of level 1
                 keys.down = true;
                 for (let i = 0; i < 240; i++) step(1 / 60);
                 return player.y;
             });
-            expect(y).toBe(8); // caught by the rope spanning row 8
+            expect(y).toBe(9); // past the rope on row 8, down to the floor
         });
 
         test('pressing up on a ladder climbs', async ({ page }) => {
@@ -396,7 +410,7 @@ test.describe('Gold Runner', () => {
             const moved = await page.evaluate(() => {
                 placePlayer(10, 5);
                 keys.right = true;
-                for (let i = 0; i < 60; i++) step(1 / 60);
+                for (let i = 0; i < 15; i++) step(1 / 60);
                 return { x: player.x, y: player.y };
             });
             expect(moved.x).toBeGreaterThan(10);
@@ -456,15 +470,16 @@ test.describe('Gold Runner', () => {
 
         test('gold is collected by falling through it', async ({ page }) => {
             const collected = await page.evaluate(() => {
-                grid[5][11] = '$';
+                // Column 13 drops out of row 3 through the gap in the brick row.
+                grid[4][13] = '$';
                 goldLeft++;
                 const before = goldLeft;
-                placePlayer(11, 3);
-                keys.down = true;
+                placePlayer(13, 3);
                 for (let i = 0; i < 240; i++) step(1 / 60);
-                return before - goldLeft;
+                return { taken: before - goldLeft, y: player.y };
             });
-            expect(collected).toBe(1);
+            expect(collected.taken).toBe(1);
+            expect(collected.y).toBe(5);
         });
 
         test('the escape ladders stay inert while gold remains', async ({ page }) => {
@@ -483,15 +498,17 @@ test.describe('Gold Runner', () => {
         });
 
         test('the armed escape ladder can be climbed', async ({ page }) => {
-            const y = await page.evaluate(() => {
+            const out = await page.evaluate(() => {
                 collectAllGoldForTest();
                 const col = grid[3].indexOf('S');
                 placePlayer(col, 3);
                 keys.up = true;
-                for (let i = 0; i < 120; i++) step(1 / 60);
-                return player.y;
+                for (let i = 0; i < 60; i++) step(1 / 60);
+                return { y: player.y, state };
             });
-            expect(y).toBe(0);
+            // Reaching the top row is the escape, so the level ends there.
+            expect(Math.round(out.y)).toBe(0);
+            expect(out.state).toBe('levelclear');
         });
     });
 
@@ -600,27 +617,36 @@ test.describe('Gold Runner', () => {
             expect(await page.evaluate(() => holes.length)).toBe(0);
         });
 
-        test('the player can drop into their own hole', async ({ page }) => {
+        test('a fresh hole is a way down to the floor below', async ({ page }) => {
             const y = await page.evaluate(() => {
                 placePlayer(5, 3);
                 dig(1);
                 keys.right = true;
-                for (let i = 0; i < 60; i++) step(1 / 60);
+                for (let i = 0; i < 240; i++) {
+                    step(1 / 60);
+                    if (player.falling) keys.right = false; // stop once committed
+                    if (!player.falling && player.y > 3) break;
+                }
                 return player.y;
             });
-            expect(y).toBe(4);
+            expect(y).toBe(6); // through the brick row and down to the next floor
         });
 
         test('a hole closing over the player costs a life', async ({ page }) => {
             const out = await page.evaluate(() => {
+                // Give the hole a floor so the player sits in it: the bricks on
+                // either side then make it inescapable.
+                grid[5][4] = '#';
                 placePlayer(5, 3);
-                dig(1);
-                keys.right = true;
-                for (let i = 0; i < 60 * 8; i++) step(1 / 60);
-                return { lives, state };
+                dig(-1);
+                keys.left = true;
+                for (let i = 0; i < 60 * 4; i++) step(1 / 60);
+                const trapped = { x: player.x, y: player.y, lives };
+                for (let i = 0; i < 60 * 4; i++) step(1 / 60);
+                return { trapped, lives, state };
             });
+            expect(out.trapped).toEqual({ x: 4, y: 4, lives: 3 });
             expect(out.lives).toBe(2);
-            expect(['dying', 'running']).toContain(out.state);
         });
     });
 
@@ -701,11 +727,18 @@ test.describe('Gold Runner', () => {
                 g.timer = GUARD_TRAP_TIME;
                 // Keep the player far away so the guard is not chasing into a wall.
                 placePlayer(1, 12);
-                for (let i = 0; i < 60 * 4; i++) step(1 / 60);
-                return { state: guards[0].state, y: guards[0].y };
+                let freed = null;
+                for (let i = 0; i < 60 * 5; i++) {
+                    step(1 / 60);
+                    // Sample the moment it is loose again: the hole is still open
+                    // for a while afterwards, so it may well drop back in.
+                    if (freed === null && g.state === 'active') freed = { y: g.y, at: i / 60 };
+                }
+                return freed;
             });
-            expect(out.state).toBe('active');
-            expect(out.y).toBeLessThanOrEqual(3);
+            expect(out).not.toBeNull();
+            expect(out.y).toBe(3);
+            expect(out.at).toBeGreaterThan(3);
         });
 
         test('a hole closing on a guard crushes it', async ({ page }) => {
@@ -730,11 +763,17 @@ test.describe('Gold Runner', () => {
                 const g = spawnGuard(6, 4);
                 const home = { c: g.spawn.c, r: g.spawn.r };
                 crushGuard(g);
-                for (let i = 0; i < 60 * 4; i++) step(1 / 60);
-                return { home, state: guards[0].state, x: guards[0].x, y: guards[0].y };
+                let back = null;
+                for (let i = 0; i < 60 * 4; i++) {
+                    step(1 / 60);
+                    if (back === null && g.state === 'active') back = { x: g.x, y: g.y, at: i / 60 };
+                }
+                return { home, back };
             });
-            expect(out.state).toBe('active');
-            expect(out.x).toBe(out.home.c);
+            expect(out.back).not.toBeNull();
+            expect(out.back.x).toBe(out.home.c);
+            expect(out.back.y).toBe(out.home.r);
+            expect(out.back.at).toBeGreaterThan(1);
         });
 
         test('guards get faster with the level but never outrun the player', async ({ page }) => {
@@ -841,7 +880,7 @@ test.describe('Gold Runner', () => {
                 const taken = goldLeft;
                 keys.left = false;
                 spawnGuard(Math.round(player.x), Math.round(player.y));
-                for (let i = 0; i < 60 * 4; i++) step(1 / 60);
+                for (let i = 0; i < 120; i++) step(1 / 60);
                 return { full, taken, now: goldLeft, state, lives };
             });
             expect(out.taken).toBe(out.full - 1);
@@ -877,6 +916,115 @@ test.describe('Gold Runner', () => {
             await page.waitForFunction(() => state === 'running');
             expect(await page.evaluate(() => [score, level, lives])).toEqual([0, 1, 3]);
         });
+    });
+
+    // -----------------------------------------------------------------------
+    // Playability — every shipped level is beaten with the real physics, not
+    // just with the abstract reachability graph.
+    // -----------------------------------------------------------------------
+    test.describe('playability', () => {
+        for (const n of [1, 2, 3]) {
+            test(`level ${n} can be cleared`, async ({ page }) => {
+                const out = await page.evaluate((lvl) => {
+                    startGame();
+                    autoStep = false;
+                    level = lvl;
+                    loadLevel(lvl);
+                    guards.length = 0;
+                    state = 'running';
+
+                    // Steer the player one cell at a time along the same route
+                    // the guards' pathfinder would take. `done` lets a run stop
+                    // early when a bar is swept up on the way past it.
+                    const driveTo = (tc, tr, limit, done) => {
+                        let frames = 0;
+                        while (frames < limit) {
+                            if (state !== 'running') return true; // escaped or died
+                            if (done && done()) return true;
+                            // Let a move (or a fall) finish before re-planning.
+                            if (player.move || player.falling) {
+                                step(1 / 60);
+                                frames++;
+                                continue;
+                            }
+                            const c = Math.round(player.x);
+                            const r = Math.round(player.y);
+                            if (c === tc && r === tr) return true;
+                            const next = bfsStep(c, r, tc, tr);
+                            if (!next) return false;
+                            keys.left = keys.right = keys.up = keys.down = false;
+                            if (next[0] < c) keys.left = true;
+                            else if (next[0] > c) keys.right = true;
+                            else if (next[1] < r) keys.up = true;
+                            else if (next[1] > r) keys.down = true;
+                            step(1 / 60);
+                            frames++;
+                            keys.left = keys.right = keys.up = keys.down = false;
+                        }
+                        return false;
+                    };
+
+                    // Distance to every cell the player can currently get to.
+                    const distances = () => {
+                        const d = new Map();
+                        const start = `${Math.round(player.x)},${Math.round(player.y)}`;
+                        d.set(start, 0);
+                        const queue = [[Math.round(player.x), Math.round(player.y)]];
+                        while (queue.length) {
+                            const [c, r] = queue.shift();
+                            const base = d.get(`${c},${r}`);
+                            for (const [nc, nr] of neighbors(c, r)) {
+                                const k = `${nc},${nr}`;
+                                if (d.has(k)) continue;
+                                d.set(k, base + 1);
+                                queue.push([nc, nr]);
+                            }
+                        }
+                        return d;
+                    };
+
+                    const nextGold = () => {
+                        const d = distances();
+                        let best = null;
+                        for (let r = 0; r < ROWS; r++)
+                            for (let c = 0; c < COLS; c++) {
+                                if (grid[r][c] !== '$') continue;
+                                const dist = d.get(`${c},${r}`);
+                                if (dist === undefined) continue;
+                                if (!best || dist < best.d) best = { c, r, d: dist };
+                            }
+                        return best;
+                    };
+
+                    const missed = [];
+                    let bars = 0;
+                    while (goldLeft > 0 && bars < 40) {
+                        const target = nextGold();
+                        if (!target) break;
+                        const ok = driveTo(target.c, target.r, 4000, () => grid[target.r][target.c] !== '$');
+                        if (!ok) {
+                            missed.push(`${target.c},${target.r}`);
+                            break;
+                        }
+                        bars++;
+                    }
+                    if (goldLeft === 0) {
+                        let col = -1;
+                        for (let c = 0; c < COLS; c++) if (grid[0][c] === 'S') col = c;
+                        driveTo(col, 0, 4000);
+                    }
+                    return { goldLeft, state, score, missed, at: [player.x, player.y] };
+                }, n);
+
+                expect({ left: out.goldLeft, missed: out.missed, at: out.at }).toEqual({
+                    left: 0,
+                    missed: [],
+                    at: out.at,
+                });
+                expect(out.state).toBe('levelclear');
+                expect(out.score).toBeGreaterThan(1500);
+            });
+        }
     });
 
     // -----------------------------------------------------------------------

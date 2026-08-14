@@ -351,6 +351,15 @@
     "thumbnail": ""
   },
   {
+    "id": "gold-runner",
+    "name": "Gold Runner",
+    "description": "Collect the gold, trap the guards in dug bricks, climb out",
+    "category": "Action",
+    "dir": "GoldRunner",
+    "path": "games/GoldRunner/index.html",
+    "thumbnail": "games/GoldRunner/screenshot.png"
+  },
+  {
     "id": "golf-solitaire",
     "name": "Golf Solitaire",
     "description": "Card solitaire with golf-themed scoring",
