@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lode Runner</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="game">
+        <header class="hud">
+            <h1>LODE RUNNER</h1>
+            <div class="stats">
+                <div class="stat"><span class="label">Score</span><span id="score">0</span></div>
+                <div class="stat"><span class="label">Level</span><span id="level">1</span></div>
+                <div class="stat"><span class="label">Lives</span><span id="lives">3</span></div>
+                <div class="stat"><span class="label">Gold</span><span id="gold">0</span></div>
+                <div class="stat"><span class="label">Best</span><span id="best">0</span></div>
+            </div>
+        </header>
+
+        <div class="board-wrap">
+            <canvas id="canvas" width="672" height="384"></canvas>
+            <div id="overlay" class="overlay visible">
+                <h2 id="overlay-title">LODE RUNNER</h2>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Press Space or click Start to play</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+
+        <div class="help">
+            <p><kbd>←</kbd> <kbd>→</kbd> run</p>
+            <p><kbd>↑</kbd> <kbd>↓</kbd> climb</p>
+            <p><kbd>Z</kbd> drill left</p>
+            <p><kbd>X</kbd> drill right</p>
+            <p><kbd>P</kbd> pause</p>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>
