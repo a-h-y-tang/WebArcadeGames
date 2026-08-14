@@ -846,6 +846,15 @@
     "thumbnail": ""
   },
   {
+    "id": "tapper",
+    "name": "Tapper",
+    "description": "Serve drinks across four bars and catch the empties coming back",
+    "category": "Action",
+    "dir": "Tapper",
+    "path": "games/Tapper/index.html",
+    "thumbnail": "games/Tapper/screenshot.png"
+  },
+  {
     "id": "tempest",
     "name": "Tempest",
     "description": "Arcade action game - navigate tube mazes",
