@@ -94,6 +94,16 @@ body {
     transition: width 0.1s linear;
 }
 
+.fuel-bar.low {
+    background: var(--danger);
+    animation: fuel-flash 0.6s steps(2, end) infinite;
+}
+
+@keyframes fuel-flash {
+    from { opacity: 1; }
+    to { opacity: 0.35; }
+}
+
 .board-wrap {
     position: relative;
     width: 480px;

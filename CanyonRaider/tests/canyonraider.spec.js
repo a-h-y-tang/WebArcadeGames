@@ -308,6 +308,18 @@ test.describe('Canyon Raider', () => {
             expect(parseFloat(full)).toBeGreaterThan(parseFloat(low));
         });
 
+        test('the gauge warns when the tank runs low, and clears after refuelling', async ({ page }) => {
+            const bar = page.locator('#fuel-bar');
+            await expect(bar).not.toHaveClass(/low/);
+            await page.evaluate(() => { fuel = LOW_FUEL - 1; updateHud(); });
+            await expect(bar).toHaveClass(/low/);
+            await page.evaluate(() => {
+                spawnEntityAt('fuel', plane.x, planeWorldY());
+                for (let i = 0; i < 60; i++) step(0.016);
+            });
+            await expect(bar).not.toHaveClass(/low/);
+        });
+
         test('running dry costs a life', async ({ page }) => {
             const after = await page.evaluate(() => {
                 fuel = 0.01;

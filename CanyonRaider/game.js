@@ -55,6 +55,7 @@ const MAX_BULLETS = 6;
 const MAX_FUEL = 100;
 const FUEL_BURN = 5.2;              // units/s at base speed (scales with throttle)
 const FUEL_REFILL = 42;             // units/s while skimming a depot
+const LOW_FUEL = 25;                // gauge turns red and the canvas warns
 
 // --- Scoring ---
 const SHIP_SCORE = 30;
@@ -427,7 +428,7 @@ function tick(dt) {
 
     updateEntities(dt);
     updateBullets(dt);
-    collidePlane();
+    collidePlane(dt);
     if (state !== 'running') return;
 
     if (fuel <= 0) {
@@ -500,7 +501,7 @@ function destroy(entity) {
     updateHud();
 }
 
-function collidePlane() {
+function collidePlane(dt) {
     const worldY = planeWorldY();
     const left = plane.x - PLANE_W / 2;
     const right = plane.x + PLANE_W / 2;
@@ -520,7 +521,7 @@ function collidePlane() {
         if (Math.abs(plane.x - e.x) > (e.w + PLANE_W) / 2) continue;
         if (Math.abs(worldY - e.worldY) > (e.h + PLANE_H) / 2) continue;
         if (e.type === 'fuel') {
-            fuel = Math.min(MAX_FUEL, fuel + FUEL_REFILL * MAX_SUBSTEP);
+            fuel = Math.min(MAX_FUEL, fuel + FUEL_REFILL * dt);
         } else {
             crash();
             return;
@@ -573,6 +574,7 @@ function updateHud() {
     sectionEl.textContent = String(section);
     distanceEl.textContent = String(Math.floor(scroll / 10));
     fuelBar.style.width = `${clamp((fuel / MAX_FUEL) * 100, 0, 100)}%`;
+    fuelBar.classList.toggle('low', fuel <= LOW_FUEL);
 }
 
 function showOverlay(title, sub, button, scoreLine) {
@@ -596,8 +598,23 @@ function draw() {
     drawCanyon();
     drawEntities();
     drawBullets();
-    if (state !== 'crashed' && state !== 'idle') drawPlane();
+    if (state !== 'crashed') drawPlane();
     drawParticles();
+    drawWarning();
+}
+
+// A pulsing warning once the tank is nearly dry — the gauge is up in the HUD,
+// but your eyes are on the river.
+function drawWarning() {
+    if (state !== 'running' || fuel > LOW_FUEL) return;
+    const pulse = 0.45 + 0.55 * Math.abs(Math.sin(elapsed * 5));
+    ctx.globalAlpha = pulse;
+    ctx.fillStyle = '#ff5d47';
+    ctx.font = 'bold 22px "Segoe UI", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('LOW FUEL', CANVAS_W / 2, 42);
+    ctx.globalAlpha = 1;
 }
 
 function drawCanyon() {
