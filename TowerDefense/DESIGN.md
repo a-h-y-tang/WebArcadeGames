@@ -9,9 +9,9 @@ either side of the road, and the turrets do the shooting for you. Every creep th
 survives the whole road costs you lives; every creep that dies pays out gold and
 score. Survive all twelve waves with at least one life left and you win.
 
-Nothing else in this repo is a tower defense game: the existing 109 titles are
-maze, shooter, platform, puzzle, board and card games, all of which put the player
-*inside* the action. Tower Defense is the repo's first "build the machine, then
+Nothing else in this repo is a tower defense game: the hundred-plus existing titles
+are maze, shooter, platform, puzzle, board and card games, all of which put the
+player *inside* the action. Tower Defense is the repo's first "build the machine, then
 watch it run" game — the interesting decisions all happen during the quiet build
 phase, and the wave is the test of those decisions.
 

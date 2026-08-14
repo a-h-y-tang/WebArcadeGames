@@ -192,7 +192,12 @@ canvas {
     cursor: pointer;
 }
 
-.wave-btn:hover { border-color: var(--accent); }
+.wave-btn:hover:not(:disabled) { border-color: var(--accent); }
+
+.wave-btn:disabled {
+    opacity: 0.4;
+    cursor: default;
+}
 
 .status {
     margin: 12px 0 0;
