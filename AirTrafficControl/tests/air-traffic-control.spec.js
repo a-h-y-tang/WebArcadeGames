@@ -743,9 +743,9 @@ test.describe('Air Traffic Control', () => {
                     peak = Math.max(peak, aircraft.length);
                     if (state !== 'running') { state = 'running'; aircraft.forEach((c) => { c.alert = false; }); }
                 }
-                return peak;
+                return { peak, cap: MAX_TRAFFIC };
             });
-            expect(n).toBeLessThanOrEqual(7);
+            expect(n.peak).toBe(n.cap);
         });
 
         test('arrivals speed up as the score climbs', async ({ page }) => {
