@@ -296,9 +296,8 @@ function substep(h) {
         crashes++;
         crashTimer = CRASH_TIME;
         skier.speed = 0;
-        skier.heading = 0;
-        skier.turn = 0;
-    }
+        skier.heading = 0;      // you get back up facing down the hill, but a
+    }                           // key still held keeps steering on recovery
 
     if (skier.y >= FINISH_Y) {
         skier.y = FINISH_Y;
@@ -522,11 +521,9 @@ function drawBanner(y, camera, text, colour) {
     if (sy < -30 || sy > CANVAS_H + 30) return;
     ctx.fillStyle = colour;
     ctx.fillRect(0, sy - 12, CANVAS_W, 6);
-    ctx.fillStyle = '#0f1b27';
-    ctx.font = 'bold 14px "Segoe UI", system-ui, sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText(text, CANVAS_W / 2, sy + 14);
-    ctx.textAlign = 'left';
+    ctx.fillStyle = '#12324a';
+    ctx.font = 'bold 13px "Segoe UI", system-ui, sans-serif';
+    ctx.fillText(text, EDGE_MARGIN + 10, sy - 20);   // clear of the skier's line
 }
 
 function drawFinish(camera) {
