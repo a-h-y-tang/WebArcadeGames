@@ -273,13 +273,13 @@ function updateMugs(dt) {
 // A mug travels right-to-left, so the customer nearest the taps is the one it
 // meets first. Only customers still walking in can take a drink.
 function firstThirstyCustomer(mug) {
-    let best = null;
+    let nearest = null;
     for (const c of customers) {
         if (c.lane !== mug.lane || c.state !== 'advancing') continue;
         if (Math.abs(c.x - mug.x) > CATCH_DIST) continue;
-        if (!best || c.x > best.x) best = c;
+        if (!nearest || c.x > nearest.x) nearest = c;
     }
-    return best;
+    return nearest;
 }
 
 function serve(c) {

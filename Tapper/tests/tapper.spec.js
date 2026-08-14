@@ -193,13 +193,15 @@ test.describe('Tapper', () => {
         });
 
         test('a poured mug starts at the tap on the bartender lane', async ({ page }) => {
-            await page.evaluate(() => {
+            // Sampled inside the same evaluate: the live animation frame loop
+            // would otherwise slide the mug before the position is read back.
+            const mug = await page.evaluate(() => {
                 moveLane(1);
-                pour();
+                const m = pour();
+                return { lane: m.lane, x: m.x, atTap: m.x === TAP_X };
             });
-            const mug = await page.evaluate(() => mugs[0]);
             expect(mug.lane).toBe(1);
-            expect(mug.x).toBeCloseTo(await page.evaluate(() => TAP_X), 5);
+            expect(mug.atTap).toBe(true);
         });
 
         test('a full mug slides left', async ({ page }) => {
@@ -251,10 +253,12 @@ test.describe('Tapper', () => {
         });
 
         test('a customer enters at the far end of its bar', async ({ page }) => {
-            await page.evaluate(() => spawnCustomer(2));
-            const c = await page.evaluate(() => customers[0]);
+            const c = await page.evaluate(() => {
+                const cust = spawnCustomer(2);
+                return { lane: cust.lane, atDoor: cust.x === BAR_LEFT, state: cust.state };
+            });
             expect(c.lane).toBe(2);
-            expect(c.x).toBeCloseTo(await page.evaluate(() => BAR_LEFT), 5);
+            expect(c.atDoor).toBe(true);
             expect(c.state).toBe('advancing');
         });
 
