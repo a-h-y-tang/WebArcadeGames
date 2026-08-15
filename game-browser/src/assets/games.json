@@ -738,6 +738,15 @@
     "thumbnail": "games/SameGame/screenshot.png"
   },
   {
+    "id": "scramble",
+    "name": "Scramble",
+    "description": "Auto-scrolling cave shooter - bomb fuel dumps to stay airborne",
+    "category": "Action",
+    "dir": "Scramble",
+    "path": "games/Scramble/index.html",
+    "thumbnail": "games/Scramble/screenshot.png"
+  },
+  {
     "id": "set-game",
     "name": "Set Game",
     "description": "Card game - find sets of three cards with matching attributes",
