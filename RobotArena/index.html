@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Robot Arena</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="game">
+        <header class="hud">
+            <h1>ROBOT ARENA</h1>
+            <div class="stats">
+                <div class="stat"><span class="label">Score</span><span id="score">0</span></div>
+                <div class="stat"><span class="label">Wave</span><span id="wave">1</span></div>
+                <div class="stat"><span class="label">Lives</span><span id="lives">3</span></div>
+                <div class="stat"><span class="label">Best</span><span id="high">0</span></div>
+            </div>
+        </header>
+
+        <div class="board-wrap">
+            <canvas id="canvas" width="640" height="480"></canvas>
+            <div id="overlay" class="overlay visible">
+                <h2 id="overlay-title">ROBOT ARENA</h2>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Press Space or click Start to play</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+
+        <div class="help">
+            <p><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> move (WASD)</p>
+            <p><kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> fire</p>
+            <p><kbd>Space</kbd> start / restart &nbsp; <kbd>P</kbd> pause</p>
+            <p>Shoot every robot to clear the wave — touch the scientists to rescue them for rising bonuses.</p>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>
