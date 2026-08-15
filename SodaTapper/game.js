@@ -112,8 +112,8 @@ let lastLoss = '';     // why the last life was lost, shown while dying
 let spawnEnabled = true;
 let loopEnabled = true;
 
-// Deterministic queue order — reseeded on every new game so a round always
-// plays out the same way for a given set of inputs.
+// Which bar a new patron walks into comes from this small LCG rather than
+// Math.random, so a game can be replayed exactly by fixing the seed.
 let rngState = 1;
 
 function rng() {
@@ -212,7 +212,9 @@ function startGame() {
     score = 0;
     lives = START_LIVES;
     level = 1;
-    rngState = 20240817;
+    // Fresh seed per game so the queue is not the same every time; nothing in
+    // the tests depends on which bar a patron picks, only on the spacing rules.
+    rngState = (Date.now() >>> 0) || 1;
     lastLoss = '';
     startRound();
     state = 'running';
@@ -251,7 +253,7 @@ function recoverFromLoss() {
 function gameOver() {
     state = 'over';
     saveBest();
-    showOverlay('LAST CALL', `Score ${score} · Round ${level}`, 'Press Space or Enter to play again');
+    showOverlay('LAST CALL', `Score ${score} · Round ${level}`, 'Press Space or Enter to play again', 'Play Again');
 }
 
 function roundComplete() {
@@ -263,7 +265,7 @@ function completeRound() {
     clearTimer = CLEAR_TIME;
     score += LEVEL_BONUS;
     updateHud();
-    showOverlay(`ROUND ${level} CLEAR`, `Bonus ${LEVEL_BONUS}`, 'Next round coming up...');
+    showOverlay(`ROUND ${level} CLEAR`, `Bonus ${LEVEL_BONUS}`, 'Next round coming up...', '');
 }
 
 function nextLevel() {
@@ -437,7 +439,7 @@ function stepSplashes(dt) {
 function togglePause() {
     if (state === 'running') {
         state = 'paused';
-        showOverlay('PAUSED', `Score ${score}`, 'Press P to carry on');
+        showOverlay('PAUSED', `Score ${score}`, 'Press P to carry on', 'Resume');
     } else if (state === 'paused') {
         state = 'running';
         hideOverlay();
@@ -467,10 +469,14 @@ function saveBest() {
     updateHud();
 }
 
-function showOverlay(title, sub, hint) {
+// `action` is the label for the overlay button, or '' for the between-rounds
+// screen, where there is nothing for the player to press.
+function showOverlay(title, sub, hint, action = 'Start Game') {
     overlayTitle.textContent = title;
     overlayScore.textContent = sub;
     overlaySub.textContent = hint;
+    btnStart.textContent = action || btnStart.textContent;
+    btnStart.hidden = !action;
     overlay.classList.add('visible');
 }
 

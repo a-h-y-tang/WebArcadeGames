@@ -58,7 +58,10 @@ toward a tap the bartender has probably already left.
 - Round *n* lets in `waveSize()` patrons (6, +1 per round, capped at 14) at
   `spawnInterval()` seconds apart (2.6 s, −0.18 s per round, floor 1.0 s).
 - New patrons go to the emptiest bar that has room at the far end
-  (`QUEUE_GAP`), chosen with a seeded RNG so a round is reproducible.
+  (`QUEUE_GAP`), picked with a small seeded LCG rather than `Math.random` so a
+  game can be replayed exactly by fixing the seed. `startGame()` seeds from the
+  clock, so ordinary play still varies; the specs never depend on which bar a
+  patron picks, only on the spacing rules.
 - A round is complete when every patron has been let in and the bar is empty of
   patrons, mugs and empties. That is worth `LEVEL_BONUS` (500) and a short
   breather before the next round.
