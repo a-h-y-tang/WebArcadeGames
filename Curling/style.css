@@ -71,6 +71,10 @@ h1 {
 
 canvas {
     display: block;
+    /* The sheet is tall; shrink it to fit short windows without distorting it
+       (width follows the canvas's own 520x720 ratio). */
+    height: min(720px, calc(100vh - 250px));
+    width: auto;
     border-radius: 10px;
     border: 2px solid rgba(159, 216, 255, 0.35);
     box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55);

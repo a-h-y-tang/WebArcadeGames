@@ -495,8 +495,8 @@ function playEnd() {
 
 function addSparks(x, y) {
     for (let i = 0; i < 8; i++) {
-        const a = rng() * Math.PI * 2;
-        const sp = 40 + rng() * 90;
+        const a = Math.random() * Math.PI * 2;
+        const sp = 40 + Math.random() * 90;
         sparks.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: 0.45 });
     }
 }
@@ -704,17 +704,37 @@ function drawAimGuide() {
     drawStone({ x: HOUSE_X, y: HACK_Y, team: 'you' });
 }
 
+// Two brooms working just ahead of the running stone, scrubbing side to side.
 function drawSweepers() {
     if (!sweeping || !activeStone) return;
-    const t = Date.now() / 60;
+    const t = Date.now() / 45;
+    const ahead = activeStone.y - STONE_R - 12;
+
     for (const side of [-1, 1]) {
-        const x = activeStone.x + side * (STONE_R + 12) + Math.sin(t + side) * 4;
-        ctx.strokeStyle = 'rgba(20, 60, 90, 0.8)';
+        const swing = Math.sin(t + (side > 0 ? Math.PI : 0)) * 7;
+        const x = activeStone.x + side * (STONE_R + 6) + swing;
+
+        ctx.strokeStyle = 'rgba(30, 60, 90, 0.85)';
         ctx.lineWidth = 3;
         ctx.beginPath();
-        ctx.moveTo(x, activeStone.y - 16);
-        ctx.lineTo(x, activeStone.y + 16);
+        ctx.moveTo(x + side * 14, ahead - 22);
+        ctx.lineTo(x, ahead);
         ctx.stroke();
+
+        ctx.fillStyle = '#f6d24a';
+        ctx.save();
+        ctx.translate(x, ahead);
+        ctx.rotate((side * -32 * Math.PI) / 180);
+        ctx.fillRect(-9, -3, 18, 6);
+        ctx.restore();
+    }
+
+    // Ice spray off the brush heads.
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+    for (let i = 0; i < 6; i++) {
+        const px = activeStone.x + (Math.random() - 0.5) * 60;
+        const py = ahead + (Math.random() - 0.5) * 16;
+        ctx.fillRect(px, py, 2, 2);
     }
 }
 
@@ -740,8 +760,31 @@ function drawShotCallout() {
     ctx.setLineDash([]);
 }
 
+// A one-line status across the dead ice behind the house: whose shot it is,
+// which stone it is, and what you can do about it right now.
+function drawStatus() {
+    let text = '';
+    if (state === 'aiming' && currentTeam === 'you') {
+        text = `YOUR SHOT — STONE ${STONES_PER_TEAM - stonesLeft('you') + 1} OF ${STONES_PER_TEAM}`;
+    } else if (state === 'aiming') {
+        text = 'THE RINK IS LINING UP…';
+    } else if (state === 'sliding') {
+        text = sweeping ? 'SWEEPING!' : 'HOLD SPACE OR THE MOUSE TO SWEEP';
+    } else if (state === 'idle') {
+        text = `${ENDS} ENDS — CLOSEST TO THE BUTTON SCORES`;
+    }
+    if (!text) return;
+
+    ctx.font = 'bold 13px "Segoe UI", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = sweeping ? '#c9302c' : 'rgba(30, 70, 100, 0.85)';
+    ctx.fillText(text, HOUSE_X, 32);
+    ctx.textAlign = 'left';
+}
+
 function draw() {
     drawSheet();
+    drawStatus();
     drawStoneRacks();
     drawAimGuide();
     for (const s of stones) drawStone(s);
