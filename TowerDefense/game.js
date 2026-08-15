@@ -568,14 +568,14 @@ function gameOver() {
     state = 'over';
     saveBest();
     updateHud();
-    showOverlay('BASE BREACHED', `Score ${score} · Wave ${wave}`, 'Press R or Space to try again');
+    showOverlay('BASE BREACHED', `Score ${score} · Wave ${wave}`, 'Press R or Space to try again', 'bad');
 }
 
 function winGame() {
     state = 'won';
     saveBest();
     updateHud();
-    showOverlay('BASE DEFENDED', `Score ${score} · Lives ${lives}`, 'Press R or Space to play again');
+    showOverlay('BASE DEFENDED', `Score ${score} · Lives ${lives}`, 'Press R or Space to play again', 'good');
 }
 
 // ---------------------------------------------------------------------------
@@ -615,10 +615,14 @@ function updateHud() {
     btnWave.disabled = state !== 'building';
 }
 
-function showOverlay(title, scoreLine, sub) {
+// `tone` colours the headline: a loss should not read the same as a win.
+function showOverlay(title, scoreLine, sub, tone = 'neutral') {
     overlayTitle.textContent = title;
+    overlayTitle.className = `tone-${tone}`;
     overlayScore.textContent = scoreLine;
     overlaySub.textContent = sub;
+    btnStart.textContent =
+        state === 'paused' ? 'Resume' : state === 'over' || state === 'won' ? 'Play Again' : 'Start Game';
     overlay.classList.add('visible');
 }
 

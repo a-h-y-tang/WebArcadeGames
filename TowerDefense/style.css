@@ -107,6 +107,9 @@ canvas {
     color: var(--accent);
 }
 
+.overlay h2.tone-bad { color: var(--danger); }
+.overlay h2.tone-good { color: var(--gold); }
+
 .overlay p {
     margin: 0;
     color: var(--muted);

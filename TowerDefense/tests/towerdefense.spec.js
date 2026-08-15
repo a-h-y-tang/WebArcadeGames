@@ -824,6 +824,19 @@ test.describe('Tower Defense', () => {
             expect(after).toEqual({ creeps: before.creeps, queue: before.queue });
         });
 
+        test('a loss is coloured differently from a win', async ({ page }) => {
+            await start(page);
+            await page.evaluate(() => {
+                lives = 1;
+                callWave();
+                step(1 / 60); // let the first creep on, then stop the wave there
+                spawnQueue.length = 0;
+                for (let i = 0; i < 60 * 60; i++) step(1 / 60);
+            });
+            await expect(page.locator('#overlay-title')).toHaveClass('tone-bad');
+            await expect(page.locator('#btn-start')).toHaveText(/again/i);
+        });
+
         test('R restarts after a loss', async ({ page }) => {
             await start(page);
             await page.evaluate(() => {
@@ -877,6 +890,7 @@ test.describe('Tower Defense', () => {
             });
             await expect(page.locator('#overlay')).toHaveClass(/visible/);
             await expect(page.locator('#overlay-title')).toContainText(/win|clear|victor|defend/i);
+            await expect(page.locator('#overlay-title')).toHaveClass('tone-good');
         });
     });
 
