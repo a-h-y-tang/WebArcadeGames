@@ -812,19 +812,25 @@ function drawBase(x, y) {
         ctx.stroke();
         return;
     }
-    ctx.fillStyle = '#e8d9a8';
+    ctx.fillStyle = '#f0e2b0';
     ctx.beginPath();
-    ctx.moveTo(x + 16, y + 5);
-    ctx.lineTo(x + 27, y + 17);
-    ctx.lineTo(x + 21, y + 17);
-    ctx.lineTo(x + 24, y + 27);
-    ctx.lineTo(x + 8, y + 27);
-    ctx.lineTo(x + 11, y + 17);
-    ctx.lineTo(x + 5, y + 17);
+    ctx.moveTo(x + 16, y + 4);
+    ctx.lineTo(x + 20, y + 10);
+    ctx.lineTo(x + 28, y + 15);
+    ctx.lineTo(x + 21, y + 16);
+    ctx.lineTo(x + 24, y + 28);
+    ctx.lineTo(x + 16, y + 23);
+    ctx.lineTo(x + 8, y + 28);
+    ctx.lineTo(x + 11, y + 16);
+    ctx.lineTo(x + 4, y + 15);
+    ctx.lineTo(x + 12, y + 10);
     ctx.closePath();
     ctx.fill();
-    ctx.fillStyle = '#a8802f';
-    ctx.fillRect(x + 13, y + 12, 6, 5);
+    ctx.strokeStyle = '#8a6a24';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.fillStyle = '#8a6a24';
+    ctx.fillRect(x + 14, y + 12, 4, 8);
 }
 
 function drawTerrain(layer) {
@@ -924,10 +930,17 @@ function drawEffects() {
     for (const fx of effects) {
         const t = fx.t / fx.life;
         if (fx.kind === 'boom') {
-            const radius = 6 + t * 22;
-            ctx.fillStyle = `rgba(255, ${Math.round(200 - t * 120)}, 60, ${(1 - t).toFixed(3)})`;
+            // A bright core inside an expanding shock ring reads far better
+            // than one fading disc, which just leaves a muddy blob behind.
+            const radius = 6 + t * 20;
+            ctx.strokeStyle = `rgba(255, 190, 90, ${(1 - t).toFixed(3)})`;
+            ctx.lineWidth = 3;
             ctx.beginPath();
             ctx.arc(fx.x, fx.y, radius, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.fillStyle = `rgba(255, ${Math.round(230 - t * 120)}, 140, ${(1 - t * t).toFixed(3)})`;
+            ctx.beginPath();
+            ctx.arc(fx.x, fx.y, Math.max(0, 11 - t * 11), 0, Math.PI * 2);
             ctx.fill();
         } else if (fx.kind === 'spark') {
             ctx.fillStyle = `rgba(255, 240, 200, ${(1 - t).toFixed(3)})`;
@@ -941,6 +954,26 @@ function drawEffects() {
             ctx.arc(fx.x, fx.y, 4 + t * 18, 0, Math.PI * 2);
             ctx.stroke();
         }
+    }
+}
+
+// Telegraph the next deployment so a tank never simply materialises on top of
+// the player.
+function drawSpawnWarnings() {
+    if (state !== 'playing' || enemiesLeft <= 0 || spawnTimer > 0.9) return;
+    const pulse = 0.35 + 0.35 * Math.sin(clock * 12);
+    ctx.strokeStyle = `rgba(255, 120, 90, ${pulse.toFixed(3)})`;
+    ctx.lineWidth = 2;
+    for (const spawn of ENEMY_SPAWNS) {
+        const x = laneCentre(spawn.col);
+        const y = laneCentre(spawn.row);
+        ctx.beginPath();
+        ctx.arc(x, y, 11, 0, Math.PI * 2);
+        ctx.moveTo(x - 6, y);
+        ctx.lineTo(x + 6, y);
+        ctx.moveTo(x, y - 6);
+        ctx.lineTo(x, y + 6);
+        ctx.stroke();
     }
 }
 
@@ -959,13 +992,8 @@ function draw() {
         ctx.stroke();
     }
 
-    if (state === 'idle') {
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.06)';
-        ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
-        return;
-    }
-
     drawTerrain('ground');
+    drawSpawnWarnings();
     for (const enemy of enemies) drawTank(enemy);
     if (player && player.alive) drawTank(player);
     drawBullets();
