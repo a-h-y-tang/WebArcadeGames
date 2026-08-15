@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>8-Ball Pool</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="game">
+        <header class="hud">
+            <h1>8-BALL POOL</h1>
+            <div class="stats">
+                <div class="stat"><span class="label">Turn</span><span id="turn">Player 1</span></div>
+                <div class="stat"><span class="label">P1 Group</span><span id="p1-group">—</span></div>
+                <div class="stat"><span class="label">P1 Left</span><span id="p1-left">—</span></div>
+                <div class="stat"><span class="label">P2 Group</span><span id="p2-group">—</span></div>
+                <div class="stat"><span class="label">P2 Left</span><span id="p2-left">—</span></div>
+            </div>
+        </header>
+
+        <div class="board-wrap">
+            <canvas id="canvas" width="880" height="480"></canvas>
+            <div id="overlay" class="overlay visible">
+                <h2 id="overlay-title">8-BALL POOL</h2>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Press Space or click Start to break</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="power">
+                <span class="label">Power</span>
+                <div class="power-bar"><div id="power-fill"></div></div>
+            </div>
+            <p id="message">Break to begin — the table is open.</p>
+            <button id="btn-mode">Opponent: Computer</button>
+        </div>
+
+        <div class="help">
+            <p><kbd>Mouse</kbd> aim</p>
+            <p><kbd>Hold</kbd> charge, release to shoot</p>
+            <p><kbd>←</kbd> <kbd>→</kbd> fine aim (<kbd>Shift</kbd> faster)</p>
+            <p><kbd>Space</kbd> charge / shoot</p>
+            <p><kbd>P</kbd> pause</p>
+            <p><kbd>R</kbd> new game</p>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>

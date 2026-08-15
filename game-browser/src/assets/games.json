@@ -675,6 +675,15 @@
     "thumbnail": ""
   },
   {
+    "id": "pool",
+    "name": "8-Ball Pool",
+    "description": "Physics billiards - sink your group, then the 8-ball",
+    "category": "Sports",
+    "dir": "Pool",
+    "path": "games/Pool/index.html",
+    "thumbnail": "games/Pool/screenshot.png"
+  },
+  {
     "id": "pyramid-solitaire",
     "name": "Pyramid Solitaire",
     "description": "Card solitaire with pyramid layout",
