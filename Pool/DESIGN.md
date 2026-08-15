@@ -21,12 +21,17 @@ best ghost-ball shot, or a second human in hot-seat mode.
 | Ball radius | 11 px |
 | Pockets | 6, radius 21 — four at the playfield corners, two at the middle of the long rails |
 | Cue ball spot | head spot, 25% along the table (240, 240) |
+| Shot speed | 250 px/s at rest on the meter, 1900 px/s at full power |
 | Rack apex | foot spot, 75% along the table (640, 240) |
 
 Balls 1–7 are solids, 9–15 are stripes, 8 is black, 0 is the cue ball. The rack
 is a fixed, deterministic triangle (no shuffling) with the 8-ball in the middle
 of the third row and a solid/stripe in the two back corners, so every game
-starts from an identical, reproducible position.
+starts from an identical, reproducible position. Each ball is nudged off the
+lattice by a fixed fraction of a pixel derived from its number: a perfectly
+symmetric rack hit dead centre barely scatters, and a real rack is never
+perfect. The offset is a pure function of the ball number, so the rack is still
+byte-identical every game.
 
 ## Physics
 
@@ -34,7 +39,7 @@ The simulation is a fixed-substep integrator. `step(dt)` splits `dt` into
 substeps of at most 1/240 s and, per substep:
 
 1. **Integrate** — `x += vx·dt`, `y += vy·dt`.
-2. **Friction** — a constant rolling deceleration of 240 px/s² applied against
+2. **Friction** — a constant rolling deceleration of 150 px/s² applied against
    the direction of travel; below 5 px/s a ball is snapped to rest. Because the
    deceleration is constant (not drag-proportional), balls travel a predictable
    `v²/2a` distance and always come to a complete stop, which keeps shots
@@ -46,7 +51,8 @@ substeps of at most 1/240 s and, per substep:
    normal velocity is reflected and scaled by a restitution of 0.92.
 5. **Ball-to-ball** — equal-mass elastic collision along the contact normal:
    the normal components of the two velocities are exchanged (scaled by a
-   restitution of 0.96) and the tangential components are kept. Overlap is
+   restitution of 0.99 — nearly elastic, so a break still carries energy
+   through the whole pack) and the tangential components are kept. Overlap is
    resolved by pushing both balls apart by half the penetration each, so balls
    never sink into one another.
 

@@ -34,7 +34,7 @@ const MID_Y = (PLAY_T + PLAY_B) / 2;
 const FRICTION = 150;          // px/s^2, constant rolling deceleration
 const STOP_SPEED = 5;          // px/s below which a ball is parked
 const CUSHION_RESTITUTION = 0.92;
-const BALL_RESTITUTION = 0.96;
+const BALL_RESTITUTION = 0.99;
 const SUB_DT = 1 / 240;
 const MAX_STEP_DIST = 3;       // px a ball may travel in one substep
 
@@ -171,14 +171,17 @@ function normalizeAngle(a) {
 function rackBalls() {
     balls = [{ n: 0, x: HEAD_X, y: MID_Y, vx: 0, vy: 0, potted: false, type: 'cue', color: '#f6f3ea' }];
 
-    const gap = BALL_R * 2 + 0.3;
-    const rowDx = BALL_R * 2 * Math.cos(Math.PI / 6);
+    // A real rack is never perfectly symmetric, and a perfectly symmetric one
+    // barely scatters on a centre-ball break. Nudge each ball by a fixed
+    // fraction of a pixel — deterministic, so every game still racks the same.
+    const gap = BALL_R * 2 + 1.4;
+    const rowDx = 19.6;
     RACK_ROWS.forEach((row, i) => {
         row.forEach((n, j) => {
             balls.push({
                 n,
                 x: FOOT_X + i * rowDx,
-                y: MID_Y + (j - i / 2) * gap,
+                y: MID_Y + (j - i / 2) * gap + (((n * 37) % 7) - 3) / 10,
                 vx: 0,
                 vy: 0,
                 potted: false,
@@ -813,7 +816,7 @@ function render() {
     }
 
     // Ball-in-hand ghost.
-    if (state === 'ballinhand') {
+    if (state === 'ballinhand' && !isAiTurn()) {
         ctx.save();
         ctx.setLineDash([4, 4]);
         ctx.strokeStyle = 'rgba(255,255,255,0.7)';

@@ -113,7 +113,7 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Marble Spiral | [MarbleSpiral/](MarbleSpiral/) | Complete |
 | Barrel Climb | [BarrelClimb/](BarrelClimb/) | Complete |
 | BurgerTime | [BurgerTime/](BurgerTime/) | Complete |
-| 8-Ball Pool | [Pool/](Pool/) | In Progress |
+| 8-Ball Pool | [Pool/](Pool/) | Complete |
 
 ## Playing
 
