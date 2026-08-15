@@ -110,7 +110,7 @@ same shape as the other games in this repo:
 ## Testing
 
 Built test-first with Playwright: `tests/tapper.spec.js` was written and run red
-before `game.js` existed, then filled in until all 63 specs passed. The specs
+before `game.js` existed, then filled in until all 62 specs passed. The specs
 drive `step(dt)` directly rather than waiting on the animation loop, so they are
 deterministic; customer arrivals are switched off with `spawnEnabled = false`
 for any spec that is not about arrivals.

@@ -266,6 +266,11 @@ function checkWave() {
 }
 
 function step(dt) {
+    // The damage flash fades through the respawn pause it triggers, not after it.
+    if (flash > 0 && state !== 'paused' && state !== 'idle') {
+        flash = Math.max(0, flash - dt);
+    }
+
     if (state === 'wave') {
         waveTimer -= dt;
         if (waveTimer <= 0) startWave(level + 1);
@@ -278,7 +283,6 @@ function step(dt) {
     }
     if (state !== 'playing') return;
 
-    if (flash > 0) flash = Math.max(0, flash - dt);
     pourTimer = Math.max(0, pourTimer - dt);
 
     updateSpawns(dt);
