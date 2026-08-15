@@ -720,6 +720,15 @@
     "thumbnail": ""
   },
   {
+    "id": "robot-arena",
+    "name": "Robot Arena",
+    "description": "Twin-stick arena shooter - blast robot waves and rescue the scientists",
+    "category": "Action",
+    "dir": "RobotArena",
+    "path": "games/RobotArena/index.html",
+    "thumbnail": "games/RobotArena/screenshot.png"
+  },
+  {
     "id": "rush-hour",
     "name": "Rush Hour",
     "description": "Sliding block puzzle - get the red car out",
