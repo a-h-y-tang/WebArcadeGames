@@ -90,7 +90,8 @@ const btnStart = document.getElementById('btn-start');
 let state, score, best, lives, level;
 let bartender, customers, mugs, empties, sparks;
 let pendingCustomers, spawnTimer, spawnEnabled;
-let serveTimer, deathTimer, clearTimer, elapsed;
+let serveTimer, deathTimer, clearTimer;
+let lossReason;
 
 // ---------------------------------------------------------------------------
 // Difficulty curve
@@ -133,7 +134,7 @@ function spawnMug(lane, x = MUG_START_X) {
 }
 
 function spawnEmpty(lane, x) {
-    const e = { lane, x, spin: 0 };
+    const e = { lane, x };
     empties.push(e);
     return e;
 }
@@ -162,8 +163,12 @@ function step(dt) {
     if (state === 'dying') {
         deathTimer -= dt;
         if (deathTimer <= 0) {
-            if (lives <= 0) gameOver();
-            else state = 'running';
+            if (lives <= 0) {
+                gameOver();
+            } else {
+                state = 'running';
+                hideOverlay();
+            }
         }
         return;
     }
@@ -174,7 +179,6 @@ function step(dt) {
     }
     if (state !== 'running') return;
 
-    elapsed += dt;
     if (serveTimer > 0) serveTimer -= dt;
 
     // The sprite eases toward its lane; the logical lane is always discrete.
@@ -241,7 +245,7 @@ function updateCustomers(dt) {
     }
 
     const reached = customers.find((c) => c.x >= DANGER_X);
-    if (reached) loseLife();
+    if (reached) loseLife('reached');
 }
 
 function updateMugs(dt) {
@@ -250,14 +254,19 @@ function updateMugs(dt) {
         const oldX = m.x;
         m.x -= MUG_SPEED * dt;
 
-        // Swept collision: the mug is caught on the frame it crosses a
-        // customer's grab line, so a fast mug can never tunnel past someone.
+        // Swept collision: the mug is caught as soon as it lands inside a
+        // customer's reach, as long as it had not already gone past them before
+        // this frame. Testing the whole interval rather than a single crossing
+        // line matters because the customer is walking toward the mug — a plain
+        // crossing test misses the frames where the two step past each other at
+        // once, and the mug slides through the drinker and smashes.
         // A customer who is already drinking lets the mug slide by.
         let taker = null;
         for (const c of customers) {
             if (c.lane !== m.lane || c.state !== 'advancing') continue;
-            const line = c.x + HIT_DIST;
-            if (m.x <= line && oldX > line && (!taker || c.x > taker.x)) taker = c;
+            if (m.x <= c.x + HIT_DIST && oldX > c.x - HIT_DIST && (!taker || c.x > taker.x)) {
+                taker = c;
+            }
         }
         if (taker) {
             taker.state = 'drinking';
@@ -268,7 +277,7 @@ function updateMugs(dt) {
         if (m.x <= BAR_LEFT) {
             spawnSparks(m.lane, BAR_LEFT);
             mugs = survivors;
-            loseLife();
+            loseLife('wasted');
             return;
         }
         survivors.push(m);
@@ -281,7 +290,6 @@ function updateEmpties(dt) {
     let caught = 0;
     for (const e of empties) {
         e.x += EMPTY_SPEED * dt;
-        e.spin += dt * 6;
         if (e.x >= CATCH_X && bartender.lane === e.lane) {
             caught++;
             continue;
@@ -290,7 +298,7 @@ function updateEmpties(dt) {
             spawnSparks(e.lane, BAR_RIGHT);
             empties = survivors;
             if (caught) addScore(CATCH_POINTS * caught);
-            loseLife();
+            loseLife('missed');
             return;
         }
         survivors.push(e);
@@ -322,8 +330,15 @@ function addScore(points) {
     updateHud();
 }
 
-function loseLife() {
+const LOSS_TEXT = {
+    reached: 'A customer reached the bar!',
+    wasted: 'That mug went over the far end!',
+    missed: 'You missed the empty!',
+};
+
+function loseLife(reason) {
     if (state !== 'running') return;
+    lossReason = reason;
     lives = Math.max(0, lives - 1);
     // Everyone still on a bar goes back into the queue, so a death costs time
     // but never wave progress.
@@ -366,7 +381,6 @@ function startGame() {
     score = 0;
     lives = START_LIVES;
     level = 1;
-    elapsed = 0;
     spawnEnabled = true;
     bartender = { lane: 0, y: LANE_Y[0] };
     startWave();
@@ -428,7 +442,7 @@ function hideOverlay() {
 function showOverlayForState() {
     if (state === 'dying') {
         const left = lives > 0 ? `${lives} ${lives === 1 ? 'life' : 'lives'} left` : 'No lives left';
-        showOverlay('SMASH!', `Score ${score}`, left);
+        showOverlay(LOSS_TEXT[lossReason] || 'SMASH!', `Score ${score}`, left);
     }
 }
 
@@ -722,7 +736,6 @@ state = 'idle';
 score = 0;
 lives = START_LIVES;
 level = 1;
-elapsed = 0;
 spawnEnabled = true;
 serveTimer = 0;
 deathTimer = 0;

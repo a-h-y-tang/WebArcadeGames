@@ -419,6 +419,26 @@ test.describe('Tapper', () => {
             expect(back).toBe('drinking');
         });
 
+        test('a mug never slips past the customer it is aimed at', async ({ page }) => {
+            // The mug and the customer close on each other, so a naive
+            // crossing test misses the frames where they step past one another
+            // in a single tick. Sweep a range of starting gaps to catch it.
+            const misses = await page.evaluate(() => {
+                const bad = [];
+                for (let offset = 0; offset < 60; offset++) {
+                    startGame();
+                    spawnEnabled = false;
+                    const c = spawnCustomer(0, BAR_LEFT + 120 + offset * 0.37);
+                    serve();
+                    for (let i = 0; i < 400 && mugs.length; i++) step(1 / 60);
+                    const took = c.state === 'drinking' || !customers.includes(c);
+                    if (!took || lives !== START_LIVES) bad.push(offset);
+                }
+                return bad;
+            });
+            expect(misses).toEqual([]);
+        });
+
         test('a mug only serves customers in its own lane', async ({ page }) => {
             await page.evaluate(() => {
                 spawnCustomer(2, BAR_RIGHT - 120);
@@ -538,6 +558,25 @@ test.describe('Tapper', () => {
             await advance(page, 200);
             expect(await page.evaluate(() => state)).toBe('running');
             await expect(page.locator('#lives')).toHaveText('2');
+            await expect(page.locator('#overlay')).not.toHaveClass(/visible/);
+        });
+
+        test('the death overlay says what went wrong', async ({ page }) => {
+            await page.evaluate(() => spawnCustomer(0, DANGER_X - 2));
+            await advance(page, 5);
+            await expect(page.locator('#overlay')).toHaveClass(/visible/);
+            await expect(page.locator('#overlay-title')).toContainText(/customer/i);
+            expect(await page.evaluate(() => lossReason)).toBe('reached');
+        });
+
+        test('a wasted mug and a missed empty report different reasons', async ({ page }) => {
+            await page.evaluate(() => serve());
+            await advance(page, 180);
+            expect(await page.evaluate(() => lossReason)).toBe('wasted');
+            await advance(page, 120);
+            await page.evaluate(() => spawnEmpty(3, CATCH_X - 20));
+            await advance(page, 60);
+            expect(await page.evaluate(() => lossReason)).toBe('missed');
         });
 
         test('running out of lives ends the game', async ({ page }) => {

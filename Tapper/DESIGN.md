@@ -112,6 +112,12 @@ and drive it directly from `page.evaluate`.
   customers by hand and run long simulations deterministically. The random lane
   choice is the only nondeterminism in the game, and disabling spawning removes
   it entirely.
+- `autoRun` decides whether the animation loop advances the simulation. The
+  specs set it to `false` so `step()` is driven purely by the test: without it,
+  real `requestAnimationFrame` frames land between a spec's `page.evaluate`
+  calls and quietly add simulated time to every measurement.
+- `lossReason` records why the last life was lost (`reached`, `wasted` or
+  `missed`) so the death overlay can say which mistake it was.
 - Drawing is pure: `draw()` reads state and never mutates it, so a spec can call
   it in any state to check that rendering does not throw.
 
