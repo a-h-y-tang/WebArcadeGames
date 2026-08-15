@@ -846,6 +846,15 @@
     "thumbnail": ""
   },
   {
+    "id": "tavern-tapper",
+    "name": "Tavern Tapper",
+    "description": "Serve mugs down four bars and catch the empties before they smash",
+    "category": "Action",
+    "dir": "TavernTapper",
+    "path": "games/TavernTapper/index.html",
+    "thumbnail": "games/TavernTapper/screenshot.png"
+  },
+  {
     "id": "tempest",
     "name": "Tempest",
     "description": "Arcade action game - navigate tube mazes",
