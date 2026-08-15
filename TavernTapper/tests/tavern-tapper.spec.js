@@ -246,7 +246,9 @@ test.describe('Tavern Tapper', () => {
                 customers[0].thirst = 3;
                 serve();
             });
-            await advance(page, 100);
+            // 70 frames lands mid-drink: the mug arrives at ~0.87 s and the
+            // patron drinks for DRINK_TIME (0.8 s) after that.
+            await advance(page, 70);
             const drinking = await page.evaluate(() => customers[0].drink > 0);
             expect(drinking).toBe(true);
         });
