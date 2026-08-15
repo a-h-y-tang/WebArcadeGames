@@ -25,7 +25,7 @@ the layout is easy to reason about and to assert on in tests.
 |---|---|---|
 | `CANVAS_W` × `CANVAS_H` | 640 × 460 | canvas size |
 | `LANES` | 4 | number of bars |
-| `LANE_Y` | 70, 170, 270, 370 | y of each bar's sliding surface |
+| `LANE_Y` | 95, 190, 285, 380 | y of each bar's sliding surface |
 | `BAR_LEFT` | 40 | far end: customers walk in here |
 | `BAR_RIGHT` | 560 | near end: the taps |
 | `BARKEEP_X` | 596 | where the barkeep stands, past the taps |
@@ -53,7 +53,7 @@ there is no separate catch button.
 ### Pouring
 
 `Space` pours: a full mug appears at the tap on the barkeep's current bar and
-slides toward the far end at `MUG_SPEED` (210 px/s). The tap has a
+slides toward the far end at `MUG_SPEED` (230 px/s). The tap has a
 `POUR_COOLDOWN` (0.25 s) so a held key cannot flood a bar.
 
 ### Serving
@@ -63,7 +63,8 @@ reaches (`CATCH_R` = 17 px from the customer's centre). On being served the
 customer:
 
 - switches to `drinking` for `DRINK_TIME` (2 s), during which they are pushed
-  back at `DRINK_SPEED` (60 px/s) — roughly 120 px per mug;
+  back at `DRINK_SPEED` (95 px/s) — roughly 190 px per mug, and a fresh mug
+  caught mid-drink restarts the timer, so a chain keeps them sliding;
 - sends an empty glass back toward the taps at `EMPTY_SPEED` (200 px/s);
 - scores `SERVE_POINTS` (50).
 
@@ -93,9 +94,14 @@ simply walks back in.
 A level needs `customersForLevel(level)` = `5 + level` happy customers. It clears
 once the quota is met and no customers or full mugs remain, pauses for
 `CLEAR_PAUSE` (1.6 s), then starts the next one with a bigger crowd that walks
-faster (`customerSpeed()` = `22 + 4 × (level − 1)`, capped at 70 px/s) and
-arrives more often (`spawnInterval()` = `2.8 − 0.18 × (level − 1)`, floored at
-0.9 s). The best score is persisted in `localStorage` under `tapper-best`.
+faster (`customerSpeed()` = `22 + 4 × (level − 1)`, capped at 55 px/s) and
+arrives more often (`spawnInterval()` = `2.0 − 0.15 × (level − 1)`, floored at
+0.8 s). The cap matters: it keeps `customerSpeed()` below `DRINK_SPEED`, so a
+sustained chain of mugs always gains ground on a customer and no board can
+become impossible to clear. Serving one mug at a time stops being enough at
+around level 7 — that is where the game asks you to chain.
+
+The best score is persisted in `localStorage` under `tapper-best`.
 
 ## Controls
 
@@ -128,7 +134,7 @@ that state and helpers are reachable from Playwright as plain globals:
 
 ## Testing
 
-`tests/tapper.spec.js` holds 68 Playwright specs covering the idle screen, start
+`tests/tapper.spec.js` holds 69 Playwright specs covering the idle screen, start
 paths, barkeep movement and clamping, pouring and the tap cooldown, customer
 advance/serve/leave, the three ways to lose a life, empty-mug catching, tips,
 level progression, pause, best-score persistence and rendering in every state.

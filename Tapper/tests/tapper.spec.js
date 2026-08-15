@@ -596,6 +596,17 @@ test.describe('Tapper', () => {
             );
         });
 
+        test('a chain of mugs beats a walking customer at any level', async ({ page }) => {
+            // Keeping a customer drinking pushes them back faster than they can
+            // ever walk, so no board can become impossible to clear.
+            await page.evaluate(() => {
+                level = 50;
+            });
+            expect(await page.evaluate(() => customerSpeed())).toBeLessThan(
+                await page.evaluate(() => DRINK_SPEED)
+            );
+        });
+
         test('customers arrive more often at higher levels', async ({ page }) => {
             const l1 = await page.evaluate(() => spawnInterval());
             await page.evaluate(() => {

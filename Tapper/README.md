@@ -26,9 +26,11 @@ Open `index.html` in any modern browser. No build step and no server required.
 
 **Serve the crowd.** Customers enter at the far end of a bar and walk toward you.
 Press `Space` to slide a full mug down whichever bar you are standing at; the
-nearest customer on that bar catches it, drinks, and is pushed back about a
-quarter of the bar's length. Keep pushing and they eventually leave happy, which
-is what counts toward the round.
+nearest customer on that bar catches it, drinks, and is pushed back about a third
+of the bar's length. A second mug caught while they are still drinking keeps them
+sliding, so chaining pours is how you shift someone who has walked a long way.
+Keep pushing and they eventually leave happy, which is what counts toward the
+round.
 
 **Catch the empties.** Every mug a customer finishes comes sliding back toward
 the taps. Be standing at that bar when it arrives and you catch it for a small

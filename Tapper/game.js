@@ -30,10 +30,10 @@ const CATCH_R = 17; // a mug within this of a customer's centre is taken
 // ---------------------------------------------------------------------------
 // Tuning
 // ---------------------------------------------------------------------------
-const MUG_SPEED = 210; // full mug, sliding away from the taps
+const MUG_SPEED = 230; // full mug, sliding away from the taps
 const EMPTY_SPEED = 200; // empty glass, sliding back toward the taps
 const TIP_SPEED = 170; // a coin left on the bar
-const DRINK_SPEED = 60; // how fast a drinking customer is pushed back
+const DRINK_SPEED = 95; // how fast a drinking customer is pushed back
 const DRINK_TIME = 2; // seconds spent drinking one mug
 const POUR_COOLDOWN = 0.25; // seconds between pours
 const DEATH_PAUSE = 1.5;
@@ -49,8 +49,8 @@ const TIP_EVERY = 4; // every Nth happy customer leaves one
 const BEST_KEY = 'tapper-best';
 
 const customersForLevel = (l) => 5 + l;
-const customerSpeed = () => Math.min(22 + 4 * (level - 1), 70);
-const spawnInterval = () => Math.max(0.9, 2.8 - 0.18 * (level - 1));
+const customerSpeed = () => Math.min(22 + 4 * (level - 1), 55);
+const spawnInterval = () => Math.max(0.8, 2.0 - 0.15 * (level - 1));
 
 // ---------------------------------------------------------------------------
 // State
