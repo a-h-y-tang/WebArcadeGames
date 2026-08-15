@@ -93,7 +93,7 @@ the same walls that block your shots.
 - `game.js` — one classic (non-module) script, so its state is reachable from
   the Playwright specs as plain globals. All motion is per-second and applied
   through `step(dt)`, which the specs call directly.
-- `tests/tankbattle.spec.js` — 51 Playwright specs, written before the game.
+- `tests/tankbattle.spec.js` — 52 Playwright specs, written before the game.
 
 Two globals exist purely so the specs can own the clock:
 

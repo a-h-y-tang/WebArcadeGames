@@ -617,6 +617,48 @@ test.describe('Tank Battle', () => {
     });
 
     // -----------------------------------------------------------------------
+    // Rendering
+    // -----------------------------------------------------------------------
+    test.describe('rendering', () => {
+        test('every game state draws without error', async ({ page }) => {
+            const errors = [];
+            page.on('pageerror', (err) => errors.push(err.message));
+            await startQuiet(page);
+            const drawn = await page.evaluate(() => {
+                const states = [];
+                const render = (label) => {
+                    draw();
+                    states.push(label);
+                };
+                render('playing');
+                spawnEnemyAt(2, 2, 'armor');
+                spawnEnemyAt(9, 2, 'fast');
+                spawnBullet(player.x, player.y - 40, 'up', 'player');
+                addEffect(120, 120, 'boom');
+                addEffect(150, 150, 'spark');
+                player.invuln = 1;
+                enemiesLeft = 3;
+                spawnTimer = 0.2;
+                step(1 / 60);
+                render('busy');
+                togglePause();
+                render('paused');
+                togglePause();
+                enemiesLeft = 0;
+                enemies.length = 0;
+                step(1 / 60);
+                render('levelclear');
+                baseAlive = false;
+                state = 'gameover';
+                render('gameover');
+                return states;
+            });
+            expect(drawn).toEqual(['playing', 'busy', 'paused', 'levelclear', 'gameover']);
+            expect(errors).toEqual([]);
+        });
+    });
+
+    // -----------------------------------------------------------------------
     // Pause, game over and restart
     // -----------------------------------------------------------------------
     test.describe('pause, game over and restart', () => {
