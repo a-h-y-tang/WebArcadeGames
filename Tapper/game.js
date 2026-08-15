@@ -208,6 +208,7 @@ function nextLevel() {
     clearBar();
     state = 'running';
     syncHud();
+    hideOverlay();
 }
 
 // ---------------------------------------------------------------------------

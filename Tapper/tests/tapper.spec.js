@@ -570,6 +570,14 @@ test.describe('Tapper', () => {
             );
         });
 
+        test('the level-clear overlay clears with it', async ({ page }) => {
+            await page.evaluate(() => serveEveryoneForTest());
+            await advance(page, 2);
+            await expect(page.locator('#overlay')).toHaveClass(/visible/);
+            await advance(page, 180);
+            await expect(page.locator('#overlay')).not.toHaveClass(/visible/);
+        });
+
         test('score carries into the next level', async ({ page }) => {
             await page.evaluate(() => {
                 score = 2500;
