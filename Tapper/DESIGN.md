@@ -55,10 +55,14 @@ on their own schedule, and you can only stand at one bar at a time.
 - `serve()` puts a full mug at the bartender's end of the current lane moving
   left at `MUG_SPEED`. Serving has a short cooldown (`SERVE_COOLDOWN`) so a held
   key cannot flood a lane.
-- Collision is swept, not proximity-based: a mug hits a customer on the frame it
-  crosses `customer.x + HIT_DIST` from the right. That prevents tunnelling at
-  high mug speeds, and it means the *rightmost* eligible customer is always the
-  one served.
+- Collision is swept, not proximity-based: a mug is taken on the first frame it
+  lands within `HIT_DIST` of a customer, provided it had not already travelled
+  past them before that frame. The test covers the whole interval the mug moved
+  through rather than a single crossing line, because the customer is walking
+  *toward* the mug — a plain crossing test silently misses the frames where the
+  two step past each other at once, and the mug sails on to smash at the far
+  end. Where several customers qualify, the *rightmost* one is served, so a mug
+  always goes to the customer closest to the bartender.
 - Only `advancing` customers take a mug; a mug passes a customer who is already
   drinking and can serve someone further down the bar.
 - A mug that reaches `BAR_LEFT` without being caught smashes on the floor and
