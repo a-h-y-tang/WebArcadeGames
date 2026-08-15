@@ -666,6 +666,15 @@
     "thumbnail": "games/PipeDream/screenshot.png"
   },
   {
+    "id": "planet-defender",
+    "name": "Planet Defender",
+    "description": "Side-scrolling rescue shooter - stop the aliens abducting the humanoids",
+    "category": "Action",
+    "dir": "PlanetDefender",
+    "path": "games/PlanetDefender/index.html",
+    "thumbnail": "games/PlanetDefender/screenshot.png"
+  },
+  {
     "id": "pong",
     "name": "Pong",
     "description": "Classic arcade paddle game",
