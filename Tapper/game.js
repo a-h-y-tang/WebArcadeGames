@@ -110,7 +110,7 @@ function spawnCustomer(lane, x) {
 }
 
 function spawnEmpty(lane, x) {
-    const e = { lane, x, spin: 0 };
+    const e = { lane, x };
     empties.push(e);
     return e;
 }
@@ -131,7 +131,7 @@ function pour() {
     if (state !== 'running' || tapCooldown > 0) return null;
     tapCooldown = POUR_COOLDOWN;
     barkeep.pour = 0.18;
-    const m = { lane: barkeep.lane, x: MUG_START_X, foam: 1 };
+    const m = { lane: barkeep.lane, x: MUG_START_X };
     mugs.push(m);
     return m;
 }
@@ -333,7 +333,6 @@ function stepEmpties(dt) {
     for (let i = empties.length - 1; i >= 0; i--) {
         const e = empties[i];
         e.x += EMPTY_SPEED * dt;
-        e.spin += dt * 8;
         if (e.x >= CATCH_X && barkeep.lane === e.lane) {
             empties.splice(i, 1);
             score += EMPTY_POINTS;
