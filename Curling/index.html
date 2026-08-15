@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curling</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="game">
+        <header class="hud">
+            <h1>CURLING</h1>
+            <div class="stats">
+                <div class="stat"><span class="label">You</span><span id="score-you">0</span></div>
+                <div class="stat"><span class="label">Rink</span><span id="score-ai">0</span></div>
+                <div class="stat"><span class="label">End</span><span><span id="end-num">1</span>/<span id="end-total">3</span></span></div>
+                <div class="stat"><span class="label">Stones</span><span><span id="stones-you">4</span>v<span id="stones-ai">4</span></span></div>
+                <div class="stat"><span class="label">Best</span><span id="best">0</span></div>
+            </div>
+        </header>
+
+        <div class="board-wrap">
+            <canvas id="canvas" width="520" height="720"></canvas>
+            <div id="overlay" class="overlay visible">
+                <h2 id="overlay-title">CURLING</h2>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Press Space or click Start to play</p>
+                <button id="btn-start">Start Match</button>
+            </div>
+        </div>
+
+        <div class="readouts">
+            <div class="readout"><span class="label">Aim</span><span id="aim">0.0&deg;</span></div>
+            <div class="readout"><span class="label">Weight</span><span id="power">58%</span></div>
+            <div class="readout"><span class="label">Handle</span><span id="spin">Straight</span></div>
+        </div>
+
+        <div class="help">
+            <p><kbd>&larr;</kbd> <kbd>&rarr;</kbd> or mouse: aim</p>
+            <p><kbd>&uarr;</kbd> <kbd>&darr;</kbd> weight</p>
+            <p><kbd>Q</kbd> <kbd>E</kbd> handle (curl)</p>
+            <p><kbd>Space</kbd> / click: deliver, then hold to sweep</p>
+            <p><kbd>P</kbd> pause &nbsp; <kbd>R</kbd> restart</p>
+            <p>3 ends, 4 stones each &mdash; closest to the button scores</p>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>
