@@ -660,9 +660,11 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
+// Only meaningful from a screen the player is actually looking at: the transient
+// dying / level-clear pauses must not throw away a run.
 el.start.addEventListener('click', () => {
     if (state === 'paused') togglePause();
-    else if (state !== 'running') startGame();
+    else if (state === 'idle' || state === 'over') startGame();
 });
 
 // ---------------------------------------------------------------------------

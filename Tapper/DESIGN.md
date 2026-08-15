@@ -134,7 +134,7 @@ that state and helpers are reachable from Playwright as plain globals:
 
 ## Testing
 
-`tests/tapper.spec.js` holds 70 Playwright specs covering the idle screen, start
+`tests/tapper.spec.js` holds 71 Playwright specs covering the idle screen, start
 paths, barkeep movement and clamping, pouring and the tap cooldown, customer
 advance/serve/leave, the three ways to lose a life, empty-mug catching, tips,
 level progression, pause, best-score persistence and rendering in every state.

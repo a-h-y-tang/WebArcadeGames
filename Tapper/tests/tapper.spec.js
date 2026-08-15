@@ -578,6 +578,17 @@ test.describe('Tapper', () => {
             await expect(page.locator('#overlay')).not.toHaveClass(/visible/);
         });
 
+        test('the start button cannot restart the run mid-transition', async ({ page }) => {
+            await page.evaluate(() => {
+                score = 900;
+                serveEveryoneForTest();
+            });
+            await advance(page, 2);
+            await page.locator('#btn-start').click();
+            expect(await page.evaluate(() => state)).toBe('levelclear');
+            expect(await page.evaluate(() => score)).toBe(900);
+        });
+
         test('score carries into the next level', async ({ page }) => {
             await page.evaluate(() => {
                 score = 2500;
