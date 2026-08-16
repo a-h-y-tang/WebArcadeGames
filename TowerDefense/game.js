@@ -707,10 +707,15 @@ function updateHud() {
     for (const type of BUILD_KEYS) {
         buildButtons[type].classList.toggle('broke', money < TOWER_TYPES[type].cost);
     }
-    if (selectedTower) {
-        btnUpgrade.disabled =
-            selectedTower.level >= MAX_LEVEL || money < upgradeCost(selectedTower);
-    }
+    syncUpgradeButton();
+}
+
+// Upgrading is off the table at max level or when the gold is not there — and
+// gold moves every frame, so this is shared by the HUD and the shop panel.
+function syncUpgradeButton() {
+    const t = selectedTower;
+    if (!t) return;
+    btnUpgrade.disabled = t.level >= MAX_LEVEL || money < upgradeCost(t);
 }
 
 function showOverlay(title, sub, hint) {
@@ -737,7 +742,7 @@ function refreshShop() {
             ' · dmg ' + Math.round(towerDamage(t)) +
             ' · rng ' + Math.round(towerRange(t));
         btnUpgrade.textContent = upgrade;
-        btnUpgrade.disabled = t.level >= MAX_LEVEL;
+        syncUpgradeButton();
         btnSell.textContent = 'Sell (+' + sellValue(t) + 'g)';
         towerPanel.classList.add('visible');
     } else {
