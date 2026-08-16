@@ -66,7 +66,9 @@ largest `dist` — the one closest to leaking. Shots are homing projectiles rath
 than hitscan, so damage lands a beat after the muzzle flash and an over-killed
 creep can waste a shell. On impact a projectile either splashes
 (`explodeAt`, damaging everything inside the blast radius) or damages its single
-target and, for Frost, refreshes that target's `slowT`.
+target and, for Frost, refreshes that target's `slowT`. `damageEnemy` reports
+whether it landed the killing blow, so kills are credited back to the tower that
+fired and shown in its panel.
 
 ### Economy and the loss condition
 
@@ -109,7 +111,7 @@ hard-coding tile coordinates, and they double as real game logic:
 
 ## Testing approach
 
-Written test-first with `@playwright/test`: the 65-test spec in
+Written test-first with `@playwright/test`: the 67-test spec in
 `tests/tower-defense.spec.js` was committed red, then `index.html`, `style.css`
 and `game.js` were written until it went green. Coverage is grouped into page
 scaffolding, map invariants (road is axis aligned, road tiles are not buildable,

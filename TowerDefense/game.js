@@ -460,30 +460,34 @@ function spawnEnemy(type, forWave) {
         color: spec.color,
         slowT: 0,
         alive: true,
-        wobble: enemies.length * 0.7,
     };
     enemies.push(e);
     return e;
 }
 
+// Returns true when this hit was the killing blow, so the firing tower can
+// take credit for it.
 function damageEnemy(e, amount) {
-    if (!e.alive) return;
+    if (!e.alive) return false;
     e.hp -= amount;
-    if (e.hp <= 0) {
-        e.alive = false;
-        money += e.reward;
-        score += e.reward;
-        effects.push({ x: e.x, y: e.y, t: 0, life: 0.6, text: '+' + e.reward, kind: 'gold' });
-    }
+    if (e.hp > 0) return false;
+    e.alive = false;
+    money += e.reward;
+    score += e.reward;
+    effects.push({ x: e.x, y: e.y, t: 0, life: 0.6, text: '+' + e.reward, kind: 'gold' });
+    return true;
 }
 
+// Damages everything inside the blast and reports how many it killed.
 function explodeAt(x, y, damage, radius) {
     const r2 = radius * radius;
+    let killed = 0;
     for (const e of enemies) {
         if (!e.alive) continue;
-        if (dist2(e.x, e.y, x, y) <= r2) damageEnemy(e, damage);
+        if (dist2(e.x, e.y, x, y) <= r2 && damageEnemy(e, damage)) killed++;
     }
     effects.push({ x, y, t: 0, life: 0.3, kind: 'blast', radius });
+    return killed;
 }
 
 function leak(e) {
@@ -535,9 +539,9 @@ function updateEnemies(dt) {
 
 function hitWith(p) {
     if (p.splash) {
-        explodeAt(p.tx, p.ty, p.damage, p.splash);
+        p.source.kills += explodeAt(p.tx, p.ty, p.damage, p.splash);
     } else if (p.target && p.target.alive) {
-        damageEnemy(p.target, p.damage);
+        if (damageEnemy(p.target, p.damage)) p.source.kills += 1;
         if (p.slow) p.target.slowT = Math.max(p.target.slowT, p.slowTime);
         effects.push({ x: p.tx, y: p.ty, t: 0, life: 0.2, kind: 'spark', color: p.color });
     }
@@ -707,14 +711,20 @@ function updateHud() {
     for (const type of BUILD_KEYS) {
         buildButtons[type].classList.toggle('broke', money < TOWER_TYPES[type].cost);
     }
-    syncUpgradeButton();
+    syncTowerPanel();
 }
 
-// Upgrading is off the table at max level or when the gold is not there — and
-// gold moves every frame, so this is shared by the HUD and the shop panel.
-function syncUpgradeButton() {
+// The live half of the tower panel: gold and kill counts move every frame, so
+// both the HUD and the shop panel refresh through here.
+function syncTowerPanel() {
     const t = selectedTower;
     if (!t) return;
+    const spec = TOWER_TYPES[t.type];
+    towerInfo.textContent =
+        spec.name + ' Lv' + t.level +
+        ' · dmg ' + Math.round(towerDamage(t)) +
+        ' · rng ' + Math.round(towerRange(t)) +
+        ' · ' + t.kills + (t.kills === 1 ? ' kill' : ' kills');
     btnUpgrade.disabled = t.level >= MAX_LEVEL || money < upgradeCost(t);
 }
 
@@ -735,14 +745,9 @@ function refreshShop() {
     }
     if (selectedTower) {
         const t = selectedTower;
-        const spec = TOWER_TYPES[t.type];
-        const upgrade = t.level < MAX_LEVEL ? 'Upgrade (' + upgradeCost(t) + 'g)' : 'Max level';
-        towerInfo.textContent =
-            spec.name + ' Lv' + t.level +
-            ' · dmg ' + Math.round(towerDamage(t)) +
-            ' · rng ' + Math.round(towerRange(t));
-        btnUpgrade.textContent = upgrade;
-        syncUpgradeButton();
+        btnUpgrade.textContent =
+            t.level < MAX_LEVEL ? 'Upgrade (' + upgradeCost(t) + 'g)' : 'Max level';
+        syncTowerPanel();
         btnSell.textContent = 'Sell (+' + sellValue(t) + 'g)';
         towerPanel.classList.add('visible');
     } else {

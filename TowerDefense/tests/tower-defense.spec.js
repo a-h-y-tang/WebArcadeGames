@@ -498,6 +498,40 @@ test.describe('Tower Defense', () => {
             expect(res.score).toBeGreaterThan(0);
         });
 
+        test('a tower is credited with the kills it lands', async ({ page }) => {
+            const kills = await page.evaluate(`(() => {
+                ${armed()};
+                for (let i = 0; i < 60 * 30; i++) {
+                    step(1 / 60);
+                    if (towers[0].kills > 0) break;
+                }
+                return towers[0].kills;
+            })()`);
+            expect(kills).toBeGreaterThan(0);
+        });
+
+        test('a splash kill credits the cannon that fired it', async ({ page }) => {
+            const kills = await page.evaluate(() => {
+                startGame();
+                money = 9999;
+                const s = buildableNearPathStart();
+                placeTower('cannon', s.c, s.r);
+                const t = towers[0];
+                const a = spawnEnemy('grunt', 1);
+                const b = spawnEnemy('grunt', 1);
+                a.x = t.x;
+                a.y = t.y;
+                b.x = t.x + 8;
+                b.y = t.y;
+                a.hp = 1;
+                b.hp = 1;
+                fire(t, a);
+                for (let i = 0; i < 60; i++) step(1 / 60);
+                return t.kills;
+            });
+            expect(kills).toBe(2);
+        });
+
         test('a frost tower slows what it hits', async ({ page }) => {
             const slowed = await page.evaluate(`(() => {
                 ${armed('frost')};
