@@ -720,6 +720,15 @@
     "thumbnail": ""
   },
   {
+    "id": "root-beer-rush",
+    "name": "Root Beer Rush",
+    "description": "Serve four bars at once - slide mugs to thirsty patrons and catch the empties",
+    "category": "Action",
+    "dir": "RootBeerRush",
+    "path": "games/RootBeerRush/index.html",
+    "thumbnail": "games/RootBeerRush/screenshot.png"
+  },
+  {
     "id": "rush-hour",
     "name": "Rush Hour",
     "description": "Sliding block puzzle - get the red car out",
