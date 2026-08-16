@@ -50,7 +50,6 @@ const GRAB_X = BAR_RIGHT - 24;  // reach here and the barkeep is done for
 const PUSH_DIST = 170;          // how far one mug shoves a patron back
 const DRINK_TIME = 0.7;
 const PATRON_GAP = 26;          // patrons queue rather than overlap
-const PATRON_HW = 11;
 
 // --- Run structure -------------------------------------------------------
 const START_LIVES = 3;
@@ -183,7 +182,7 @@ function spawnEmpty(lane, x) {
 function pour() {
     if (state !== 'running') return false;
     if (barkeep.pourCd > 0) return false;
-    mugs.push({ lane: barkeep.lane, x: MUG_START, foam: 1 });
+    mugs.push({ lane: barkeep.lane, x: MUG_START });
     barkeep.pourCd = POUR_CD;
     return true;
 }

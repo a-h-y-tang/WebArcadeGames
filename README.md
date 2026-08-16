@@ -113,7 +113,7 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Marble Spiral | [MarbleSpiral/](MarbleSpiral/) | Complete |
 | Barrel Climb | [BarrelClimb/](BarrelClimb/) | Complete |
 | BurgerTime | [BurgerTime/](BurgerTime/) | Complete |
-| Root Beer Rush | [RootBeerRush/](RootBeerRush/) | In Progress |
+| Root Beer Rush | [RootBeerRush/](RootBeerRush/) | Complete |
 
 ## Playing
 
