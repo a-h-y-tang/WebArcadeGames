@@ -140,6 +140,10 @@ canvas {
 
 .help p { margin: 0; }
 
+/* Matches the grip rings drawn around each hand on the canvas. */
+.tint-left { color: #56d1ff; }
+.tint-right { color: #ffc14d; }
+
 kbd {
     display: inline-block;
     margin-right: 2px;

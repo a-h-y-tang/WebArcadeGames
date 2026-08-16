@@ -561,14 +561,16 @@ function handPoint(hand) {
 }
 
 // Ring the two windows the climber is holding, so the grips are obvious at a
-// glance even when the wall is busy.
+// glance even when the wall is busy. The colours match the two control groups
+// listed under the canvas: cyan is the WASD hand, amber is the arrow-key hand.
+const LEFT_TINT = '#56d1ff';
+const RIGHT_TINT = '#ffc14d';
+
 function drawGrips() {
-    ctx.strokeStyle = 'rgba(86, 209, 255, 0.75)';
     ctx.lineWidth = 2;
-    [leftHand, rightHand].forEach((hand) => {
-        const x = cellX(hand.col) + 6;
-        const y = cellY(hand.row) + 6;
-        ctx.strokeRect(x, y, CELL_W - 12, CELL_H - 12);
+    [[leftHand, LEFT_TINT], [rightHand, RIGHT_TINT]].forEach(([hand, tint]) => {
+        ctx.strokeStyle = tint;
+        ctx.strokeRect(cellX(hand.col) + 6, cellY(hand.row) + 6, CELL_W - 12, CELL_H - 12);
     });
 }
 
@@ -612,12 +614,15 @@ function drawClimber() {
     ctx.arc(cx, cy - 18, 8, 0, Math.PI * 2);
     ctx.fill();
 
-    // Hands
-    ctx.fillStyle = skin;
-    [l, r].forEach((p) => {
+    // Hands, tinted to match their control group.
+    [[l, LEFT_TINT], [r, RIGHT_TINT]].forEach(([p, tint]) => {
+        ctx.fillStyle = skin;
         ctx.beginPath();
         ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
         ctx.fill();
+        ctx.strokeStyle = tint;
+        ctx.lineWidth = 2;
+        ctx.stroke();
     });
 }
 
