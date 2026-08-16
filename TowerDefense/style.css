@@ -253,3 +253,12 @@ kbd {
     font-family: inherit;
     font-size: 11px;
 }
+
+.build.broke {
+    opacity: 0.45;
+}
+
+.tower-panel button:disabled {
+    opacity: 0.4;
+    cursor: default;
+}

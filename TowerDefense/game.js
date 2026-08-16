@@ -618,7 +618,6 @@ function checkWaveComplete() {
     score += bonus;
     effects.push({ x: CANVAS_W / 2, y: 60, t: 0, life: 1.2, text: 'WAVE CLEAR +' + bonus, kind: 'gold' });
     if (wave >= WAVES.length) winGame();
-    else showBetweenWaves();
 }
 
 // ---------------------------------------------------------------------------
@@ -703,6 +702,15 @@ function updateHud() {
     waveEl.textContent = wave + '/' + WAVES.length;
     scoreEl.textContent = String(score);
     bestEl.textContent = String(bestWave);
+    for (const type of BUILD_KEYS) {
+        document
+            .getElementById('build-' + type)
+            .classList.toggle('broke', money < TOWER_TYPES[type].cost);
+    }
+    if (selectedTower) {
+        btnUpgrade.disabled =
+            selectedTower.level >= MAX_LEVEL || money < upgradeCost(selectedTower);
+    }
 }
 
 function showOverlay(title, sub, hint) {
@@ -714,11 +722,6 @@ function showOverlay(title, sub, hint) {
 
 function hideOverlay() {
     overlay.classList.remove('visible');
-}
-
-function showBetweenWaves() {
-    // Between waves the board stays live (projectiles finish, towers can be
-    // built and sold); the prompt lives on the canvas rather than the overlay.
 }
 
 function refreshShop() {
@@ -785,6 +788,14 @@ function drawBuildHint() {
     if (!hover) return;
     const { c, r } = hover;
     if (!inGrid(c, r)) return;
+    const hovered = towerAt(c, r);
+    if (hovered && hovered !== selectedTower) {
+        ctx.strokeStyle = 'rgba(230, 237, 247, 0.28)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.arc(hovered.x, hovered.y, towerRange(hovered), 0, Math.PI * 2);
+        ctx.stroke();
+    }
     if (selectedType) {
         const ok = isBuildable(c, r) && money >= TOWER_TYPES[selectedType].cost;
         ctx.fillStyle = ok ? 'rgba(143, 214, 168, 0.22)' : 'rgba(226, 104, 95, 0.22)';
@@ -905,6 +916,14 @@ function drawBanner() {
         ctx.fillStyle = '#e6edf7';
         ctx.font = 'bold 30px "Segoe UI", system-ui, sans-serif';
         ctx.fillText('PAUSED', CANVAS_W / 2, CANVAS_H / 2);
+    } else if (state === 'running' && waveActive) {
+        ctx.fillStyle = 'rgba(230, 237, 247, 0.5)';
+        ctx.font = '13px "Segoe UI", system-ui, sans-serif';
+        ctx.fillText(
+            'Wave ' + wave + ' · ' + (enemies.length + spawnQueue.length) + ' left',
+            CANVAS_W / 2,
+            CANVAS_H - 16,
+        );
     } else if (state === 'running' && !waveActive) {
         ctx.fillStyle = 'rgba(143, 214, 168, 0.9)';
         ctx.fillText(

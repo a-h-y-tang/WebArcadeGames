@@ -109,14 +109,16 @@ hard-coding tile coordinates, and they double as real game logic:
 
 ## Testing approach
 
-Written test-first with `@playwright/test`: the 64-test spec in
+Written test-first with `@playwright/test`: the 65-test spec in
 `tests/tower-defense.spec.js` was committed red, then `index.html`, `style.css`
 and `game.js` were written until it went green. Coverage is grouped into page
 scaffolding, map invariants (road is axis aligned, road tiles are not buildable,
 out-of-grid tiles are not buildable), starting, building rules, upgrade/sell
 economics, creep movement (including "a creep never leaves a road tile for the
 whole run"), combat (range, targeting priority, splash, slow), wave flow, win and
-loss, pause/restart/persistence, and rendering.
+loss, pause/restart/persistence, and rendering. One test deliberately rides the
+real `requestAnimationFrame` loop rather than `step()`, so a broken `frame()`
+cannot hide behind the deterministic tests.
 
 Balance was checked with a throwaway autoplay probe that ranks open tiles by how
 much road they cover, buys greedily and launches every wave immediately. Tuning

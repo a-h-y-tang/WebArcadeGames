@@ -154,6 +154,15 @@ test.describe('Tower Defense', () => {
             expect(await page.evaluate(() => enemies.length)).toBeGreaterThan(0);
         });
 
+        // Everything else drives step() directly; this one check rides the real
+        // requestAnimationFrame loop so a broken frame() would be caught.
+        test('the animation loop advances the game in real time', async ({ page }) => {
+            await page.locator('#btn-start').click();
+            await page.waitForTimeout(1500);
+            const moved = await page.evaluate(() => enemies.length > 0 && enemies[0].dist > 0);
+            expect(moved).toBe(true);
+        });
+
         test('the wave counter updates in the HUD', async ({ page }) => {
             await page.evaluate(() => startGame());
             await expect(page.locator('#wave')).toContainText('1');
