@@ -198,6 +198,8 @@ const towerPanel = document.getElementById('tower-panel');
 const towerInfo = document.getElementById('tower-info');
 const btnUpgrade = document.getElementById('btn-upgrade');
 const btnSell = document.getElementById('btn-sell');
+// Build buttons keyed by tower type — looked up once, touched every frame.
+const buildButtons = {};
 
 // --- State ---
 // state: 'idle' | 'running' | 'paused' | 'over' | 'won'
@@ -703,9 +705,7 @@ function updateHud() {
     scoreEl.textContent = String(score);
     bestEl.textContent = String(bestWave);
     for (const type of BUILD_KEYS) {
-        document
-            .getElementById('build-' + type)
-            .classList.toggle('broke', money < TOWER_TYPES[type].cost);
+        buildButtons[type].classList.toggle('broke', money < TOWER_TYPES[type].cost);
     }
     if (selectedTower) {
         btnUpgrade.disabled =
@@ -726,8 +726,7 @@ function hideOverlay() {
 
 function refreshShop() {
     for (const type of BUILD_KEYS) {
-        const btn = document.getElementById('build-' + type);
-        btn.classList.toggle('selected', selectedType === type);
+        buildButtons[type].classList.toggle('selected', selectedType === type);
     }
     if (selectedTower) {
         const t = selectedTower;
@@ -1036,7 +1035,8 @@ window.addEventListener('keydown', (e) => {
 });
 
 for (const type of BUILD_KEYS) {
-    document.getElementById('build-' + type).addEventListener('click', () => {
+    buildButtons[type] = document.getElementById('build-' + type);
+    buildButtons[type].addEventListener('click', () => {
         selectTowerType(selectedType === type ? null : type);
     });
 }
