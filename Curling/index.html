@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curling</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="game">
+        <header class="hud">
+            <h1>CURLING</h1>
+            <div class="stats">
+                <div class="stat"><span class="label">You</span><span id="score-p1">0</span></div>
+                <div class="stat"><span class="label">Rival</span><span id="score-p2">0</span></div>
+                <div class="stat"><span class="label">End</span><span id="end">1</span></div>
+                <div class="stat"><span class="label">Your Stones</span><span id="stones-p1">4</span></div>
+                <div class="stat"><span class="label">Rival Stones</span><span id="stones-p2">4</span></div>
+                <div class="stat"><span class="label">Hammer</span><span id="hammer">Rival</span></div>
+            </div>
+        </header>
+
+        <div class="board-wrap">
+            <canvas id="canvas" width="900" height="360"></canvas>
+            <div id="overlay" class="overlay visible">
+                <h2 id="overlay-title">CURLING</h2>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Press Space or click Start to play</p>
+                <button id="btn-start">Start Match</button>
+            </div>
+        </div>
+
+        <p class="linescore"><span class="label">Line score</span> <span id="linescore">—</span></p>
+
+        <div class="help">
+            <p><kbd>Mouse</kbd> / <kbd>↑</kbd> <kbd>↓</kbd> move the broom</p>
+            <p><kbd>←</kbd> <kbd>→</kbd> handle (curl)</p>
+            <p><kbd>Space</kbd> arm meter, then throw</p>
+            <p><kbd>Space</kbd> held sweeps the stone</p>
+            <p><kbd>P</kbd> pause</p>
+            <p>Four ends — most points wins</p>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>
