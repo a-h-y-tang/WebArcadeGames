@@ -34,7 +34,7 @@ const POUR_CD = 0.22;           // seconds between mugs
 
 // --- Mugs ----------------------------------------------------------------
 const MUG_START = BAR_RIGHT - 12;
-const MUG_SPEED = 240;          // px/s sliding away from the barkeep
+const MUG_SPEED = 300;          // px/s sliding away from the barkeep
 const EMPTY_SPEED = 190;        // px/s sliding back toward the barkeep
 const MUG_W = 16;
 const MUG_H = 20;
@@ -47,8 +47,8 @@ const MISS_X = BAR_RIGHT + 24;  // ...past here it hits the floor
 const PATRON_SPAWN_X = BAR_LEFT + 6;
 const EXIT_X = BAR_LEFT - 10;   // pushed past here and the patron leaves happy
 const GRAB_X = BAR_RIGHT - 24;  // reach here and the barkeep is done for
-const PUSH_DIST = 90;           // how far one mug shoves a patron back
-const DRINK_TIME = 1.0;
+const PUSH_DIST = 170;          // how far one mug shoves a patron back
+const DRINK_TIME = 0.7;
 const PATRON_GAP = 26;          // patrons queue rather than overlap
 const PATRON_HW = 11;
 
@@ -99,15 +99,15 @@ let spawnTimer, spawnEnabled, deathTimer, clearTimer, resumeState;
 // ---------------------------------------------------------------------------
 
 function levelTarget(l) {
-    return Math.min(16, 6 + (l - 1) * 2);
+    return Math.min(20, 6 + (l - 1) * 2);
 }
 
 function patronSpeed(l) {
-    return Math.min(62, 30 + (l - 1) * 6);
+    return Math.min(70, 30 + (l - 1) * 5);
 }
 
 function spawnInterval(l) {
-    return Math.max(1.1, 2.8 - (l - 1) * 0.22);
+    return Math.max(0.75, 2.8 - (l - 1) * 0.22);
 }
 
 // ---------------------------------------------------------------------------
@@ -299,16 +299,43 @@ function nearestPatron(mug) {
 
 function servePatron(patron) {
     addScore(DRINK_POINTS);
+
+    const from = patron.x;
     patron.x -= PUSH_DIST;
-    if (patron.x <= EXIT_X) {
-        patrons.splice(patrons.indexOf(patron), 1);
-        served += 1;
-        addScore(SERVE_POINTS);
-        updateHud();
-        return;
-    }
     patron.mode = 'drinking';
     patron.drinkT = DRINK_TIME;
+
+    sweep(patron, from);
+    clearDoorway(patron.lane);
+}
+
+// The shoved patron slides back along the bar and takes anyone standing in the
+// way with them, stacked up behind. Timing a mug for a bunched-up lane is worth
+// far more than serving one patron at a time — and it keeps a busy lane from
+// jamming, since the mug always reaches whoever is nearest the barkeep.
+function sweep(patron, from) {
+    const swept = patrons
+        .filter((p) => p !== patron && p.lane === patron.lane && p.x > patron.x && p.x <= from)
+        .sort((a, b) => b.x - a.x);
+
+    let pos = patron.x;
+    for (const p of swept) {
+        pos -= PATRON_GAP;
+        p.x = pos;
+    }
+}
+
+// Anyone shoved past the door leaves — whether they got a drink or were simply
+// carried out by the crowd.
+function clearDoorway(lane) {
+    for (let i = patrons.length - 1; i >= 0; i--) {
+        const p = patrons[i];
+        if (p.lane !== lane || p.x > EXIT_X) continue;
+        patrons.splice(i, 1);
+        served += 1;
+        addScore(SERVE_POINTS);
+    }
+    updateHud();
 }
 
 function stepPatrons(dt) {

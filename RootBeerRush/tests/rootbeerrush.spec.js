@@ -353,6 +353,55 @@ test.describe('Root Beer Rush', () => {
             await expect(page.locator('#served')).toHaveText('1');
         });
 
+        test('a shoved patron sweeps the queue behind them back too', async ({ page }) => {
+            await page.evaluate(() => {
+                spawnPatron(0);
+                spawnPatron(0);
+                patrons[0].x = 320;
+                patrons[1].x = 220;
+                pour();
+            });
+            await advance(page, 60);
+            const xs = await page.evaluate(() => patrons.map((p) => p.x).sort((a, b) => b - a));
+            expect(xs[0]).toBeLessThan(320);
+            expect(xs[1]).toBeLessThan(220);
+        });
+
+        test('one mug can clear a bunched-up lane', async ({ page }) => {
+            await page.evaluate(() => {
+                spawnPatron(1);
+                spawnPatron(1);
+                patrons[0].x = 150;
+                patrons[1].x = 110;
+                barkeep.lane = 1;
+                pour();
+            });
+            await page.waitForFunction(() => {
+                for (let i = 0; i < 20; i++) step(1 / 60);
+                return served >= 2 || state !== 'running';
+            });
+            expect(await page.evaluate(() => served)).toBe(2);
+            expect(await page.evaluate(() => patrons.length)).toBe(0);
+        });
+
+        test('walking patrons queue instead of overlapping', async ({ page }) => {
+            // The leader nurses their drink, so the one behind walks up and has
+            // to stop rather than walking through them.
+            await page.evaluate(() => {
+                spawnPatron(0);
+                spawnPatron(0);
+                patrons[0].x = 300;
+                patrons[0].mode = 'drinking';
+                patrons[0].drinkT = 999;
+                patrons[1].x = 200;
+            });
+            await advance(page, 60 * 5);
+            const follower = await page.evaluate(() => patrons[1].x);
+            const gap = await page.evaluate(() => patrons[0].x - patrons[1].x);
+            expect(follower).toBeGreaterThan(200);
+            expect(gap).toBeGreaterThanOrEqual(await page.evaluate(() => PATRON_GAP) - 0.5);
+        });
+
         test('mugs only reach patrons in their own lane', async ({ page }) => {
             await page.evaluate(() => {
                 spawnPatron(2);
@@ -360,7 +409,7 @@ test.describe('Root Beer Rush', () => {
                 barkeep.lane = 0;
                 pour();
             });
-            await advance(page, 90);
+            await advance(page, 60);
             expect(await page.evaluate(() => patrons.length)).toBe(1);
             expect(await page.evaluate(() => patrons[0].mode)).toBe('walking');
         });

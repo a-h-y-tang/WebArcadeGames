@@ -27,8 +27,10 @@ right lane, at the right moment.
   `POUR_CD` (0.22 s) cooldown keeps a single keypress from stacking mugs.
 - A full mug slides toward the far end at `MUG_SPEED`.
 - If it reaches a **walking** patron (within `HIT_DIST`), the patron takes it:
-  `DRINK_POINTS` are scored and the patron is shoved `PUSH_DIST` back down the
-  bar.
+  `DRINK_POINTS` are scored and the patron is shoved `PUSH_DIST` (170 px) back
+  down the bar. Anyone standing between where they were and where they land is
+  swept along and stacked up behind them, so a mug timed for a bunched-up lane
+  clears several patrons at once.
 - If it reaches `BAR_LEFT` untouched it drops off the end and costs a life. Pour
   only when someone is actually coming.
 
@@ -40,7 +42,8 @@ right lane, at the right moment.
 - A served patron drinks for `DRINK_TIME`, standing still, then slides the empty
   mug back toward the barkeep and resumes walking.
 - A patron pushed past `EXIT_X` leaves satisfied: `SERVE_POINTS` and the served
-  counter goes up. That is the only way to make progress on the level quota.
+  counter goes up. That is the only way to make progress on the level quota — it
+  counts whether they got the drink themselves or were carried out by the crowd.
 - A patron who reaches `GRAB_X` — the barkeep's end of the bar — costs a life.
 
 ### Empty mugs
@@ -56,12 +59,27 @@ right lane, at the right moment.
 - You start with `START_LIVES` (3) lives. Losing one clears the bars, pauses for
   `DEATH_PAUSE`, and restarts the round with the level's progress intact.
 - A level asks for `levelTarget(level)` patrons (6, rising by 2 per level, capped
-  at 16). It is cleared once the quota has spawned and the bars are empty of
+  at 20). It is cleared once the quota has spawned and the bars are empty of
   patrons, mugs and empties — a `LEVEL_BONUS × level` bonus is awarded and the
   next level begins after `CLEAR_PAUSE`.
-- Later levels raise patron speed (`patronSpeed`) and shorten the gap between
-  arrivals (`spawnInterval`). All three difficulty curves are plain functions of
-  the level number so the ramp can be asserted directly in the tests.
+- Later levels raise patron speed (`patronSpeed`, 30 px/s rising by 5 to a cap of
+  70) and shorten the gap between arrivals (`spawnInterval`, 2.8 s down to a
+  floor of 0.75 s). All three difficulty curves are plain functions of the level
+  number so the ramp can be asserted directly in the tests.
+
+### Balance
+
+The numbers that matter are the ones governing how much ground a patron regains
+between mugs. A patron can only be shoved once per cycle — they must finish
+`DRINK_TIME` (0.7 s) and start walking again before another mug can reach them —
+so the cycle costs roughly the drink plus the mug's flight time, and the patron
+walks for part of it. At the difficulty cap that is about 0.7 s of drinking plus
+0.8 s of flight against 70 px/s, so a `PUSH_DIST` of 170 nets about 65 px of
+retreat per mug. Earlier drafts used a 90 px push against a 90 px/s cap, which
+netted almost nothing: an automated player could keep four lanes alive forever
+without ever finishing the level. The tuning was checked by scripting a bot that
+plays the game headlessly and reporting how long each level took; it now clears a
+level roughly every 20-25 s and keeps climbing rather than stalling.
 
 ### Scoring
 
@@ -129,7 +147,8 @@ simpler reading won each time.
   mug poured into a lane where everyone is mid-drink runs off the end and costs a
   life. This keeps "don't pour blindly" as a real decision.
 - **Patrons pushed off the end do not send an empty back.** They leave with the
-  mug; only patrons who stop to drink mid-bar return one.
+  mug; only patrons who stop to drink mid-bar return one. Patrons swept out by
+  the crowd count as served even though they never got a drink.
 - **Instant lane changes.** The barkeep teleports between adjacent lanes instead
   of animating along a rail — lane position is the only thing the rules depend
   on.
@@ -146,9 +165,10 @@ simpler reading won each time.
 
 ## Testing
 
-`tests/rootbeerrush.spec.js` holds 60 Playwright specs covering the initial and
+`tests/rootbeerrush.spec.js` holds 63 Playwright specs covering the initial and
 idle state, starting a run, barkeep movement and clamping, pouring and the pour
-cooldown, patron walking and queueing, serving and pushing patrons off the end,
+cooldown, patron walking, queueing and sweeping, serving and pushing patrons off
+the end,
 empties being caught or smashed, every way to lose a life, game over and
 restart, the level quota and difficulty ramp, pausing, scoring and `localStorage`
 persistence, and that rendering a busy bar paints pixels without throwing.
