@@ -36,14 +36,17 @@ const STONE_R = 14;
 const FRICTION = 62;                // px/s² of deceleration on plain ice
 const STOP_SPEED = 4;               // below this a stone is put to rest
 const RESTITUTION = 1;              // granite on granite: near enough elastic
-const MIN_SPEED = 190;              // launch speed at power 0…
-const MAX_SPEED = 420;              // …and at power 1
+// The power range is chosen so the whole meter is useful: power 0 just clears
+// the hog line, a draw to the button sits around 0.6, and power 1 is a hitter
+// that runs through the house and out the back.
+const MIN_SPEED = 155;              // launch speed at power 0…
+const MAX_SPEED = 370;              // …and at power 1
 
 // --- Curl & sweeping ---
 const CURL_ACCEL = 26;              // px/s² sideways at full bite
 const CURL_REF = 320;               // a stone at this speed barely curls
 const CURL_MIN_FACTOR = 0.05;
-const CURL_COMP = 48;               // roughly how far a drawn stone curls
+const CURL_COMP = 54;               // how far a drawn stone curls, measured
 const SWEEP_FRICTION = 0.72;        // sweeping scales friction…
 const SWEEP_CURL = 0.35;            // …and curl
 const SWEEP_BUDGET = 3;             // seconds of sweeping per delivery
@@ -51,7 +54,7 @@ const SWEEP_BUDGET = 3;             // seconds of sweeping per delivery
 // --- Match ---
 const ENDS = 4;
 const STONES_PER_END = 4;
-const METER_SPEED = 0.75;           // power meter sweeps per second
+const METER_SPEED = 0.55;           // power meter sweeps per second
 const RIVAL_DELAY = 0.8;            // seconds before the rival throws
 const BANNER_TIME = 2.5;
 
@@ -279,8 +282,6 @@ function removeOutOfPlay() {
 const atRest = () => stones.every((s) => s.vx === 0 && s.vy === 0);
 
 function substep(h) {
-    if (bannerTimer > 0) bannerTimer = Math.max(0, bannerTimer - h);
-
     if (phase === 'power') {
         power += meterDir * METER_SPEED * h;
         if (power >= 1) { power = 1; meterDir = -1; }
@@ -486,10 +487,12 @@ function planRivalShot() {
     const shot = counting[0];
     const spin = rng() < 0.5 ? -1 : 1;
 
+    // The rival is a decent club player, not a machine: every shot carries
+    // enough jitter in weight and line to miss a take-out or come up light.
     if (shot && shot.team === 'p1' && rng() < 0.8) {
         return {
-            power: clamp(powerFor(shot.x + 190) + jitter(0.04), 0, 1),
-            aimY: aimAt(shot.x, shot.y + jitter(7)),
+            power: clamp(powerFor(shot.x + 190) + jitter(0.06), 0, 1),
+            aimY: aimAt(shot.x, shot.y + jitter(13)),
             spin: 0,
         };
     }
@@ -497,15 +500,15 @@ function planRivalShot() {
     if (!counting.length && stonesLeft.p2 > 2 && rng() < 0.35) {
         // A guard short of the house, on or near the centre line.
         return {
-            power: clamp(powerFor(HOG_X + 240) + jitter(0.03), 0, 1),
-            aimY: clamp(TEE_Y - spin * CURL_COMP * 0.6 + jitter(14), SIDE_TOP + 30, SIDE_BOTTOM - 30),
+            power: clamp(powerFor(HOG_X + 240) + jitter(0.05), 0, 1),
+            aimY: clamp(TEE_Y - spin * CURL_COMP * 0.6 + jitter(20), SIDE_TOP + 30, SIDE_BOTTOM - 30),
             spin,
         };
     }
 
     return {
-        power: clamp(powerFor(TEE_X + jitter(14)) + jitter(0.022), 0, 1),
-        aimY: clamp(TEE_Y - spin * CURL_COMP + jitter(12), SIDE_TOP + 30, SIDE_BOTTOM - 30),
+        power: clamp(powerFor(TEE_X) + jitter(0.045), 0, 1),
+        aimY: clamp(TEE_Y - spin * CURL_COMP + jitter(20), SIDE_TOP + 30, SIDE_BOTTOM - 30),
         spin,
     };
 }
@@ -808,9 +811,22 @@ function draw() {
 
     if (state === 'running' && phase === 'slide' && sweeping && deliveredStone) drawSweepers(deliveredStone);
 
-    // Meters.
+    // Meters. The power meter carries a guide: the shaded band is the weight
+    // that finishes somewhere in the house, and the tick is a draw to the
+    // button — everything past it runs through.
     if (state === 'running' && phase === 'power') {
-        drawBar(150, SIDE_BOTTOM - 34, 250, 12, power, '#facc15', 'POWER — press Space to throw');
+        const x = 150;
+        const y = SIDE_BOTTOM - 34;
+        const w = 250;
+        drawBar(x, y, w, 12, power, '#facc15', 'POWER — press Space to throw');
+        const from = powerFor(TEE_X - HOUSE_R);
+        const to = powerFor(BACK_X - STONE_R);
+        ctx.fillStyle = 'rgba(88, 196, 255, 0.35)';
+        ctx.fillRect(x + w * from, y, w * (to - from), 12);
+        ctx.fillStyle = '#f4f9ff';
+        ctx.fillRect(x + w * powerFor(TEE_X) - 1, y - 4, 2, 20);
+        ctx.fillStyle = 'rgba(88, 196, 255, 0.9)';
+        ctx.fillRect(x + w * clamp(power, 0, 1) - 1, y, 2, 12);
     }
     if (state === 'running' && phase === 'slide') {
         drawBar(150, SIDE_BOTTOM - 34, 200, 10, sweepLeft / SWEEP_BUDGET, '#58c4ff', 'SWEEP — hold Space');
@@ -858,6 +874,9 @@ function frame(t) {
     lastTime = t;
     if (dt > 0.05) dt = 0.05; // clamp after tab switches / long frames
     animTime += dt;
+    // The end-result banner fades on real time, so it also clears once the
+    // match is over and the simulation has stopped.
+    if (bannerTimer > 0) bannerTimer = Math.max(0, bannerTimer - dt);
     if (state === 'running') step(dt);
     updateChips(dt);
     draw();

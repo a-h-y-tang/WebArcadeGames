@@ -108,7 +108,11 @@ hammer, so the player throws the first stone of the match.
 | <kbd>P</kbd> | pause / resume |
 
 The power meter is an oscillating bar drawn under the sheet: press once to set
-it swinging, press again to deliver at whatever it reads.
+it swinging, press again to deliver at whatever it reads. It carries a guide —
+a shaded band covering the weights that finish somewhere in the house, and a
+tick at a draw to the button — so the meter reads as a range of shots rather
+than a bare number. The range is tuned (`MIN_SPEED`, `MAX_SPEED`) so that a
+draw sits around 0.6 and the whole bar is useful.
 
 ## Code layout
 

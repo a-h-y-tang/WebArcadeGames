@@ -822,7 +822,7 @@ test.describe('Curling', () => {
             const r = await page.evaluate(() => {
                 startGame();
                 for (let i = 0; i < 60 * 400 && state === 'running'; i++) {
-                    if (phase === 'aim') throwStone(0.42 + (stonesLeft.p1 % 3) * 0.05, TEE_Y + (stonesLeft.p1 - 2) * 12, stonesLeft.p1 % 2 ? 1 : -1);
+                    if (phase === 'aim') throwStone(0.55 + (stonesLeft.p1 % 3) * 0.03, TEE_Y + (stonesLeft.p1 - 2) * 12, stonesLeft.p1 % 2 ? 1 : -1);
                     step(1 / 60);
                 }
                 return { state, end: endNumber, p1: scoreboard.p1, p2: scoreboard.p2, results: endResults.length };
