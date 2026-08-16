@@ -1,0 +1,264 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 18px 12px 32px;
+    background: radial-gradient(circle at 50% 0%, #1b2436 0%, #0b0f18 65%);
+    color: #e6edf7;
+    font-family: "Segoe UI", system-ui, sans-serif;
+    display: flex;
+    justify-content: center;
+}
+
+.game {
+    width: 720px;
+}
+
+.hud h1 {
+    margin: 0 0 10px;
+    font-size: 26px;
+    letter-spacing: 5px;
+    text-align: center;
+    color: #8fd6a8;
+    text-shadow: 0 0 18px rgba(143, 214, 168, 0.35);
+}
+
+.stats {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.stat {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 6px 4px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.stat .label {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: rgba(230, 237, 247, 0.55);
+}
+
+.stat span:last-child {
+    font-size: 19px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.board-wrap {
+    position: relative;
+    width: 720px;
+    height: 480px;
+}
+
+canvas {
+    display: block;
+    width: 720px;
+    height: 480px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: #101a14;
+    cursor: crosshair;
+}
+
+.overlay {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: rgba(8, 12, 18, 0.82);
+    border-radius: 10px;
+    text-align: center;
+}
+
+.overlay.visible {
+    display: flex;
+}
+
+.overlay h2 {
+    margin: 0;
+    font-size: 34px;
+    letter-spacing: 4px;
+    color: #8fd6a8;
+}
+
+.overlay p {
+    margin: 0;
+    color: rgba(230, 237, 247, 0.75);
+}
+
+.overlay button,
+.shop button {
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.overlay button {
+    margin-top: 8px;
+    padding: 10px 24px;
+    font-size: 15px;
+    letter-spacing: 2px;
+    border: 0;
+    border-radius: 999px;
+    background: #4fa96f;
+    color: #08120c;
+    font-weight: 700;
+}
+
+.overlay button:hover {
+    background: #63c988;
+}
+
+.shop {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    align-items: stretch;
+}
+
+.build {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 18px 1fr;
+    grid-template-areas:
+        "swatch name"
+        "swatch cost"
+        "blurb blurb";
+    gap: 2px 8px;
+    padding: 8px 10px;
+    text-align: left;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: #e6edf7;
+}
+
+.build:hover {
+    background: rgba(255, 255, 255, 0.09);
+}
+
+.build.selected {
+    border-color: #8fd6a8;
+    box-shadow: 0 0 0 1px rgba(143, 214, 168, 0.6);
+    background: rgba(143, 214, 168, 0.14);
+}
+
+.build .swatch {
+    grid-area: swatch;
+    align-self: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+}
+
+.swatch.arrow {
+    background: #6fd0f2;
+}
+
+.swatch.cannon {
+    background: #f2a05a;
+}
+
+.swatch.frost {
+    background: #9db8ff;
+}
+
+.build .name {
+    grid-area: name;
+    font-weight: 700;
+    font-size: 13px;
+}
+
+.build .cost {
+    grid-area: cost;
+    font-size: 12px;
+    color: #ffd479;
+}
+
+.build .blurb {
+    grid-area: blurb;
+    font-size: 11px;
+    color: rgba(230, 237, 247, 0.55);
+}
+
+.tower-panel {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 150px;
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid rgba(143, 214, 168, 0.5);
+    background: rgba(143, 214, 168, 0.1);
+}
+
+.tower-panel.visible {
+    display: flex;
+}
+
+.tower-panel .info {
+    font-size: 11px;
+    color: rgba(230, 237, 247, 0.8);
+    line-height: 1.35;
+}
+
+.tower-panel button {
+    padding: 4px 8px;
+    font-size: 12px;
+    border: 0;
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.14);
+    color: #e6edf7;
+}
+
+.tower-panel button:hover {
+    background: rgba(255, 255, 255, 0.24);
+}
+
+.help {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+    justify-content: center;
+    margin-top: 12px;
+    font-size: 12px;
+    color: rgba(230, 237, 247, 0.55);
+}
+
+.help p {
+    margin: 0;
+}
+
+kbd {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-family: inherit;
+    font-size: 11px;
+}
+
+.build.broke {
+    opacity: 0.45;
+}
+
+.tower-panel button:disabled {
+    opacity: 0.4;
+    cursor: default;
+}
