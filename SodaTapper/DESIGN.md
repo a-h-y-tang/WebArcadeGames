@@ -118,6 +118,10 @@ Three globals exist for the specs and are inert in normal play:
 - `serveWaveForTest()` — empties the counters and marks the wave fully spawned,
   the shortest path to the wave-clear transition.
 
+`pourNow()` (the tap pull without the cooldown, which `pour()` wraps),
+`spawnCustomer(lane, x)` and `spawnMug(lane, x, full)` are ordinary parts of the
+game that the specs also use to set up an exact board.
+
 ## Assumptions
 
 Recorded per the standing instruction to pick the simpler reading, note it and

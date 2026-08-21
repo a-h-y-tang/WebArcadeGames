@@ -32,7 +32,8 @@ const laneY = (lane) => LANE_TOP + lane * LANE_SPACING;
 const MUG_HW = 9;             // mug half-width
 const MUG_H = 24;
 const CUST_HW = 14;           // customer half-width
-const CUST_H = 46;
+const CUST_TOP = -58;         // top of the head, relative to the counter surface
+const CUST_FOOT = 14;         // feet, below the surface: the counter hides the legs
 
 // --- Speeds and timings (per second) -------------------------------------
 const MUG_SPEED = 300;        // full mug, travelling away from the taps
@@ -130,7 +131,8 @@ function spawnCustomer(lane, x = BAR_LEFT) {
         x,
         state: 'advancing',
         drink: 0,
-        hold: 0,
+        hold: 0,      // mugs caught but not yet thrown back
+        gone: false,  // shoved off the far end, waiting to be swept up
         kind: customers.length % 4,
         bob: Math.random() * Math.PI * 2,
     };
@@ -140,7 +142,7 @@ function spawnCustomer(lane, x = BAR_LEFT) {
 }
 
 function spawnMug(lane, x, full) {
-    const m = { lane, x, full, spin: 0 };
+    const m = { lane, x, full };
     mugs.push(m);
     return m;
 }
@@ -260,7 +262,7 @@ function updateCustomers(dt) {
                 c.gone = true;
                 throwBackEmpties(c);
                 score += CUSTOMER_POINTS;
-                pop(c.x, laneY(c.lane) - CUST_H, `+${CUSTOMER_POINTS}`);
+                pop(c.x, laneY(c.lane) + CUST_TOP - 10, `+${CUSTOMER_POINTS}`);
             } else if (c.drink <= 0) {
                 throwBackEmpties(c);
                 c.state = 'advancing';
@@ -282,13 +284,13 @@ function updateCustomers(dt) {
 
 // The customer nearest the taps in this lane whose body the mug has reached.
 function catcherFor(mug) {
-    let best_ = null;
+    let nearest = null;
     for (const c of customers) {
         if (c.lane !== mug.lane) continue;
         if (mug.x - MUG_HW > c.x + CUST_HW) continue;
-        if (!best_ || c.x > best_.x) best_ = c;
+        if (!nearest || c.x > nearest.x) nearest = c;
     }
-    return best_;
+    return nearest;
 }
 
 function updateMugs(dt) {
@@ -302,7 +304,7 @@ function updateMugs(dt) {
                 c.drink = DRINK_TIME;
                 c.hold++;
                 score += SERVE_POINTS;
-                pop(c.x, laneY(c.lane) - CUST_H, `+${SERVE_POINTS}`);
+                pop(c.x, laneY(c.lane) + CUST_TOP - 10, `+${SERVE_POINTS}`);
                 updateHud();
                 continue;
             }
@@ -312,7 +314,6 @@ function updateMugs(dt) {
             }
         } else {
             m.x += EMPTY_SPEED * dt;
-            m.spin += dt * 6;
             if (m.x + MUG_HW >= TAP_X) {
                 if (m.lane === barman.lane) {
                     score += CATCH_POINTS;
@@ -397,69 +398,114 @@ function serveWaveForTest() {
 // Rendering
 // ---------------------------------------------------------------------------
 
-const CUST_COLORS = ['#e46a6a', '#6fb2e4', '#8ad07a', '#d79ae0'];
+const CUST_COLORS = ['#e4695f', '#5fa8e4', '#7fc96e', '#c98ae0'];
+function roundRect(x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+}
 
 function drawBackground() {
     const g = ctx.createLinearGradient(0, 0, 0, CANVAS_H);
-    g.addColorStop(0, '#132133');
-    g.addColorStop(1, '#080f18');
+    g.addColorStop(0, '#16273b');
+    g.addColorStop(1, '#070e17');
     ctx.fillStyle = g;
     ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
 
-    // Panelling on the back wall.
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.035)';
+    // Wall panelling.
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
     ctx.lineWidth = 1;
-    for (let x = 20; x < CANVAS_W; x += 40) {
+    for (let x = 24; x < CANVAS_W; x += 48) {
         ctx.beginPath();
         ctx.moveTo(x + 0.5, 0);
         ctx.lineTo(x + 0.5, CANVAS_H);
+        ctx.stroke();
+    }
+
+    // The doorway each queue files in through.
+    for (let l = 0; l < LANE_COUNT; l++) {
+        const y = laneY(l);
+        ctx.fillStyle = '#0a1420';
+        roundRect(BAR_LEFT - 42, y - 66, 34, 80, 15);
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(255, 182, 72, 0.18)';
+        ctx.lineWidth = 2;
         ctx.stroke();
     }
 }
 
 function drawCounter(lane) {
     const y = laneY(lane);
-    // Counter body.
-    ctx.fillStyle = '#5a3a22';
-    ctx.fillRect(BAR_LEFT - 10, y, BAR_RIGHT - BAR_LEFT + 20, 16);
+    const x0 = BAR_LEFT - 22;
+    const w = BAR_RIGHT - x0 + 14;
+
+    // Front panel, with a little grain.
+    ctx.fillStyle = '#4a2f1c';
+    ctx.fillRect(x0, y - 2, w, 18);
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.25)';
+    ctx.lineWidth = 1;
+    for (let x = x0 + 12; x < x0 + w; x += 26) {
+        ctx.beginPath();
+        ctx.moveTo(x + 0.5, y + 2);
+        ctx.lineTo(x + 0.5, y + 14);
+        ctx.stroke();
+    }
+
     // Polished top.
-    const g = ctx.createLinearGradient(0, y - 6, 0, y + 4);
-    g.addColorStop(0, '#a9743f');
-    g.addColorStop(1, '#7a4c28');
+    const g = ctx.createLinearGradient(0, y - 8, 0, y);
+    g.addColorStop(0, '#b98046');
+    g.addColorStop(1, '#7d4f29');
     ctx.fillStyle = g;
-    ctx.fillRect(BAR_LEFT - 10, y - 6, BAR_RIGHT - BAR_LEFT + 20, 8);
-    ctx.fillStyle = 'rgba(255, 226, 178, 0.35)';
-    ctx.fillRect(BAR_LEFT - 10, y - 6, BAR_RIGHT - BAR_LEFT + 20, 2);
-    // Shadow under the counter.
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.28)';
-    ctx.fillRect(BAR_LEFT - 10, y + 16, BAR_RIGHT - BAR_LEFT + 20, 10);
-    // The far end, where mugs are lost.
-    ctx.fillStyle = '#2c1a10';
-    ctx.fillRect(BAR_LEFT - 14, y - 8, 6, 26);
+    ctx.fillRect(x0, y - 8, w, 8);
+    ctx.fillStyle = 'rgba(255, 232, 194, 0.4)';
+    ctx.fillRect(x0, y - 8, w, 2);
+
+    // The lip at the far end, where a mug goes over.
+    ctx.fillStyle = '#25150c';
+    ctx.fillRect(x0 - 6, y - 12, 8, 28);
+
+    // Shadow cast onto the floor below.
+    const s = ctx.createLinearGradient(0, y + 16, 0, y + 32);
+    s.addColorStop(0, 'rgba(0, 0, 0, 0.35)');
+    s.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    ctx.fillStyle = s;
+    ctx.fillRect(x0, y + 16, w, 16);
 }
 
 function drawMug(m) {
-    const y = laneY(m.lane) - 6;
+    const base = laneY(m.lane) - 8;
+    const top = base - MUG_H;
     const w = MUG_HW * 2;
-    const top = y - MUG_H;
+
     ctx.save();
     ctx.translate(m.x, 0);
-    if (!m.full) ctx.rotate(0); // empties travel upright; the wobble is the foam
+    // Handle first, so the glass sits over it.
+    ctx.strokeStyle = m.full ? '#f0d9b0' : '#cfe2f2';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.arc(MUG_HW + 3, top + MUG_H * 0.55, 5.5, -Math.PI / 2, Math.PI / 2);
+    ctx.stroke();
+
     // Glass.
-    ctx.fillStyle = m.full ? '#c8862f' : 'rgba(214, 232, 245, 0.35)';
+    ctx.fillStyle = m.full ? '#d08a2c' : 'rgba(198, 224, 244, 0.42)';
     ctx.fillRect(-MUG_HW, top, w, MUG_H);
-    ctx.strokeStyle = '#eaf4ff';
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.22)';
+    ctx.fillRect(-MUG_HW + 2, top + 3, 3, MUG_H - 8);
+    ctx.strokeStyle = m.full ? '#ffe6b8' : '#cfe2f2';
     ctx.lineWidth = 2;
     ctx.strokeRect(-MUG_HW, top, w, MUG_H);
-    // Handle.
-    ctx.beginPath();
-    ctx.arc(MUG_HW + 3, top + MUG_H / 2, 5, -Math.PI / 2, Math.PI / 2);
-    ctx.stroke();
+
     if (m.full) {
-        // Foam head, with a wobble as it slides.
+        // Foam head, wobbling as the mug slides.
+        const wob = Math.sin(m.x * 0.09) * 1.5;
         ctx.fillStyle = '#fff6e2';
-        const wob = Math.sin(m.x * 0.08) * 1.5;
-        ctx.fillRect(-MUG_HW, top - 3 + wob, w, 6);
+        ctx.beginPath();
+        ctx.ellipse(0, top + wob, MUG_HW + 1, 5, 0, 0, Math.PI * 2);
+        ctx.fill();
     }
     ctx.restore();
 }
@@ -467,94 +513,129 @@ function drawMug(m) {
 function drawCustomer(c) {
     const y = laneY(c.lane);
     const drinking = c.state === 'drinking';
-    const bob = drinking ? 0 : Math.sin(shine * 6 + c.bob) * 1.5;
-    const top = y - CUST_H + bob;
+    const bob = drinking ? Math.sin(shine * 18) * 1.2 : Math.sin(shine * 6 + c.bob) * 1.5;
+    const top = y + CUST_TOP + bob;
     const color = CUST_COLORS[c.kind % CUST_COLORS.length];
 
     ctx.save();
     ctx.translate(c.x, 0);
-    // Body.
+
+    // Torso.
     ctx.fillStyle = color;
-    ctx.fillRect(-CUST_HW, top + 14, CUST_HW * 2, CUST_H - 14);
-    // Head.
+    roundRect(-CUST_HW, top + 22, CUST_HW * 2, y + CUST_FOOT - (top + 22), 5);
+    ctx.fill();
+    // Collar.
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.18)';
+    ctx.fillRect(-CUST_HW, top + 22, CUST_HW * 2, 3);
+
+    // Head and hat.
     ctx.fillStyle = '#f2cfa4';
     ctx.beginPath();
-    ctx.arc(0, top + 8, 9, 0, Math.PI * 2);
+    ctx.arc(0, top + 12, 11, 0, Math.PI * 2);
     ctx.fill();
-    // Hat brim, so the silhouette reads at a glance.
-    ctx.fillStyle = '#2b3442';
-    ctx.fillRect(-11, top - 1, 22, 3);
-    ctx.fillRect(-7, top - 7, 14, 6);
-    // Arm reaching toward the taps, or a raised mug while drinking.
-    ctx.fillStyle = color;
+    ctx.fillStyle = '#28313d';
+    ctx.fillRect(-13, top + 1, 26, 4);
+    ctx.fillRect(-8, top - 6, 16, 7);
+
     if (drinking) {
-        ctx.fillRect(2, top + 6, 6, 14);
-        ctx.fillStyle = '#c8862f';
-        ctx.fillRect(6, top - 2, 10, 12);
-        ctx.strokeStyle = '#eaf4ff';
+        // Arm up, mug at the lips — kept clear of the face.
+        ctx.fillStyle = color;
+        ctx.fillRect(10, top + 18, 8, 14);
+        ctx.fillStyle = '#d08a2c';
+        ctx.fillRect(13, top + 6, 13, 15);
+        ctx.strokeStyle = '#ffe6b8';
         ctx.lineWidth = 2;
-        ctx.strokeRect(6, top - 2, 10, 12);
+        ctx.strokeRect(13, top + 6, 13, 15);
     } else {
-        ctx.fillRect(CUST_HW - 2, top + 20, 12, 6);
+        // Arm out, reaching toward the taps.
+        ctx.fillStyle = color;
+        ctx.fillRect(CUST_HW - 3, top + 28, 14, 7);
     }
-    // Held mugs waiting to be thrown back.
+
+    // Empties still waiting to be thrown back.
     for (let i = 1; i < c.hold; i++) {
-        ctx.fillStyle = 'rgba(214, 232, 245, 0.5)';
-        ctx.fillRect(-CUST_HW - 6 * i, y - 12, 5, 12);
+        ctx.fillStyle = 'rgba(190, 218, 240, 0.45)';
+        ctx.fillRect(-CUST_HW - 7 * i, y - 22, 5, 14);
     }
     ctx.restore();
 }
 
-function drawTaps() {
-    // The tap station running down the right-hand edge.
-    ctx.fillStyle = '#1b2937';
-    ctx.fillRect(TAP_X + 4, 40, 48, CANVAS_H - 70);
-    ctx.fillStyle = '#26384b';
-    ctx.fillRect(TAP_X + 4, 40, 48, 6);
+function drawTapStation() {
+    const x = TAP_X + 6;
+    const w = CANVAS_W - x;
+
+    ctx.fillStyle = '#182635';
+    ctx.fillRect(x, 24, w, CANVAS_H - 48);
+    ctx.fillStyle = '#22364a';
+    ctx.fillRect(x, 24, w, 8);
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.06)';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(x + 0.5, 24.5, w - 1, CANVAS_H - 49);
+
     for (let l = 0; l < LANE_COUNT; l++) {
         const y = laneY(l);
+        const live = l === barman.lane;
+        // Spout and handle.
         ctx.fillStyle = '#9fb6c9';
-        ctx.fillRect(TAP_X + 12, y - 40, 6, 24);
-        ctx.fillStyle = l === barman.lane ? '#ffb648' : '#5d7285';
-        ctx.fillRect(TAP_X + 8, y - 44, 14, 6);
+        ctx.fillRect(x + 8, y - 44, 6, 26);
+        ctx.fillStyle = live ? '#ffb648' : '#5d7285';
+        ctx.fillRect(x + 3, y - 50, 16, 7);
+        if (live && pourTimer > POUR_COOLDOWN * 0.45) {
+            // A splash of soda while the tap is still running.
+            ctx.fillStyle = 'rgba(233, 176, 88, 0.75)';
+            ctx.fillRect(x + 9, y - 20, 4, 12);
+        }
     }
 }
 
 function drawBarman() {
     const y = laneY(barman.lane);
-    const x = TAP_X + 28;
-    const top = y - CUST_H - 2;
-    // Head.
+    const x = TAP_X + 24;
+    const top = y + CUST_TOP - 4;
+
+    // A lit pad behind you, so the counter you are working is unmistakable.
+    ctx.fillStyle = 'rgba(255, 182, 72, 0.14)';
+    roundRect(x - 19, top - 12, 38, y + CUST_FOOT + 8 - (top - 12), 8);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255, 182, 72, 0.45)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Reaching arm, behind the body.
+    ctx.fillStyle = '#f2cfa4';
+    ctx.fillRect(x - 32, top + 30, 22, 7);
+
+    // Torso and apron.
+    ctx.fillStyle = '#31506c';
+    roundRect(x - 14, top + 22, 28, y + CUST_FOOT - (top + 22), 5);
+    ctx.fill();
+    ctx.fillStyle = '#eef4fa';
+    ctx.fillRect(x - 11, top + 34, 22, y + CUST_FOOT - (top + 34));
+
+    // Head and cap.
     ctx.fillStyle = '#f2cfa4';
     ctx.beginPath();
-    ctx.arc(x, top + 8, 9, 0, Math.PI * 2);
+    ctx.arc(x, top + 12, 11, 0, Math.PI * 2);
     ctx.fill();
-    // Cap.
+    ctx.fillStyle = '#f6c96a';
+    ctx.fillRect(x - 13, top + 1, 26, 4);
     ctx.fillStyle = '#eef4fa';
-    ctx.fillRect(x - 10, top - 1, 20, 4);
-    ctx.fillRect(x - 7, top - 6, 14, 6);
-    // Shirt and apron.
-    ctx.fillStyle = '#2f4a63';
-    ctx.fillRect(x - 13, top + 16, 26, CUST_H - 14);
-    ctx.fillStyle = '#eef4fa';
-    ctx.fillRect(x - 10, top + 26, 20, CUST_H - 24);
-    // Arm on the tap.
-    ctx.fillStyle = '#f2cfa4';
-    ctx.fillRect(x - 26, top + 20, 16, 6);
-    // A glow so the active lane is unmistakable.
-    ctx.strokeStyle = 'rgba(255, 182, 72, 0.5)';
+    ctx.fillRect(x - 9, top - 7, 18, 8);
+
+    // The counter you are standing at, lit up.
+    ctx.strokeStyle = 'rgba(255, 182, 72, 0.55)';
     ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.moveTo(BAR_LEFT - 10, y - 7);
-    ctx.lineTo(BAR_RIGHT + 10, y - 7);
+    ctx.moveTo(BAR_LEFT - 22, y - 9);
+    ctx.lineTo(BAR_RIGHT + 6, y - 9);
     ctx.stroke();
 }
 
 function drawPops() {
     ctx.textAlign = 'center';
-    ctx.font = 'bold 14px "Segoe UI", system-ui, sans-serif';
+    ctx.font = 'bold 15px "Segoe UI", system-ui, sans-serif';
     for (const p of pops) {
-        const t = p.life / POP_TIME;
+        const t = Math.max(0, p.life / POP_TIME);
         ctx.fillStyle = `rgba(255, 214, 138, ${t.toFixed(3)})`;
         ctx.fillText(p.text, p.x, p.y - (1 - t) * 26);
     }
@@ -562,8 +643,8 @@ function drawPops() {
 }
 
 function drawBanner(text, sub) {
-    ctx.fillStyle = 'rgba(6, 12, 20, 0.55)';
-    ctx.fillRect(0, CANVAS_H / 2 - 46, CANVAS_W, 92);
+    ctx.fillStyle = 'rgba(6, 12, 20, 0.62)';
+    ctx.fillRect(0, CANVAS_H / 2 - 48, CANVAS_W, 96);
     ctx.textAlign = 'center';
     ctx.fillStyle = '#ffb648';
     ctx.font = 'bold 30px "Segoe UI", system-ui, sans-serif';
@@ -578,15 +659,21 @@ function drawBanner(text, sub) {
 
 function draw() {
     drawBackground();
-    for (let l = 0; l < LANE_COUNT; l++) drawCounter(l);
-    for (const c of customers) drawCustomer(c);
-    for (const m of mugs) drawMug(m);
-    drawTaps();
+    // Per lane: the customers stand behind the bar, so the counter is painted
+    // over their legs and the mugs on top of everything.
+    for (let l = 0; l < LANE_COUNT; l++) {
+        for (const c of customers) if (c.lane === l) drawCustomer(c);
+        drawCounter(l);
+        for (const m of mugs) if (m.lane === l) drawMug(m);
+    }
+    drawTapStation();
     if (state !== 'dying' || Math.floor(deathTimer * 8) % 2 === 0) drawBarman();
     drawPops();
 
     if (state === 'idle') drawBanner('SODA TAPPER', 'Four counters. One of you.');
-    if (state === 'dying') drawBanner(LOSS_TEXT[lastLoss] || 'Lost a life', `${Math.max(0, lives)} left`);
+    if (state === 'dying') {
+        drawBanner(LOSS_TEXT[lastLoss] || 'Lost a life', `${Math.max(0, lives)} left`);
+    }
     if (state === 'waveclear') drawBanner(`WAVE ${level} CLEAR`, `+${waveBonus(level)}`);
 
     if (flash > 0) {
@@ -594,6 +681,7 @@ function draw() {
         ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
     }
 }
+
 
 // ---------------------------------------------------------------------------
 // Input
