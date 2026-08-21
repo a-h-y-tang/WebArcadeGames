@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tower Defense</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="game">
+        <header class="hud">
+            <h1>TOWER DEFENSE</h1>
+            <div class="stats">
+                <div class="stat"><span class="label">Gold</span><span id="gold">150</span></div>
+                <div class="stat"><span class="label">Lives</span><span id="lives">20</span></div>
+                <div class="stat"><span class="label">Wave</span><span id="wave">0/20</span></div>
+                <div class="stat"><span class="label">Score</span><span id="score">0</span></div>
+                <div class="stat"><span class="label">Best</span><span id="best">0</span></div>
+            </div>
+        </header>
+
+        <div class="board-wrap">
+            <canvas id="canvas" width="640" height="480"></canvas>
+            <div id="overlay" class="overlay visible">
+                <h2 id="overlay-title">TOWER DEFENSE</h2>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Press Space or click Start to defend the road</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+
+        <div class="shop">
+            <button class="shop-btn selected" id="buy-arrow" data-type="arrow">
+                <span class="key">1</span>
+                <span class="name">Arrow</span>
+                <span class="cost">50g</span>
+            </button>
+            <button class="shop-btn" id="buy-frost" data-type="frost">
+                <span class="key">2</span>
+                <span class="name">Frost</span>
+                <span class="cost">75g</span>
+            </button>
+            <button class="shop-btn" id="buy-cannon" data-type="cannon">
+                <span class="key">3</span>
+                <span class="name">Cannon</span>
+                <span class="cost">100g</span>
+            </button>
+            <div class="spacer"></div>
+            <button class="shop-btn action" id="btn-upgrade" disabled>
+                <span class="key">U</span>
+                <span class="name">Upgrade</span>
+                <span class="cost" id="upgrade-cost">—</span>
+            </button>
+            <button class="shop-btn action" id="btn-sell" disabled>
+                <span class="key">S</span>
+                <span class="name">Sell</span>
+                <span class="cost" id="sell-value">—</span>
+            </button>
+        </div>
+
+        <div class="help">
+            <p><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> pick tower</p>
+            <p><kbd>Click</kbd> build / select</p>
+            <p><kbd>U</kbd> upgrade &nbsp; <kbd>S</kbd> sell</p>
+            <p><kbd>Space</kbd> call next wave</p>
+            <p><kbd>P</kbd> pause</p>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>
