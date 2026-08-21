@@ -20,12 +20,13 @@ The canvas is 560 × 440. Four counters run horizontally across it:
 
 | Constant | Value | Meaning |
 |---|---|---|
-| `LANE_Y` | 64, 160, 256, 352 | top surface of each counter (items rest on this line) |
+| `LANE_Y` | 80, 176, 272, 368 | top surface of each counter (items rest on this line) |
 | `COUNTER_LEFT` / `SPAWN_X` / `EXIT_X` | 40 | the doorway — patrons enter here and leave here |
 | `COUNTER_RIGHT` / `SERVE_X` | 496 | the tap end; full mugs are poured here |
 | `GRAB_X` | 470 | a patron who walks this far grabs you — a life is lost |
 | `CATCH_X` | 486 | an empty mug reaching here is caught (if you're on that lane) or smashes |
-| `PLAYER_X` | 522 | where the soda jerk stands |
+| `PLAYER_X` | 528 | where the soda jerk stands |
+| `FLOOR_Y` | 400 | top of the tiled floor strip below the bottom counter |
 
 Everything moves along the x axis only; the lane index is the y axis. That
 keeps collision detection to a one-dimensional comparison inside a lane and
@@ -103,7 +104,9 @@ bindings, so a Playwright test can read `state`, `patrons`, `mugs` or call
 - **`step(dt)`** — the whole simulation, expressed per-second: player easing,
   mugs, empties, patrons, spawning, level check, effects. It returns
   immediately unless `state === 'running'`.
-- **`draw()`** — pure rendering; it never mutates simulation state.
+- **`draw()`** — pure rendering; it never mutates simulation state. Everything
+  on a counter is drawn from the same baseline (`LANE_Y[lane]`) with a contact
+  shadow, so figures and mugs sit on the wood rather than floating over it.
 - **`frame(now)`** — the `requestAnimationFrame` loop: `step` (only while
   `autoStep` is true) then `draw`.
 

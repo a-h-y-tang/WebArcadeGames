@@ -23,7 +23,7 @@ const CANVAS_W = 560;
 const CANVAS_H = 440;
 
 const LANES = 4;
-const LANE_TOP = 64;
+const LANE_TOP = 80;
 const LANE_SPACING = 96;
 // The y of each counter's top surface: everything on a counter rests on it.
 const LANE_Y = Array.from({ length: LANES }, (_, i) => LANE_TOP + i * LANE_SPACING);
@@ -35,9 +35,10 @@ const EXIT_X = COUNTER_LEFT;
 const SERVE_X = COUNTER_RIGHT;
 const GRAB_X = 470;         // a patron this far along grabs the soda jerk
 const CATCH_X = 486;        // where a returning empty is caught or smashed
-const PLAYER_X = 522;
+const PLAYER_X = 528;
 
 const COUNTER_H = 16;       // drawn thickness of a counter slab
+const FLOOR_Y = 400;        // decorative tiled floor below the bottom counter
 
 // --- Speeds --------------------------------------------------------------
 const MUG_SPEED = 220;      // px/s, full mug sliding toward the door
@@ -478,6 +479,17 @@ function step(dt) {
 // Rendering
 // ---------------------------------------------------------------------------
 
+// Darken (amount < 0) or lighten a #rrggbb colour, for hats and shading.
+function shade(hex, amount) {
+    const n = parseInt(hex.slice(1), 16);
+    const mix = (c) =>
+        Math.max(0, Math.min(255, Math.round(amount < 0 ? c * (1 + amount) : c + (255 - c) * amount)));
+    const r = mix((n >> 16) & 255);
+    const g = mix((n >> 8) & 255);
+    const b = mix(n & 255);
+    return `rgb(${r}, ${g}, ${b})`;
+}
+
 function roundRect(x, y, w, h, r) {
     const rr = Math.min(r, w / 2, h / 2);
     ctx.beginPath();
@@ -502,21 +514,47 @@ function drawBackground() {
     for (let x = 0; x <= CANVAS_W; x += 28) {
         ctx.beginPath();
         ctx.moveTo(x + 0.5, 0);
-        ctx.lineTo(x + 0.5, CANVAS_H);
+        ctx.lineTo(x + 0.5, FLOOR_Y);
         ctx.stroke();
     }
-    for (let y = 0; y <= CANVAS_H; y += 28) {
+    for (let y = 0; y <= FLOOR_Y; y += 28) {
         ctx.beginPath();
         ctx.moveTo(0, y + 0.5);
         ctx.lineTo(CANVAS_W, y + 0.5);
         ctx.stroke();
     }
+
+    // Tiled floor below the bottom counter, where dropped mugs land.
+    const f = ctx.createLinearGradient(0, FLOOR_Y, 0, CANVAS_H);
+    f.addColorStop(0, '#2c2350');
+    f.addColorStop(1, '#181234');
+    ctx.fillStyle = f;
+    ctx.fillRect(0, FLOOR_Y, CANVAS_W, CANVAS_H - FLOOR_Y);
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.06)';
+    for (let x = 0; x < CANVAS_W; x += 40) {
+        for (let y = FLOOR_Y; y < CANVAS_H; y += 20) {
+            if (((x / 40) + (y / 20)) % 2 === 0) ctx.fillRect(x, y, 40, 20);
+        }
+    }
+    ctx.fillStyle = 'rgba(255, 194, 71, 0.18)';
+    ctx.fillRect(0, FLOOR_Y - 2, CANVAS_W, 2);
+}
+
+// A soft contact shadow so figures and mugs read as standing on the counter
+// rather than floating above it.
+function drawShadow(x, y, w) {
+    ctx.save();
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+    ctx.beginPath();
+    ctx.ellipse(x, y + 1, w, 3.5, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
 }
 
 function drawCounter(lane) {
     const y = LANE_Y[lane];
     const left = COUNTER_LEFT - 18;
-    const w = COUNTER_RIGHT + 34 - left;
+    const w = COUNTER_RIGHT + 46 - left;
 
     ctx.save();
     ctx.shadowColor = 'rgba(0, 0, 0, 0.45)';
@@ -562,7 +600,7 @@ function drawDoor(lane) {
 
 function drawTaps(lane) {
     const y = LANE_Y[lane];
-    const x = COUNTER_RIGHT + 12;
+    const x = COUNTER_RIGHT + 8;
 
     // Chrome tower.
     const g = ctx.createLinearGradient(x - 8, 0, x + 8, 0);
@@ -581,9 +619,10 @@ function drawTaps(lane) {
     ctx.fill();
 }
 
-function drawMugBody(x, y, full, alpha) {
+function drawMugBody(x, y, full, alpha, shadow = true) {
     ctx.save();
     ctx.globalAlpha = alpha;
+    if (shadow) drawShadow(x, y, 11);
     // Handle.
     ctx.strokeStyle = full ? '#c98f36' : '#6d7789';
     ctx.lineWidth = 3;
@@ -637,43 +676,48 @@ function drawPatron(p) {
 
     ctx.save();
     ctx.translate(x + lean, y + bob);
+    drawShadow(0, -bob, 13);
 
-    // Legs.
-    ctx.fillStyle = '#2c2748';
-    ctx.fillRect(-8, -12, 5, 12);
-    ctx.fillRect(3, -12, 5, 12);
+    // Legs — kept light enough to stay visible against the dark wall.
+    const stride = p.mode === 'walk' ? Math.sin(p.bob) * 2 : 0;
+    ctx.fillStyle = '#6b5fa8';
+    ctx.fillRect(-8 - stride, -13, 6, 13);
+    ctx.fillRect(2 + stride, -13, 6, 13);
+    ctx.fillStyle = '#2a2246';
+    ctx.fillRect(-9 - stride, -3, 8, 3);
+    ctx.fillRect(1 + stride, -3, 8, 3);
 
     // Body.
     ctx.fillStyle = p.color;
-    roundRect(-11, -32, 22, 22, 5);
+    roundRect(-11, -33, 22, 22, 5);
+    ctx.fill();
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.18)';
+    roundRect(-11, -18, 22, 7, 3);
     ctx.fill();
 
-    // Arm reaching for the next mug.
+    // Arm — reaching ahead while walking, tucked in while drinking.
     ctx.fillStyle = p.skin;
-    const reach = p.mode === 'drink' ? -6 : 8;
-    ctx.fillRect(6, -28, reach > 0 ? 10 : 6, 5);
+    if (p.mode === 'drink') ctx.fillRect(-16, -29, 8, 5);
+    else ctx.fillRect(6, -29, 11, 5);
 
     // Head.
     ctx.beginPath();
-    ctx.arc(0, -40, 9, 0, Math.PI * 2);
+    ctx.arc(0, -41, 9, 0, Math.PI * 2);
     ctx.fill();
 
-    // Hat brim, so patrons read at a glance against the wall.
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
-    ctx.fillRect(-11, -48, 22, 4);
-    ctx.fillStyle = p.color;
-    roundRect(-8, -55, 16, 8, 3);
+    // Cap, so patrons read at a glance against the wall.
+    ctx.fillStyle = shade(p.color, -0.35);
+    ctx.fillRect(-11, -47, 20, 3);
+    roundRect(-8, -55, 16, 9, 3);
     ctx.fill();
 
     // Thirst pips: one per mug already drunk.
     ctx.fillStyle = '#ffe6a0';
     for (let i = 0; i < Math.min(p.sips, 3); i++) {
-        ctx.fillRect(-9 + i * 7, -26, 4, 4);
+        ctx.fillRect(-9 + i * 7, -27, 4, 4);
     }
 
-    if (p.mode === 'drink') {
-        drawMugBody(-14, -18, true, 1);
-    }
+    if (p.mode === 'drink') drawMugBody(-20, 0, true, 1);
     ctx.restore();
 }
 
@@ -684,33 +728,40 @@ function drawPlayer() {
 
     ctx.save();
     ctx.translate(x, y + bob);
+    drawShadow(0, -bob, 14);
 
     // Legs.
-    ctx.fillStyle = '#2b2a4a';
-    ctx.fillRect(-8, -12, 5, 12);
-    ctx.fillRect(3, -12, 5, 12);
+    ctx.fillStyle = '#5a86c9';
+    ctx.fillRect(-8, -13, 6, 13);
+    ctx.fillRect(2, -13, 6, 13);
+    ctx.fillStyle = '#22203c';
+    ctx.fillRect(-9, -3, 8, 3);
+    ctx.fillRect(1, -3, 8, 3);
 
     // Apron / body.
     ctx.fillStyle = '#f4f1ff';
-    roundRect(-11, -34, 22, 24, 5);
+    roundRect(-11, -35, 22, 24, 5);
     ctx.fill();
     ctx.fillStyle = '#e05a6b';
-    ctx.fillRect(-11, -22, 22, 5);
+    ctx.fillRect(-11, -23, 22, 5);
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+    roundRect(-11, -17, 22, 6, 3);
+    ctx.fill();
 
-    // Pouring arm reaches toward the taps when a mug has just been served.
+    // The pouring arm swings out to the taps just after a mug is served.
     ctx.fillStyle = '#f0c39a';
-    const arm = player.pour > 0 ? -18 : -12;
-    ctx.fillRect(arm, -30, Math.abs(arm) - 8, 5);
+    if (player.pour > 0) ctx.fillRect(-20, -33, 12, 5);
+    else ctx.fillRect(-16, -30, 8, 5);
 
     // Head and soda-jerk cap.
     ctx.beginPath();
-    ctx.arc(0, -42, 9, 0, Math.PI * 2);
+    ctx.arc(0, -43, 9, 0, Math.PI * 2);
     ctx.fill();
     ctx.fillStyle = '#f4f1ff';
-    roundRect(-9, -53, 18, 8, 3);
+    roundRect(-9, -55, 18, 9, 3);
     ctx.fill();
     ctx.fillStyle = '#e05a6b';
-    ctx.fillRect(-9, -46, 18, 3);
+    ctx.fillRect(-10, -47, 20, 3);
     ctx.restore();
 }
 
