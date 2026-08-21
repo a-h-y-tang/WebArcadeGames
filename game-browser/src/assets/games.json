@@ -621,6 +621,15 @@
     "thumbnail": "games/Pang/screenshot.png"
   },
   {
+    "id": "peg-blast",
+    "name": "Peg Blast",
+    "description": "Aim-and-drop physics game - clear every orange peg",
+    "category": "Action",
+    "dir": "PegBlast",
+    "path": "games/PegBlast/index.html",
+    "thumbnail": "games/PegBlast/screenshot.png"
+  },
+  {
     "id": "peg-solitaire",
     "name": "Peg Solitaire",
     "description": "Jump pegs to eliminate them from the board",
