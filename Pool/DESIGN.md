@@ -18,8 +18,10 @@ contact point, and judge how much power the cushions will eat.
 - Sinking **any** object ball in **any** pocket is legal and permanent.
 - Every stroke of the cue counts as one shot.
 - **Scratch** — pocketing the cue ball — costs one extra shot as a penalty and
-  the cue ball is re-spotted on the head spot (nudged left if that spot is
-  occupied).
+  the cue ball is re-spotted on the head spot. If that spot is occupied the ball
+  slides back along the head string toward the rail; if the whole head string is
+  blocked, `respotCue()` falls back to a coarse scan of the cloth for the first
+  square that is clear of other balls and clear of a pocket.
 - The rack is cleared when all nine object balls are down. Final score is the
   shot count; lower is better.
 - `R` re-racks at any time.

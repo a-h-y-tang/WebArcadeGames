@@ -54,7 +54,7 @@ assumptions behind the ruleset.
 npx playwright test Pool/tests/
 ```
 
-65 Playwright specs cover the rack layout, aiming and power, the collision and
+66 Playwright specs cover the rack layout, aiming and power, the collision and
 cushion physics (including that balls never tunnel out of the table or end up
 overlapping), pocketing and scratches, the win flow and personal best, and the
 rendering.

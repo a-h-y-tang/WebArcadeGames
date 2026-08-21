@@ -141,15 +141,27 @@ function respotCue() {
     cue.sunk = false;
     cue.vx = 0;
     cue.vy = 0;
+    const free = () =>
+        balls.every(
+            (b) => b === cue || b.sunk || Math.hypot(b.x - cue.x, b.y - cue.y) >= 2 * BALL_R + 1
+        );
+
+    // First choice: the head spot, sliding back toward the head rail.
     cue.y = MID_Y;
     for (let x = HEAD_X; x >= PLAY_L + BALL_R; x -= 4) {
         cue.x = x;
-        const clash = balls.some(
-            (b) => b !== cue && !b.sunk && Math.hypot(b.x - cue.x, b.y - cue.y) < 2 * BALL_R + 1
-        );
-        if (!clash) return;
+        if (free()) return;
     }
-    cue.x = PLAY_L + BALL_R;
+    // Failing that, take the first clear square anywhere on the cloth.
+    for (let y = PLAY_T + BALL_R; y <= PLAY_B - BALL_R; y += 8) {
+        for (let x = PLAY_L + BALL_R; x <= PLAY_R - BALL_R; x += 8) {
+            cue.x = x;
+            cue.y = y;
+            if (free() && !pocketFor(cue)) return;
+        }
+    }
+    cue.x = HEAD_X;
+    cue.y = MID_Y;
 }
 
 // ---------------------------------------------------------------------------
@@ -170,10 +182,16 @@ function allStopped() {
 
 /** Elastic-ish impulse between two equal-mass balls, plus overlap separation. */
 function collidePair(a, b) {
-    const dx = b.x - a.x;
-    const dy = b.y - a.y;
-    const dist = Math.hypot(dx, dy);
-    if (dist === 0 || dist >= 2 * BALL_R) return;
+    let dx = b.x - a.x;
+    let dy = b.y - a.y;
+    let dist = Math.hypot(dx, dy);
+    if (dist >= 2 * BALL_R) return;
+    if (dist === 0) {
+        // Exactly coincident centres have no normal; nudge them apart.
+        dx = 0.01;
+        dy = 0;
+        dist = 0.01;
+    }
 
     const nx = dx / dist;
     const ny = dy / dist;
@@ -469,12 +487,14 @@ function drawTable() {
     }
 }
 
-function drawBall(b) {
+function drawBallShadow(b) {
     ctx.fillStyle = 'rgba(0, 0, 0, 0.28)';
     ctx.beginPath();
     ctx.ellipse(b.x + 2.5, b.y + 3, BALL_R * 0.95, BALL_R * 0.8, 0, 0, Math.PI * 2);
     ctx.fill();
+}
 
+function drawBall(b) {
     const grad = ctx.createRadialGradient(
         b.x - BALL_R * 0.35, b.y - BALL_R * 0.4, BALL_R * 0.15,
         b.x, b.y, BALL_R
@@ -575,6 +595,10 @@ function drawAim() {
 function draw() {
     ctx.clearRect(0, 0, CANVAS_W, CANVAS_H);
     drawTable();
+    // Shadows first, so no ball is smudged by a neighbour's shadow.
+    for (const b of balls) {
+        if (!b.sunk) drawBallShadow(b);
+    }
     for (const b of balls) {
         if (!b.sunk) drawBall(b);
     }

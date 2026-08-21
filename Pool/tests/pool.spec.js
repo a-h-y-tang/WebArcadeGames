@@ -599,6 +599,42 @@ test.describe('Pool', () => {
             expect(clear).toBe(true);
         });
 
+        test('a blocked head spot pushes the cue ball somewhere legal', async ({ page }) => {
+            const result = await page.evaluate(() => {
+                // Wall the whole head string off with object balls.
+                balls.slice(1).forEach((b, i) => {
+                    b.x = PLAY_L + BALL_R + i * 20.5;
+                    b.y = (PLAY_T + PLAY_B) / 2;
+                });
+                const pocket = pockets[0];
+                cueBall.x = pocket.x + 60;
+                cueBall.y = pocket.y + 60;
+                state = 'rolling';
+                cueBall.vx = -300;
+                cueBall.vy = -300;
+                for (let i = 0; i < 600 && state === 'rolling'; i++) step(1 / 240);
+                return {
+                    sunk: cueBall.sunk,
+                    clear: balls
+                        .slice(1)
+                        .filter((b) => !b.sunk)
+                        .every((b) => Math.hypot(b.x - cueBall.x, b.y - cueBall.y) >= 2 * BALL_R),
+                    inside:
+                        cueBall.x >= PLAY_L + BALL_R &&
+                        cueBall.x <= PLAY_R - BALL_R &&
+                        cueBall.y >= PLAY_T + BALL_R &&
+                        cueBall.y <= PLAY_B - BALL_R,
+                    outOfPocket: pockets.every(
+                        (p) => Math.hypot(cueBall.x - p.x, cueBall.y - p.y) >= POCKET_R
+                    ),
+                };
+            });
+            expect(result.sunk).toBe(false);
+            expect(result.clear).toBe(true);
+            expect(result.inside).toBe(true);
+            expect(result.outOfPocket).toBe(true);
+        });
+
         test('scratching does not sink object balls', async ({ page }) => {
             await page.evaluate(() => {
                 const pocket = pockets[0];
