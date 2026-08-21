@@ -39,6 +39,7 @@ const PLAYER_X = 528;
 
 const COUNTER_H = 16;       // drawn thickness of a counter slab
 const FLOOR_Y = 400;        // decorative tiled floor below the bottom counter
+const DANGER_ZONE = 90;     // how far out from the taps a patron lights up red
 
 // --- Speeds --------------------------------------------------------------
 const MUG_SPEED = 220;      // px/s, full mug sliding toward the door
@@ -582,6 +583,24 @@ function drawCounter(lane) {
         ctx.moveTo(x, y + 5);
         ctx.lineTo(x + 10, y + COUNTER_H - 4);
         ctx.stroke();
+    }
+
+    // The counter you are standing at is lit, so it stays findable when the
+    // bar is crowded.
+    if (lane === player.lane && state !== 'idle') {
+        ctx.fillStyle = 'rgba(255, 194, 71, 0.5)';
+        ctx.fillRect(left, y, w, 2);
+    }
+
+    // A patron closing on the taps lights the end of their counter red.
+    const threat = patrons.reduce(
+        (near, p) => (p.lane === lane && p.x > near ? p.x : near),
+        -Infinity
+    );
+    if (threat > GRAB_X - DANGER_ZONE) {
+        const heat = (threat - (GRAB_X - DANGER_ZONE)) / DANGER_ZONE;
+        ctx.fillStyle = `rgba(255, 93, 115, ${(0.25 + heat * 0.5).toFixed(3)})`;
+        ctx.fillRect(GRAB_X - DANGER_ZONE, y, left + w - (GRAB_X - DANGER_ZONE), 3);
     }
 }
 

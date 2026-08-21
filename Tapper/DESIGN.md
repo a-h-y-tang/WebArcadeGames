@@ -27,6 +27,7 @@ The canvas is 560 × 440. Four counters run horizontally across it:
 | `CATCH_X` | 486 | an empty mug reaching here is caught (if you're on that lane) or smashes |
 | `PLAYER_X` | 528 | where the soda jerk stands |
 | `FLOOR_Y` | 400 | top of the tiled floor strip below the bottom counter |
+| `DANGER_ZONE` | 90 | how close a patron gets before their counter lights up red |
 
 Everything moves along the x axis only; the lane index is the y axis. That
 keeps collision detection to a one-dimensional comparison inside a lane and
@@ -107,6 +108,9 @@ bindings, so a Playwright test can read `state`, `patrons`, `mugs` or call
 - **`draw()`** — pure rendering; it never mutates simulation state. Everything
   on a counter is drawn from the same baseline (`LANE_Y[lane]`) with a contact
   shadow, so figures and mugs sit on the wood rather than floating over it.
+  Two cues keep a crowded bar readable: the counter you're standing at is lit
+  in amber, and the tap end of a counter glows red as a patron closes inside
+  `DANGER_ZONE`.
 - **`frame(now)`** — the `requestAnimationFrame` loop: `step` (only while
   `autoStep` is true) then `draw`.
 

@@ -54,6 +54,11 @@ Your best score is kept in the browser's local storage.
 
 Mouse or touch also works: click a counter to move to it, click again to serve.
 
+## Reading the bar
+
+- The counter you're standing at is lit in amber along its top edge.
+- The tap end of a counter glows red when a patron is getting close to you.
+
 ## Tips
 
 - Empties are the real clock. Every mug you pour is a mug you have to be
