@@ -126,6 +126,15 @@
     "thumbnail": "games/BurgerTime/screenshot.png"
   },
   {
+    "id": "burgertime",
+    "name": "BurgerTime",
+    "description": "Walk the ingredients down to the plates while food monsters chase you",
+    "category": "Action",
+    "dir": "BurgerTime",
+    "path": "games/BurgerTime/index.html",
+    "thumbnail": "games/BurgerTime/screenshot.png"
+  },
+  {
     "id": "calcudoku",
     "name": "Calcudoku",
     "description": "Math logic puzzle with grid and operations",
@@ -799,6 +808,15 @@
     "dir": "SnakesAndLadders",
     "path": "games/SnakesAndLadders/index.html",
     "thumbnail": ""
+  },
+  {
+    "id": "soda-tapper",
+    "name": "Soda Tapper",
+    "description": "Serve four counters of thirsty customers and catch every empty mug",
+    "category": "Action",
+    "dir": "SodaTapper",
+    "path": "games/SodaTapper/index.html",
+    "thumbnail": "games/SodaTapper/screenshot.png"
   },
   {
     "id": "sokoban",
