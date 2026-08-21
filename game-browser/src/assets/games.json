@@ -801,6 +801,15 @@
     "thumbnail": ""
   },
   {
+    "id": "soda-tapper",
+    "name": "Soda Tapper",
+    "description": "Slide sodas down four bars and catch the empties before they smash",
+    "category": "Action",
+    "dir": "SodaTapper",
+    "path": "games/SodaTapper/index.html",
+    "thumbnail": "games/SodaTapper/screenshot.png"
+  },
+  {
     "id": "sokoban",
     "name": "Sokoban",
     "description": "Puzzle game - push boxes to their destinations",
