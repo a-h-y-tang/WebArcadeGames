@@ -26,7 +26,8 @@ Open `index.html` in any modern browser. No build step and no server required.
 
 **Pour early.** A mug only pushes the patron it actually reaches. Pouring on an
 empty bar wastes the mug — it smashes on the floor at the far end and costs you a
-life.
+life. Sodas already sliding down a bar when its patron leaves are safe: they go
+out the door with them.
 
 **One mug is rarely enough.** Each hit shoves a patron back about 110 px, then
 they take a swig and start walking again. A patron who entered at the door needs

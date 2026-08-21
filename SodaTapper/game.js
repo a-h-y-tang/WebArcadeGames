@@ -304,6 +304,16 @@ function stepPatrons(dt) {
                 served += 1;
                 addScore(SCORE_SERVE * level);
                 addSplash(BAR_LEFT + 10, laneY(p.lane), '#4fd1c5');
+                // A departing patron takes any sodas still sliding down their
+                // bar with them. Without this the player is punished for mugs
+                // that were already in flight when the last one did the job —
+                // something they cannot un-pour.
+                for (let m = mugs.length - 1; m >= 0; m--) {
+                    if (mugs[m].lane === p.lane) {
+                        addSplash(mugs[m].x, laneY(p.lane), '#4fd1c5');
+                        mugs.splice(m, 1);
+                    }
+                }
                 spawnEmpty(p.lane);
                 updateHud();
                 continue;

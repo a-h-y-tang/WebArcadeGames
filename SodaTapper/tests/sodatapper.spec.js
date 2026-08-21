@@ -365,6 +365,31 @@ test.describe('Soda Tapper', () => {
             expect(await page.evaluate(() => served)).toBe(1);
         });
 
+        test('a departing patron takes mugs still in flight on their lane', async ({ page }) => {
+            await page.evaluate(() => {
+                spawnPatron(0);
+                patrons[0].x = BAR_LEFT + 10;
+                serve();
+                serve(); // a second soda already on its way down the bar
+            });
+            await advanceUntil(page, () => served === 1);
+            expect(await page.evaluate(() => mugs.length)).toBe(0);
+            expect(await page.evaluate(() => lives)).toBe(3);
+        });
+
+        test('mugs on other lanes survive a patron leaving', async ({ page }) => {
+            await page.evaluate(() => {
+                spawnPatron(0);
+                patrons[0].x = BAR_LEFT + 10;
+                serve();
+                mugs[0].x = 80; // about to reach the patron
+                bartender.lane = 2;
+                serve(); // unrelated soda still near the tap on lane 2
+            });
+            await advanceUntil(page, () => served === 1);
+            expect(await page.evaluate(() => mugs.map((m) => m.lane))).toEqual([2]);
+        });
+
         test('a served patron slides an empty mug back', async ({ page }) => {
             await page.evaluate(() => {
                 spawnPatron(0);

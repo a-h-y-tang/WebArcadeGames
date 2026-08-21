@@ -36,7 +36,9 @@ they enter `sliding`.
 
 **Serving a patron.** A sliding patron whose x falls below `BAR_LEFT` leaves:
 `SCORE_SERVE × level` points, `served` increments, and `spawnEmpty()` puts an
-empty mug on that lane travelling right at 200 px/s.
+empty mug on that lane travelling right at 200 px/s. Any full mugs still sliding
+down *that* lane leave with them (see assumption 10) — mugs on other lanes are
+untouched.
 
 **Catching empties.** Once an empty reaches `CATCH_X` (560) it is caught if the
 bartender is on that lane — `SCORE_CATCH` (50) points. The gap between
@@ -102,7 +104,7 @@ thing that paints. That split is what makes the game testable frame by frame.
 
 ## Testing
 
-`tests/sodatapper.spec.js` holds 62 Playwright specs, written before the
+`tests/sodatapper.spec.js` holds 64 Playwright specs, written before the
 implementation. They open `index.html` over `file://` — no server needed — and
 drive the game deterministically:
 
@@ -153,7 +155,15 @@ recorded here.
 8. **Losing a life clears the whole bar,** not just the offending lane, and
    gives a 1.4 s breather before the next arrival, so the player is never
    instantly killed twice by a situation they had no time to read.
-9. **`game-browser/e2e/game-browser.spec.ts` was left alone.** It hardcodes a
+10. **A departing patron collects in-flight mugs on their lane.** A scripted
+    playtest (a bot pouring greedily at the leading patron) showed the unfair
+    case this fixes: pour twice, the first mug finishes the job, and the second
+    is left sliding toward an empty bar where it must smash and cost a life —
+    a punishment the player cannot avoid once the mug is poured. Pouring at a
+    genuinely empty bar still costs a life, so the risk in over-pouring stays.
+    With the rule in place the same bot survives three simulated minutes and
+    reaches level 6 without losing a life; before it, it was dead inside one.
+11. **`game-browser/e2e/game-browser.spec.ts` was left alone.** It hardcodes a
    count of 105 game cards while `games.json` already listed 108 before this
    change, so that spec was stale independently of this game. It is not part of
    the root `npm test` run (the root config only matches `**/tests/*.spec.js`),
