@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pool</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="game">
+        <header class="hud">
+            <h1>POOL</h1>
+            <div class="stats">
+                <div class="stat"><span class="label">Shots</span><span id="shots">0</span></div>
+                <div class="stat"><span class="label">Balls Left</span><span id="remaining">9</span></div>
+                <div class="stat"><span class="label">Best</span><span id="best">—</span></div>
+            </div>
+        </header>
+
+        <div class="board-wrap">
+            <canvas id="canvas" width="720" height="400"></canvas>
+            <div id="overlay" class="overlay visible">
+                <h2 id="overlay-title">POOL</h2>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Press Space or click Break to play</p>
+                <button id="btn-start">Break</button>
+            </div>
+        </div>
+
+        <div class="power">
+            <span class="label">Power</span>
+            <div class="power-bar"><div id="power-fill"></div></div>
+        </div>
+
+        <div class="help">
+            <p><kbd>Mouse</kbd> aim</p>
+            <p><kbd>Hold</kbd> charge, release to strike</p>
+            <p><kbd>←</kbd> <kbd>→</kbd> fine aim</p>
+            <p><kbd>Space</kbd> charge / strike</p>
+            <p><kbd>R</kbd> re-rack</p>
+            <p>Clear all nine in as few shots as you can</p>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>

@@ -675,6 +675,15 @@
     "thumbnail": ""
   },
   {
+    "id": "pool",
+    "name": "Pool",
+    "description": "Nine-ball billiards - clear the rack in as few shots as you can",
+    "category": "Sports",
+    "dir": "Pool",
+    "path": "games/Pool/index.html",
+    "thumbnail": "games/Pool/screenshot.png"
+  },
+  {
     "id": "pyramid-solitaire",
     "name": "Pyramid Solitaire",
     "description": "Card solitaire with pyramid layout",
