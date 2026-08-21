@@ -393,6 +393,9 @@ function stepEffects(dt) {
 
 function step(dt) {
     clock += dt;
+    // Visual effects keep settling even while paused or on the game over
+    // screen, so a splash or a red flash never freezes mid-animation.
+    stepEffects(dt);
     if (state !== 'running') return;
     bartender.y = laneY(bartender.lane);
     stepSpawning(dt);
@@ -402,7 +405,6 @@ function step(dt) {
     if (state !== 'running') return;
     stepEmpties(dt);
     if (state !== 'running') return;
-    stepEffects(dt);
     if (
         served >= levelTarget &&
         patrons.length === 0 &&
