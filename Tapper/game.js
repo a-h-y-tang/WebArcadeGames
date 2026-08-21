@@ -453,12 +453,17 @@ function drawRoom() {
 function drawBar(lane) {
     const y = LANE_Y[lane];
 
-    // Doorway at the far end.
-    ctx.fillStyle = '#0b0704';
+    // Doorway at the far end, lit from the street outside.
+    const door = ctx.createLinearGradient(0, y - 62, 0, y);
+    door.addColorStop(0, '#3b2a17');
+    door.addColorStop(1, '#0b0704');
+    ctx.fillStyle = door;
     ctx.fillRect(BAR_LEFT - 40, y - 62, 30, 62);
     ctx.strokeStyle = '#5c3d22';
     ctx.lineWidth = 2;
     ctx.strokeRect(BAR_LEFT - 40, y - 62, 30, 62);
+    ctx.fillStyle = 'rgba(240, 168, 40, 0.16)';
+    ctx.fillRect(BAR_LEFT - 36, y - 58, 22, 26);
 
     // Counter top.
     const top = ctx.createLinearGradient(0, y, 0, y + 14);
@@ -479,10 +484,21 @@ function drawBar(lane) {
     ctx.fillRect(BAR_RIGHT - 6, y - 30, 16, 6);
 }
 
+// A soft ellipse under a figure, so it reads as standing at the bar rather than
+// floating in front of it.
+function drawShadow(x, y, w) {
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.32)';
+    ctx.beginPath();
+    ctx.ellipse(x, y + 3, w, 4, 0, 0, Math.PI * 2);
+    ctx.fill();
+}
+
 function drawCustomer(c) {
     const y = LANE_Y[c.lane];
     const baseY = y + 2;
     const hue = ['#c8553d', '#4f7f9c', '#7c9a55', '#9b6ea8'][(c.lane + c.served) % 4];
+
+    drawShadow(c.x, baseY, CUST_HW + 3);
 
     // Body.
     ctx.fillStyle = hue;
@@ -552,6 +568,8 @@ function drawTip(tip) {
 function drawBartender() {
     const y = LANE_Y[bartender.lane];
     const baseY = y + 2;
+
+    drawShadow(BARTENDER_X, baseY, 17);
 
     ctx.fillStyle = '#f2efe6';
     roundRect(BARTENDER_X - 14, baseY - 46, 28, 34, 5);
