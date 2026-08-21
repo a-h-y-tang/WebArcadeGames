@@ -846,6 +846,15 @@
     "thumbnail": ""
   },
   {
+    "id": "tank-battle",
+    "name": "Tank Battle",
+    "description": "Defend your base and blast enemy tanks through a destructible brick maze",
+    "category": "Action",
+    "dir": "TankBattle",
+    "path": "games/TankBattle/index.html",
+    "thumbnail": "games/TankBattle/screenshot.png"
+  },
+  {
     "id": "tempest",
     "name": "Tempest",
     "description": "Arcade action game - navigate tube mazes",
