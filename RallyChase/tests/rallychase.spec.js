@@ -727,6 +727,43 @@ test.describe('Rally Chase', () => {
             await startQuiet(page);
         });
 
+        // The grace period is short, and the page's own animation loop keeps
+        // burning it between statements, so these three run in one evaluate.
+        test('pursuers hold still for a moment after the start', async ({ page }) => {
+            const held = await page.evaluate(() => {
+                startGame();
+                const before = enemies.map((e) => e.x + ',' + e.y);
+                for (let i = 0; i < 30; i++) step(1 / 60);
+                return enemies.every((e, i) => e.x + ',' + e.y === before[i]);
+            });
+            expect(held).toBe(true);
+        });
+
+        test('pursuers set off once the grace period is over', async ({ page }) => {
+            const moved = await page.evaluate(() => {
+                startGame();
+                const before = enemies.map((e) => e.x + ',' + e.y);
+                for (let i = 0; i < 60 * 3; i++) step(1 / 60);
+                return enemies.some((e, i) => e.x + ',' + e.y !== before[i]);
+            });
+            expect(moved).toBe(true);
+        });
+
+        test('the grace period is renewed after a crash', async ({ page }) => {
+            const result = await page.evaluate(() => {
+                placeCar(12, 6);
+                spawnEnemy(12, 6);
+                for (let i = 0; i < 100; i++) step(1 / 60); // crash, then respawn
+                const before = enemies.map((e) => e.x + ',' + e.y);
+                for (let i = 0; i < 20; i++) step(1 / 60);
+                return {
+                    running: state === 'running',
+                    held: enemies.every((e, i) => e.x + ',' + e.y === before[i]),
+                };
+            });
+            expect(result).toEqual({ running: true, held: true });
+        });
+
         test('a pursuer closes in on the car', async ({ page }) => {
             const gap = await page.evaluate(() => {
                 placeCar(3, 3);

@@ -55,6 +55,7 @@ var FUEL_BONUS_PER_UNIT = 10;
 var MAX_MULTIPLIER = 4;
 
 var CRASH_RADIUS = 28;
+var GRACE_TIME = 1.5; // seconds the pursuers hold after a start or a respawn
 var DEATH_TIME = 1.5; // seconds
 var CLEAR_TIME = 2.0; // seconds
 var START_LIVES = 3;
@@ -83,6 +84,7 @@ var flagMultiplier = 1;
 var best = 0;
 var deathTimer = 0;
 var clearTimer = 0;
+var graceTimer = 0;
 var elapsed = 0; // drives the cosmetic animation only
 
 var el = {
@@ -379,6 +381,10 @@ function checkSmokeHits() {
 }
 
 function updateEnemies(dt) {
+    // A short hold after every start and respawn, so the player gets a moment
+    // to read the circuit instead of being converged on immediately.
+    var held = graceTimer > 0;
+    if (held) graceTimer = Math.max(0, graceTimer - dt);
     var speed = enemySpeed();
     for (var i = 0; i < enemies.length; i++) {
         var e = enemies[i];
@@ -390,7 +396,7 @@ function updateEnemies(dt) {
             }
             continue;
         }
-        moveEntity(e, speed * dt, chooseChaseDir);
+        if (!held) moveEntity(e, speed * dt, chooseChaseDir);
     }
 }
 
@@ -435,6 +441,7 @@ function resetPositions() {
     spawnEnemies();
     smokes = [];
     fuel = FUEL_MAX;
+    graceTimer = GRACE_TIME;
     updateCamera();
 }
 
@@ -808,6 +815,13 @@ function draw() {
     drawSmoke();
     drawEnemies();
     drawPlayer();
+    if (state === 'running' && graceTimer > 0) {
+        ctx.textAlign = 'center';
+        ctx.font = 'bold 20px "Segoe UI", system-ui, sans-serif';
+        ctx.fillStyle = 'rgba(255, 212, 71, ' + (0.55 + 0.45 * Math.sin(elapsed * 8)).toFixed(3) + ')';
+        ctx.fillText('GET READY', VIEW_W / 2, 44);
+        ctx.textAlign = 'left';
+    }
     ctx.restore();
 
     drawRadar();

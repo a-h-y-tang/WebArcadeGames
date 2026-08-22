@@ -109,6 +109,11 @@ of the open directions (excluding a reverse, unless the cell is a dead end) they
 take the one that most reduces the straight-line distance to the player, with a
 fixed tie-break order so a given situation always plays out the same way.
 
+For the first 1.5 seconds of a level — and of every respawn — the pursuers hold
+still while the view shows `GET READY`. Without that hold they converge on the
+start before the player has read the circuit, which turns a lost life into a
+second lost life; with it, a crash costs you position rather than the run.
+
 Pursuers get faster with the level — `84 + 6 × (level − 1)` px/s — but the speed
 is capped at 92% of the player's full speed, so a car with fuel in the tank can
 always outrun them. That cap is what makes running dry the real threat rather
@@ -168,6 +173,10 @@ required by the task brief:
 - **Flags persist through a death.** Losing a life could reasonably reset the
   circuit. Resetting it makes a long level punishing to the point of being
   unfun, so collected flags stay collected; only positions and fuel reset.
+- **The pursuers hold at the start.** A 1.5-second hold after every start and
+  respawn was added after play-testing showed a bot being converged on within
+  four seconds of spawning. The alternative — spawning the pursuers further
+  away — does not help on a circuit this size.
 - **An empty tank is not death.** The simpler reading of "fuel" would be that
   running out ends the life. Slowing the car instead keeps the player in the
   game and makes fuel a pressure rather than a timer.

@@ -52,6 +52,10 @@ that drives through it spins out for three seconds — harmless, motionless, and
 worth 200 points. One puff can catch several cars at once, which is the best
 scoring play in the game, but every puff is fuel you are not driving on.
 
+**You get a head start.** For a second and a half at the start of each level and
+after each crash the pursuit cars hold still and the view reads `GET READY` —
+use it to pick a direction, not to sit still.
+
 **Losing a life** costs you the car, not the level: the flags you have already
 collected stay collected, everyone returns to their starting cell, and the tank
 is refilled. Three lives, and the best score is kept between sessions.
