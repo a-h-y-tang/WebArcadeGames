@@ -595,6 +595,35 @@ test.describe('Lode Runner', () => {
             expect((await cell(page)).row).toBeGreaterThan(11);
         });
 
+        test('a dig asked for mid-stride lands on the next cell', async ({ page }) => {
+            const { HOLE } = await rules(page);
+            await startQuiet(page);
+            await place(page, 9, 11);
+            await hold(page, 'ArrowRight');
+            await advance(page, 4);            // mid-step between two cells
+            await page.keyboard.press('x');
+            await advance(page, 12);
+            await release(page, 'ArrowRight');
+            expect(await page.evaluate(() => tileAt(11, 12))).toBe(HOLE);
+        });
+
+        test('a buffered dig expires rather than firing late', async ({ page }) => {
+            const { BRICK } = await rules(page);
+            await startQuiet(page);
+            await place(page, 9, 11);
+            await page.evaluate(() => {
+                player.moving = true;        // pretend the runner is mid-step
+                pendingDig = 1;
+                pendingDigTimer = 0.3;
+            });
+            await advanceSeconds(page, 0.5);
+            await page.evaluate(() => {
+                player.moving = false;
+            });
+            await advance(page, 5);
+            expect(await page.evaluate(() => tileAt(10, 12))).toBe(BRICK);
+        });
+
         test('digging fails when there is no brick to dig', async ({ page }) => {
             await startQuiet(page);
             await place(page, 10, 14);
@@ -805,6 +834,117 @@ test.describe('Lode Runner', () => {
             await page.keyboard.press('p');
             await advance(page, 60);
             expect(await cell(page)).toEqual({ col: 12, row: 3 });
+        });
+    });
+
+    // -----------------------------------------------------------------------
+    // A whole level, played through the keyboard state the game actually reads
+    // -----------------------------------------------------------------------
+    test.describe('playthrough', () => {
+        test('every level can be won by playing it', async ({ page }) => {
+            const results = await page.evaluate(() => {
+                // Shortest route between two cells under the runner's own rules.
+                const route = (fromCol, fromRow, toCol, toRow) => {
+                    const start = fromRow * COLS + fromCol;
+                    const goal = toRow * COLS + toCol;
+                    const prev = new Map([[start, null]]);
+                    let frontier = [start];
+                    while (frontier.length) {
+                        const next = [];
+                        for (const id of frontier) {
+                            const c = id % COLS;
+                            const r = (id - c) / COLS;
+                            const steps = [];
+                            if (!isSupported(c, r)) {
+                                if (passable(c, r + 1)) steps.push([c, r + 1]);
+                            } else {
+                                if (climbable(c, r) && climbable(c, r - 1)) steps.push([c, r - 1]);
+                                if (passable(c, r + 1)) steps.push([c, r + 1]);
+                                if (passable(c - 1, r)) steps.push([c - 1, r]);
+                                if (passable(c + 1, r)) steps.push([c + 1, r]);
+                            }
+                            for (const [nc, nr] of steps) {
+                                const nid = nr * COLS + nc;
+                                if (prev.has(nid)) continue;
+                                prev.set(nid, id);
+                                if (nid === goal) {
+                                    const path = [];
+                                    for (let cur = nid; cur !== start; cur = prev.get(cur)) {
+                                        path.push({ col: cur % COLS, row: (cur - (cur % COLS)) / COLS });
+                                    }
+                                    return path.reverse();
+                                }
+                                next.push(nid);
+                            }
+                        }
+                        frontier = next;
+                    }
+                    return null;
+                };
+
+                // Drive the real key state towards a cell, replanning whenever
+                // the runner comes to rest (a fall can land somewhere else).
+                const walkTo = (col, row, budget) => {
+                    for (let frame = 0; frame < budget; frame++) {
+                        if (!player.moving) {
+                            if (player.col === col && player.row === row) {
+                                heldKeys.clear();
+                                return true;
+                            }
+                            const path = route(player.col, player.row, col, row);
+                            heldKeys.clear();
+                            if (!path) return false;   // nothing to walk, try digging
+                            const next = path[0];
+                            if (next.row < player.row) heldKeys.add('ArrowUp');
+                            else if (next.row > player.row) heldKeys.add('ArrowDown');
+                            else if (next.col < player.col) heldKeys.add('ArrowLeft');
+                            else heldKeys.add('ArrowRight');
+                        }
+                        step(1 / 60);
+                    }
+                    heldKeys.clear();
+                    return false;
+                };
+
+                // A coin sealed under a brick floor is only reachable by digging
+                // through it from the platform above and dropping in.
+                const digTo = (coin) => {
+                    if (tileAt(coin.col, coin.row - 1) !== BRICK) return false;
+                    for (const side of [-1, 1]) {
+                        if (!walkTo(coin.col + side, coin.row - 2, 2400)) continue;
+                        if (!dig(-side)) continue;
+                        if (walkTo(coin.col, coin.row, 600)) return true;
+                    }
+                    return false;
+                };
+
+                return LEVELS.map((rows, index) => {
+                    startGame();
+                    levelIndex = index;
+                    loadLevel(index);
+                    enemies.length = 0;   // the route, not the chase, is under test
+                    const missed = [];
+                    while (goldCells.length) {
+                        const coin = goldCells[0];
+                        if (!walkTo(coin.col, coin.row, 2400) && !digTo(coin)) {
+                            missed.push(`${coin.col},${coin.row}`);
+                            break;
+                        }
+                    }
+                    const escaped = walkTo(rows[0].indexOf('S'), 0, 2400);
+                    return { level: index + 1, missed, escaped, goldRemaining, state };
+                });
+            });
+
+            for (const run of results) {
+                expect({ level: run.level, missed: run.missed }).toEqual({
+                    level: run.level,
+                    missed: [],
+                });
+                expect(run.goldRemaining).toBe(0);
+                expect(run.escaped).toBe(true);
+                expect(run.state).toBe(run.level === 3 ? 'won' : 'levelclear');
+            }
         });
     });
 

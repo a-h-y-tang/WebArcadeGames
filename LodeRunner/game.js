@@ -145,6 +145,11 @@ let goldRemaining = 0;
 let escapeRevealed = false;
 let digCooldown = 0;
 
+// A dig asked for mid-stride is remembered briefly and fired the moment the
+// runner reaches the next cell, so digging never feels like it was ignored.
+let pendingDig = 0;
+let pendingDigTimer = 0;
+
 const heldKeys = new Set();
 
 // ---------------------------------------------------------------------------
@@ -305,6 +310,7 @@ function loadLevel(index) {
     holes = [];
     escapeRevealed = false;
     digCooldown = 0;
+    pendingDigTimer = 0;
 
     rows.forEach((row, r) => {
         [...row].forEach((ch, c) => {
@@ -324,6 +330,7 @@ function resetActors() {
     holes.forEach((hole) => setTile(hole.col, hole.row, BRICK));
     holes = [];
     digCooldown = 0;
+    pendingDigTimer = 0;
     placeActor(player, player.spawnCol, player.spawnRow);
     enemies.forEach((enemy) => {
         placeActor(enemy, enemy.spawnCol, enemy.spawnRow);
@@ -367,6 +374,11 @@ const held = (name) => KEY_ALIASES[name].some((key) => heldKeys.has(key));
 
 function updatePlayer(dt) {
     if (digCooldown > 0) digCooldown = Math.max(0, digCooldown - dt);
+
+    if (pendingDigTimer > 0) {
+        pendingDigTimer -= dt;
+        if (!player.moving && (dig(pendingDig) || pendingDigTimer <= 0)) pendingDigTimer = 0;
+    }
 
     // Let the runner change their mind mid-stride, but never mid-fall.
     if (player.moving && player.mode === 'walk') {
@@ -433,6 +445,18 @@ function dig(dirX) {
     digCooldown = DIG_COOLDOWN;
     player.face = dirX;
     return true;
+}
+
+// Dig now if the runner is standing still; otherwise hold the request open for
+// a fraction of a second so it lands as soon as they finish the step.
+function requestDig(dirX) {
+    if (state !== 'playing') return false;
+    if (dig(dirX)) return true;
+    if (player.mode !== 'fall') {
+        pendingDig = dirX;
+        pendingDigTimer = 0.3;
+    }
+    return false;
 }
 
 // ---------------------------------------------------------------------------
@@ -891,12 +915,12 @@ window.addEventListener('keydown', (e) => {
     }
     if (e.key === 'z' || e.key === 'Z' || e.key === ',') {
         e.preventDefault();
-        dig(-1);
+        requestDig(-1);
         return;
     }
     if (e.key === 'x' || e.key === 'X' || e.key === '.') {
         e.preventDefault();
-        dig(1);
+        requestDig(1);
         return;
     }
     if (MOVEMENT_KEYS.has(e.key)) {

@@ -48,10 +48,12 @@ thin air.
 
 **Digging.** `Z` burns the brick down-left, `X` the brick down-right. The dig
 fails unless the runner is standing on something solid (not on a ladder or a
-rope) and the cell being aimed through is clear. A hole stays open for five
-seconds — the last 1.5 s flash as a warning — then reseals into brick. Anything
-standing in the cell at that moment dies: a guard is worth 75 points and returns
-to its spawn, the runner loses a life.
+rope) and the cell being aimed through is clear. A dig asked for mid-stride is
+held for a third of a second and fires the instant the runner reaches the next
+cell, so digging on the run never feels like it was swallowed. A hole stays open
+for five seconds — the last 1.5 s flash as a warning — then reseals into brick.
+Anything standing in the cell at that moment dies: a guard is worth 75 points
+and returns to its spawn, the runner loses a life.
 
 **Guards.** Each guard runs a breadth-first search across the cells it may
 legally enter (recomputed five times a second) and walks the first step of the
@@ -96,12 +98,12 @@ racing `requestAnimationFrame`.
 
 ## Tests
 
-`tests/loderunner.spec.js` (67 specs) was written before the implementation and
+`tests/loderunner.spec.js` (70 specs) was written before the implementation and
 covers: the idle page, level-data integrity, walking, falling, ladders, ropes,
 gold and the hidden exit, level flow, digging and resealing holes, guard
 pursuit, trapping, crushing and collisions, pause, best score and rendering.
 
-Two specs are worth calling out because they check the levels rather than the
+Three specs are worth calling out because they check the levels rather than the
 code:
 
 - *every coin and the exit are reachable from the spawn* floods each level using
@@ -111,6 +113,12 @@ code:
   the board, and since a hidden ladder is just air, the shaft cut a gap in every
   platform that the runner fell into instead of crossing. The escape ladder now
   runs up the edge of the board on all three levels.
+- *every level can be won by playing it* actually plays each level: it plans a
+  route with the runner's movement rules, presses the keys the game itself
+  reads, replans whenever a fall lands somewhere unexpected, digs its way into
+  the sealed pocket on level 3, and finishes by climbing the escape ladder. It
+  is the end-to-end proof that the whole loop — input, physics, gold, exit,
+  level flow — hangs together.
 - *a full level of play raises no page errors* runs the real animation loop for
   a second and a half with the guards live and asserts the console stayed clean.
 
