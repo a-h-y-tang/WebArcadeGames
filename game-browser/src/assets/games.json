@@ -693,6 +693,15 @@
     "thumbnail": ""
   },
   {
+    "id": "rally-chase",
+    "name": "Rally Chase",
+    "description": "Drive a scrolling maze for flags and shake pursuers with smoke",
+    "category": "Action",
+    "dir": "RallyChase",
+    "path": "games/RallyChase/index.html",
+    "thumbnail": "games/RallyChase/screenshot.png"
+  },
+  {
     "id": "reversi",
     "name": "Reversi",
     "description": "Othello strategy game - flip opponent's pieces",
