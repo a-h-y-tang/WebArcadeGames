@@ -697,6 +697,31 @@ test.describe('Lode Runner', () => {
             expect(closing.after).toBeLessThan(closing.before);
         });
 
+        test('a stale path never moves an enemy more than one cell', async ({ page }) => {
+            const jumps = await page.evaluate(() => {
+                startGame();
+                enemies.length = 1;
+                placeActor(player, 2, 14);
+                placeActor(enemies[0], 20, 14);
+                // A plan the guard can no longer follow, as if a fall had moved it.
+                enemies[0].path = [{ col: 12, row: 14 }, { col: 11, row: 14 }];
+                enemies[0].aiTimer = 1;
+                let worst = 0;
+                for (let i = 0; i < 120; i++) {
+                    const before = { col: enemies[0].col, row: enemies[0].row };
+                    step(1 / 60);
+                    if (enemies[0].moving) {
+                        worst = Math.max(
+                            worst,
+                            Math.abs(enemies[0].toCol - before.col) + Math.abs(enemies[0].toRow - before.row)
+                        );
+                    }
+                }
+                return worst;
+            });
+            expect(jumps).toBeLessThanOrEqual(1);
+        });
+
         test('an enemy that falls into a hole is trapped', async ({ page }) => {
             const trapped = await page.evaluate(() => {
                 startGame();

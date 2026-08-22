@@ -98,7 +98,7 @@ racing `requestAnimationFrame`.
 
 ## Tests
 
-`tests/loderunner.spec.js` (70 specs) was written before the implementation and
+`tests/loderunner.spec.js` (71 specs) was written before the implementation and
 covers: the idle page, level-data integrity, walking, falling, ladders, ropes,
 gold and the hidden exit, level flow, digging and resealing holes, guard
 pursuit, trapping, crushing and collisions, pause, best score and rendering.

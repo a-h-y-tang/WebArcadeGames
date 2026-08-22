@@ -547,9 +547,17 @@ function chooseEnemyMove(enemy) {
     }
 
     let stepTo = enemy.path && enemy.path.length ? enemy.path.shift() : null;
-    if (stepTo && (!passable(stepTo.col, stepTo.row) || enemyAt(stepTo.col, stepTo.row, enemy))) {
-        stepTo = null;
-        enemy.path = null;
+    // A path goes stale the moment a fall carries the guard somewhere the plan
+    // did not expect, so never trust a step that is not to a legal neighbour —
+    // following one blindly would walk the guard straight through a wall.
+    if (stepTo) {
+        const dcol = Math.abs(stepTo.col - enemy.col);
+        const drow = Math.abs(stepTo.row - enemy.row);
+        const adjacent = dcol + drow === 1;
+        if (!adjacent || !passable(stepTo.col, stepTo.row) || enemyAt(stepTo.col, stepTo.row, enemy)) {
+            stepTo = null;
+            enemy.path = null;
+        }
     }
     if (!stepTo) stepTo = greedyStep(enemy);
     if (!stepTo) return;
