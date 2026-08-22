@@ -243,6 +243,15 @@
     "thumbnail": "games/FifteenPuzzle/screenshot.png"
   },
   {
+    "id": "flag-rally",
+    "name": "Flag Rally",
+    "description": "Rally through a scrolling maze collecting flags, smoking out rival cars",
+    "category": "Action",
+    "dir": "FlagRally",
+    "path": "games/FlagRally/index.html",
+    "thumbnail": "games/FlagRally/screenshot.png"
+  },
+  {
     "id": "flappy-bird",
     "name": "Flappy Bird",
     "description": "Navigate a bird through pipes with careful taps",
