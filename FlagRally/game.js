@@ -425,8 +425,9 @@ function movePlayer(dt) {
     }
 }
 
-// Preference order per rival, so several chasers arriving at the same junction
-// fan out instead of stacking into one convoy.
+// The four grid neighbours. Rivals scan them starting at their own `pref`
+// offset, so several chasers arriving at one junction fan out instead of
+// stacking into a convoy.
 const DIRS = [
     { x: 1, y: 0 },
     { x: -1, y: 0 },
