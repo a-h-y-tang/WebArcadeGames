@@ -134,6 +134,20 @@ The specs place actors with `placeRunner`/`placeGuard`, freeze guards with
 tile shape a test needs (a brick floor, a ladder, a rope) rather than hard
 coding level coordinates, so level tweaks do not break the suite.
 
+Two groups of specs are about the *levels* rather than the code, both built on
+one shared description of legal movement (`MOVE_MODEL` in the spec): step
+sideways and fall to wherever that lands you, climb a ladder, or drop off an
+edge.
+
+- **Level audits** flood fill from the spawn and assert that every nugget is
+  reachable without digging, and that no reachable cell can strand the runner
+  away from the exit — the level-design bugs that are otherwise only found by
+  playing.
+- **Auto-play** plans a route with that same model and then *drives the real
+  simulation* along it through `input`, clearing all three levels without
+  losing a life. If the movement code ever drifts from the model the audits
+  trust, this is what catches it.
+
 ## Assumptions
 
 Made autonomously while building this, per the task's instruction to pick the

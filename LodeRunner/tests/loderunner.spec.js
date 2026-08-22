@@ -82,6 +82,36 @@ const findCell = (page, predicateSource) =>
         return null;
     }, predicateSource);
 
+// Model of what the runner can reach without digging: step sideways (falling to
+// wherever that lands you), climb a ladder, or drop off an edge. Injected into
+// page context as source, so both the level audits and the auto-player below
+// share one description of legal movement.
+const MOVE_MODEL = `
+    const lands = (c, r) => isLadderAt(c, r) || isBlocking(c, r + 1) || isLadderAt(c, r + 1);
+    const landRow = (c, r) => {
+        let rr = r;
+        while (rr < ROWS - 1 && !lands(c, rr)) rr++;
+        return rr;
+    };
+    const moves = (c, r) => {
+        const out = [];
+        const standable = isLadderAt(c, r) || isRopeAt(c, r) ||
+            isBlocking(c, r + 1) || isLadderAt(c, r + 1);
+        if (standable) {
+            for (const d of [-1, 1]) {
+                const nc = c + d;
+                if (nc < 0 || nc >= COLS || isBlocking(nc, r)) continue;
+                out.push([nc, landRow(nc, r)]);
+            }
+        }
+        if (isLadderAt(c, r) && r > 0 && !isBlocking(c, r - 1)) out.push([c, r - 1]);
+        if (r < ROWS - 1 && !isBlocking(c, r + 1)) {
+            out.push(isLadderAt(c, r + 1) ? [c, r + 1] : [c, landRow(c, r + 1)]);
+        }
+        return out;
+    };
+`;
+
 // A cell the runner can stand on with diggable brick under both sides.
 const DIG_SPOT = `(c, r) => c > 0 && c < COLS - 1 && tileAt(c, r) === ' ' &&
     tileAt(c, r - 1) === ' ' && isBlocking(c, r + 1) &&
@@ -240,33 +270,10 @@ test.describe('Lode Runner', () => {
             expect(leftovers).toEqual([]);
         });
 
-        // Model of what the runner can reach without digging: step sideways
-        // (falling to wherever that lands you), climb a ladder, or drop off.
-        // Used to prove each level is playable rather than merely well formed.
+        // Flood fill of everywhere the runner can get to, used to prove each
+        // level is playable rather than merely well formed.
         const REACH = `(startC, startR) => {
-            const lands = (c, r) => isLadderAt(c, r) || isBlocking(c, r + 1) || isLadderAt(c, r + 1);
-            const landRow = (c, r) => {
-                let rr = r;
-                while (rr < ROWS - 1 && !lands(c, rr)) rr++;
-                return rr;
-            };
-            const moves = (c, r) => {
-                const out = [];
-                const standable = isLadderAt(c, r) || isRopeAt(c, r) ||
-                    isBlocking(c, r + 1) || isLadderAt(c, r + 1);
-                if (standable) {
-                    for (const d of [-1, 1]) {
-                        const nc = c + d;
-                        if (nc < 0 || nc >= COLS || isBlocking(nc, r)) continue;
-                        out.push([nc, landRow(nc, r)]);
-                    }
-                }
-                if (isLadderAt(c, r) && r > 0 && !isBlocking(c, r - 1)) out.push([c, r - 1]);
-                if (r < ROWS - 1 && !isBlocking(c, r + 1)) {
-                    out.push(isLadderAt(c, r + 1) ? [c, r + 1] : [c, landRow(c, r + 1)]);
-                }
-                return out;
-            };
+            ${MOVE_MODEL}
             const seen = new Set([startR * COLS + startC]);
             const queue = [[startC, startR]];
             while (queue.length) {
@@ -1271,6 +1278,100 @@ test.describe('Lode Runner', () => {
             await page.keyboard.press('p');
             await expect(page.locator('#overlay')).toHaveClass(/visible/);
             await expect(page.locator('#overlay-title')).toContainText(/pause/i);
+        });
+    });
+
+    // -----------------------------------------------------------------------
+    // Auto-play: drive the real simulation, with the real keyboard-equivalent
+    // input, along a planned route. This is the end-to-end proof that the
+    // movement code matches the model the level audits above rely on.
+    // -----------------------------------------------------------------------
+    test.describe('auto-play', () => {
+        const PLAYER = `() => {
+            ${MOVE_MODEL}
+            const key = (c, r) => r * COLS + c;
+            // Shortest route from the runner to the first cell matching pred.
+            const pathTo = (pred) => {
+                const start = { c: colOf(runner.x), r: rowOf(runner.y) };
+                const prev = new Map([[key(start.c, start.r), null]]);
+                const queue = [start];
+                let head = 0;
+                let goal = null;
+                while (head < queue.length) {
+                    const cur = queue[head++];
+                    if (cur !== start && pred(cur.c, cur.r)) { goal = cur; break; }
+                    for (const [nc, nr] of moves(cur.c, cur.r)) {
+                        const k = key(nc, nr);
+                        if (prev.has(k)) continue;
+                        prev.set(k, cur);
+                        queue.push({ c: nc, r: nr });
+                    }
+                }
+                if (!goal) return null;
+                const out = [];
+                for (let cur = goal; cur; cur = prev.get(key(cur.c, cur.r))) out.unshift(cur);
+                return out.slice(1);
+            };
+            // Walk/climb to one adjacent cell of the route.
+            const goTo = (target) => {
+                const startLevel = level;
+                for (let i = 0; i < 400; i++) {
+                    if (level !== startLevel || state !== 'running') return true;
+                    const c = colOf(runner.x);
+                    const r = rowOf(runner.y);
+                    if (c === target.c && r === target.r && !runner.falling) return true;
+                    if (target.r < r) { input.x = 0; input.y = -1; }
+                    else if (target.c !== c) { input.x = Math.sign(target.c - c); input.y = 0; }
+                    else { input.x = 0; input.y = 1; }
+                    step(1 / 60);
+                }
+                input.x = 0;
+                input.y = 0;
+                return false;
+            };
+            const follow = (path) => path.every(goTo);
+
+            let trips = 0;
+            while (goldRemaining() > 0) {
+                if (trips++ > 40) return { error: 'too many trips', gold: goldRemaining() };
+                const path = pathTo((c, r) => grid[r][c] === '$');
+                if (!path) return { error: 'no route to gold', gold: goldRemaining() };
+                if (!follow(path)) return { error: 'stuck heading for gold', gold: goldRemaining() };
+            }
+            step(1 / 60); // let the exit open
+            const out = pathTo((c, r) => r === 0 && isLadderAt(c, r));
+            if (!out) return { error: 'no route to the exit' };
+            if (!follow(out)) return { error: 'stuck heading for the exit' };
+            input.x = 0;
+            input.y = 0;
+            return { level, state, score };
+        }`;
+
+        test('a planned route clears the first level', async ({ page }) => {
+            await startQuiet(page);
+            const res = await page.evaluate((src) => new Function(`return (${src})();`)(), PLAYER);
+            expect(res.error).toBeUndefined();
+            expect(res.state).toBe('running');
+            expect(res.level).toBe(2);
+            // 11 nuggets on level 1 plus the level bonus.
+            expect(res.score).toBe(11 * 250 + 1500);
+        });
+
+        test('a planned route clears every level in turn', async ({ page }) => {
+            test.slow();
+            await startQuiet(page);
+            const res = await page.evaluate((src) => {
+                const play = new Function(`return (${src});`)();
+                const out = [];
+                for (let i = 0; i < LEVELS.length; i++) {
+                    guardsEnabled = false;
+                    out.push(play());
+                }
+                return { runs: out, state, lives };
+            }, PLAYER);
+            for (const run of res.runs) expect(run.error).toBeUndefined();
+            expect(res.lives).toBe(3);
+            expect(res.state).toBe('won');
         });
     });
 

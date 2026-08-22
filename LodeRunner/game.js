@@ -744,7 +744,10 @@ function step(dt) {
     if (lives !== before || state !== 'running') return;
 
     if (runner.digTimer > 0) {
+        // Locked mid-swing: the shovel takes a moment and the runner is rooted.
         runner.digTimer -= dt;
+        runner.dir.x = 0;
+        runner.dir.y = 0;
     } else {
         runner.dir.x = input.x;
         runner.dir.y = input.y;
