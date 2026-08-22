@@ -88,6 +88,18 @@ Collecting all ten clears the level. The clear bonus is
 a slow one. The next level rebuilds the course from a new seed with one more
 rival (capped at 6) and two more boulders (capped at 14), and refills the tank.
 
+### Boulders
+
+Boulders are static hazards on open cells: touching one wrecks you exactly like
+a rival does. They are laid one at a time, and a candidate cell is skipped if
+putting a boulder there would leave any flag unreachable from the start without
+crossing a boulder. Without that check roughly 1.5% of generated courses (found
+by sweeping 200 seed/level combinations) sealed a flag behind boulders, which
+made the level unwinnable — the flag could only be driven to by wrecking first.
+
+Boulders are hazards for the player only. Rivals ignore them, which keeps the
+chase AI to one rule and means you cannot use a boulder as cover.
+
 ### Rivals
 
 Rival cars move cell to cell. On arriving at a cell centre each one picks the
@@ -176,7 +188,7 @@ Structure of `game.js`:
 
 1. constants (grid, car, rivals, smoke, fuel, scoring)
 2. seeded RNG and level generation (`setSeed`, `buildMaze`, `placeFlags`,
-   `placeRocks`)
+   `placeRocks`, `flagsReachable`)
 3. grid helpers (`isOpen`, `colOf`, `rowOf`, `centerX`, `centerY`, `nearestOpen`)
 4. state and level lifecycle (`startGame`, `buildLevel`, `resetCars`,
    `loseLife`, `nextLevel`, `endGame`)
@@ -202,7 +214,8 @@ Other choices made where the brief was open, always taking the simpler reading:
 - **A puff of smoke spins at most one rival**, then vanishes.
 - **A wreck does not reset the level**, only the car positions. Collected flags
   stay collected.
-- **Boulders are static.** They never move, spawn, or fall.
+- **Boulders are static, and only the player can hit them.** They never move,
+  spawn or fall, and rivals drive straight over them.
 - **The course is regenerated from a new seed each level** rather than shipping
   hand-authored levels, so difficulty comes from rival count, rival speed and
   boulder count.

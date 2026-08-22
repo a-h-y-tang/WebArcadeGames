@@ -26,7 +26,8 @@ rival, and where you are — use it to plan a route to flags you cannot see.
 - **The gold "S" flag** is the special flag. Once you have it, every flag you
   collect afterwards on that level is worth 200.
 - **Rival cars** steer towards you constantly. Touching one wrecks your car and
-  costs a life. So does hitting a boulder.
+  costs a life. So does hitting a boulder — though boulders are never laid in a
+  way that seals a flag off, so every flag can always be reached cleanly.
 - **Smoke screen** (`Space`) drops a puff of exhaust behind you for 6 fuel. A
   rival that drives into it spins out for three seconds — 200 points — and is
   harmless and stationary while it spins, so you can drive straight through it.

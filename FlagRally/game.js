@@ -208,6 +208,26 @@ function placeFlags() {
     if (flags.length) flags[Math.floor(rng() * flags.length)].special = true;
 }
 
+// Can every flag still be driven to from the start without crossing one of
+// `blocked` (the boulder cells)? A boulder wrecks the car, so a flag ringed by
+// boulders would be an uncollectable flag — and an unwinnable level.
+function flagsReachable(blocked) {
+    const seen = new Set([cellKey(SPAWN.c, SPAWN.r)]);
+    const queue = [[SPAWN.c, SPAWN.r]];
+    while (queue.length) {
+        const [c, r] = queue.shift();
+        for (const d of DIRS) {
+            const nc = c + d.x;
+            const nr = r + d.y;
+            const key = cellKey(nc, nr);
+            if (!isOpen(nc, nr) || seen.has(key) || blocked.has(key)) continue;
+            seen.add(key);
+            queue.push([nc, nr]);
+        }
+    }
+    return flags.every((f) => seen.has(cellKey(f.c, f.r)));
+}
+
 function placeRocks() {
     const taken = new Set(flags.map((f) => cellKey(f.c, f.r)));
     taken.add(cellKey(SPAWN.c, SPAWN.r));
@@ -221,12 +241,20 @@ function placeRocks() {
             (cell) => !taken.has(cellKey(cell.c, cell.r)) && manhattan(cell, SPAWN) >= 3
         )
     );
-    rocks = pool.slice(0, count).map((cell) => ({
-        c: cell.c,
-        r: cell.r,
-        x: centerX(cell.c),
-        y: centerY(cell.r),
-    }));
+
+    // Lay boulders one at a time, skipping any that would seal a flag off.
+    rocks = [];
+    const blocked = new Set();
+    for (const cell of pool) {
+        if (rocks.length >= count) break;
+        const key = cellKey(cell.c, cell.r);
+        blocked.add(key);
+        if (flagsReachable(blocked)) {
+            rocks.push({ c: cell.c, r: cell.r, x: centerX(cell.c), y: centerY(cell.r) });
+        } else {
+            blocked.delete(key);
+        }
+    }
 }
 
 function enemySpeed() {

@@ -888,6 +888,39 @@ test.describe('Flag Rally', () => {
             expect(s.state).toBe('crashed');
         });
 
+        // Boulders wreck the car, so a flag ringed by boulders would be an
+        // uncollectable flag — and an unwinnable level. Every flag must be
+        // reachable from the start without driving over one.
+        test('boulders never wall a flag off', async ({ page }) => {
+            const blocked = await page.evaluate(() => {
+                const bad = [];
+                for (let s = 1; s <= 40; s++) {
+                    setSeed(s);
+                    startGame();
+                    for (let lv = 1; lv <= 5; lv++) {
+                        const rockCells = new Set(rocks.map((k) => k.c + ',' + k.r));
+                        const seen = new Set([SPAWN.c + ',' + SPAWN.r]);
+                        const queue = [[SPAWN.c, SPAWN.r]];
+                        while (queue.length) {
+                            const [c, r] = queue.shift();
+                            for (const [dc, dr] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+                                const nc = c + dc, nr = r + dr, key = nc + ',' + nr;
+                                if (!isOpen(nc, nr) || seen.has(key) || rockCells.has(key)) continue;
+                                seen.add(key);
+                                queue.push([nc, nr]);
+                            }
+                        }
+                        const walled = flags.filter((f) => !seen.has(f.c + ',' + f.r)).length;
+                        if (walled) bad.push({ seed: s, level: lv, walled });
+                        for (const f of flags) f.taken = true;
+                        nextLevel();
+                    }
+                }
+                return bad;
+            });
+            expect(blocked).toEqual([]);
+        });
+
         test('boulders never sit on the spawn cell', async ({ page }) => {
             await startQuiet(page);
             const onSpawn = await page.evaluate(
