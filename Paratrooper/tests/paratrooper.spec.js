@@ -288,6 +288,19 @@ test.describe('Paratrooper', () => {
             expect(count).toBe(0);
         });
 
+        test('firing lights a muzzle flash that dies down', async ({ page }) => {
+            const flash = await page.evaluate(() => {
+                const before = muzzleFlash;
+                fire();
+                const lit = muzzleFlash;
+                step(0.3);
+                return { before, lit, after: muzzleFlash };
+            });
+            expect(flash.before).toBe(0);
+            expect(flash.lit).toBeGreaterThan(0);
+            expect(flash.after).toBeLessThanOrEqual(0);
+        });
+
         test('firing while idle does nothing', async ({ page }) => {
             const count = await page.evaluate(() => {
                 state = 'idle';
@@ -690,6 +703,23 @@ test.describe('Paratrooper', () => {
             });
             expect(wave).toBe(2);
             await expect(page.locator('#wave')).toHaveText('2');
+        });
+
+        test('a new wave raises a banner that fades away', async ({ page }) => {
+            const banner = await page.evaluate(() => {
+                startGame();
+                spawnTimer = Number.POSITIVE_INFINITY;
+                const atStart = waveBanner;
+                // Frame-sized steps, so the banner is not raised and drained
+                // inside a single coarse call.
+                while (wave === 1 && elapsed < WAVE_SECONDS * 2) step(1 / 60);
+                const onChange = waveBanner;
+                for (let i = 0; i < 200; i++) step(0.016);
+                return { atStart, onChange, later: waveBanner };
+            });
+            expect(banner.atStart).toBe(0);
+            expect(banner.onChange).toBeGreaterThan(0);
+            expect(banner.later).toBeLessThanOrEqual(0);
         });
 
         test('later waves send faster helicopters', async ({ page }) => {

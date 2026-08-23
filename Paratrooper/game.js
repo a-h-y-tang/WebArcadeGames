@@ -93,6 +93,8 @@ var helicopters = [];
 var troopers = [];
 var particles = [];
 var heldKeys = new Set();
+var muzzleFlash = 0;                // seconds of glow left at the barrel tip
+var waveBanner = 0;                 // seconds the "WAVE n" banner stays up
 
 // ---------------------------------------------------------------------------
 // Deterministic randomness
@@ -210,6 +212,7 @@ function fire() {
         vy: -cos * BULLET_SPEED,
     });
     turret.cooldown = FIRE_COOLDOWN;
+    muzzleFlash = 0.07;
 }
 
 function refreshKeyDir() {
@@ -237,7 +240,9 @@ function step(dt) {
     if (state !== 'running') return;
 
     elapsed += dt;
-    wave = Math.floor(elapsed / WAVE_SECONDS) + 1;
+    const nextWave = Math.floor(elapsed / WAVE_SECONDS) + 1;
+    if (nextWave !== wave) waveBanner = 1.6;
+    wave = nextWave;
 
     let remaining = dt;
     while (remaining > 0 && state === 'running') {
@@ -336,6 +341,9 @@ function stepTroopers(dt) {
 }
 
 function stepParticles(dt) {
+    if (muzzleFlash > 0) muzzleFlash -= dt;
+    if (waveBanner > 0) waveBanner -= dt;
+
     for (let i = particles.length - 1; i >= 0; i--) {
         const p = particles[i];
         p.age += dt;
@@ -396,6 +404,8 @@ function startGame() {
     helicopters = [];
     troopers = [];
     particles = [];
+    muzzleFlash = 0;
+    waveBanner = 0;
     refreshKeyDir();
     hideOverlay();
     updateHud();
@@ -467,6 +477,7 @@ function draw() {
     for (const t of troopers) drawTrooper(t);
     drawBullets();
     drawParticles();
+    drawWaveBanner();
     updateHud();
 }
 
@@ -526,6 +537,44 @@ function drawTower() {
     ctx.beginPath();
     ctx.arc(TOWER_X, PIVOT_Y, 9, Math.PI, Math.PI * 2);
     ctx.fill();
+
+    if (muzzleFlash > 0) {
+        ctx.save();
+        ctx.translate(TOWER_X, PIVOT_Y);
+        ctx.rotate(turret.angle);
+        ctx.fillStyle = 'rgba(255, 244, 190, 0.9)';
+        ctx.beginPath();
+        ctx.arc(0, -BARREL_LEN - 2, 6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+    }
+
+    drawDangerCue();
+}
+
+// One trooper short of an overrun, the threatened flank pulses red — the
+// stack counters in the HUD are easy to miss mid-shot.
+function drawDangerCue() {
+    const pulse = 0.35 + 0.35 * Math.sin(elapsed * 9);
+    for (const side of ['left', 'right']) {
+        if (countStack(side) < STACK_LIMIT - 1) continue;
+        const x = side === 'left'
+            ? TOWER_X - TOWER_HALF_W - 4
+            : TOWER_X + TOWER_HALF_W;
+        ctx.fillStyle = `rgba(242, 112, 95, ${pulse})`;
+        ctx.fillRect(x, TOWER_TOP, 4, GROUND_Y - TOWER_TOP);
+    }
+}
+
+function drawWaveBanner() {
+    if (waveBanner <= 0) return;
+    ctx.save();
+    ctx.globalAlpha = Math.min(1, waveBanner / 0.4);
+    ctx.fillStyle = '#ffcf5c';
+    ctx.font = 'bold 34px "Segoe UI", system-ui, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(`WAVE ${wave}`, TOWER_X, 120);
+    ctx.restore();
 }
 
 function drawHelicopter(h) {
