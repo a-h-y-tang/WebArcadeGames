@@ -92,6 +92,18 @@ game stays playable rather than turning into noise.
 
 The **Start** button on the overlay does the same as `Space`.
 
+Held keys auto-repeat, which is what you want for the gun — the cooldown paces
+it — so `Space` fires on repeat. `P`, `R` and the restart branch of `Space`
+ignore repeats, so a key still held from the shot that lost the tower cannot
+restart the run out from under you.
+
+### Feedback
+
+The HUD carries the numbers, but a player mid-shot is not reading it, so three
+cues are drawn on the canvas: the barrel tip flashes when a shell leaves it, a
+`WAVE n` banner fades in and out on each difficulty step, and the threatened
+flank of the tower pulses red once a side is one trooper short of an overrun.
+
 ## Code structure
 
 Single classic (non-module) script, `game.js`, matching the rest of this repo

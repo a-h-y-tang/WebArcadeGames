@@ -699,24 +699,22 @@ function frame(now) {
 // ---------------------------------------------------------------------------
 
 window.addEventListener('keydown', (e) => {
-    if (e.repeat && e.key === ' ') {
-        e.preventDefault();
-        return;
-    }
-
+    // Held keys auto-repeat. That is what you want for the gun — the cooldown
+    // already paces it — but a Space still held from the shot that lost the
+    // tower must not restart the run out from under the player.
     if (e.key === ' ' || e.code === 'Space') {
-        if (state === 'idle' || state === 'over') startGame();
-        else if (state === 'running') fire();
+        if (state === 'running') fire();
+        else if (!e.repeat && state !== 'paused') startGame();
         e.preventDefault();
         return;
     }
     if (e.key === 'p' || e.key === 'P') {
-        togglePause();
+        if (!e.repeat) togglePause();
         e.preventDefault();
         return;
     }
     if (e.key === 'r' || e.key === 'R') {
-        if (state !== 'idle') startGame();
+        if (!e.repeat && state !== 'idle') startGame();
         e.preventDefault();
         return;
     }

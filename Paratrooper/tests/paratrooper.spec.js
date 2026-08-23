@@ -288,6 +288,21 @@ test.describe('Paratrooper', () => {
             expect(count).toBe(0);
         });
 
+        test('holding Space keeps firing at the cooldown rate', async ({ page }) => {
+            const count = await page.evaluate(() => {
+                const held = () => window.dispatchEvent(
+                    new KeyboardEvent('keydown', { key: ' ', code: 'Space', repeat: true }),
+                );
+                held();
+                step(FIRE_COOLDOWN + 0.01);
+                held();
+                step(FIRE_COOLDOWN + 0.01);
+                held();
+                return bullets.length;
+            });
+            expect(count).toBe(3);
+        });
+
         test('firing lights a muzzle flash that dies down', async ({ page }) => {
             const flash = await page.evaluate(() => {
                 const before = muzzleFlash;
@@ -656,6 +671,17 @@ test.describe('Paratrooper', () => {
             await page.keyboard.press('Space');
             expect(await page.evaluate(() => state)).toBe('running');
         });
+
+        test('a Space still held from the last shot does not restart', async ({ page }) => {
+            await page.evaluate(overrun);
+            const after = await page.evaluate(() => {
+                window.dispatchEvent(
+                    new KeyboardEvent('keydown', { key: ' ', code: 'Space', repeat: true }),
+                );
+                return state;
+            });
+            expect(after).toBe('over');
+        });
     });
 
     // -----------------------------------------------------------------------
@@ -682,6 +708,16 @@ test.describe('Paratrooper', () => {
                 return troopers[0].y === before;
             });
             expect(frozen).toBe(true);
+        });
+
+        test('Space does not wipe a paused run', async ({ page }) => {
+            const after = await page.evaluate(startQuiet);
+            expect(after).toBeUndefined();
+            await page.evaluate(() => { score = 90; });
+            await page.keyboard.press('p');
+            await page.keyboard.press('Space');
+            expect(await page.evaluate(() => ({ state, score })))
+                .toEqual({ state: 'paused', score: 90 });
         });
 
         test('P does nothing on the title screen', async ({ page }) => {
