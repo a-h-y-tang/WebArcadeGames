@@ -621,6 +621,15 @@
     "thumbnail": "games/Pang/screenshot.png"
   },
   {
+    "id": "paratrooper",
+    "name": "Paratrooper",
+    "description": "Defend the tower - shoot down helicopters and their paratroopers",
+    "category": "Action",
+    "dir": "Paratrooper",
+    "path": "games/Paratrooper/index.html",
+    "thumbnail": "games/Paratrooper/screenshot.png"
+  },
+  {
     "id": "peg-solitaire",
     "name": "Peg Solitaire",
     "description": "Jump pegs to eliminate them from the board",
