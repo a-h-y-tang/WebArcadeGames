@@ -282,13 +282,13 @@ function pickSpawnLane() {
 // The customer nearest the tap in this lane that is close enough to grab a
 // sliding mug.
 function customerForMug(mug) {
-    let best2 = null;
+    let nearest = null;
     for (const c of customers) {
         if (c.lane !== mug.lane) continue;
         if (Math.abs(c.x - mug.x) > HIT_DIST) continue;
-        if (!best2 || c.x > best2.x) best2 = c;
+        if (!nearest || c.x > nearest.x) nearest = c;
     }
-    return best2;
+    return nearest;
 }
 
 function serveCustomer(c, index) {
@@ -296,7 +296,7 @@ function serveCustomer(c, index) {
     served += 1;
     score += SERVE_POINTS * level;
     mugs.push({ lane: c.lane, x: EXIT_X + 8, full: false, spin: 0 });
-    splash(EXIT_X + 8, laneY(c.lane), '#ffd27a');
+    splash(EXIT_X + 8, counterY(c.lane), '#ffd27a');
     updateHud();
     if (served >= target) completeLevel();
 }
@@ -406,18 +406,18 @@ function updateMugs(dt) {
         if (m.full) {
             m.x -= MUG_SPEED * dt;
             m.spin = (m.spin || 0) - dt * 6;
-            const target2 = customerForMug(m);
-            if (target2) {
+            const drinker = customerForMug(m);
+            if (drinker) {
                 mugs.splice(i, 1);
-                target2.drinking = true;
-                target2.pushRemaining = (target2.pushRemaining > 0 ? target2.pushRemaining : 0) + PUSHBACK_DIST;
-                target2.drinkTimer = PUSHBACK_DIST / PUSHBACK_SPEED;
-                splash(m.x, laneY(m.lane), '#ffd27a');
+                drinker.drinking = true;
+                drinker.pushRemaining = Math.max(0, drinker.pushRemaining) + PUSHBACK_DIST;
+                drinker.drinkTimer = PUSHBACK_DIST / PUSHBACK_SPEED;
+                splash(m.x, counterY(m.lane), '#ffd27a');
                 continue;
             }
             if (m.x <= EXIT_X) {
                 mugs.splice(i, 1);
-                splash(EXIT_X, laneY(m.lane), '#8fd8ff');
+                splash(EXIT_X, counterY(m.lane), '#8fd8ff');
                 loseLife('A MUG HIT THE FLOOR!');
                 return;
             }
@@ -427,13 +427,13 @@ function updateMugs(dt) {
             if (m.x >= CATCH_X && player.lane === m.lane) {
                 mugs.splice(i, 1);
                 score += CATCH_POINTS * level;
-                splash(CATCH_X, laneY(m.lane), '#8fd8ff');
+                splash(CATCH_X, counterY(m.lane), '#8fd8ff');
                 updateHud();
                 continue;
             }
             if (m.x >= MUG_SMASH_X) {
                 mugs.splice(i, 1);
-                splash(MUG_SMASH_X, laneY(m.lane), '#8fd8ff');
+                splash(MUG_SMASH_X, counterY(m.lane), '#8fd8ff');
                 loseLife('YOU MISSED AN EMPTY!');
                 return;
             }

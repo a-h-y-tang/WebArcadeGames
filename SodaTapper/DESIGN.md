@@ -62,8 +62,8 @@ zero lives the game ends and the best score is written to `localStorage`.
 **Levels.** Level *n* requires `LEVEL_BASE + 2n` customers served
 (`4 + 2n`). Customers walk at `CUSTOMER_SPEED_BASE + n × CUSTOMER_SPEED_STEP`
 (22 + 5n px/s) and arrive every `max(SPAWN_MIN, SPAWN_BASE - n × SPAWN_STEP)`
-seconds. Clearing a level awards `100 × level` and shows a short interlude
-before the next rush.
+seconds. Clearing a level awards `LEVEL_BONUS × level` (200 × level) and shows a short
+`INTERLUDE_TIME` (1.5 s) breather before the next rush.
 
 ## Controls
 
