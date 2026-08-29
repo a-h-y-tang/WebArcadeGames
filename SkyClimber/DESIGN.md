@@ -29,7 +29,7 @@ taller one.
 | `COLS` | 5 | window columns |
 | `COL_W` | 96 px | column width |
 | `ROW_H` | 56 px | row height |
-| `ROWS_BASE` / `ROWS_STEP` | 22 / 4 | building height at level 1, and per level |
+| `ROWS_BASE` / `ROWS_STEP` | 16 / 3 | building height at level 1, and per level |
 | `CANVAS_W` × `CANVAS_H` | 520 × 640 | canvas size |
 
 Row 0 is the street-level ledge and its windows are **always open**, so the
@@ -41,24 +41,30 @@ Every window above row 0 runs its own cycle, driven by a seeded PRNG so a run is
 reproducible:
 
 ```
-open (4–9 s) → closing (0.8 s warning flash) → closed (2–5 s) → open → …
+open (4–9 s) → closing (0.8 s warning flash) → closed (1.5–3.5 s) → open → …
 ```
 
-Timings shorten as the level rises. A hand may only be *moved onto* an `open`
-window. A window that is `closing` still holds — the flashing frame is your
-warning to move. When it reaches `closed` with a hand on it, the grip breaks and
-the climber **slips**: both hands slide down to the nearest row below where both
-of the climber's columns are open. Because row 0 is always open, a slip can
-never be fatal — it only costs height.
+Timings shorten as the level rises (×0.88 per level), and each window starts at
+a random point in its cycle so the wall does not open and shut in one wave —
+roughly 60–80% of it is open at any moment.
+
+A hand may only be *moved onto* an `open` window. A window that is `closing`
+still holds — the flashing frame is your warning to move. When it reaches
+`closed` with a hand on it, the grip breaks and the climber **slips**: both hands
+slide down to the nearest row below where both of the climber's columns are open.
+Because row 0 is always open, a slip can never be fatal — it only costs height.
 
 ### Flower pots
 
-Pots are dropped from above at a rate and speed that scale with the level. A pot
-falls down a single column. If it reaches the climber's body while it is in
-either of the climber's two columns, it knocks you off the wall: the state
-becomes `falling`, the climber drops to the street, and a life is spent. With
-lives left you restart at the bottom of the *same* building with your score
-intact; otherwise the game is over.
+Pots are dropped from above at a rate and speed that scale with the level: one
+every ~3 s falling at 180 px/s on the first building, tightening from there, with
+at most three in flight so the lanes never all fill at once. A pot falls down a
+single column, and for the first 1.5 s of a climb none of them can touch you.
+
+A pot that reaches the climber's body while it is in either of the climber's two
+columns knocks them off the wall: the state becomes `falling`, the climber drops
+to the street, and a life is spent. With lives left you restart at the bottom of
+the *same* building with your score intact; otherwise the game is over.
 
 ### Scoring
 
@@ -67,9 +73,10 @@ intact; otherwise the game is over.
 | Each new highest row reached | 10 |
 | Reaching the roof | 500 × level |
 
-Height points are paid only for rows above your best so far in the run, so
-sliding down and re-climbing the same stretch earns nothing. The best score is
-kept in `localStorage` under `skyclimber.best`.
+Height points are paid only for rows above your best so far *on the current
+building*, so sliding down and re-climbing the same stretch earns nothing; a new
+building starts the height marker again. The best score is kept in
+`localStorage` under `skyclimber.best`.
 
 ### Level progression
 
@@ -89,8 +96,9 @@ bottom of the new building.
 | `Enter` | start / restart |
 | `P` | pause / resume |
 
-Holding a hand key repeats the move every 0.2 s, so you can climb by holding
-alternately rather than tapping.
+Holding a hand key repeats the move every 0.15 s. Holding both hand keys climbs
+at full speed — the one-row rule between the hands paces the alternation for you,
+so the skill lies in reading the wall and dodging, not in drumming the keys.
 
 ## Code layout
 
@@ -111,8 +119,9 @@ plain global the Playwright tests can reach through `page.evaluate`.
 All motion is expressed per second and advanced by `step(dt)`. The animation
 loop only computes `dt` and calls `step`/`draw`, so a test can simulate any
 number of frames deterministically without depending on `requestAnimationFrame`
-wall-clock timing. Tests switch off the random systems with `potsEnabled = false`
-and `windowCycling = false`, and reshape the wall with `openAllWindows()` and
+wall-clock timing. Tests park the loop with `autoStep = false`, switch off the
+random systems with `potsEnabled = false`, `windowCycling = false` and
+`graceTimer = 0`, and reshape the wall with `openAllWindows()` and
 `setWindow(col, row, 'closed')`.
 
 ### State machine
@@ -150,8 +159,14 @@ recorded here.
 5. **Height is measured in rows,** and the HUD shows the body row directly
    rather than converting to metres or floors.
 6. **Score is not reset on a life lost,** and neither is the best-row marker, so
-   re-climbing after a fall pays nothing until you pass your previous best.
-7. **Game-browser count assertion left alone.** `game-browser/e2e/game-browser.spec.ts`
+   re-climbing after a fall pays nothing until you pass your previous best on
+   that building.
+7. **Difficulty was tuned by simulation, not by feel.** A scripted bot that
+   climbs and sidesteps falling pots was run over a dozen seeded games; the
+   building height, pot rate and window odds above are the numbers at which that
+   bot clears the first building about half the time, which leaves headroom for
+   a human who reads the wall better than it does.
+8. **Game-browser count assertion left alone.** `game-browser/e2e/game-browser.spec.ts`
    asserts an exact card count that was already stale before this change (it
    expects 105 for the 108 entries in `games.json`). That suite is not part of
    the root `npm test` run, and correcting an unrelated pre-existing assertion is

@@ -126,9 +126,11 @@ function buildWindows() {
                 // The street ledge is always available, so a slip is never fatal.
                 col.push({ state: 'open', timer: Infinity });
             } else if (rand() < 0.85) {
-                col.push({ state: 'open', timer: randRange(OPEN_MIN, OPEN_MAX) * cycleScale() });
+                // Start each window at a random point in its cycle, so the wall
+                // does not open and shut in one synchronised wave.
+                col.push({ state: 'open', timer: randRange(0.5, OPEN_MAX) * cycleScale() });
             } else {
-                col.push({ state: 'closed', timer: randRange(SHUT_MIN, SHUT_MAX) * cycleScale() });
+                col.push({ state: 'closed', timer: randRange(0.3, SHUT_MAX) * cycleScale() });
             }
         }
         windows.push(col);
@@ -729,7 +731,13 @@ function drawPots() {
 
 function drawClimber() {
     if (!climber) return;
-    const drop = state === 'falling' ? fallOffset : 0;
+    // While falling, the climber drops no further than the pavement, so the
+    // tumble stays on screen instead of vanishing past the bottom edge.
+    let drop = 0;
+    if (state === 'falling') {
+        const base = Math.max(rowHandY(climber.dispLeftRow), rowHandY(climber.dispRightRow));
+        drop = Math.min(fallOffset, Math.max(0, worldToScreenY(0) - 34 - base));
+    }
     const lx = colCenterX(climber.dispLeftCol);
     const rx = colCenterX(climber.dispRightCol);
     const ly = rowHandY(climber.dispLeftRow) + drop;
