@@ -225,6 +225,15 @@
     "thumbnail": ""
   },
   {
+    "id": "droid-arena",
+    "name": "Droid Arena",
+    "description": "Twin-stick arena shooter - clear waves of droids and rescue civilians",
+    "category": "Action",
+    "dir": "DroidArena",
+    "path": "games/DroidArena/index.html",
+    "thumbnail": "games/DroidArena/screenshot.png"
+  },
+  {
     "id": "farkle",
     "name": "Farkle",
     "description": "Dice-rolling game - score combinations wisely",
