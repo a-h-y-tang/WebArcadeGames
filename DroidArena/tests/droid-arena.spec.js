@@ -953,6 +953,20 @@ test.describe('Droid Arena', () => {
             expect(ok).toBe(true);
         });
 
+        test('a rescue leaves a floating score popup that fades', async ({ page }) => {
+            const result = await page.evaluate(() => {
+                startGame();
+                clearEntities();
+                spawnHuman(player.x + 4, player.y);
+                step(1 / 60);
+                const shown = popups.map((p) => p.text);
+                for (let i = 0; i < 300; i++) step(1 / 60);
+                return { shown, after: popups.length };
+            });
+            expect(result.shown).toEqual(['1000']);
+            expect(result.after).toBe(0);
+        });
+
         test('particles fade away', async ({ page }) => {
             const result = await page.evaluate(() => {
                 startGame();

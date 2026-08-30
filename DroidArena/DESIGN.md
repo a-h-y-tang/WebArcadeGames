@@ -79,7 +79,9 @@ as a plain global.
 - **Constants** — arena geometry, speeds, radii, scoring, wave shape.
 - **State** — `state` (`idle` / `running` / `paused` / `over`), `score`, `lives`,
   `wave`, `highScore`, `rescueIndex`, plus the `player` object and the
-  `bullets`, `enemyBullets`, `enemies`, `humans`, `particles` arrays.
+  `bullets`, `enemyBullets`, `enemies`, `humans`, `particles` and `popups`
+  arrays. `particles` are the debris of an explosion; `popups` are the floating
+  score numbers a rescue leaves behind.
 - **Spawning** — `spawnWave(n)` plus `spawnGrunt/​spawnHulk/​spawnSentry/​spawnHuman`,
   which take explicit coordinates so tests can build exact scenarios.
 - **`step(dt)`** — the whole simulation for one slice of time: input → player →

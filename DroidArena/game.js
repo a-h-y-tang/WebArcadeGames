@@ -57,6 +57,7 @@ const HUMAN_TURN_MAX = 2.0;
 const SCORE_GRUNT = 100;
 const SCORE_SENTRY = 200;
 const RESCUE_VALUES = [1000, 2000, 3000, 4000, 5000];
+const POPUP_LIFE = 0.9;             // seconds a floating score stays up
 
 // --- Waves ---
 const MIN_SPAWN_DIST = 110;         // nothing spawns closer to the player
@@ -92,6 +93,7 @@ const enemyBullets = [];
 const enemies = [];
 const humans = [];
 const particles = [];
+const popups = [];      // floating "+points" text
 
 // ---------------------------------------------------------------------------
 // Small helpers
@@ -191,6 +193,7 @@ function clearEntities() {
     bullets.length = 0;
     enemyBullets.length = 0;
     particles.length = 0;
+    popups.length = 0;
 }
 
 function spawnWave(w) {
@@ -381,6 +384,20 @@ function burst(x, y, colour, count, speed) {
     }
 }
 
+// A score that drifts up from where it was earned and fades out.
+function popup(x, y, text, colour) {
+    popups.push({ x, y, text, colour, life: POPUP_LIFE });
+}
+
+function updatePopups(dt) {
+    for (let i = popups.length - 1; i >= 0; i--) {
+        const p = popups[i];
+        p.life -= dt;
+        if (p.life <= 0) { popups.splice(i, 1); continue; }
+        p.y -= 26 * dt;
+    }
+}
+
 function updateParticles(dt) {
     for (let i = particles.length - 1; i >= 0; i--) {
         const p = particles[i];
@@ -469,7 +486,7 @@ function step(dt) {
     }
 
     // --- Firing: holding an aim key *is* the trigger ---
-    player.cooldown -= dt;
+    if (player.cooldown > 0) player.cooldown -= dt;
     const ad = Math.hypot(aim.x, aim.y);
     if (ad > 0) {
         player.aimX = aim.x / ad;
@@ -534,6 +551,7 @@ function step(dt) {
     }
 
     updateParticles(dt);
+    updatePopups(dt);
 
     // --- Hulks trample civilians ---
     for (let i = humans.length - 1; i >= 0; i--) {
@@ -549,6 +567,7 @@ function step(dt) {
     // --- Rescues ---
     for (let i = humans.length - 1; i >= 0; i--) {
         if (!hits(player, humans[i], PLAYER_R, HUMAN_R)) continue;
+        popup(humans[i].x, humans[i].y - 12, String(rescueValue()), '#ffd166');
         addScore(rescueValue());
         if (rescueIndex < RESCUE_VALUES.length - 1) rescueIndex += 1;
         burst(humans[i].x, humans[i].y, '#ffd166', 14, 160);
@@ -830,6 +849,17 @@ function draw() {
         ctx.fillRect(p.x - 2, p.y - 2, 4, 4);
     }
     ctx.globalAlpha = 1;
+
+    // Floating scores.
+    ctx.textAlign = 'center';
+    ctx.font = 'bold 13px "Segoe UI", system-ui, sans-serif';
+    for (const p of popups) {
+        ctx.globalAlpha = clamp(p.life / POPUP_LIFE, 0, 1);
+        ctx.fillStyle = p.colour;
+        ctx.fillText(p.text, p.x, p.y);
+    }
+    ctx.globalAlpha = 1;
+    ctx.textAlign = 'left';
 
     if (state === 'running' && waveTimer > 0) {
         drawBanner('WAVE ' + wave + ' CLEAR', 'Next wave incoming');
