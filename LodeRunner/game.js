@@ -782,6 +782,13 @@ function drawFigure(x, y, body, head, actor) {
     ctx.arc(cx, y + 7, 4.5, 0, Math.PI * 2);
     ctx.fill();
 
+    // A dark eye on the leading side: the only cue to which way this one is
+    // about to go, which matters most for the guards.
+    ctx.fillStyle = 'rgba(5, 9, 18, 0.75)';
+    ctx.beginPath();
+    ctx.arc(cx + actor.facing * 2, y + 6.5, 1.3, 0, Math.PI * 2);
+    ctx.fill();
+
     ctx.strokeStyle = body;
     ctx.lineWidth = 2.5;
     ctx.beginPath();
