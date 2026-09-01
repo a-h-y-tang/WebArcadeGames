@@ -186,6 +186,10 @@ function buildColumn(i, prev) {
         centre,
         ceiling: centre - half + noise(i, 3) * RUBBLE,
         floor: centre + half - noise(i, 4) * RUBBLE,
+        // Where the decorative speckles sit in the rock face, settled once so
+        // drawing never has to spin up a PRNG per column per frame.
+        dustTop: noise(i, 5) * 22,
+        dustBottom: noise(i, 6) * 22,
     };
 }
 
@@ -619,8 +623,8 @@ function drawCave() {
         if (i % 2) continue;
         const col = terrainColumn(i);
         const x = i * COL_W - world.scrollX;
-        ctx.fillRect(x, col.ceiling - 6 - noise(i, 5) * 22, 3, 3);
-        ctx.fillRect(x, col.floor + 4 + noise(i, 6) * 22, 3, 3);
+        ctx.fillRect(x, col.ceiling - 6 - col.dustTop, 3, 3);
+        ctx.fillRect(x, col.floor + 4 + col.dustBottom, 3, 3);
     }
 
     // Glowing rims along both rock faces.
@@ -885,7 +889,12 @@ btnStart.addEventListener('click', () => {
 // Init
 // ---------------------------------------------------------------------------
 
-best = parseInt(localStorage.getItem('cavern-raider-best') || '0', 10) || 0;
+function loadBest() {
+    try { return parseInt(localStorage.getItem('cavern-raider-best') || '0', 10) || 0; }
+    catch (e) { return 0; }   // some browsers refuse storage on file:// URLs
+}
+
+best = loadBest();
 state = 'idle';
 score = 0;
 killScore = 0;
