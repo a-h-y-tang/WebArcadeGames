@@ -94,6 +94,10 @@ Inspired by Konami's 1981 *Scramble*.
   everything destroyed. **Depth** climbs every `LEVEL_DIST` (2400 px) and both
   speeds the cave up (`LEVEL_SPEED`) and narrows it (`GAP_SQUEEZE`), so a run
   ends when the cave finally out-paces you rather than at a fixed finish line.
+- Speed **plateaus** at `MAX_SCROLL` (320 px/s, reached around depth 12). Left
+  uncapped it reached 700+ px/s — past anything a human can fly, which turns the
+  late game into a coin flip rather than a challenge. Past the cap the pressure
+  comes from the still-narrowing channel instead.
 
 ## Controls
 

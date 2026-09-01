@@ -336,6 +336,19 @@ test.describe('Cavern Raider', () => {
             expect(counts).toEqual({ b: 0, m: 0 });
         });
 
+        test('Space fires once the run is under way', async ({ page }) => {
+            await page.evaluate(() => startGame());
+            await page.keyboard.press('Space');
+            expect(await page.evaluate(() => bullets.length)).toBe(1);
+            expect(await page.evaluate(() => state)).toBe('running');
+        });
+
+        test('X drops a bomb', async ({ page }) => {
+            await page.evaluate(() => startGame());
+            await page.keyboard.press('x');
+            expect(await page.evaluate(() => bombs.length)).toBe(1);
+        });
+
         test('bullets are absorbed by the cave wall', async ({ page }) => {
             const gone = await page.evaluate(() => {
                 startGame();

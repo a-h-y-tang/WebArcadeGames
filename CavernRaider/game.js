@@ -50,6 +50,7 @@ const START_LIVES = 3;
 const RESPAWN_DELAY = 1.2;          // seconds of wreckage before the next ship
 const BASE_SCROLL = 130;            // px/s the cave flows past at depth 1
 const LEVEL_SPEED = 18;             // ...and how much faster each depth is
+const MAX_SCROLL = 320;             // ...up to a ceiling a human can still fly
 const LEVEL_DIST = 2400;            // px of cave per depth level
 const DIST_PER_POINT = 20;          // px flown per point of distance score
 
@@ -418,8 +419,10 @@ function respawn() {
 // Simulation
 // ---------------------------------------------------------------------------
 
+// The cave speeds up with depth but plateaus: past the cap the difficulty keeps
+// coming from the narrowing channel instead of from speed no one can fly.
 function scrollSpeed() {
-    return BASE_SCROLL + (level - 1) * LEVEL_SPEED;
+    return Math.min(MAX_SCROLL, BASE_SCROLL + (level - 1) * LEVEL_SPEED);
 }
 
 function substep(h) {
