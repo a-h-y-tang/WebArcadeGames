@@ -135,6 +135,15 @@
     "thumbnail": ""
   },
   {
+    "id": "cavern-raider",
+    "name": "Cavern Raider",
+    "description": "Fly a scout ship through a winding cave, bombing fuel tanks and missile bases",
+    "category": "Action",
+    "dir": "CavernRaider",
+    "path": "games/CavernRaider/index.html",
+    "thumbnail": "games/CavernRaider/screenshot.png"
+  },
+  {
     "id": "centipede",
     "name": "Centipede",
     "description": "Classic arcade shooter - defeat the centipede",
