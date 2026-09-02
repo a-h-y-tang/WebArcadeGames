@@ -73,6 +73,20 @@ A falling humanoid that reaches the terrain survives if its fall speed is at or
 below `SAFE_FALL_SPEED`, otherwise it dies. Flying low with a carried humanoid
 sets it down automatically and scores `SCORE_RESCUE`.
 
+### Feel
+
+Two tuning decisions matter more than any constant:
+
+- **The gun outreaches the hull.** A shot connects within `BULLET_REACH_Y` of an
+  alien's centre, but the ship only collides within `SHIP_H / 2 + ALIEN_R / 2`.
+  Lining a shot up from just above or below an alien is therefore survivable,
+  which is what makes duelling landers feel fair rather than fatal. A test pins
+  that relationship so future tuning cannot quietly invert it.
+- **Feedback is on the canvas, not just the HUD.** A wave announces itself with
+  a banner for `BANNER_TIME` seconds, a smart bomb whites out the sky for a
+  moment, and every kill, rescue and death throws a particle burst — so you can
+  keep your eyes on the radar and still know what happened.
+
 ### Waves, scoring and lives
 
 - Wave *n* spawns `min(5 + 2n, MAX_WAVE_LANDERS)` landers. Clearing every lander

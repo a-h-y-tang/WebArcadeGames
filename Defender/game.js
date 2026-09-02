@@ -39,6 +39,7 @@ const INVULN_TIME = 2.0;            // seconds of grace after re-materialising
 const BULLET_SPEED = 900;
 const BULLET_LIFE = 0.9;            // seconds — a shot never laps the planet
 const MAX_BULLETS = 4;
+const BULLET_REACH_Y = 14;          // vertical reach of a shot — wider than the hull
 const ENEMY_BULLET_SPEED = 260;
 const ENEMY_BULLET_LIFE = 3.5;
 const FIRE_RANGE = 480;             // aliens only shoot at a ship this close
@@ -72,6 +73,8 @@ const START_BOMBS = 3;
 const MAX_BOMBS = 6;
 const MAX_WAVE_LANDERS = 15;
 const WAVE_CLEAR_DELAY = 1.2;       // beat between clearing a wave and the next
+const BANNER_TIME = 1.6;            // seconds a wave announcement stays up
+const FLASH_FADE = 3;               // smart-bomb screen flash decay (1/s)
 const SCORE_LANDER = 150;
 const SCORE_MUTANT = 150;
 const SCORE_RESCUE = 500;
@@ -96,7 +99,7 @@ const btnStart = document.getElementById('btn-start');
 // --- State ---
 // state: 'idle' | 'running' | 'paused' | 'over'
 let state, score, highScore, lives, wave, bombs, camX, carried, planetLost;
-let waveTimer, respawnTimer, clock;
+let waveTimer, respawnTimer, clock, bannerTimer, flash;
 const ship = {
     x: WORLD_W / 2, y: 200, vx: 0, dir: 1,
     thrust: 0, climb: 0, dead: false, invuln: 0,
@@ -222,6 +225,8 @@ function startGame() {
     waveTimer = 0;
     respawnTimer = 0;
     clock = 0;
+    bannerTimer = BANNER_TIME;
+    flash = 0;
     carried = null;
 
     bullets.length = 0;
@@ -270,6 +275,7 @@ function nextWave() {
     wave += 1;
     bombs = Math.min(bombs + 1, MAX_BOMBS);
     waveTimer = 0;
+    bannerTimer = BANNER_TIME;
     spawnWave();
     updateHud();
 }
@@ -354,6 +360,7 @@ function fire() {
 function smartBomb() {
     if (state !== 'running' || bombs <= 0) return;
     bombs -= 1;
+    flash = 1;
     const onScreen = (e) => screenX(e.x) >= 0 && screenX(e.x) <= CANVAS_W;
     for (let i = landers.length - 1; i >= 0; i--) {
         if (!onScreen(landers[i])) continue;
@@ -394,6 +401,8 @@ function step(dt) {
     updateEnemyBullets(dt);
     updateHumans(dt);
     updateParticles(dt);
+    bannerTimer = Math.max(0, bannerTimer - dt);
+    flash = Math.max(0, flash - FLASH_FADE * dt);
     checkPlanetLost();
     checkShipCollisions();
     updateCamera(dt);
@@ -449,7 +458,7 @@ function updateBullets(dt) {
 function hitAlien(b) {
     for (let i = landers.length - 1; i >= 0; i--) {
         const l = landers[i];
-        if (Math.abs(worldDelta(b.x, l.x)) > 16 || Math.abs(b.y - l.y) > 12) continue;
+        if (Math.abs(worldDelta(b.x, l.x)) > 16 || Math.abs(b.y - l.y) > BULLET_REACH_Y) continue;
         if (l.human) {
             l.human.state = 'falling';
             l.human.vy = 0;
@@ -462,7 +471,7 @@ function hitAlien(b) {
     }
     for (let i = mutants.length - 1; i >= 0; i--) {
         const m = mutants[i];
-        if (Math.abs(worldDelta(b.x, m.x)) > 16 || Math.abs(b.y - m.y) > 12) continue;
+        if (Math.abs(worldDelta(b.x, m.x)) > 16 || Math.abs(b.y - m.y) > BULLET_REACH_Y) continue;
         burst(m.x, m.y, '#c084fc', 10);
         mutants.splice(i, 1);
         addScore(SCORE_MUTANT);
@@ -647,11 +656,15 @@ function checkShipCollisions() {
     const hits = (x, y, rx, ry) =>
         Math.abs(worldDelta(x, ship.x)) < rx && Math.abs(y - ship.y) < ry;
 
+    // The hull box is deliberately a little tighter than the reach of your own
+    // gun, so lining a shot up from just above or below an alien is survivable.
+    const rx = SHIP_W / 2 + ALIEN_R / 2;
+    const ry = SHIP_H / 2 + ALIEN_R / 2;
     for (const l of landers) {
-        if (hits(l.x, l.y, SHIP_W / 2 + ALIEN_R / 2, SHIP_H + ALIEN_R / 2)) { killPlayer(); return; }
+        if (hits(l.x, l.y, rx, ry)) { killPlayer(); return; }
     }
     for (const m of mutants) {
-        if (hits(m.x, m.y, SHIP_W / 2 + ALIEN_R / 2, SHIP_H + ALIEN_R / 2)) { killPlayer(); return; }
+        if (hits(m.x, m.y, rx, ry)) { killPlayer(); return; }
     }
     for (let i = enemyBullets.length - 1; i >= 0; i--) {
         const b = enemyBullets[i];
@@ -724,6 +737,8 @@ function draw() {
     drawShots();
     drawParticles();
     if (!ship.dead && state !== 'idle') drawShip();
+    drawFlash();
+    drawBanner();
     drawRadar();
 }
 
@@ -849,6 +864,28 @@ function drawParticles() {
     ctx.globalAlpha = 1;
 }
 
+// A smart bomb whites out the sky for a moment.
+function drawFlash() {
+    if (flash <= 0) return;
+    ctx.fillStyle = `rgba(230, 249, 255, ${Math.min(0.4, flash * 0.4)})`;
+    ctx.fillRect(0, PLAY_TOP, CANVAS_W, CANVAS_H - PLAY_TOP);
+}
+
+// A short announcement when a wave begins.
+function drawBanner() {
+    if (bannerTimer <= 0 || state === 'idle') return;
+    ctx.save();
+    ctx.globalAlpha = Math.min(1, bannerTimer / 0.4);
+    ctx.fillStyle = '#6ee7ff';
+    ctx.font = 'bold 30px "Segoe UI", system-ui, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(`WAVE ${wave}`, CANVAS_W / 2, 150);
+    ctx.font = '14px "Segoe UI", system-ui, sans-serif';
+    ctx.fillStyle = '#7b89a8';
+    ctx.fillText(`${humans.length} humanoids to defend`, CANVAS_W / 2, 174);
+    ctx.restore();
+}
+
 // The radar shows the whole planet squeezed into the top strip, centred on the
 // ship so the seam never splits what you are looking at.
 function drawRadar() {
@@ -969,6 +1006,8 @@ planetLost = false;
 waveTimer = 0;
 respawnTimer = 0;
 clock = 0;
+bannerTimer = 0;
+flash = 0;
 camX = wrapX(ship.x - CANVAS_W / 2);
 for (let i = 0; i < HUMAN_COUNT; i++) {
     humans.push(makeHuman((i + 0.5) * (WORLD_W / HUMAN_COUNT)));

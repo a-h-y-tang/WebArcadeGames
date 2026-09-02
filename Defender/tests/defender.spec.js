@@ -774,6 +774,18 @@ test.describe('Defender', () => {
             expect(n).toBe(1);
         });
 
+        test('a smart bomb flashes the screen and the flash fades', async ({ page }) => {
+            const s = await page.evaluate(() => {
+                startGame();
+                smartBomb();
+                const lit = flash;
+                for (let i = 0; i < 120; i++) step(0.016);
+                return { lit, later: flash };
+            });
+            expect(s.lit).toBeGreaterThan(0);
+            expect(s.later).toBe(0);
+        });
+
         test('B triggers a smart bomb', async ({ page }) => {
             await page.evaluate(() => {
                 startGame();
@@ -821,6 +833,26 @@ test.describe('Defender', () => {
                 return { before, after: lives };
             });
             expect(s.after).toBe(s.before - 1);
+        });
+
+        test('the gun outreaches the hull, so a shot from just off-altitude is safe', async ({ page }) => {
+            const s = await page.evaluate(() => ({ reach: BULLET_REACH_Y, hull: SHIP_H / 2 + ALIEN_R / 2 }));
+            expect(s.reach).toBeGreaterThan(s.hull);
+        });
+
+        test('an alien a little above the ship does not clip it', async ({ page }) => {
+            const s = await page.evaluate(() => {
+                startGame();
+                landers.length = 0;
+                mutants.length = 0;
+                ship.invuln = 0;
+                const before = lives;
+                ship.x = 400; ship.y = 250;
+                spawnLander(400, 250 - (SHIP_H / 2 + ALIEN_R / 2) - 1);
+                step(0.016);
+                return { before, after: lives };
+            });
+            expect(s.after).toBe(s.before);
         });
 
         test('the ship respawns after the delay and is briefly invulnerable', async ({ page }) => {
@@ -971,6 +1003,20 @@ test.describe('Defender', () => {
                 return bombs;
             });
             expect(s).toBe(2);
+        });
+
+        test('a new wave announces itself on the canvas', async ({ page }) => {
+            const s = await page.evaluate(() => {
+                startGame();
+                landers.length = 0;
+                mutants.length = 0;
+                for (let i = 0; i < Math.ceil(WAVE_CLEAR_DELAY / 0.016) + 5; i++) step(0.016);
+                const shown = bannerTimer;
+                for (let i = 0; i < Math.ceil(BANNER_TIME / 0.016) + 5; i++) step(0.016);
+                return { shown, later: bannerTimer };
+            });
+            expect(s.shown).toBeGreaterThan(0);
+            expect(s.later).toBe(0);
         });
 
         test('the HUD shows the wave number', async ({ page }) => {
