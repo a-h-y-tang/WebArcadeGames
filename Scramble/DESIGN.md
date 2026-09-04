@@ -81,7 +81,8 @@ in the safe zone, and never on a column whose corridor is too tight.
 
 ### Crashes, lives, levels
 
-`crash()` decrements `lives`, marks `ship.alive = false` and starts a
+`crash(reason)` decrements `lives`, marks `ship.alive = false`, flashes the
+reason on the canvas (CRASHED / SHOT DOWN / OUT OF FUEL) and starts a
 `RESPAWN_DELAY` timer. If lives hit zero the game ends and the overlay shows
 GAME OVER (with the best score written to `localStorage` under
 `scramble-best`). Otherwise the *current* level restarts: `camX` back to 0,
@@ -123,11 +124,12 @@ clock, so the specs are deterministic.
 
 Test-facing hooks:
 
-* `state`, `score`, `best`, `lives`, `level`, `fuel`, `camX`
-* `ship`, `bullets`, `bombs`, `rockets`, `tanks`, `terrain`
-* `step(dt)`, `startGame()`, `togglePause()`, `fire()`, `dropBomb()`,
-  `buildLevel()`, `crash()`, `groundHeightAt(x)`, `ceilHeightAt(x)`,
-  `columnIndexAt(x)`, `scrollSpeed()`, `shipScreenX()`
+* `state`, `score`, `best`, `lives`, `level`, `fuel`, `camX`, `crashReason`
+* `ship`, `bullets`, `bombs`, `blasts`, `rockets`, `tanks`, `terrain`
+* `step(dt)`, `draw()`, `startGame()`, `togglePause()`, `fire()`, `dropBomb()`,
+  `explode(x, y)`, `destroyTarget(t)`, `buildLevel()`, `crash(reason)`,
+  `groundHeightAt(x)`, `ceilHeightAt(x)`, `columnIndexAt(x)`, `scrollSpeed()`,
+  `shipScreenX()`
 * `fuelDrainEnabled` — set to `false` so long simulations don't run dry
 
 ## Assumptions
