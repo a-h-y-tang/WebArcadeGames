@@ -68,8 +68,12 @@ releasing it (automatic when the ship flies low) scores 500.
 - **Smart bomb.** Destroys every alien currently on screen and awards their
   points. Three at the start.
 - **Death.** Touching an alien or an alien shot costs a life; a 1.6 s `dying`
-  state clears alien fire and respawns the ship mid-screen. Out of lives is
-  game over, and the best score persists in `localStorage`.
+  state clears alien fire and respawns the ship mid-screen. Anything within
+  130 px is caught in the blast, and the replacement ship is untouchable (and
+  blinking) for 1.4 s, so a death never cascades into the next one. Out of
+  lives is game over, and the best score persists in `localStorage`.
+- **Bonus ships.** Every 10,000 points pays a ship and a smart bomb. Every score
+  change goes through `addScore()`, so that threshold is tested in one place.
 - **Planet death.** When the tenth humanoid is lost, every remaining lander
   mutates immediately and the terrain is drawn scorched red for the rest of the
   run.

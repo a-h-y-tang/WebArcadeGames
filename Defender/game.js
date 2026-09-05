@@ -78,6 +78,8 @@ const START_BOMBS = 3;
 const DEATH_PAUSE = 1.6;
 const WAVECLEAR_PAUSE = 2;
 const BLAST_RADIUS = 130;
+const RESPAWN_SHIELD = 1.4;      // grace period after a replacement ship arrives
+const EXTRA_EVERY = 10000;       // score per bonus ship and smart bomb
 const LANDER_SCORE = 150;
 const MUTANT_SCORE = 250;
 const CATCH_SCORE = 250;
@@ -206,6 +208,7 @@ const onScreen = (x, margin = 24) => {
 let state, score, best, lives, wave, smartBombs, planetDead;
 let ship, bullets, alienShots, aliens, humanoids, particles;
 let cameraX, leadOffset, fireTimer, stateTimer, elapsed, waveSpawned;
+let shield, nextExtra;
 
 // Test seams: switch off spawning / alien fire, or drive step() by hand.
 let spawnEnabled = true;
@@ -214,9 +217,11 @@ let autoStep = true;
 
 const input = { left: false, right: false, up: false, down: false };
 
+// A fresh ship arrives where the camera is already looking, so a respawn never
+// yanks the view to the other side of the planet.
 function resetShip() {
     ship = {
-        x: cameraX === undefined ? START_X : wrapX(cameraX + CANVAS_W * 0.4),
+        x: wrapX(cameraX + CANVAS_W * 0.4),
         y: START_Y,
         vx: 0,
         vy: 0,
@@ -263,6 +268,8 @@ function startGame() {
     stateTimer = 0;
     elapsed = 0;
     waveSpawned = 0;
+    shield = 0;
+    nextExtra = EXTRA_EVERY;
     resetHumanoids();
     resetShip();
     spawnWave();
@@ -300,8 +307,7 @@ function spawnLander(x, y) {
 function beginWaveClear() {
     state = 'waveclear';
     stateTimer = WAVECLEAR_PAUSE;
-    score += humansAlive() * HUMANOID_BONUS;
-    updateHud();
+    addScore(humansAlive() * HUMANOID_BONUS);
 }
 
 function nextWave() {
@@ -342,6 +348,7 @@ function killShip() {
 function respawn() {
     resetShip();
     fireTimer = 0;
+    shield = RESPAWN_SHIELD;
     state = 'running';
     stateTimer = 0;
 }
@@ -387,6 +394,18 @@ function useSmartBomb() {
     return true;
 }
 
+// Every score change funnels through here so the bonus-ship threshold is
+// checked in exactly one place.
+function addScore(points) {
+    score += points;
+    while (score >= nextExtra) {
+        nextExtra += EXTRA_EVERY;
+        lives++;
+        smartBombs++;
+    }
+    updateHud();
+}
+
 function alienScore(alien) {
     return alien.type === 'mutant' ? MUTANT_SCORE : LANDER_SCORE;
 }
@@ -400,10 +419,7 @@ function killAlien(alien, award) {
         alien.carrying.vy = 0;
         alien.carrying = null;
     }
-    if (award) {
-        score += alienScore(alien);
-        updateHud();
-    }
+    if (award) addScore(alienScore(alien));
     explode(alien.x, alien.y, 18, alien.type === 'mutant' ? '#ff8a4a' : '#7cff9b');
 }
 
@@ -481,6 +497,7 @@ function step(dt) {
 
 function updateShip(dt) {
     if (fireTimer > 0) fireTimer -= dt;
+    if (shield > 0) shield = Math.max(0, shield - dt);
 
     const ax = (input.right ? 1 : 0) - (input.left ? 1 : 0);
     const ay = (input.down ? 1 : 0) - (input.up ? 1 : 0);
@@ -673,8 +690,7 @@ function updateHumanoids(dt) {
                 Math.abs(h.y - ship.y) < CATCH_DY) {
                 h.state = 'aboard';
                 h.vy = 0;
-                score += CATCH_SCORE;
-                updateHud();
+                addScore(CATCH_SCORE);
                 continue;
             }
             const ground = terrainY(h.x) - HUMANOID_LIFT;
@@ -693,8 +709,7 @@ function updateHumanoids(dt) {
                 h.state = 'ground';
                 h.y = terrainY(h.x) - HUMANOID_LIFT;
                 h.vy = 0;
-                score += RESCUE_SCORE;
-                updateHud();
+                addScore(RESCUE_SCORE);
             }
         }
     }
@@ -712,6 +727,7 @@ function updateParticles(dt) {
 }
 
 function checkShipCollisions() {
+    if (shield > 0) return;
     for (const a of aliens) {
         if (Math.abs(signedDelta(a.x, ship.x)) < SHIP_HW + ALIEN_HW - 8 &&
             Math.abs(a.y - ship.y) < SHIP_HH + ALIEN_HH) {
@@ -859,6 +875,7 @@ function drawAlien(a) {
 }
 
 function drawShip() {
+    if (shield > 0 && Math.floor(elapsed * 12) % 2 === 0) return;
     const x = screenX(ship.x);
     const f = ship.facing;
     ctx.fillStyle = '#e8f4ff';
@@ -1089,6 +1106,8 @@ fireTimer = 0;
 stateTimer = 0;
 elapsed = 0;
 waveSpawned = 0;
+shield = 0;
+nextExtra = EXTRA_EVERY;
 buildTerrain();
 setSeed(0xa17e5);
 resetHumanoids();

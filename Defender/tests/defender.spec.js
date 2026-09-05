@@ -690,6 +690,38 @@ test.describe('Defender', () => {
             expect(out).toEqual({ state: 'running', vx: 0, shots: 0 });
         });
 
+        test('the replacement ship is briefly invulnerable', async ({ page }) => {
+            await startQuiet(page);
+            await page.evaluate(() => {
+                spawnLander(ship.x, ship.y);
+                spawnLander(wrapX(ship.x - 900), 200);
+                step(1 / 60);
+            });
+            await advance(page, 120); // through the death pause, back to running
+            const out = await page.evaluate(() => {
+                spawnLander(ship.x, ship.y);
+                step(1 / 60);
+                return { state, lives };
+            });
+            expect(out).toEqual({ state: 'running', lives: 2 });
+        });
+
+        test('invulnerability wears off', async ({ page }) => {
+            await startQuiet(page);
+            await page.evaluate(() => {
+                spawnLander(ship.x, ship.y);
+                spawnLander(wrapX(ship.x - 900), 200);
+                step(1 / 60);
+            });
+            await advance(page, 220); // death pause plus the whole shield
+            const out = await page.evaluate(() => {
+                spawnLander(ship.x, ship.y);
+                step(1 / 60);
+                return { state, lives };
+            });
+            expect(out).toEqual({ state: 'dying', lives: 1 });
+        });
+
         test('a humanoid aboard falls when the ship is destroyed', async ({ page }) => {
             await startQuiet(page);
             const out = await page.evaluate(() => {
@@ -714,6 +746,20 @@ test.describe('Defender', () => {
             expect(await page.evaluate(() => state)).toBe('over');
             await expect(page.locator('#overlay')).toHaveClass(/visible/);
             await expect(page.locator('#overlay-title')).toContainText(/game over/i);
+        });
+
+        test('every 10,000 points pays a bonus ship and bomb', async ({ page }) => {
+            await startQuiet(page);
+            const out = await page.evaluate(() => {
+                ship.vx = 0;
+                score = 9900;
+                spawnLander(wrapX(ship.x + 120), ship.y);
+                spawnLander(wrapX(ship.x - 900), 200);
+                fire();
+                for (let i = 0; i < 20; i++) step(1 / 60);
+                return { score, lives, smartBombs };
+            });
+            expect(out).toEqual({ score: 10050, lives: 4, smartBombs: 4 });
         });
 
         test('the best score is remembered', async ({ page }) => {

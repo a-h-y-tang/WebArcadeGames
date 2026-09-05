@@ -32,6 +32,8 @@ Press **Space** (or click **Start Game**) to launch.
   at once and the landscape burns red for the rest of the run.
 - A smart bomb destroys everything currently on screen. You start with three.
 - Touching an alien or an alien shot costs a ship. Three ships, then it's over.
+  The replacement ship blinks for a moment and cannot be hit while it does.
+- Every 10,000 points pays a bonus ship and a bonus smart bomb.
 
 ## Reading the scanner
 
