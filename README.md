@@ -110,6 +110,13 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Kakuro | [Kakuro/](Kakuro/) | Complete |
 | Kaboom! | [Kaboom/](Kaboom/) | Complete |
 | Berzerk | [Berzerk/](Berzerk/) | Complete |
+| Defender | [Defender/](Defender/) | Complete |
+| Tower Defense | [TowerDefense/](TowerDefense/) | Complete |
+| Marble Shooter | [MarbleShooter/](MarbleShooter/) | Complete |
+| Slime Volley | [SlimeVolley/](SlimeVolley/) | Complete |
+| Marble Spiral | [MarbleSpiral/](MarbleSpiral/) | Complete |
+| Barrel Climb | [BarrelClimb/](BarrelClimb/) | Complete |
+| BurgerTime | [BurgerTime/](BurgerTime/) | Complete |
 
 ## Playing
 
