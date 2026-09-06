@@ -504,6 +504,15 @@
     "thumbnail": ""
   },
   {
+    "id": "lode-runner",
+    "name": "Lode Runner",
+    "description": "Dig holes to trap guards while you steal every bar of gold",
+    "category": "Action",
+    "dir": "LodeRunner",
+    "path": "games/LodeRunner/index.html",
+    "thumbnail": "games/LodeRunner/screenshot.png"
+  },
+  {
     "id": "lumberjack",
     "name": "Lumberjack",
     "description": "Action game - fell trees and avoid obstacles",
