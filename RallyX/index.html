@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rally-X</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="game">
+        <header class="hud">
+            <h1>RALLY-X</h1>
+            <div class="stats">
+                <div class="stat"><span class="label">Score</span><span id="score">0</span></div>
+                <div class="stat"><span class="label">Level</span><span id="level">1</span></div>
+                <div class="stat"><span class="label">Lives</span><span id="lives">3</span></div>
+                <div class="stat"><span class="label">Flags</span><span id="flags">10</span></div>
+                <div class="stat"><span class="label">Best</span><span id="best">0</span></div>
+            </div>
+        </header>
+
+        <div class="fuel">
+            <span class="label">Fuel</span>
+            <div class="fuel-track"><div id="fuel-fill" class="fuel-fill" style="width: 100%"></div></div>
+        </div>
+
+        <div class="board-wrap">
+            <canvas id="canvas" width="608" height="448"></canvas>
+            <div id="overlay" class="overlay visible">
+                <h2 id="overlay-title">RALLY-X</h2>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Press Space or click Start to play</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+
+        <div class="help">
+            <p><kbd>←</kbd> <kbd>↑</kbd> <kbd>↓</kbd> <kbd>→</kbd> steer</p>
+            <p><kbd>Space</kbd> smoke screen</p>
+            <p><kbd>P</kbd> pause</p>
+            <p>Collect all 10 flags before the fuel runs out</p>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>
