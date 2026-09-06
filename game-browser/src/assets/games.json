@@ -36,6 +36,15 @@
     "thumbnail": ""
   },
   {
+    "id": "barrel-climb",
+    "name": "Barrel Climb",
+    "description": "Climb girders and ladders to the prize while dodging rolling barrels",
+    "category": "Action",
+    "dir": "BarrelClimb",
+    "path": "games/BarrelClimb/index.html",
+    "thumbnail": "games/BarrelClimb/screenshot.png"
+  },
+  {
     "id": "battleship",
     "name": "Battleship",
     "description": "Naval strategy game - find and sink opponent's ships",
@@ -106,6 +115,15 @@
     "dir": "BubbleShooter",
     "path": "games/BubbleShooter/index.html",
     "thumbnail": ""
+  },
+  {
+    "id": "burger-time",
+    "name": "BurgerTime",
+    "description": "Trip burger ingredients down the girders while food-monsters chase you",
+    "category": "Action",
+    "dir": "BurgerTime",
+    "path": "games/BurgerTime/index.html",
+    "thumbnail": "games/BurgerTime/screenshot.png"
   },
   {
     "id": "calcudoku",
@@ -486,6 +504,24 @@
     "thumbnail": ""
   },
   {
+    "id": "marble-shooter",
+    "name": "Marble Shooter",
+    "description": "Pop chains of marbles on a spiral track before they reach the pit",
+    "category": "Action",
+    "dir": "MarbleShooter",
+    "path": "games/MarbleShooter/index.html",
+    "thumbnail": "games/MarbleShooter/screenshot.png"
+  },
+  {
+    "id": "marble-spiral",
+    "name": "Marble Spiral",
+    "description": "Shoot marbles into the spiralling train and match three to clear it",
+    "category": "Puzzle",
+    "dir": "MarbleSpiral",
+    "path": "games/MarbleSpiral/index.html",
+    "thumbnail": "games/MarbleSpiral/screenshot.png"
+  },
+  {
     "id": "mastermind",
     "name": "Mastermind",
     "description": "Guess the code with logical deduction",
@@ -745,6 +781,15 @@
     "dir": "SlidingPuzzle",
     "path": "games/SlidingPuzzle/index.html",
     "thumbnail": ""
+  },
+  {
+    "id": "slime-volley",
+    "name": "Slime Volley",
+    "description": "Physics volleyball - outjump a slime rival to 7 points",
+    "category": "Sports",
+    "dir": "SlimeVolley",
+    "path": "games/SlimeVolley/index.html",
+    "thumbnail": "games/SlimeVolley/screenshot.png"
   },
   {
     "id": "snake",
