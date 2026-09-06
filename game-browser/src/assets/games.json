@@ -9,6 +9,15 @@
     "thumbnail": ""
   },
   {
+    "id": "pool",
+    "name": "8-Ball Pool",
+    "description": "Two-player 8-ball pool with cue physics and pocket play",
+    "category": "Sports",
+    "dir": "Pool",
+    "path": "games/Pool/index.html",
+    "thumbnail": "games/Pool/screenshot.png"
+  },
+  {
     "id": "air-hockey",
     "name": "Air Hockey",
     "description": "Fast-paced air hockey match against the computer",
@@ -36,6 +45,15 @@
     "thumbnail": ""
   },
   {
+    "id": "barrel-climb",
+    "name": "Barrel Climb",
+    "description": "Climb girders and ladders to the prize while dodging rolling barrels",
+    "category": "Action",
+    "dir": "BarrelClimb",
+    "path": "games/BarrelClimb/index.html",
+    "thumbnail": "games/BarrelClimb/screenshot.png"
+  },
+  {
     "id": "battleship",
     "name": "Battleship",
     "description": "Naval strategy game - find and sink opponent's ships",
@@ -43,6 +61,15 @@
     "dir": "Battleship",
     "path": "games/Battleship/index.html",
     "thumbnail": ""
+  },
+  {
+    "id": "berzerk",
+    "name": "Berzerk",
+    "description": "Maze shoot-'em-up - blast robots and escape Evil Otto",
+    "category": "Action",
+    "dir": "Berzerk",
+    "path": "games/Berzerk/index.html",
+    "thumbnail": "games/Berzerk/screenshot.png"
   },
   {
     "id": "blackjack",
@@ -108,6 +135,15 @@
     "thumbnail": ""
   },
   {
+    "id": "burger-time",
+    "name": "BurgerTime",
+    "description": "Trip burger ingredients down the girders while food-monsters chase you",
+    "category": "Action",
+    "dir": "BurgerTime",
+    "path": "games/BurgerTime/index.html",
+    "thumbnail": "games/BurgerTime/screenshot.png"
+  },
+  {
     "id": "calcudoku",
     "name": "Calcudoku",
     "description": "Math logic puzzle with grid and operations",
@@ -162,6 +198,15 @@
     "thumbnail": ""
   },
   {
+    "id": "curling",
+    "name": "Curling",
+    "description": "Slide stones down the ice and outscore the computer",
+    "category": "Sports",
+    "dir": "Curling",
+    "path": "games/Curling/index.html",
+    "thumbnail": "games/Curling/screenshot.png"
+  },
+  {
     "id": "darts",
     "name": "Darts",
     "description": "Aim and throw darts at the board",
@@ -169,6 +214,15 @@
     "dir": "Darts",
     "path": "games/Darts/index.html",
     "thumbnail": ""
+  },
+  {
+    "id": "defender",
+    "name": "Defender",
+    "description": "Side-scrolling rescue shooter - protect the humanoids from alien landers",
+    "category": "Action",
+    "dir": "Defender",
+    "path": "games/Defender/index.html",
+    "thumbnail": "games/Defender/screenshot.png"
   },
   {
     "id": "dig-dug",
@@ -495,6 +549,15 @@
     "thumbnail": ""
   },
   {
+    "id": "marble-loop",
+    "name": "Marble Loop",
+    "description": "Spiral marble shooter - burst three of a colour before the chain reaches the pit",
+    "category": "Puzzle",
+    "dir": "MarbleLoop",
+    "path": "games/MarbleLoop/index.html",
+    "thumbnail": "games/MarbleLoop/screenshot.png"
+  },
+  {
     "id": "mastermind",
     "name": "Mastermind",
     "description": "Guess the code with logical deduction",
@@ -675,6 +738,15 @@
     "thumbnail": ""
   },
   {
+    "id": "quoridor",
+    "name": "Quoridor",
+    "description": "Race your pawn across the board while fencing off the computer",
+    "category": "Board Game",
+    "dir": "Quoridor",
+    "path": "games/Quoridor/index.html",
+    "thumbnail": "games/Quoridor/screenshot.png"
+  },
+  {
     "id": "reversi",
     "name": "Reversi",
     "description": "Othello strategy game - flip opponent's pieces",
@@ -756,6 +828,15 @@
     "thumbnail": ""
   },
   {
+    "id": "slime-volley",
+    "name": "Slime Volley",
+    "description": "Physics volleyball - outjump a slime rival to 7 points",
+    "category": "Sports",
+    "dir": "SlimeVolley",
+    "path": "games/SlimeVolley/index.html",
+    "thumbnail": "games/SlimeVolley/screenshot.png"
+  },
+  {
     "id": "snake",
     "name": "Snake",
     "description": "Classic snake game - eat food and grow longer",
@@ -819,6 +900,15 @@
     "thumbnail": ""
   },
   {
+    "id": "tank-battle",
+    "name": "Tank Battle",
+    "description": "Defend the eagle base and blast every enemy tank",
+    "category": "Action",
+    "dir": "TankBattle",
+    "path": "games/TankBattle/index.html",
+    "thumbnail": "games/TankBattle/screenshot.png"
+  },
+  {
     "id": "tempest",
     "name": "Tempest",
     "description": "Arcade action game - navigate tube mazes",
@@ -835,6 +925,15 @@
     "dir": "Tetris",
     "path": "games/Tetris/index.html",
     "thumbnail": "games/Tetris/screenshot.png"
+  },
+  {
+    "id": "tower-defense",
+    "name": "Tower Defense",
+    "description": "Build and upgrade towers to stop ten waves of creeps",
+    "category": "Strategy",
+    "dir": "TowerDefense",
+    "path": "games/TowerDefense/index.html",
+    "thumbnail": "games/TowerDefense/screenshot.png"
   },
   {
     "id": "tower-of-hanoi",
