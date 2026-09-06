@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tower Defense</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="game">
+        <header class="hud">
+            <h1>TOWER DEFENSE</h1>
+            <div class="stats">
+                <div class="stat"><span class="label">Wave</span><span id="wave">1 / 10</span></div>
+                <div class="stat"><span class="label">Gold</span><span id="gold">100</span></div>
+                <div class="stat"><span class="label">Lives</span><span id="lives">20</span></div>
+                <div class="stat"><span class="label">Score</span><span id="score">0</span></div>
+                <div class="stat"><span class="label">Best</span><span id="best">0</span></div>
+            </div>
+        </header>
+
+        <div class="board-wrap">
+            <canvas id="canvas" width="640" height="480"></canvas>
+            <div id="overlay" class="overlay visible">
+                <h2 id="overlay-title">TOWER DEFENSE</h2>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Press Space or click Start to play</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+
+        <div class="palette">
+            <button id="tower-arrow" class="tower-btn selected" data-type="arrow">
+                <span class="pip arrow"></span>
+                <span class="name">Arrow <kbd>1</kbd></span>
+                <span class="cost">20g</span>
+            </button>
+            <button id="tower-cannon" class="tower-btn" data-type="cannon">
+                <span class="pip cannon"></span>
+                <span class="name">Cannon <kbd>2</kbd></span>
+                <span class="cost">45g</span>
+            </button>
+            <button id="tower-frost" class="tower-btn" data-type="frost">
+                <span class="pip frost"></span>
+                <span class="name">Frost <kbd>3</kbd></span>
+                <span class="cost">35g</span>
+            </button>
+            <button id="btn-wave" class="wave-btn">Send Wave <kbd>Space</kbd></button>
+        </div>
+
+        <div class="help">
+            <p>click grass to build</p>
+            <p>click a tower to upgrade</p>
+            <p><kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> pick tower</p>
+            <p><kbd>Space</kbd> send wave</p>
+            <p><kbd>P</kbd> pause</p>
+            <p><kbd>R</kbd> restart</p>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>
