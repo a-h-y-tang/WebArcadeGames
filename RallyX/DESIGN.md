@@ -63,14 +63,19 @@ double.
   direction and it is taken at the first tile where it becomes legal, so
   turns feel forgiving. Reversing is always legal.
 - **Chasers.** Each red car re-decides at every tile centre, picking the legal
-  direction that most reduces its straight-line distance to the player.
+  direction that most reduces its straight-line distance to its target.
   Reversing is only allowed out of a dead end, which keeps them committed and
-  readable rather than jittery. They are slower than you (`ENEMY_SPEED`
+  readable rather than jittery. They are slower than you (`ENEMY_SPEED_BASE`
   vs `CAR_SPEED`), and get a little faster each level up to a cap.
+  Targets differ per car (`ENEMY_LEADS`): the first aims at you, the others at
+  a point up to six tiles *ahead* of you, so the pack fans out and cuts you
+  off instead of trailing in single file.
 - **Smoke screen.** <kbd>Space</kbd> drops a cloud behind the car for
-  `SMOKE_COST` fuel. Any chaser that touches a cloud spins out for
-  `STUN_TIME` seconds and is worth `SMOKE_POINTS`. Clouds fade after
-  `SMOKE_LIFE` seconds.
+  `SMOKE_COST` fuel, no more often than every `SMOKE_COOLDOWN` seconds — the
+  cooldown is what stops a held-down key from turning the whole tank into a
+  wall of smoke. Any chaser that touches a cloud spins out for `STUN_TIME`
+  seconds (harmless while it does) and is worth `SMOKE_POINTS`. Clouds fade
+  after `SMOKE_LIFE` seconds.
 - **Fuel.** Starts full each level and drains at `FUEL_DRAIN` per second, plus
   whatever the smoke costs. Empty tank = lost life.
 - **Dying.** Touching a chaser, or running out of fuel, costs a life; the
@@ -147,3 +152,10 @@ the brief or the original arcade game was ambiguous:
    maps; generating from a seed gives variety for free and stays testable.
 7. **Scoring** is simplified to: 100 per flag, doubled after the special flag,
    200 per chaser smoked, and 10 per remaining fuel unit at level clear.
+8. **A spun-out chaser cannot kill you**, so smoke is a way through a blocked
+   corridor and not just a delay. The arcade is vaguer about this; this
+   reading makes the smoke worth its fuel.
+9. **Difficulty was tuned against a scripted bot** (BFS to the nearest flag,
+   smoke when crowded) rather than by feel alone: it clears level 1 in
+   roughly 25 seconds of a ~52-second tank and runs out of lives somewhere
+   around levels 3–7, which is the arcade curve this is aiming for.

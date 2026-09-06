@@ -449,6 +449,34 @@ test.describe('Rally-X', () => {
             expect(dropped).toBe(0);
         });
 
+        test('smoke cannot be spammed frame after frame', async ({ page }) => {
+            await startQuiet(page);
+            const dropped = await page.evaluate(() => {
+                dropSmoke();
+                dropSmoke();
+                dropSmoke();
+                return smokes.length;
+            });
+            expect(dropped).toBe(1);
+
+            await advance(page, Math.ceil(60 * (await page.evaluate(() => SMOKE_COOLDOWN))) + 2);
+            const again = await page.evaluate(() => { dropSmoke(); return smokes.length; });
+            expect(again).toBe(2);
+        });
+
+        test('a spun-out chaser cannot catch the car', async ({ page }) => {
+            await startWithChasers(page);
+            const result = await page.evaluate(() => {
+                enemies[0].stun = 2;
+                placeEnemy(0, colOf(car.x), rowOf(car.y));
+                enemies[0].stun = 2;
+                step(1 / 60);
+                return { state, lives };
+            });
+            expect(result.state).toBe('running');
+            expect(result.lives).toBe(3);
+        });
+
         test('a chaser that hits the smoke spins out and scores', async ({ page }) => {
             await startWithChasers(page);
             const result = await page.evaluate(() => {

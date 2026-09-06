@@ -51,6 +51,7 @@ const FLAG_MIN_SPACING = 3;    // tiles, Manhattan
 
 // --- Smoke ---------------------------------------------------------------
 const SMOKE_COST = 6;          // fuel per cloud
+const SMOKE_COOLDOWN = 0.4;    // seconds between clouds, so it cannot be spammed
 const SMOKE_LIFE = 3.2;        // seconds
 const SMOKE_R = 22;            // stun radius
 const STUN_TIME = 3.5;
@@ -79,6 +80,10 @@ const SPAWN_CELLS = [
 ];
 
 const ENEMY_COLORS = ['#ff5a53', '#ff8b3d', '#ff5ea8', '#ff3d3d', '#ff9f68', '#e8544f'];
+// How many tiles ahead of the player each chaser aims. A pack that all drives
+// at the same point just queues up behind you; leaders that cut you off make
+// the maze feel like it is closing in.
+const ENEMY_LEADS = [0, 4, 2, 6, 1, 3];
 
 const DIRS = [
     { x: 1, y: 0 },
@@ -105,7 +110,7 @@ const btnStart = document.getElementById('btn-start');
 // --- State ---------------------------------------------------------------
 // state: 'idle' | 'running' | 'paused' | 'dying' | 'levelclear' | 'over'
 let state, score, best, lives, level, fuel;
-let deathTimer, clearTimer, flagValue, seedBase;
+let deathTimer, clearTimer, flagValue, seedBase, smokeTimer = 0;
 
 // Test seams. `autoStep` lets the specs switch off the rAF pump so simulated
 // time comes only from their own step() calls; `enemiesEnabled` freezes the
@@ -326,6 +331,7 @@ function resetEnemies() {
             dir: { x: 0, y: 0 },
             want: { x: 0, y: 0 },
             stun: 0,
+            lead: ENEMY_LEADS[i % ENEMY_LEADS.length],
             color: ENEMY_COLORS[i % ENEMY_COLORS.length],
         });
     }
@@ -348,6 +354,7 @@ function resetLevel() {
     resetCar();
     resetEnemies();
     smokes.length = 0;
+    smokeTimer = 0;
     fuel = FUEL_MAX;
 }
 
@@ -356,6 +363,7 @@ function respawn() {
     resetCar();
     resetEnemies();
     smokes.length = 0;
+    smokeTimer = 0;
     fuel = FUEL_MAX;
     state = 'running';
     hideOverlay();
@@ -459,19 +467,32 @@ function updateCar(dt) {
     if (car.dir.x || car.dir.y) car.facing = { x: car.dir.x, y: car.dir.y };
 }
 
+// Where a chaser is aiming: the player, or a point `lead` tiles ahead of them,
+// which is what makes the pack fan out and cut corners instead of trailing in
+// single file.
+function enemyTarget(e) {
+    const lead = e.lead || 0;
+    if (!lead) return { x: car.x, y: car.y };
+    return {
+        x: clamp(car.x + car.facing.x * lead * TILE, TILE, WORLD_W - TILE),
+        y: clamp(car.y + car.facing.y * lead * TILE, TILE, WORLD_H - TILE),
+    };
+}
+
 // A chaser re-decides at every tile centre: of the legal exits, take the one
-// that most reduces the straight-line distance to the player. Reversing is
+// that most reduces the straight-line distance to its target. Reversing is
 // only allowed out of a dead end, which keeps the pursuit readable.
 function chooseEnemyDir(e, c, r) {
     const options = DIRS.filter((d) => canEnter(c + d.x, r + d.y));
     if (!options.length) { e.want = { x: 0, y: 0 }; return; }
     const forward = options.filter((d) => !(d.x === -e.dir.x && d.y === -e.dir.y));
     const pool = forward.length ? forward : options;
+    const target = enemyTarget(e);
 
     let best = pool[0], bestD = Infinity;
     for (const d of pool) {
-        const dx = tileCenter(c + d.x) - car.x;
-        const dy = tileCenter(r + d.y) - car.y;
+        const dx = tileCenter(c + d.x) - target.x;
+        const dy = tileCenter(r + d.y) - target.y;
         const dist = dx * dx + dy * dy;
         if (dist < bestD) { bestD = dist; best = d; }
     }
@@ -505,8 +526,9 @@ function collectFlags() {
 }
 
 function dropSmoke() {
-    if (state !== 'running' || fuel < SMOKE_COST) return;
+    if (state !== 'running' || fuel < SMOKE_COST || smokeTimer > 0) return;
     fuel -= SMOKE_COST;
+    smokeTimer = SMOKE_COOLDOWN;
     // The cloud is laid down behind the car, so it screens whoever is chasing.
     const back = car.dir.x || car.dir.y ? car.dir : car.facing;
     smokes.push({
@@ -519,6 +541,7 @@ function dropSmoke() {
 }
 
 function updateSmoke(dt) {
+    if (smokeTimer > 0) smokeTimer -= dt;
     for (let i = smokes.length - 1; i >= 0; i--) {
         const s = smokes[i];
         s.life -= dt;
@@ -580,9 +603,10 @@ function step(dt) {
     updateCamera();
 
     if (!flags.length) {
+        // No overlay here: the in-canvas banner keeps the radar and the maze
+        // visible while the fuel bonus is being celebrated.
         state = 'levelclear';
         clearTimer = CLEAR_PAUSE;
-        showOverlay('LEVEL CLEAR', `Score ${score}`, `Fuel bonus ${Math.round(fuel) * FUEL_BONUS_PER_UNIT}`);
         updateHud();
         return;
     }
