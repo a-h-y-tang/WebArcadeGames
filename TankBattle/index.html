@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tank Battle</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="game">
+        <header class="hud">
+            <h1>TANK BATTLE</h1>
+            <div class="stats">
+                <div class="stat"><span class="label">Score</span><span id="score">0</span></div>
+                <div class="stat"><span class="label">Level</span><span id="level">1</span></div>
+                <div class="stat"><span class="label">Lives</span><span id="lives">3</span></div>
+                <div class="stat"><span class="label">Enemies</span><span id="enemies">0</span></div>
+                <div class="stat"><span class="label">Best</span><span id="best">0</span></div>
+            </div>
+        </header>
+
+        <div class="board-wrap">
+            <canvas id="canvas" width="480" height="480"></canvas>
+            <div id="overlay" class="overlay visible">
+                <h2 id="overlay-title">TANK BATTLE</h2>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Press Space or click Start to play</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+
+        <div class="help">
+            <p><kbd>&larr;</kbd> <kbd>&uarr;</kbd> <kbd>&darr;</kbd> <kbd>&rarr;</kbd> / <kbd>WASD</kbd> drive</p>
+            <p><kbd>Space</kbd> fire</p>
+            <p><kbd>P</kbd> pause</p>
+            <p>Defend the eagle &mdash; lose it and the war is over.</p>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>
