@@ -289,14 +289,13 @@ test.describe('Kakuro', () => {
     test.describe('controls', () => {
         test('restart clears all entries and resets state', async ({ page }) => {
             await page.evaluate(() => { selectCell(2, 2); setCell(2, 2, 6); tick(4); });
-            await page.evaluate(() => restart());
-            const res = await page.evaluate(() => ({
-                filled: grid[2][2].value, state, selected, elapsed,
-            }));
-            expect(res).toMatchObject({ filled: 0, state: 'playing', selected: null });
-            // The clock restarts from zero and is immediately running again, so a
-            // frame may already have been counted by the time it is read back.
-            expect(res.elapsed).toBeLessThan(0.5);
+            // Read in the same evaluate as the restart: the animation loop ticks
+            // `elapsed` on every frame, so a separate round-trip races it.
+            const res = await page.evaluate(() => {
+                restart();
+                return { filled: grid[2][2].value, state, selected, elapsed };
+            });
+            expect(res).toEqual({ filled: 0, state: 'playing', selected: null, elapsed: 0 });
         });
 
         test('restart button works', async ({ page }) => {
