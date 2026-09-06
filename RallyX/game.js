@@ -535,7 +535,6 @@ function dropSmoke() {
         x: clamp(car.x - back.x * 10, 0, WORLD_W),
         y: clamp(car.y - back.y * 10, 0, WORLD_H),
         life: SMOKE_LIFE,
-        age: 0,
     });
     updateHud();
 }
@@ -545,7 +544,6 @@ function updateSmoke(dt) {
     for (let i = smokes.length - 1; i >= 0; i--) {
         const s = smokes[i];
         s.life -= dt;
-        s.age += dt;
         if (s.life <= 0) { smokes.splice(i, 1); continue; }
         for (const e of enemies) {
             if (e.stun > 0) continue;
