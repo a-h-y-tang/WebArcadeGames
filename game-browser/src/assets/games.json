@@ -54,6 +54,15 @@
     "thumbnail": ""
   },
   {
+    "id": "berzerk",
+    "name": "Berzerk",
+    "description": "Maze shoot-'em-up - blast robots and escape Evil Otto",
+    "category": "Action",
+    "dir": "Berzerk",
+    "path": "games/Berzerk/index.html",
+    "thumbnail": "games/Berzerk/screenshot.png"
+  },
+  {
     "id": "blackjack",
     "name": "Blackjack",
     "description": "Classic card game - beat the dealer to 21",
