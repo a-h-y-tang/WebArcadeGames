@@ -540,22 +540,13 @@
     "thumbnail": ""
   },
   {
-    "id": "marble-shooter",
-    "name": "Marble Shooter",
-    "description": "Pop chains of marbles on a spiral track before they reach the pit",
-    "category": "Action",
-    "dir": "MarbleShooter",
-    "path": "games/MarbleShooter/index.html",
-    "thumbnail": "games/MarbleShooter/screenshot.png"
-  },
-  {
-    "id": "marble-spiral",
-    "name": "Marble Spiral",
-    "description": "Shoot marbles into the spiralling train and match three to clear it",
+    "id": "marble-loop",
+    "name": "Marble Loop",
+    "description": "Spiral marble shooter - burst three of a colour before the chain reaches the pit",
     "category": "Puzzle",
-    "dir": "MarbleSpiral",
-    "path": "games/MarbleSpiral/index.html",
-    "thumbnail": "games/MarbleSpiral/screenshot.png"
+    "dir": "MarbleLoop",
+    "path": "games/MarbleLoop/index.html",
+    "thumbnail": "games/MarbleLoop/screenshot.png"
   },
   {
     "id": "mastermind",

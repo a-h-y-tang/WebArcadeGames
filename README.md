@@ -109,6 +109,7 @@ For each new game, put it in a new folder. Each game should have its own README.
 | TriPeaks Solitaire | [TriPeaks/](TriPeaks/) | Complete |
 | Kakuro | [Kakuro/](Kakuro/) | Complete |
 | Kaboom! | [Kaboom/](Kaboom/) | Complete |
+| Marble Loop | [MarbleLoop/](MarbleLoop/) | Complete |
 | Quoridor | [Quoridor/](Quoridor/) | Complete |
 | Curling | [Curling/](Curling/) | Complete |
 | 8-Ball Pool | [Pool/](Pool/) | Complete |
