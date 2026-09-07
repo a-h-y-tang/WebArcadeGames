@@ -66,6 +66,9 @@ body {
     font-variant-numeric: tabular-nums;
 }
 
+/* The fuel readout turns red once the tank is nearly dry. */
+#fuel.low { color: var(--danger); }
+
 .play {
     display: flex;
     gap: 16px;

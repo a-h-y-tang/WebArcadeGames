@@ -62,7 +62,7 @@ const SPIN_TIME = 2.5;
 // --- Run structure -------------------------------------------------------
 const START_LIVES = 3;
 const FUEL_MAX = 100;
-const FUEL_DRAIN = 2.5;        // units per second
+const FUEL_DRAIN = 2;          // units per second — a 50 second tank
 const FUEL_BONUS = 5;          // points per unit left when a level is cleared
 const DEATH_PAUSE = 1.2;
 const CLEAR_PAUSE = 1.6;
@@ -535,6 +535,7 @@ function updateHud() {
     livesEl.textContent = String(lives);
     flagsEl.textContent = String(flags.length);
     fuelEl.textContent = String(Math.max(0, Math.round(fuel)));
+    fuelEl.classList.toggle('low', fuel < 20);
     fuelBar.style.width = `${Math.max(0, Math.min(100, (fuel / FUEL_MAX) * 100))}%`;
     bestEl.textContent = String(best);
 }
@@ -571,7 +572,35 @@ function draw() {
     }
 
     ctx.restore();
+    drawBanner();
     drawRadar();
+}
+
+// The text shown across the play field between lives and between levels. It is
+// derived from the state rather than stored, so drawing stays a pure function
+// of the simulation.
+function bannerText() {
+    if (state === 'dying') return lives > 0 ? 'CRASH!' : '';
+    if (state === 'levelclear') return `LEVEL ${level} CLEAR`;
+    return '';
+}
+
+function drawBanner() {
+    const text = bannerText();
+    if (!text) return;
+    const sub = state === 'levelclear' ? `Fuel bonus ${Math.round(fuel) * FUEL_BONUS}` : `${lives} car${lives === 1 ? '' : 's'} left`;
+
+    ctx.save();
+    ctx.textAlign = 'center';
+    ctx.fillStyle = 'rgba(6, 9, 15, 0.72)';
+    ctx.fillRect(0, CANVAS_H / 2 - 44, CANVAS_W, 88);
+    ctx.fillStyle = state === 'levelclear' ? '#ffd54f' : '#ef5350';
+    ctx.font = 'bold 30px "Segoe UI", system-ui, sans-serif';
+    ctx.fillText(text, CANVAS_W / 2, CANVAS_H / 2 - 2);
+    ctx.fillStyle = '#7d90a8';
+    ctx.font = '14px "Segoe UI", system-ui, sans-serif';
+    ctx.fillText(sub, CANVAS_W / 2, CANVAS_H / 2 + 24);
+    ctx.restore();
 }
 
 function drawMaze() {
@@ -616,18 +645,24 @@ function drawFlag(f) {
     ctx.fill();
 }
 
+// A puff is three overlapping blobs that bloom and thin out with age, so smoke
+// reads as smoke rather than as a grey ball.
+const PUFF_OFFSETS = [
+    { x: 0, y: 0, r: 1 },
+    { x: -0.5, y: -0.35, r: 0.7 },
+    { x: 0.45, y: 0.3, r: 0.6 },
+];
+
 function drawSmoke(s) {
     const age = 1 - s.life / SMOKE_LIFE;
-    const radius = 10 + age * 12;
-    const alpha = 0.45 * Math.min(1, s.life / 1.2);
-    ctx.fillStyle = `rgba(206, 224, 240, ${alpha})`;
-    ctx.beginPath();
-    ctx.arc(s.x, s.y, radius, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = `rgba(255, 255, 255, ${alpha * 0.5})`;
-    ctx.beginPath();
-    ctx.arc(s.x - radius * 0.25, s.y - radius * 0.25, radius * 0.45, 0, Math.PI * 2);
-    ctx.fill();
+    const radius = 9 + age * 13;
+    const alpha = 0.4 * Math.min(1, s.life / 1.2);
+    for (const p of PUFF_OFFSETS) {
+        ctx.fillStyle = `rgba(206, 224, 240, ${alpha * p.r})`;
+        ctx.beginPath();
+        ctx.arc(s.x + p.x * radius, s.y + p.y * radius, radius * p.r, 0, Math.PI * 2);
+        ctx.fill();
+    }
 }
 
 function drawCar(car, body, glass) {

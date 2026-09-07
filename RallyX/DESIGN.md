@@ -21,7 +21,7 @@ position — at a glance.
 | Radar | 160 × 128 canvas, the world at 1/4 scale |
 | Flags per level | 10 (one of them is the *lucky flag*) |
 | Lives | 3 |
-| Fuel | 100 units, draining 2.5 units/second |
+| Fuel | 100 units, draining 2 units/second (a 50 second tank) |
 
 ### Maze generation
 
@@ -120,7 +120,9 @@ simulation through plain globals: `state`, `score`, `lives`, `level`, `fuel`,
 
 All motion is expressed per second and advanced through `step(dt)`, so tests can
 simulate frames deterministically without depending on `requestAnimationFrame`
-wall-clock timing. `draw()` is a pure function of the state and never mutates it.
+wall-clock timing. `draw()` is a pure function of the state and never mutates it
+— even the between-lives and between-levels banners come from `bannerText()`,
+which is derived from the state rather than stored.
 
 ## Assumptions
 

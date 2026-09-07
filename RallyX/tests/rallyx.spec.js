@@ -470,6 +470,16 @@ test.describe('Rally-X', () => {
             await expect(page.locator('#fuel')).not.toHaveText('100');
         });
 
+        test('the fuel readout turns red when the tank is nearly dry', async ({ page }) => {
+            await startQuiet(page);
+            await expect(page.locator('#fuel')).not.toHaveClass(/low/);
+            await page.evaluate(() => {
+                fuel = 12;
+                step(1 / 60);
+            });
+            await expect(page.locator('#fuel')).toHaveClass(/low/);
+        });
+
         test('an empty tank costs a life', async ({ page }) => {
             await startQuiet(page);
             await page.evaluate(() => {
@@ -540,12 +550,14 @@ test.describe('Rally-X', () => {
 
         test('an empty tank cannot make smoke', async ({ page }) => {
             await startQuiet(page);
-            await page.evaluate(() => {
+            // One evaluate: the live animation loop keeps burning fuel, so the
+            // "nothing was spent" check has to happen without a round trip.
+            const s = await page.evaluate(() => {
                 fuel = 2;
-                dropSmoke();
+                const made = dropSmoke();
+                return { made, puffs: smokes.length, spent: 2 - fuel };
             });
-            expect(await page.evaluate(() => smokes.length)).toBe(0);
-            expect(await page.evaluate(() => fuel)).toBe(2);
+            expect(s).toEqual({ made: false, puffs: 0, spent: 0 });
         });
 
         test('smoke spins out a pursuer', async ({ page }) => {
@@ -783,6 +795,40 @@ test.describe('Rally-X', () => {
                 return seen.size;
             });
             expect(painted).toBeGreaterThan(3);
+        });
+
+        test('a crash puts a banner on the canvas', async ({ page }) => {
+            const banner = await page.evaluate(() => {
+                startGame();
+                placeAt(player, 1, 1);
+                placeAt(enemies[0], 1, 1);
+                step(1 / 60);
+                return bannerText();
+            });
+            expect(banner).toMatch(/crash/i);
+        });
+
+        test('clearing a level puts a banner on the canvas', async ({ page }) => {
+            const banner = await page.evaluate(() => {
+                startGame();
+                enemies.length = 0;
+                while (flags.length) {
+                    const f = flags[0];
+                    placeAt(player, f.r, f.c);
+                    step(1 / 60);
+                }
+                return bannerText();
+            });
+            expect(banner).toMatch(/level/i);
+        });
+
+        test('a running game shows no banner', async ({ page }) => {
+            const banner = await page.evaluate(() => {
+                startGame();
+                step(1 / 60);
+                return bannerText();
+            });
+            expect(banner).toBe('');
         });
 
         test('drawing does not change the simulation', async ({ page }) => {
