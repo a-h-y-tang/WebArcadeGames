@@ -221,6 +221,39 @@ test.describe('Rally-X', () => {
             expect(second).not.toBe(first);
         });
 
+        test('every level is connected, flagged and playable', async ({ page }) => {
+            const bad = await page.evaluate(() => {
+                const problems = [];
+                for (let n = 1; n <= 10; n++) {
+                    buildLevel(n);
+                    const open = [];
+                    for (let r = 0; r < ROWS; r++)
+                        for (let c = 0; c < COLS; c++) if (!isWall(r, c)) open.push([r, c]);
+                    const seen = new Set([open[0].join(',')]);
+                    const queue = [open[0]];
+                    while (queue.length) {
+                        const [r, c] = queue.shift();
+                        for (const [dr, dc] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+                            const nr = r + dr, nc = c + dc, key = `${nr},${nc}`;
+                            if (isWall(nr, nc) || seen.has(key)) continue;
+                            seen.add(key);
+                            queue.push([nr, nc]);
+                        }
+                    }
+                    if (seen.size !== open.length) problems.push(`level ${n}: maze is split`);
+                    if (flags.length !== 10) problems.push(`level ${n}: ${flags.length} flags`);
+                    if (flags.some((f) => isWall(f.r, f.c))) problems.push(`level ${n}: flag in a wall`);
+                    if (flags.filter((f) => f.special).length !== 1)
+                        problems.push(`level ${n}: lucky flag count`);
+                    if (enemies.some((e) => isWall(e.r, e.c)))
+                        problems.push(`level ${n}: pursuer in a wall`);
+                    if (isWall(player.r, player.c)) problems.push(`level ${n}: start in a wall`);
+                }
+                return problems;
+            });
+            expect(bad).toEqual([]);
+        });
+
         test('the same level always generates the same maze', async ({ page }) => {
             const [a, b] = await page.evaluate(() => {
                 buildLevel(3);
