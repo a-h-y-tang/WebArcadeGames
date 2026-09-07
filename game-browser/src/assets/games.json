@@ -747,6 +747,15 @@
     "thumbnail": "games/Quoridor/screenshot.png"
   },
   {
+    "id": "rally-x",
+    "name": "Rally-X",
+    "description": "Scrolling maze chase - grab every flag and smoke out the pursuit cars",
+    "category": "Action",
+    "dir": "RallyX",
+    "path": "games/RallyX/index.html",
+    "thumbnail": "games/RallyX/screenshot.png"
+  },
+  {
     "id": "reversi",
     "name": "Reversi",
     "description": "Othello strategy game - flip opponent's pieces",
