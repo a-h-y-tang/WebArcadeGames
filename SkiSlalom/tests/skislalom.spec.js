@@ -863,6 +863,21 @@ test.describe('Ski Slalom', () => {
             expect(worst.max).toBeLessThanOrEqual(worst.shift + 0.001);
         });
 
+        test('a corridor step is inside what a carve can actually cover', async ({ page }) => {
+            // The reachability guarantee is only real if the sideways step is
+            // no further than a full carve carries the skier between two rows.
+            const reach = (metres) =>
+                page.evaluate((d) => {
+                    startGame();
+                    distance = d;
+                    const rowTime = rowGap() / speedCap();
+                    return rowTime * speedCap() * Math.sin(MAX_ANGLE);
+                }, metres);
+            const shift = await page.evaluate(() => CORRIDOR_SHIFT);
+            expect(shift).toBeLessThanOrEqual(await reach(0));
+            expect(shift).toBeLessThanOrEqual(await reach(3000));
+        });
+
         test('gates sit on the corridor, so they can always be reached', async ({ page }) => {
             const offsets = await page.evaluate(() => {
                 startGame();

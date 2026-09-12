@@ -70,7 +70,10 @@ const CULL_BEHIND = 260;      // px uphill of the skier before objects are dropp
 // Every row keeps one corridor clear, and the corridor only ever steps sideways
 // by a carve's worth, so there is always a line down the mountain to find.
 const CLEAR_HALF = 58;        // half-width of the clear corridor
-const CORRIDOR_SHIFT = 130;   // how far the corridor may move between rows
+// A carve covers roughly `rowTime * speed * sin(MAX_ANGLE)` px sideways between
+// two rows — about 118 px at the top of the mountain — so the corridor never
+// steps further than that, and the line is always physically reachable.
+const CORRIDOR_SHIFT = 110;   // how far the corridor may move between rows
 const CORRIDOR_EDGE = 40;     // keep the corridor off the netting
 
 // --- Run structure -------------------------------------------------------
