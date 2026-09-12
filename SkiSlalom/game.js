@@ -596,18 +596,13 @@ function drawTracks(cam) {
     ctx.lineCap = 'round';
     for (const side of [-1, 1]) {
         ctx.beginPath();
-        let pen = false;
         for (let i = 0; i < trail.length; i++) {
             const p = trail[i];
             const prev = trail[i - 1];
             const x = p.x + side * 5 * Math.cos(p.angle);
             const y = p.y - cam - side * 5 * Math.sin(p.angle);
-            if (!prev || Math.abs(p.y - prev.y) > TRAIL_BREAK) {
-                ctx.moveTo(x, y);
-                pen = true;
-            } else if (pen) {
-                ctx.lineTo(x, y);
-            }
+            if (!prev || Math.abs(p.y - prev.y) > TRAIL_BREAK) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
         }
         ctx.stroke();
     }
