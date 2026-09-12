@@ -55,13 +55,23 @@ const OBSTACLE = {
 };
 
 // --- Course generation ---------------------------------------------------
+// Rows are spaced in *time*, not pixels: the gap is how far the skier travels
+// in `rowTime` seconds at the current speed cap. That keeps a 420 px/s run from
+// meeting three times as many obstacles a second as a 210 px/s one, while
+// `rowTime` still tightens with distance so the course does get harder.
 const SPAWN_START = 400;      // the first stretch of the run is always clear
 const SPAWN_AHEAD = 820;      // how far below the skier the course is built
-const ROW_GAP_BASE = 130;     // px between rows at the top of the mountain
-const ROW_GAP_MIN = 78;       // px between rows once it is fully wound up
-const ROW_GAP_SHRINK = 0.02;  // px of gap lost per metre descended
+const ROW_TIME_BASE = 0.62;   // seconds between rows at the top of the mountain
+const ROW_TIME_MIN = 0.34;    // seconds between rows once it is fully wound up
+const ROW_TIME_SHRINK = 0.00008; // seconds lost per metre descended
 const GATE_CHANCE = 0.34;
 const CULL_BEHIND = 260;      // px uphill of the skier before objects are dropped
+
+// Every row keeps one corridor clear, and the corridor only ever steps sideways
+// by a carve's worth, so there is always a line down the mountain to find.
+const CLEAR_HALF = 58;        // half-width of the clear corridor
+const CORRIDOR_SHIFT = 130;   // how far the corridor may move between rows
+const CORRIDOR_EDGE = 40;     // keep the corridor off the netting
 
 // --- Run structure -------------------------------------------------------
 const START_LIVES = 3;
@@ -98,6 +108,8 @@ const skier = { x: CANVAS_W / 2, y: 0, angle: 0, speed: 0, air: 0, airTime: 0, i
 // Mutated in place, never reassigned, so the tests can hold on to them.
 const obstacles = [];
 const gates = [];
+// One entry per generated row: the clear line through it.
+const corridors = [];
 
 // Carved tracks left behind in the snow: sampled world points, purely cosmetic.
 const trail = [];
@@ -141,23 +153,54 @@ function addGate(x, y) {
 // Course generation
 // ---------------------------------------------------------------------------
 
+// The speed the hill allows at the current distance, and the row spacing that
+// falls out of it. Both are read by the tests as the difficulty curve.
+function speedCap() {
+    return Math.min(SPEED_CAP_MAX, SPEED_BASE + distance * SPEED_GROWTH);
+}
+
+function rowGap() {
+    const rowTime = Math.max(ROW_TIME_MIN, ROW_TIME_BASE - distance * ROW_TIME_SHRINK);
+    return speedCap() * rowTime;
+}
+
+function nextCorridor(y) {
+    const lo = CORRIDOR_EDGE + CLEAR_HALF;
+    const hi = CANVAS_W - CORRIDOR_EDGE - CLEAR_HALF;
+    const from = corridors.length ? corridors[corridors.length - 1].x : CANVAS_W / 2;
+    const x = clamp(from + (rand() * 2 - 1) * CORRIDOR_SHIFT, lo, hi);
+    const corridor = { x, y };
+    corridors.push(corridor);
+    return corridor;
+}
+
 function spawnRow(y) {
+    const corridor = nextCorridor(y);
+
     if (rand() < GATE_CHANCE) {
-        const margin = GATE_HALF + 26;
-        addGate(margin + rand() * (CANVAS_W - 2 * margin), y);
+        // A gate is the corridor, so the scoring line is always skiable.
+        addGate(corridor.x, y);
         return;
     }
+
     const count = 1 + Math.floor(rand() * 3);
     for (let i = 0; i < count; i++) {
         const roll = rand();
         const type = roll < 0.55 ? 'tree' : roll < 0.85 ? 'rock' : 'ramp';
-        addObstacle(type, 26 + rand() * (CANVAS_W - 52), y + rand() * 26);
+        // Roll positions until one falls outside the corridor; the piste is far
+        // wider than the corridor, so this lands quickly.
+        let x = null;
+        for (let tries = 0; tries < 8 && x === null; tries++) {
+            const candidate = 26 + rand() * (CANVAS_W - 52);
+            if (Math.abs(candidate - corridor.x) >= CLEAR_HALF) x = candidate;
+        }
+        if (x !== null) addObstacle(type, x, y + rand() * 26);
     }
 }
 
 function spawnAhead() {
     if (!spawnEnabled) return;
-    const gap = Math.max(ROW_GAP_MIN, ROW_GAP_BASE - distance * ROW_GAP_SHRINK);
+    const gap = rowGap();
     while (spawnY < skier.y + SPAWN_AHEAD) {
         spawnRow(spawnY);
         spawnY += gap;
@@ -176,6 +219,7 @@ function recordTrail(dt) {
 function cull() {
     const limit = skier.y - CULL_BEHIND;
     while (trail.length && trail[0].y < limit) trail.shift();
+    while (corridors.length > 1 && corridors[0].y < limit) corridors.shift();
     for (let i = obstacles.length - 1; i >= 0; i--) {
         if (obstacles[i].y < limit) obstacles.splice(i, 1);
     }
@@ -294,7 +338,7 @@ function step(dt) {
     // --- Speed -----------------------------------------------------------
     // The target already scales with cos(angle), and the descent is that speed
     // projected onto the fall line, so a hard carve costs downhill pace twice.
-    const cap = Math.min(SPEED_CAP_MAX, SPEED_BASE + distance * SPEED_GROWTH);
+    const cap = speedCap();
     let target = SPEED_MIN + (cap - SPEED_MIN) * Math.cos(skier.angle);
     if (keys.brake && skier.air <= 0) target *= BRAKE_FACTOR;
     const rate = target > skier.speed ? ACCEL : DECEL;
@@ -355,6 +399,7 @@ function startGame() {
 
     obstacles.length = 0;
     gates.length = 0;
+    corridors.length = 0;
     trail.length = 0;
     trailTimer = 0;
 
@@ -618,7 +663,8 @@ function drawSkier() {
     ctx.save();
     ctx.translate(x, y - hop);
 
-    if (state === 'crashing') {
+    if (state === 'crashing' || state === 'over') {
+        // Stay face-down in the snow once the run has ended, too.
         ctx.rotate(crashSpin);
         ctx.strokeStyle = '#d94a3d';
         ctx.lineWidth = 3;
@@ -741,12 +787,6 @@ function draw() {
     drawSkier();
     drawSpeedGauge();
     drawPopup();
-
-    if (state === 'running' || state === 'crashing') {
-        ctx.fillStyle = 'rgba(40, 80, 110, 0.85)';
-        ctx.font = '12px "Segoe UI", system-ui, sans-serif';
-        ctx.fillText(`${'▲'.repeat(Math.max(0, lives))}`, CANVAS_W - 54, CANVAS_H - 16);
-    }
 }
 
 // ---------------------------------------------------------------------------

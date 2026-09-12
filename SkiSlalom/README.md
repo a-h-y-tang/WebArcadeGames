@@ -40,9 +40,15 @@ each one costs a life, and you have three. `Space` hops you over rocks, but a
 tree is far too tall to clear. Ramps fling you into a long flight worth 120
 points a second of air time, and you can steer (slowly) while you are up there.
 
-**It gets faster.** The speed cap climbs steadily with every metre descended,
-and the course rows tighten from 130 px apart to 78 px. What is a comfortable
-line at 200 m is a very busy one at 2000 m.
+**There is always a line.** Every row of the course keeps one corridor clear,
+and that corridor never jumps further sideways than a carve can carry you — so
+no row is unwinnable. Gates are placed on the corridor, which is why chasing
+the flags and skiing the safe line are the same thing. The difficulty is
+spotting it in time.
+
+**It gets faster.** The speed cap climbs with every metre descended, from 210 to
+420 px/s, and rows go from arriving every 0.62 s to every 0.34 s. What is a
+comfortable line at 200 m is a very busy one at 2000 m.
 
 **Scoring.**
 

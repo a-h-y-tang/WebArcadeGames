@@ -780,6 +780,9 @@ test.describe('Ski Slalom', () => {
                     rngSeed = 4242;
                     obstacles.length = 0;
                     gates.length = 0;
+                    // The corridor chain is course state too: each row steps
+                    // sideways from the one before it.
+                    corridors.length = 0;
                     spawnY = skier.y + 100;
                     for (let i = 0; i < 600; i++) step(1 / 60);
                     return {
@@ -793,23 +796,88 @@ test.describe('Ski Slalom', () => {
             expect(first.obstacles.length + first.gates.length).toBeGreaterThan(0);
         });
 
-        test('the course tightens up the further you go', async ({ page }) => {
-            const density = (startY) =>
-                page.evaluate((y) => {
+        test('rows arrive more often the further you go', async ({ page }) => {
+            // Rows are spaced in time, not pixels: the gap grows with the speed
+            // cap, but not as fast, so the course arrives quicker and quicker.
+            const interval = (metres) =>
+                page.evaluate((d) => {
                     startGame();
-                    rngSeed = 2024;
-                    spawnEnabled = true;
-                    skier.y = y;
-                    obstacles.length = 0;
-                    gates.length = 0;
-                    spawnY = y;
-                    step(1 / 60);
-                    const span = Math.max(...obstacles.map((o) => o.y), ...gates.map((g) => g.y)) - y;
-                    return (obstacles.length + gates.length) / span;
-                }, startY);
-            const early = await density(0);
-            const late = await density(40000);
-            expect(late).toBeGreaterThan(early);
+                    distance = d;
+                    return rowGap() / speedCap();
+                }, metres);
+            const early = await interval(0);
+            const late = await interval(3000);
+            expect(late).toBeLessThan(early);
+            expect(late).toBeGreaterThan(0.2);
+        });
+
+        test('the run speeds up faster than the rows bunch up', async ({ page }) => {
+            // A sanity floor on the difficulty ramp: the mountain must stay
+            // skiable rather than becoming a wall of obstacles.
+            const gap = (metres) =>
+                page.evaluate((d) => {
+                    startGame();
+                    distance = d;
+                    return rowGap();
+                }, metres);
+            expect(await gap(3000)).toBeGreaterThan(await gap(0));
+        });
+
+        test('every obstacle row leaves a clear corridor', async ({ page }) => {
+            const { clear, CLEAR_HALF, SKIER_HW } = await page.evaluate(() => {
+                startGame();
+                rngSeed = 777;
+                obstacles.length = 0;
+                gates.length = 0;
+                corridors.length = 0;
+                spawnY = skier.y + 100;
+                for (let i = 0; i < 3000; i++) step(1 / 60);
+                const bad = [];
+                for (const c of corridors) {
+                    for (const o of obstacles) {
+                        if (Math.abs(o.y - c.y) > 30) continue;
+                        if (Math.abs(o.x - c.x) < CLEAR_HALF) bad.push([o.type, o.x, c.x]);
+                    }
+                }
+                return { clear: bad, CLEAR_HALF, SKIER_HW };
+            });
+            // The corridor has to be wide enough to actually ski down.
+            expect(CLEAR_HALF).toBeGreaterThan(SKIER_HW * 2);
+            expect(clear).toEqual([]);
+        });
+
+        test('consecutive corridors stay within a carve of each other', async ({ page }) => {
+            const worst = await page.evaluate(() => {
+                startGame();
+                rngSeed = 31337;
+                corridors.length = 0;
+                spawnY = skier.y + 100;
+                for (let i = 0; i < 3000; i++) step(1 / 60);
+                let max = 0;
+                for (let i = 1; i < corridors.length; i++) {
+                    max = Math.max(max, Math.abs(corridors[i].x - corridors[i - 1].x));
+                }
+                return { max, shift: CORRIDOR_SHIFT, rows: corridors.length };
+            });
+            expect(worst.rows).toBeGreaterThan(3);
+            expect(worst.max).toBeLessThanOrEqual(worst.shift + 0.001);
+        });
+
+        test('gates sit on the corridor, so they can always be reached', async ({ page }) => {
+            const offsets = await page.evaluate(() => {
+                startGame();
+                rngSeed = 5150;
+                gates.length = 0;
+                corridors.length = 0;
+                spawnY = skier.y + 100;
+                for (let i = 0; i < 3000; i++) step(1 / 60);
+                return gates.map((g) => {
+                    const c = corridors.find((c) => Math.abs(c.y - g.y) < 1);
+                    return c ? Math.abs(c.x - g.x) : 999;
+                });
+            });
+            expect(offsets.length).toBeGreaterThan(0);
+            expect(Math.max(...offsets)).toBeLessThan(1);
         });
     });
 

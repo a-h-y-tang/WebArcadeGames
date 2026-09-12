@@ -120,19 +120,41 @@ flashes while invulnerable.
 The course is generated ahead of the skier from a seeded LCG (`rand()`), so a
 test can pin `rngSeed` and get the same mountain every time. A `spawnY` frontier
 walks downhill while it is closer than `SPAWN_AHEAD` (820 px) to the skier,
-emitting one row each step and then advancing by
+emitting one row each step and then advancing by `rowGap()`.
+
+**Rows are spaced in time, not in pixels.** A fixed pixel gap would mean a
+420 px/s run meets twice as many obstacles a second as a 210 px/s one, and the
+difficulty curve would run away from the player. Instead the gap is how far the
+skier covers in `rowTime` seconds at the current cap:
 
 ```
-rowGap = max(ROW_GAP_MIN, ROW_GAP_BASE - distance * ROW_GAP_SHRINK)
+rowTime = max(ROW_TIME_MIN, ROW_TIME_BASE - distance * ROW_TIME_SHRINK)
+rowGap  = speedCap() * rowTime
 ```
 
-(130 px thinning to 78 px), which is the second difficulty ramp alongside speed.
-A row is a gate with probability `GATE_CHANCE` (0.34) or otherwise one to three
-obstacles rolled as 55% tree, 30% rock, 15% ramp at random piste positions. The
-first `SPAWN_START` (400 px) of the run is left empty so the start is never
+so rows still arrive faster the further you go (0.62 s apart at the top, 0.34 s
+at the bottom of the curve) while the spacing on the ground grows with speed.
+
+**Every row keeps a corridor clear.** Random placement can wall the piste off
+with three trees the skier has no line through, so each row first picks a
+corridor: `CLEAR_HALF` (58 px) either side of a point that steps at most
+`CORRIDOR_SHIFT` (130 px) from the previous row's corridor and stays
+`CORRIDOR_EDGE` (40 px) off the netting. A row is then either a gate — placed
+*on* the corridor, so the scoring line is always skiable — with probability
+`GATE_CHANCE` (0.34), or one to three obstacles (55% tree, 30% rock, 15% ramp)
+rolled at random piste positions and rejected while they fall inside the
+corridor. The corridors live in their own array so the tests can assert the
+invariant directly: there is always a line down the mountain, and the challenge
+is reading it in time rather than being handed an unwinnable row.
+
+The first `SPAWN_START` (400 px) of the run is left empty so the start is never
 unfair, and everything more than `CULL_BEHIND` (260 px) uphill of the skier is
 dropped. Setting `spawnEnabled = false` freezes generation, which is how the
 tests get a bare mountain to place single objects on.
+
+A scripted pilot that simply follows the corridors averages about 2.5 km a run;
+a pilot that ignores the line and chases gates, or does nothing at all, is out
+inside 500 m. That gap is the game.
 
 ## Controls
 
@@ -159,6 +181,8 @@ animation.
 | `state` | `'idle' \| 'running' \| 'paused' \| 'crashing' \| 'over'` |
 | `skier` | `{ x, y, angle, speed, air, airTime, invuln }` |
 | `obstacles`, `gates` | live world objects, culled behind the skier |
+| `corridors` | the clear line through each generated row |
+| `speedCap()`, `rowGap()` | the difficulty curve, in px/s and px |
 | `score`, `best`, `lives`, `combo`, `distance` | run state, `best` in `localStorage` |
 | `step(dt)` | the whole simulation: input → motion → spawn → collide → cull → HUD |
 | `draw()` | pure rendering, reads state only |
