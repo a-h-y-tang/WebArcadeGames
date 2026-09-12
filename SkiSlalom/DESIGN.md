@@ -138,8 +138,11 @@ at the bottom of the curve) while the spacing on the ground grows with speed.
 **Every row keeps a corridor clear.** Random placement can wall the piste off
 with three trees the skier has no line through, so each row first picks a
 corridor: `CLEAR_HALF` (58 px) either side of a point that steps at most
-`CORRIDOR_SHIFT` (130 px) from the previous row's corridor and stays
-`CORRIDOR_EDGE` (40 px) off the netting. A row is then either a gate — placed
+`CORRIDOR_SHIFT` (110 px) from the previous row's corridor and stays
+`CORRIDOR_EDGE` (40 px) off the netting. That step is deliberately under the
+`rowTime × speed × sin(MAX_ANGLE)` a full carve covers between two rows — about
+118 px at the top of the mountain — so the line is reachable in practice and not
+just in principle. A row is then either a gate — placed
 *on* the corridor, so the scoring line is always skiable — with probability
 `GATE_CHANCE` (0.34), or one to three obstacles (55% tree, 30% rock, 15% ramp)
 rolled at random piste positions and rejected while they fall inside the
