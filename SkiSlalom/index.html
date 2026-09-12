@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ski Slalom</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="game">
+        <header class="hud">
+            <h1>SKI SLALOM</h1>
+            <div class="stats">
+                <div class="stat"><span class="label">Score</span><span id="score">0</span></div>
+                <div class="stat"><span class="label">Metres</span><span id="distance">0</span></div>
+                <div class="stat"><span class="label">Combo</span><span id="combo">x1</span></div>
+                <div class="stat"><span class="label">Lives</span><span id="lives">3</span></div>
+                <div class="stat"><span class="label">Best</span><span id="best">0</span></div>
+            </div>
+        </header>
+
+        <div class="board-wrap">
+            <canvas id="canvas" width="560" height="620"></canvas>
+            <div id="overlay" class="overlay visible">
+                <h2 id="overlay-title">SKI SLALOM</h2>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Press Space or click Start to drop in</p>
+                <button id="btn-start">Start Run</button>
+            </div>
+        </div>
+
+        <div class="help">
+            <p><kbd>←</kbd> <kbd>→</kbd> carve</p>
+            <p><kbd>↓</kbd> brake</p>
+            <p><kbd>Space</kbd> jump</p>
+            <p><kbd>P</kbd> pause</p>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>
