@@ -123,7 +123,7 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Marble Spiral | [MarbleSpiral/](MarbleSpiral/) | Complete |
 | Barrel Climb | [BarrelClimb/](BarrelClimb/) | Complete |
 | BurgerTime | [BurgerTime/](BurgerTime/) | Complete |
-| Soda Tapper | [SodaTapper/](SodaTapper/) | In Progress |
+| Soda Tapper | [SodaTapper/](SodaTapper/) | Complete |
 
 ## Playing
 
