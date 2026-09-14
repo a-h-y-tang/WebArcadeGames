@@ -318,7 +318,8 @@ function moveWolves(dt) {
         wolf.throwTimer -= dt;
         if (wolf.throwTimer <= 0) {
             wolf.throwTimer = randRange(ROCK_THROW_MIN, ROCK_THROW_MAX);
-            rocks.push({ x: wolf.x + WOLF_W / 2, y: wolf.y + 6, r: ROCK_R });
+            // Thrown from the wolf's paws, which sit below its balloon.
+            rocks.push({ x: wolf.x + WOLF_W / 2, y: wolf.y + 12, r: ROCK_R });
         }
     }
 

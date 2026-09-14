@@ -58,16 +58,21 @@ Everything is expressed per second and advanced by a single `step(dt)`:
 1. **Basket** — `basket.y += basket.dir * BASKET_SPEED * dt`, then clamped.
 2. **Arrows** — travel left at `ARROW_SPEED`; at most `ARROW_MAX` are in
    flight at once, which is what stops the game being a hold-space affair.
-3. **Arrow collisions**, resolved in order: wolf → rock → meat. An arrow is
-   consumed by the first thing it hits.
-4. **Wolves** — travel right at the wave's speed in a straight line, and count
+3. **Wolves** — travel right at the wave's speed in a straight line, and count
    down a throw timer that spawns a rock.
-5. **Rocks** — travel right; a rock overlapping the basket costs a life.
-6. **Meat** — drifts right until shot, then falls, sweeping a wider box than
+4. **Rocks** — travel right; a rock overlapping the basket costs a life.
+5. **Meat** — drifts right until shot, then falls, sweeping a wider box than
    its own sprite (`MEAT_SWEEP_W`) so a well-timed shot clears a column.
+6. **Arrow collisions**, resolved per arrow in the order wolf → rock → meat.
+   An arrow is consumed by the first thing it hits.
 7. **Spawning** — a wave-long quota released on a timer, with the meat
    released once the wave is half spawned.
 8. **Wave end** — when the quota is resolved and the sky is empty.
+
+Everything moves before anything collides, so a frame never resolves a hit
+against a half-updated world. Steps 3 and 4 can end a life mid-frame; when
+they do, `step` returns immediately and the remainder of the frame belongs to
+the `dying` state rather than to play that is already over.
 
 `step(dt)` is the only thing the animation loop does besides drawing, so the
 tests advance the game by calling it in a loop with a fixed `dt`. Nothing in
