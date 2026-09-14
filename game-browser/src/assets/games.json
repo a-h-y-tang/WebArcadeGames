@@ -720,6 +720,15 @@
     "thumbnail": ""
   },
   {
+    "id": "pooyan",
+    "name": "Pooyan",
+    "description": "Shoot arrows at balloon-riding wolves before they reach the house",
+    "category": "Action",
+    "dir": "Pooyan",
+    "path": "games/Pooyan/index.html",
+    "thumbnail": "games/Pooyan/screenshot.png"
+  },
+  {
     "id": "pyramid-solitaire",
     "name": "Pyramid Solitaire",
     "description": "Card solitaire with pyramid layout",
