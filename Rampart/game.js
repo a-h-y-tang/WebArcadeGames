@@ -151,12 +151,10 @@ let autoStep = true;
 // Seeded RNG — the map and the fleet behave the same way on every run.
 // ---------------------------------------------------------------------------
 
-let seed = DEFAULT_SEED;
 let rngState = DEFAULT_SEED;
 
 function setSeed(n) {
-    seed = n >>> 0;
-    rngState = seed;
+    rngState = n >>> 0;
 }
 
 function rand() {
@@ -506,7 +504,7 @@ function spawnShip(row) {
         x: -SHIP_W,
         fire: shipFireInterval(round),
         hp: shipArmour(round),
-        anchored: false,
+        engaged: false,
         flash: 0,
         bob: rand() * Math.PI * 2,
     };
@@ -542,8 +540,8 @@ function updateShips(dt) {
         // Guns stay quiet out at sea and open up on the run in, so every ship
         // that is allowed to close the last stretch of water costs you wall.
         if (ship.x < anchor - SHIP_FIRING_RANGE) continue;
-        if (!ship.anchored) {
-            ship.anchored = true;
+        if (!ship.engaged) {
+            ship.engaged = true;
             ship.fire = Math.min(ship.fire, shipFireInterval(round) * 0.35);
         }
 
