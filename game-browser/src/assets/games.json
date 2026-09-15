@@ -747,6 +747,15 @@
     "thumbnail": "games/Quoridor/screenshot.png"
   },
   {
+    "id": "rampart",
+    "name": "Rampart",
+    "description": "Siege game - shell the fleet, then wall your castle back in",
+    "category": "Strategy",
+    "dir": "Rampart",
+    "path": "games/Rampart/index.html",
+    "thumbnail": "games/Rampart/screenshot.png"
+  },
+  {
     "id": "reversi",
     "name": "Reversi",
     "description": "Othello strategy game - flip opponent's pieces",
