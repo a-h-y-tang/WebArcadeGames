@@ -69,8 +69,10 @@ const SHIP_W = SHIP_CELLS * CELL; // 60
 const SHIP_H = CELL;
 const SHIP_SPEED = 22;            // px/s
 const SHIP_STOP_GAP = 24;         // px of open water kept between hull and coast
+const SHIP_FIRING_RANGE = 70;     // px short of the anchor where the guns open up
 const SHIP_FIRST_SPAWN = 1.5;     // s into the battle
-const SHIP_MAX_ALIVE = 3;
+const SHIP_MAX_ALIVE_BASE = 3;
+const SHIP_MAX_ALIVE_CAP = 5;
 const SHELL_SPEED = 220;          // px/s
 const SHELL_SCATTER = 5;          // px of aiming slop, so craters do not stack
 
@@ -188,6 +190,12 @@ function shipSpawnInterval(r) { return Math.max(1.6, 4.2 - 0.3 * (r - 1)); }
 
 // Ships reload slowly, so a gunner who sinks the fleet early keeps their walls.
 function shipFireInterval(r) { return Math.max(2.8, 5.5 - 0.25 * (r - 1)); }
+
+// Later rounds send armoured hulls that shrug off a single ball, so one volley
+// stops being an answer and the guns have to be worked.
+function shipArmour(r) { return 1 + Math.floor((r - 1) / 3); }
+
+function shipsAtOnce(r) { return Math.min(SHIP_MAX_ALIVE_CAP, SHIP_MAX_ALIVE_BASE + Math.floor(r / 3)); }
 
 // ---------------------------------------------------------------------------
 // Map generation
@@ -451,7 +459,10 @@ function explode(x, y, side) {
     if (side === 'player') {
         for (let i = ships.length - 1; i >= 0; i--) {
             const ship = ships[i];
-            if (pointRectDist(x, y, ship.x, ship.row * CELL, SHIP_W, SHIP_H) <= BLAST_R) {
+            if (pointRectDist(x, y, ship.x, ship.row * CELL, SHIP_W, SHIP_H) > BLAST_R) continue;
+            ship.hp--;
+            ship.flash = 1;
+            if (ship.hp <= 0) {
                 ships.splice(i, 1);
                 shipsSunk++;
                 score += SHIP_POINTS;
@@ -493,8 +504,10 @@ function spawnShip(row) {
     const ship = {
         row,
         x: -SHIP_W,
-        fire: shipFireInterval(round) * (0.6 + rand() * 0.6),
-        hp: 1,
+        fire: shipFireInterval(round),
+        hp: shipArmour(round),
+        anchored: false,
+        flash: 0,
         bob: rand() * Math.PI * 2,
     };
     ships.push(ship);
@@ -522,10 +535,16 @@ function pickShellTarget(ship) {
 function updateShips(dt) {
     for (const ship of ships) {
         ship.bob += dt * 2.2;
+        if (ship.flash > 0) ship.flash = Math.max(0, ship.flash - dt * 3);
         const anchor = shipAnchorX(ship.row);
-        if (ship.x < anchor) {
-            ship.x = Math.min(anchor, ship.x + SHIP_SPEED * dt);
-            continue; // guns stay quiet until the ship is on station
+        if (ship.x < anchor) ship.x = Math.min(anchor, ship.x + SHIP_SPEED * dt);
+
+        // Guns stay quiet out at sea and open up on the run in, so every ship
+        // that is allowed to close the last stretch of water costs you wall.
+        if (ship.x < anchor - SHIP_FIRING_RANGE) continue;
+        if (!ship.anchored) {
+            ship.anchored = true;
+            ship.fire = Math.min(ship.fire, shipFireInterval(round) * 0.35);
         }
 
         ship.fire -= dt;
@@ -538,7 +557,7 @@ function updateShips(dt) {
 }
 
 function updateFleet(dt) {
-    if (shipSpawnEnabled && shipsSpawned < shipsForRound(round) && ships.length < SHIP_MAX_ALIVE) {
+    if (shipSpawnEnabled && shipsSpawned < shipsForRound(round) && ships.length < shipsAtOnce(round)) {
         shipTimer -= dt;
         if (shipTimer <= 0) {
             shipTimer = shipSpawnInterval(round);
@@ -914,8 +933,8 @@ function drawShips() {
         ctx.ellipse(x + SHIP_W / 2, y + SHIP_H - 1, SHIP_W / 2, 4, 0, 0, Math.PI * 2);
         ctx.fill();
 
-        // Hull
-        ctx.fillStyle = C_SHIP;
+        // Hull — armoured hulls are darker, and flash white when they take a ball
+        ctx.fillStyle = ship.flash > 0 ? '#f6e7c8' : ship.hp > 1 ? '#42332a' : C_SHIP;
         ctx.beginPath();
         ctx.moveTo(x, y + 5);
         ctx.lineTo(x + SHIP_W, y + 5);

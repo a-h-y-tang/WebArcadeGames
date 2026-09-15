@@ -33,11 +33,15 @@ it — you get two, plus one for every castle you currently hold. The cursor sho
 green where a cannon fits and red where it does not. Cannons stay on the board
 between rounds, so a quiet round builds a battery.
 
-**Battle (30 s).** Ships sail in from the west and anchor off the coast. They do
-not open fire until they are on station, which is your window: click a ship and
-*every* loaded cannon in range fires at that point at once. Each hit sinks a ship
-for 200 points. Ships that live long enough start shelling, and each shell blows a
-small crater in your stonework — and in any cannon it lands on.
+**Battle (30 s).** Ships sail in from the west and anchor off the coast. Their
+guns stay quiet while they are still out at sea and open up over the last stretch
+of the run in — that approach is your window. Click a ship and *every* loaded
+cannon in range fires at that point at once; a sinking is worth 200 points. Ships
+that live long enough start shelling, and each shell blows a small crater in your
+stonework — and in any cannon it lands on.
+
+From round 4 the fleet arrives armoured and takes more than one ball to sink, and
+the ships come thicker and faster the longer you hold out.
 
 Your own shells destroy your own walls too. Firing across your ramparts at
 something just behind them will punch a hole in your own ring, so pick targets in

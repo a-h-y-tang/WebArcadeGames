@@ -552,10 +552,12 @@ test.describe('Rampart', () => {
             );
             await page.evaluate(() => {
                 const ship = spawnShip(6);
-                ship.fire = 999; // one shell only, so the count below is stable
+                ship.fire = 999; // stay quiet on the run in, so one shell is in play
                 launchShell(ship, RING.left, RING.top + 3);
             });
-            await advanceSeconds(page, 6);
+            // Long enough for the shell to land, short enough that the ship is
+            // still out of its own firing range.
+            await advanceSeconds(page, 3);
             const after = await page.evaluate(() => ({
                 cell: structures[RING.top + 3][RING.left],
                 shots: shots.length,

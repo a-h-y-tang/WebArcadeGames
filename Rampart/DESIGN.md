@@ -89,11 +89,19 @@ in bounds, on land, empty and *not* outside. The cursor previews the footprint i
 green or red, and enclosed ground is tinted so you can see what you actually hold.
 
 **Battle.** Ships spawn in the sea on a timer (`shipsForRound(round)` of them, at
-most `SHIP_MAX_ALIVE` at once), sail east and anchor `SHIP_STOP_GAP` px off the
-coast. They only open fire once they are on station, which gives a gunner a real
-window to sink them before they do any damage. Each shell is aimed at a wall or
-cannon cell near the ship's own row, with a few pixels of scatter so repeated
-hits spread into a crater instead of drilling one hole.
+most `shipsAtOnce(round)` at once), sail east and anchor `SHIP_STOP_GAP` px off
+the coast. Their guns stay quiet out at sea and open up over the last
+`SHIP_FIRING_RANGE` px of the run in, so every ship allowed to close the gap
+costs you wall — but a gunner who meets each arrival takes no damage at all.
+Each shell is aimed at a wall or cannon cell near the ship's own row, with a few
+pixels of scatter so repeated hits spread into a crater instead of drilling one
+hole.
+
+Difficulty comes from the fleet, not from the clock: `shipsForRound`,
+`shipSpawnInterval`, `shipFireInterval`, `shipsAtOnce` and `shipArmour` all scale
+with the round. From round 4 hulls carry two points of armour and from round 7
+three, so a single volley stops being an answer and the battery has to be worked
+while new ships are still closing.
 
 `fireAt(x, y)` orders every cannon that is loaded and within `CANNON_RANGE` to
 fire at the same point, then puts each on a `CANNON_COOL` reload. Shots are not
