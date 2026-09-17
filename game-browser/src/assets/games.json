@@ -756,6 +756,15 @@
     "thumbnail": ""
   },
   {
+    "id": "river-raid",
+    "name": "River Raid",
+    "description": "Fly upstream, shoot the bridges and never run out of fuel",
+    "category": "Action",
+    "dir": "RiverRaid",
+    "path": "games/RiverRaid/index.html",
+    "thumbnail": "games/RiverRaid/screenshot.png"
+  },
+  {
     "id": "road-racer",
     "name": "Road Racer",
     "description": "Arcade racing game - avoid obstacles on the road",
