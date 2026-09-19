@@ -114,6 +114,10 @@ global, matching Lode Runner, Kaboom and Tetris in this repo.
 * **Rendering** splits the canvas: the left 440 px is the scrolling maze
   viewport, the right 160 px is a fixed panel with the radar (the whole course
   scaled down, with flags, chasers and the car) and the fuel gauge.
+* **Cosmetics stay out of the simulation.** The "COURSE CLEAR" / "CAR LOST"
+  banner and the pulsing low-fuel border are timed off the animation frame,
+  never off `step(dt)`, so the simulation the tests drive stays pure and the
+  game never pauses itself in a way a test would have to wait out.
 
 ## Assumptions
 

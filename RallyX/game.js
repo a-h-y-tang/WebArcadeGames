@@ -155,6 +155,7 @@ let wantDir = { x: 0, y: 0 };
 let smokeCooldown = 0;
 let autoStep = true;
 let spinTime = 0;            // drives the spinning animation of stunned chasers
+let banner = null;           // { text, time } — a purely cosmetic flash, timed off the animation frame
 
 // A seeded generator keeps chaser decisions — and therefore the tests —
 // reproducible from one run to the next.
@@ -284,6 +285,7 @@ function resetCars() {
 function startGame() {
     score = 0;
     lives = START_LIVES;
+    banner = null;
     setSeed(20250918);
     loadLevel(1);
     fuel = FUEL_MAX;
@@ -303,14 +305,20 @@ function togglePause() {
 }
 
 function loseLife() {
+    const dry = fuel <= 0;   // resetCars() refills the tank, so read the reason first
     lives -= 1;
     if (lives <= 0) {
         lives = 0;
         gameOver();
     } else {
         resetCars();
+        showBanner(dry ? 'OUT OF FUEL' : 'CAR LOST');
     }
     updateHud();
+}
+
+function showBanner(text) {
+    banner = { text, time: 1.6 };
 }
 
 function gameOver() {
@@ -320,9 +328,11 @@ function gameOver() {
 }
 
 function clearRound() {
-    score += Math.round(fuel) * FUEL_BONUS;
+    const bonus = Math.round(fuel) * FUEL_BONUS;
+    score += bonus;
     loadLevel(level + 1);
     resetCars();
+    showBanner(`COURSE CLEAR  +${bonus}`);
     updateHud();
 }
 
@@ -599,6 +609,33 @@ function drawMaze() {
     drawCar(player, '#4fc3f7', false);
 
     ctx.restore();
+
+    if (banner) drawBanner();
+    if (state === 'running' && fuel > 0 && fuel < FUEL_MAX * 0.2) drawFuelWarning();
+}
+
+function drawBanner() {
+    const fade = Math.min(1, banner.time / 0.4);
+    ctx.save();
+    ctx.globalAlpha = fade;
+    ctx.fillStyle = 'rgba(5, 9, 20, 0.78)';
+    ctx.fillRect(0, VIEW_H / 2 - 26, VIEW_W, 52);
+    ctx.fillStyle = '#4fc3f7';
+    ctx.font = 'bold 22px system-ui, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(banner.text, VIEW_W / 2, VIEW_H / 2);
+    ctx.restore();
+}
+
+function drawFuelWarning() {
+    const pulse = 0.35 + 0.3 * Math.sin(spinTime * 8);
+    ctx.save();
+    ctx.globalAlpha = pulse;
+    ctx.strokeStyle = '#ef5d5d';
+    ctx.lineWidth = 6;
+    ctx.strokeRect(3, 3, VIEW_W - 6, VIEW_H - 6);
+    ctx.restore();
 }
 
 function drawFlag(flag) {
@@ -850,6 +887,10 @@ function frame(t) {
     if (dt > 0.05) dt = 0.05;   // clamp after tab switches / long frames
     if (autoStep && state === 'running') step(dt);
     else spinTime += dt;
+    if (banner) {
+        banner.time -= dt;
+        if (banner.time <= 0) banner = null;
+    }
     draw();
     updateHud();
     requestAnimationFrame(frame);
