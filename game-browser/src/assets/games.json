@@ -27,6 +27,15 @@
     "thumbnail": "games/AirHockey/screenshot.png"
   },
   {
+    "id": "alpine-ski",
+    "name": "Alpine Ski",
+    "description": "Downhill slalom - carve the gates, dodge the pines, beat the clock",
+    "category": "Sports",
+    "dir": "AlpineSki",
+    "path": "games/AlpineSki/index.html",
+    "thumbnail": "games/AlpineSki/screenshot.png"
+  },
+  {
     "id": "artillery-duel",
     "name": "Artillery Duel",
     "description": "Strategic turn-based artillery combat game",

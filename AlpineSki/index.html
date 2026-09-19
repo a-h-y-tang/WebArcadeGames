@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alpine Ski</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="game">
+        <header class="hud">
+            <h1>ALPINE SKI</h1>
+            <div class="stats">
+                <div class="stat"><span class="label">Score</span><span id="score">0</span></div>
+                <div class="stat"><span class="label">Course</span><span id="level">1</span></div>
+                <div class="stat"><span class="label">Gates</span><span id="gates">0</span></div>
+                <div class="stat"><span class="label">Time</span><span id="time">0.0</span></div>
+                <div class="stat"><span class="label">Best</span><span id="best">0</span></div>
+            </div>
+        </header>
+
+        <div class="board-wrap">
+            <canvas id="canvas" width="600" height="420"></canvas>
+            <div id="overlay" class="overlay visible">
+                <h2 id="overlay-title">ALPINE SKI</h2>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Press Space or click Start to drop in</p>
+                <button id="btn-start">Start Run</button>
+            </div>
+        </div>
+
+        <div class="help">
+            <p><kbd>←</kbd> <kbd>→</kbd> carve</p>
+            <p><kbd>↓</kbd> tuck</p>
+            <p><kbd>↑</kbd> snowplough</p>
+            <p><kbd>P</kbd> pause</p>
+        </div>
+
+        <p class="tip">Thread every gate — the flags are points, the pines are not. Carving scrubs speed, so take the straightest line you dare.</p>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>
