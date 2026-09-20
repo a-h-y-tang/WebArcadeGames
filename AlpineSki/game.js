@@ -149,6 +149,8 @@ function setAutoStep(on) {
     autoStep = !!on;
 }
 
+// Drop every held control. Used on blur, and by the tests to start from a
+// known-quiet keyboard.
 function resetInput() {
     input.left = false;
     input.right = false;
@@ -276,7 +278,7 @@ function startGame() {
     gatesMissed = 0;
     crashes = 0;
     loadCourse(1);
-    resetInput();
+    refreshHeldInput();   // keys the player is already holding stay held
     state = 'running';
     hideOverlay();
     updateHud();
@@ -286,7 +288,7 @@ function nextCourse() {
     if (state !== 'finished') return;
     level += 1;
     loadCourse(level);
-    resetInput();
+    refreshHeldInput();
     state = 'running';
     hideOverlay();
     updateHud();
