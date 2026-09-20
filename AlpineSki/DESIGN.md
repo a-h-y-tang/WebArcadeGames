@@ -167,3 +167,8 @@ These were judgement calls made while building; the simpler reading won each tim
   make "you won" a real state, and make the tests deterministic.
 - **Airborne means invulnerable.** Flying over a pine is the ramp's reward.
   Landing is automatic — there is no landing-angle failure case.
+- **Game browser registration stops at `games.json`.** The game is added to
+  `game-browser/src/assets/games.json` in the same shape as every other entry.
+  The browser's own e2e spec asserts a hard-coded 105 game cards, but
+  `games.json` already held 116 games before this one, so that expectation was
+  stale before this change and fixing it is a separate job from adding a game.
