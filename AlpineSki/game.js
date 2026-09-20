@@ -587,15 +587,20 @@ function drawSnow(camY) {
         ctx.stroke();
     }
 
-    // Moguls.
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
+    // Moguls: a shaded lip below each bump so they read as snow, not cloud.
     const mSpacing = 52;
     const mFirst = Math.floor(camY / mSpacing) * mSpacing;
     for (let y = mFirst; y < camY + CANVAS_H + mSpacing; y += mSpacing) {
         for (let i = 0; i < 4; i++) {
             const mx = ((Math.sin(y * 0.07 + i * 2.3) + 1) / 2) * (CANVAS_W - 120) + 60;
+            const my = y - camY;
+            ctx.fillStyle = 'rgba(158, 186, 214, 0.35)';
             ctx.beginPath();
-            ctx.ellipse(mx, y - camY, 22, 8, 0, 0, Math.PI * 2);
+            ctx.ellipse(mx, my + 3, 19, 6, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+            ctx.beginPath();
+            ctx.ellipse(mx, my, 18, 6, 0, 0, Math.PI * 2);
             ctx.fill();
         }
     }
@@ -788,33 +793,37 @@ function drawSkier(camY) {
 }
 
 function drawHudOverlays(camY) {
-    // Course progress down the right-hand edge.
-    const pad = 10;
-    const h = CANVAS_H - 2 * pad;
-    ctx.fillStyle = 'rgba(29, 42, 58, 0.15)';
-    ctx.fillRect(CANVAS_W - 16, pad, 6, h);
+    // Course progress: a strip across the top, clear of the tree line.
+    ctx.fillStyle = 'rgba(29, 42, 58, 0.14)';
+    ctx.fillRect(0, 0, CANVAS_W, 5);
     const p = course ? clamp(skier.y / course.length, 0, 1) : 0;
     ctx.fillStyle = '#2f6fd0';
-    ctx.fillRect(CANVAS_W - 16, pad, 6, h * p);
+    ctx.fillRect(0, 0, CANVAS_W * p, 5);
 
     // Speed bar, bottom left.
     const sw = 120;
     ctx.fillStyle = 'rgba(29, 42, 58, 0.15)';
-    ctx.fillRect(12, CANVAS_H - 22, sw, 8);
+    ctx.fillRect(12, CANVAS_H - 26, sw, 8);
     const sp = clamp(skier.speed / TUCK_SPEED, 0, 1);
     ctx.fillStyle = sp > 0.8 ? '#e8593b' : '#2f9e5e';
-    ctx.fillRect(12, CANVAS_H - 22, sw * sp, 8);
+    ctx.fillRect(12, CANVAS_H - 26, sw * sp, 8);
     ctx.fillStyle = '#41556e';
     ctx.font = '10px "Segoe UI", system-ui, sans-serif';
-    ctx.fillText(`${Math.round(skier.speed)} km/h`, 12, CANVAS_H - 26);
+    ctx.fillText(`${Math.round(skier.speed)} km/h`, 12, CANVAS_H - 30);
 
-    // Streak.
+    // Streak, on a pill so it stays readable over the tree line.
     if (streak > 1) {
-        ctx.fillStyle = '#1361a8';
+        const label = `×${Math.min(streak, MAX_MULTIPLIER)}`;
         ctx.font = 'bold 15px "Segoe UI", system-ui, sans-serif';
-        ctx.textAlign = 'right';
-        ctx.fillText(`×${Math.min(streak, MAX_MULTIPLIER)}`, CANVAS_W - 24, 26);
-        ctx.textAlign = 'left';
+        const w = ctx.measureText(label).width + 16;
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+        ctx.beginPath();
+        // roundRect is recent enough that a square pill is worth keeping as a fallback.
+        if (ctx.roundRect) ctx.roundRect(EDGE_MARGIN + 4, 16, w, 22, 11);
+        else ctx.rect(EDGE_MARGIN + 4, 16, w, 22);
+        ctx.fill();
+        ctx.fillStyle = '#1361a8';
+        ctx.fillText(label, EDGE_MARGIN + 12, 32);
     }
 
     // Floating labels.

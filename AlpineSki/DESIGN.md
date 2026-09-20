@@ -57,7 +57,7 @@ straight one and every gate is a decision about how much speed to spend.
 | `BASE_SPEED` | 175 px/s |
 | `TUCK_SPEED` | 260 px/s |
 | `BRAKE_SPEED` | 70 px/s |
-| `EDGE_DRAG` | 0.48 |
+| `EDGE_DRAG` | 0.55 |
 | `ACCEL` | 1.9 /s |
 | `STEER_RATE` | 2.6 rad/s (`AIR_STEER_RATE` 0.9 in the air) |
 | `MAX_ANGLE` | 1.1 rad |
