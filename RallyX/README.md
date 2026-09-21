@@ -37,9 +37,12 @@ always a way through.
 
 **The chase cars.** They head for you on the shortest route through the maze,
 and each one aims a few cells to a different side of you so the pack spreads out
-and tries to cut you off rather than following in a queue. Touching one costs a
-car; you start with three. Each round adds another chase car up to five, and
-they get a little faster — but never as fast as a fuelled player car.
+and tries to cut you off rather than following in a queue. They are not perfect
+drivers, though — every car takes a wrong turn now and then, and the pack holds
+still for a moment at the start of each life, so there is always a gap to drive
+through. Touching one costs a car; you start with three. Round 2 brings a fourth
+chase car and round 4 a fifth, and they gain a little speed each round — but
+never as much as a fuelled player car.
 
 **Smoke them.** `Space` leaves a cloud of smoke where you are for four seconds
 and costs 6 fuel. Any chase car that drives into it spins out for three seconds:

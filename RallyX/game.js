@@ -72,9 +72,12 @@ const LUCKY_INDEX = 4;
 // --- Driving -------------------------------------------------------------
 const CAR_SPEED = 104;           // px/s with fuel in the tank
 const LOW_FUEL_FACTOR = 0.55;    // ...and on fumes
-const ENEMY_SPEED_BASE = 72;
+const ENEMY_SPEED_BASE = 64;
 const ENEMY_SPEED_STEP = 4;
-const ENEMY_SPEED_CAP = 92;      // always under CAR_SPEED
+const ENEMY_SPEED_CAP = 88;      // always under CAR_SPEED
+const GRACE_TIME = 1.5;          // chase cars hold still at the start of a life
+const WANDER = 0.3;              // chance a chase car takes its second choice
+const LEAD_WANDER = 0.1;         // ...the lead car is the single-minded one
 const CRASH_DIST = 17;
 const PICKUP_DIST = 18;
 
@@ -130,6 +133,7 @@ let fuel = FUEL_MAX;
 let multiplier = 1;
 let deathTimer = 0;
 let clearTimer = 0;
+let graceTimer = 0;
 let flags = [];
 
 const car = { x: 0, y: 0, dir: { x: 0, y: 0 }, want: { x: 0, y: 0 }, angle: -Math.PI / 2 };
@@ -166,8 +170,10 @@ function centerOf(c, r) {
     return { x: c * CELL + CELL / 2, y: r * CELL + CELL / 2 };
 }
 
+// Three cars to start, a fourth in round 2 and a fifth in round 4 — a gentler
+// ramp than one a round, which reaches an unplayable pack almost immediately.
 function enemyCount(lvl) {
-    return Math.min(2 + lvl, ENEMY_CELLS.length);
+    return Math.min(3 + Math.floor(lvl / 2), ENEMY_CELLS.length);
 }
 
 function enemySpeed(lvl) {
@@ -311,6 +317,9 @@ function spawnEnemies() {
             y: p.y,
             dir: { x: 0, y: 0 },
             bias: { ...ENEMY_BIAS[i % ENEMY_BIAS.length] },
+            wander: i === 0 ? LEAD_WANDER : WANDER,
+            seed: 1013 + i * 7919,
+            decided: null,
             stun: 0,
             angle: 0,
             spin: 0,
@@ -318,16 +327,29 @@ function spawnEnemies() {
     }
 }
 
+// A small deterministic PRNG per chase car (a 32-bit LCG), so their wandering
+// is reproducible from one run to the next and the specs stay stable.
+function nextRandom(e) {
+    e.seed = (e.seed * 1664525 + 1013904223) % 4294967296;
+    return e.seed / 4294967296;
+}
+
 // Greedy pursuit: at every cell centre take the open direction whose next cell
 // is closest to the (biased) player cell, never reversing unless forced to.
+//
+// `decided` records the cell the last choice was made in. Without it a car that
+// has only crept a fraction of a pixel past its centre still counts as "at the
+// centre", gets snapped back and never leaves the cell it started in.
 function chooseEnemyDir(e, speed, dt) {
     const cell = cellOf(e.x, e.y);
     const cen = centerOf(cell.c, cell.r);
-    const snap = Math.max(2, speed * dt);
+    const snap = Math.max(1, speed * dt);
     const atCentre = Math.abs(e.x - cen.x) <= snap && Math.abs(e.y - cen.y) <= snap;
-    if (!atCentre && (e.dir.x || e.dir.y)) return;
+    const sameCell = e.decided && e.decided.c === cell.c && e.decided.r === cell.r;
+    if ((e.dir.x || e.dir.y) && (!atCentre || sameCell)) return;
     e.x = cen.x;
     e.y = cen.y;
+    e.decided = { c: cell.c, r: cell.r };
 
     const target = cellOf(car.x, car.y);
     const tc = clamp(target.c + e.bias.c, 0, COLS - 1);
@@ -337,22 +359,28 @@ function chooseEnemyDir(e, speed, dt) {
     const forward = open.filter((d) => !(d.x === -e.dir.x && d.y === -e.dir.y));
     const pool = forward.length ? forward : open;
 
-    let best = null;
-    let bestScore = Infinity;
-    for (const d of pool) {
-        const s = Math.abs(cell.c + d.x - tc) + Math.abs(cell.r + d.y - tr);
-        if (s < bestScore) {
-            bestScore = s;
-            best = d;
-        }
-    }
-    if (best) {
-        e.dir.x = best.x;
-        e.dir.y = best.y;
-    }
+    const ranked = pool
+        .map((d) => ({
+            d,
+            s: Math.abs(cell.c + d.x - tc) + Math.abs(cell.r + d.y - tr),
+        }))
+        .sort((a, b) => a.s - b.s);
+    if (!ranked.length) return;
+
+    // A perfect pursuer is unplayable once there are four of them, so each car
+    // takes its second choice now and then. The randomness is a per-car LCG
+    // seeded at spawn, so a given chase stays reproducible.
+    const takeSecond = ranked.length > 1 && nextRandom(e) < e.wander;
+    const best = (takeSecond ? ranked[1] : ranked[0]).d;
+    e.dir.x = best.x;
+    e.dir.y = best.y;
 }
 
 function updateEnemies(dt) {
+    // The grace period at the start of a life holds the cars still; it does not
+    // hold a spin-out, which keeps ticking down.
+    const grace = graceTimer > 0;
+    if (grace) graceTimer = Math.max(0, graceTimer - dt);
     const speed = enemySpeed(level);
     for (const e of enemies) {
         if (e.stun > 0) {
@@ -360,6 +388,7 @@ function updateEnemies(dt) {
             e.spin += dt * 12;
             continue;
         }
+        if (grace) continue;
         chooseEnemyDir(e, speed, dt);
         moveEntity(e, speed, dt);
         if (e.dir.x || e.dir.y) e.angle = Math.atan2(e.dir.y, e.dir.x);
@@ -390,6 +419,7 @@ function resetPositions() {
     car.want.y = 0;
     car.angle = -Math.PI / 2;
     smokes.length = 0;
+    graceTimer = GRACE_TIME;
     enemies.forEach((e, i) => {
         const cell = ENEMY_CELLS[i % ENEMY_CELLS.length];
         const q = centerOf(cell.c, cell.r);
@@ -397,6 +427,7 @@ function resetPositions() {
         e.y = q.y;
         e.dir.x = 0;
         e.dir.y = 0;
+        e.decided = null;
         e.stun = 0;
     });
     updateCamera();
@@ -606,7 +637,10 @@ function drawCarShape(x, y, angle, body, roof) {
 
 function drawEnemyCar(e) {
     const angle = e.stun > 0 ? e.spin : e.angle;
+    // ghosted while they are still waiting for the flag to drop
+    ctx.globalAlpha = graceTimer > 0 ? 0.45 : 1;
     drawCarShape(e.x, e.y, angle, '#ef5350', '#7f1d1d');
+    ctx.globalAlpha = 1;
     if (e.stun > 0) {
         ctx.strokeStyle = 'rgba(255, 207, 63, 0.9)';
         ctx.lineWidth = 2;

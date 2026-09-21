@@ -614,8 +614,10 @@ test.describe('Rally-X', () => {
                 const e = centerOf(2, 1);
                 enemies[0].x = e.x;
                 enemies[0].y = e.y;
+                graceTimer = 0;
                 enemies[0].stun = 0;
                 enemies[0].bias = { c: 0, r: 0 };
+                enemies[0].wander = 0;
                 enemies[0].dir = { x: 1, y: 0 };
                 const p = centerOf(14, 1);
                 car.x = p.x;
@@ -644,6 +646,27 @@ test.describe('Rally-X', () => {
             );
             expect(info.every((e) => !e.wall)).toBe(true);
             expect(info.every((e) => e.offAxis < 0.001)).toBe(true);
+        });
+
+        test('chase cars hold still for a moment at the start of a life', async ({ page }) => {
+            await page.evaluate(() => startGame());
+            const at = () => page.evaluate(() => enemies.map((e) => `${e.x},${e.y}`).join('|'));
+            const start = await at();
+            await advance(page, 60); // still inside the grace period
+            expect(await at()).toBe(start);
+            await advance(page, 120);
+            expect(await at()).not.toBe(start);
+        });
+
+        test('the chase plays out the same way every run', async ({ page }) => {
+            const run = () =>
+                page.evaluate(() => {
+                    startGame();
+                    lives = 99;
+                    for (let i = 0; i < 60 * 10; i++) step(1 / 60);
+                    return enemies.map((e) => `${e.x.toFixed(3)},${e.y.toFixed(3)}`).join('|');
+                });
+            expect(await run()).toBe(await run());
         });
 
         test('chase cars get faster each round but never outrun a fuelled car', async ({ page }) => {
@@ -794,6 +817,73 @@ test.describe('Rally-X', () => {
         test('P does nothing on the title screen', async ({ page }) => {
             await page.keyboard.press('p');
             expect(await page.evaluate(() => state)).toBe('idle');
+        });
+    });
+
+    // -----------------------------------------------------------------------
+    // Playability — the whole loop, driven end to end
+    // -----------------------------------------------------------------------
+    test.describe('playability', () => {
+        test('a driver heading for the nearest flag clears the round', async ({ page }) => {
+            const result = await page.evaluate(() => {
+                startGame();
+                enemies.length = 0;
+                const dirs = [{ x: 1, y: 0 }, { x: -1, y: 0 }, { x: 0, y: 1 }, { x: 0, y: -1 }];
+                // breadth-first search to the nearest flag, one cell of route at a time
+                const routeDir = () => {
+                    const s = cellOf(car.x, car.y);
+                    const prev = new Map();
+                    const seen = new Set([`${s.c},${s.r}`]);
+                    const queue = [s];
+                    let goal = null;
+                    while (queue.length) {
+                        const cur = queue.shift();
+                        if (flags.some((f) => !f.taken && f.c === cur.c && f.r === cur.r)) {
+                            goal = cur;
+                            break;
+                        }
+                        for (const d of dirs) {
+                            const n = { c: cur.c + d.x, r: cur.r + d.y };
+                            const key = `${n.c},${n.r}`;
+                            if (isWall(n.c, n.r) || seen.has(key)) continue;
+                            seen.add(key);
+                            prev.set(key, cur);
+                            queue.push(n);
+                        }
+                    }
+                    if (!goal) return null;
+                    let cur = goal;
+                    for (;;) {
+                        const p = prev.get(`${cur.c},${cur.r}`);
+                        if (!p) return null;
+                        if (p.c === s.c && p.r === s.r) return { x: cur.c - s.c, y: cur.r - s.r };
+                        cur = p;
+                    }
+                };
+                let frames = 0;
+                while (state === 'running' && frames < 60 * 120) {
+                    const d = routeDir();
+                    if (d) {
+                        car.want.x = d.x;
+                        car.want.y = d.y;
+                    }
+                    step(1 / 60);
+                    frames++;
+                }
+                return { state, left: flags.filter((f) => !f.taken).length, seconds: frames / 60 };
+            });
+            expect(result.state).toBe('levelclear');
+            expect(result.left).toBe(0);
+            expect(result.seconds).toBeLessThan(60);
+        });
+
+        test('the chase pack catches a player who sits still', async ({ page }) => {
+            await page.evaluate(() => {
+                startGame();
+                lives = 99;
+            });
+            await advance(page, 60 * 20);
+            expect(await page.evaluate(() => lives)).toBeLessThan(98);
         });
     });
 

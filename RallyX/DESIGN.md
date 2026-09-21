@@ -67,6 +67,11 @@ Player speed is `CAR_SPEED` (104 px/s), dropping to 55 % of that when the tank
 runs dry. Chase cars are slower than a fuelled player car but faster than an
 empty one, so running out of fuel is dangerous without being an instant loss.
 
+The tests pin this model down precisely: driving for a second covers exactly
+`CAR_SPEED` pixels, a wall parks the car on an exact cell centre, and a turn is
+taken at the first centre where the way is open (column 4 of row 1, not column
+3, where the way down is blocked).
+
 ## Chase-car AI
 
 At each cell centre a chase car scores its available directions by the Manhattan
@@ -75,6 +80,27 @@ reversing unless that is the only option. Each car carries a `bias` offset that
 shifts the target a couple of cells to one side, so the pack spreads out and
 tries to pincer the player instead of forming a single queue. A stunned car
 does not move and cannot hurt the player.
+
+Three things keep that from being unplayable, all of them found by driving a
+flag-seeking bot through the game and watching where it died:
+
+- **Wandering.** A pack of perfect pursuers corners the player almost at once,
+  so each car takes its *second* choice with probability `WANDER` (0.3; the lead
+  car, which also has no bias, uses 0.1). The draw comes from a per-car 32-bit
+  LCG seeded at spawn, so a chase is reproducible run to run and the specs stay
+  deterministic — `nextRandom()` is the only source of randomness in the game.
+- **A grace period.** `GRACE_TIME` (1.5 s) after every round start and every
+  crash, the chase cars sit still — drawn ghosted so it reads as "not yet" —
+  which gives the player a moment to pick a direction. Spin-outs still tick down
+  during the grace period; only movement is frozen.
+- **A gentle ramp.** Three cars to start, a fourth in round 2 and a fifth in
+  round 4, rather than one more every round.
+
+The decision point itself needs care: a car that has crept a fraction of a pixel
+past its cell centre is still "at the centre" by any tolerance wide enough to
+catch it reliably, so it gets snapped back and re-decides forever without ever
+leaving the cell. `decided` records the cell the last choice was made in, and a
+car only re-decides once it is in a new one.
 
 ## Smoke screen
 
@@ -92,8 +118,9 @@ consumed by a hit, so one well-placed cloud can stop a whole pack.
 - Clearing all ten flags ends the round and pays a fuel bonus of 10 points per
   whole unit of fuel remaining.
 - Each round refills the tank, re-lays the flags from a rotating table of fixed
-  spots, and adds a chase car up to a maximum of five. Chase cars also gain a
-  little speed per round, capped below the player's fuelled speed.
+  spots, and adds a chase car on the schedule above, up to five. Chase cars also
+  gain a little speed per round (64 px/s, +4 a round, capped at 88), always
+  below the player's fuelled 104 px/s and above the 57 px/s of an empty tank.
 - Crashing into a chase car costs a life (three to start). Flags already taken
   stay taken; the cars and the player return to their starting cells. The best
   score is kept in `localStorage` under `rallyx-best`.
