@@ -48,6 +48,7 @@ let best = loadBest();
 let pegs = [];
 let ball = null;                     // { x, y, vx, vy, age } while a shot is live
 let pops = [];                       // short-lived hit sparkles, cosmetic only
+let trail = [];                      // recent ball positions, cosmetic only
 let autoRun = true;                  // the animation loop only simulates while true
 const keys = Object.create(null);
 
@@ -74,7 +75,7 @@ function buildLevel(n) {
             for (let row = 0; row < 5; row++) {
                 for (let col = 0; col < 9; col++) pts.push({ x: 60 + col * 45, y: 190 + row * 52 });
             }
-            return assignTypes(pts, 7);
+            return assignTypes(pts, 6);
 
         case 2: // arch narrowing toward the bottom
             [9, 7, 5, 3].forEach((count, row) => {
@@ -82,7 +83,7 @@ function buildLevel(n) {
                 const span = (count - 1) * 46;
                 for (let i = 0; i < count; i++) pts.push({ x: W / 2 - span / 2 + i * 46, y });
             });
-            return assignTypes(pts, 6);
+            return assignTypes(pts, 4);
 
         case 3: // diamond
             [1, 3, 5, 7, 5, 3, 1].forEach((count, row) => {
@@ -90,14 +91,14 @@ function buildLevel(n) {
                 const span = (count - 1) * 44;
                 for (let i = 0; i < count; i++) pts.push({ x: W / 2 - span / 2 + i * 44, y });
             });
-            return assignTypes(pts, 5);
+            return assignTypes(pts, 4);
 
         case 4: // staggered zigzag rows
             for (let row = 0; row < 6; row++) {
                 const offset = row % 2 ? 27 : 0;
                 for (let col = 0; col < 8; col++) pts.push({ x: 50 + col * 54 + offset, y: 190 + row * 52 });
             }
-            return assignTypes(pts, 4);
+            return assignTypes(pts, 3);
 
         default: // two rings over a floor row
             for (let i = 0; i < 12; i++) {
@@ -109,7 +110,7 @@ function buildLevel(n) {
                 pts.push({ x: W / 2 + Math.cos(a) * 110, y: 300 + Math.sin(a) * 110 });
             }
             for (let i = 0; i < 7; i++) pts.push({ x: 90 + i * 50, y: 490 });
-            return assignTypes(pts, 4);
+            return assignTypes(pts, 3);
     }
 }
 
@@ -124,6 +125,7 @@ function loadLevel(n) {
     pegs = buildLevel(n);
     ball = null;
     pops = [];
+    trail = [];
     ballsLeft = BALLS_PER_LEVEL;
     launcher.angle = 0;
     bucket.x = W / 2 - bucket.w / 2;
@@ -153,6 +155,7 @@ function fireBall() {
         age: 0,
     };
     ballsLeft--;
+    trail = [];
     updateHud();
 }
 
@@ -160,6 +163,7 @@ function fireBall() {
 // has come to an end.
 function endShot(caught) {
     ball = null;
+    trail = [];
     if (caught) {
         ballsLeft++;
         bucket.catches++;
@@ -287,6 +291,8 @@ function physicsStep(dt) {
 
     if (ball) {
         ball.age += dt;
+        trail.push({ x: ball.x, y: ball.y });
+        if (trail.length > 16) trail.shift();
         ball.vy += GRAVITY * dt;
         ball.x += ball.vx * dt;
         ball.y += ball.vy * dt;
@@ -454,20 +460,47 @@ function drawLauncher() {
 
 function drawBucket() {
     const { x, y, w, h } = bucket;
-    ctx.fillStyle = '#1e293b';
+
+    // the catch zone, so the player can read where a ball would be saved
+    const glow = ctx.createLinearGradient(0, y - 46, 0, y);
+    glow.addColorStop(0, 'rgba(52, 211, 153, 0)');
+    glow.addColorStop(1, 'rgba(52, 211, 153, 0.16)');
+    ctx.fillStyle = glow;
+    ctx.fillRect(x, y - 46, w, 46);
+
+    ctx.fillStyle = '#132031';
     ctx.fillRect(x, y, w, h);
     ctx.fillStyle = '#34d399';
-    ctx.fillRect(x, y, w, 5);
-    ctx.strokeStyle = '#34d399';
+    ctx.fillRect(x, y, w, 4);
+    ctx.fillRect(x, y, 5, h);          // side posts
+    ctx.fillRect(x + w - 5, y, 5, h);
+    ctx.strokeStyle = 'rgba(52, 211, 153, 0.7)';
     ctx.lineWidth = 2;
     ctx.strokeRect(x + 1, y + 1, w - 2, h - 2);
 
-    ctx.fillStyle = 'rgba(148, 163, 184, 0.35)';
+    ctx.fillStyle = 'rgba(148, 163, 184, 0.3)';
     ctx.fillRect(0, H - 4, W, 4);
+}
+
+// Thin rails down the sides to show the walls a shot can bank off.
+function drawRails() {
+    const rail = ctx.createLinearGradient(0, 0, 0, H);
+    rail.addColorStop(0, 'rgba(148, 163, 184, 0.30)');
+    rail.addColorStop(1, 'rgba(148, 163, 184, 0.06)');
+    ctx.fillStyle = rail;
+    ctx.fillRect(0, 0, 3, H);
+    ctx.fillRect(W - 3, 0, 3, H);
 }
 
 function drawBall() {
     if (!ball) return;
+    trail.forEach((point, i) => {
+        const k = (i + 1) / trail.length;
+        ctx.beginPath();
+        ctx.arc(point.x, point.y, BALL_R * 0.75 * k, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(226, 232, 240, ${0.22 * k})`;
+        ctx.fill();
+    });
     ctx.beginPath();
     ctx.arc(ball.x, ball.y, BALL_R, 0, Math.PI * 2);
     ctx.fillStyle = '#f8fafc';
@@ -489,6 +522,7 @@ function drawBallsLeft() {
 
 function draw() {
     drawBackground();
+    drawRails();
     drawPegs();
     drawPops();
     drawBucket();

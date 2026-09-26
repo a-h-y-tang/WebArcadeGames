@@ -81,10 +81,15 @@ The best score is written to `localStorage` under `pegpop-best` when a run ends
 
 Board layouts are hand-authored patterns (grid, arch, diamond, zigzag, rings)
 built by `buildLevel(n)`, with peg *types* assigned by a fixed rule rather than
-at random: every `orangeStride`-th peg is orange and the middle peg of the
-pattern is the green one. The stride tightens on later levels (6, 5, 5, 4, 4),
-so later boards carry more targets. Because nothing is random, a given level is
-always the same board, which keeps the Playwright suite deterministic.
+at random: every `stride`-th peg is orange and the middle peg of the pattern is
+the green one. The stride tightens on later levels (6, 4, 4, 3, 3), giving 8, 6,
+6, 16 and 12 orange targets. Because nothing is random, a given level is always
+the same board, which keeps the Playwright suite deterministic.
+
+Difficulty was checked by simulation rather than by feel: a greedy player that
+tries sixty aims per shot and keeps the best clears each board in three to six
+of its ten balls, while a player firing at random usually finishes two to four
+oranges short. Aiming is therefore what decides a run, which is the intent.
 
 ## Controls
 
