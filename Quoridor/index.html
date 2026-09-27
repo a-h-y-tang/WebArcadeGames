@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quoridor</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="game">
+        <header class="hud">
+            <h1>QUORIDOR</h1>
+            <div class="stats">
+                <div class="stat you"><span class="label">Your walls</span><span id="walls-0">10</span></div>
+                <div class="stat"><span class="label">Turn</span><span id="turn">You</span></div>
+                <div class="stat ai"><span class="label">CPU walls</span><span id="walls-1">10</span></div>
+            </div>
+        </header>
+
+        <div class="board-wrap">
+            <canvas id="canvas" width="560" height="560"></canvas>
+            <div id="overlay" class="overlay visible">
+                <h2 id="overlay-title">QUORIDOR</h2>
+                <p id="overlay-sub">Press Space or click Start to play</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+
+        <p id="status" class="status">Reach the far side before the computer does.</p>
+
+        <div class="controls">
+            <button id="btn-orientation">Wall: Horizontal</button>
+            <button id="btn-new">New Game</button>
+        </div>
+
+        <div class="help">
+            <p><kbd>Click</kbd> a glowing square to move</p>
+            <p><kbd>Click</kbd> a groove to place a wall</p>
+            <p><kbd>←</kbd> <kbd>↑</kbd> <kbd>↓</kbd> <kbd>→</kbd> step</p>
+            <p><kbd>R</kbd> rotate wall</p>
+            <p><kbd>Space</kbd> start / restart</p>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>
