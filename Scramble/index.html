@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scramble</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="game">
+        <header class="hud">
+            <h1>SCRAMBLE</h1>
+            <div class="stats">
+                <div class="stat"><span class="label">Score</span><span id="score">0</span></div>
+                <div class="stat"><span class="label">Best</span><span id="best">0</span></div>
+                <div class="stat"><span class="label">Ships</span><span id="lives">3</span></div>
+                <div class="stat"><span class="label">Zone</span><span id="zone">CAVERNS</span></div>
+            </div>
+        </header>
+
+        <div class="fuel-gauge">
+            <span class="label">Fuel</span>
+            <div class="fuel-track"><div id="fuel-bar" class="fuel-fill" style="width: 100%"></div></div>
+            <span id="fuel">100</span>
+        </div>
+
+        <div class="board-wrap">
+            <canvas id="canvas" width="640" height="400"></canvas>
+            <div id="overlay" class="overlay visible">
+                <h2 id="overlay-title">SCRAMBLE</h2>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Press Space or click Start to fly</p>
+                <button id="btn-start">Start Mission</button>
+            </div>
+        </div>
+
+        <div class="help">
+            <p><kbd>←</kbd> <kbd>↑</kbd> <kbd>↓</kbd> <kbd>→</kbd> fly</p>
+            <p><kbd>Space</kbd> laser</p>
+            <p><kbd>B</kbd> bomb</p>
+            <p><kbd>P</kbd> pause</p>
+            <p>Bomb fuel tanks before you run dry</p>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>
