@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slitherlink</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Slitherlink</h1>
+
+        <div id="hud">
+            <span>Level <strong id="level">—</strong></span>
+            <span>Clues left <strong id="remaining">0</strong></span>
+            <span>Moves <strong id="moves">0</strong></span>
+            <span>Best <strong id="best">—</strong></span>
+        </div>
+
+        <div id="levels"></div>
+
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="560" height="560"></canvas>
+            <div id="overlay" class="visible">
+                <h2 id="overlay-title">Slitherlink</h2>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">
+                    Draw one closed loop. Each number says how many of its four sides
+                    the loop uses.
+                </p>
+                <button id="btn-start">Start</button>
+            </div>
+        </div>
+
+        <div id="controls-hint">
+            Click an edge to draw a line · right-click to mark it blocked ·
+            <kbd>R</kbd> restart · <kbd>N</kbd> next level · <kbd>Space</kbd> start
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
