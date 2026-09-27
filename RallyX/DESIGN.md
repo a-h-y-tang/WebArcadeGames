@@ -82,9 +82,11 @@ by being outrun.
 
 ### Smoke screen
 
-Space drops a smoke cloud on the tile behind the car for `SMOKE_COST` (5) fuel.
-The cloud lives `SMOKE_LIFE` (3 s) and has radius `SMOKE_RADIUS` (13 px). A
-chaser whose centre enters a cloud **spins out** for `SPIN_TIME` (2.6 s): it
+Space drops a smoke cloud just behind the car (0.6 of a tile back along its
+heading) for `SMOKE_COST` (5) fuel. The cloud lives `SMOKE_LIFE` (3 s) and has
+radius `SMOKE_RADIUS` (13 px), which a chaser touches once its centre comes
+within `SMOKE_RADIUS + CAR_R / 2` of the cloud's. A chaser that touches a cloud
+**spins out** for `SPIN_TIME` (2.6 s): it
 stops dead, and while spinning it is harmless — you can drive straight through
 it. That is what makes smoke a real defensive option in a corridor rather than
 just a delay.
