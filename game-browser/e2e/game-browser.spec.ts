@@ -114,7 +114,7 @@ test.describe('Game Browser', () => {
     // Games should be filtered
     let gameCards = page.locator('app-game-card');
     const filteredCount = await gameCards.count();
-    expect(filteredCount).toBeLessThan(GAME_COUNT);
+    expect(filteredCount).toBeLessThan(109);
 
     // Click Reset button
     const resetButton = page.locator('button:has-text("Reset")');
