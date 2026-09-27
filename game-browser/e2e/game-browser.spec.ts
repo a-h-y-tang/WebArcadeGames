@@ -24,7 +24,7 @@ test.describe('Game Browser', () => {
   test('should display games in a grid', async ({ page }) => {
     // Wait for games to load
     const gameCards = page.locator('app-game-card');
-    await expect(gameCards).toHaveCount(105);
+    await expect(gameCards).toHaveCount(109);
 
     // Check first game card structure
     const firstCard = gameCards.first();
@@ -33,9 +33,9 @@ test.describe('Game Browser', () => {
   });
 
   test('should have search functionality', async ({ page }) => {
-    // Initial state: all 105 games visible
+    // Initial state: all 109 games visible
     let gameCards = page.locator('app-game-card');
-    await expect(gameCards).toHaveCount(105);
+    await expect(gameCards).toHaveCount(109);
 
     // Search for "Tetris"
     const searchInput = page.locator('input[placeholder="Search games..."]');
@@ -96,7 +96,7 @@ test.describe('Game Browser', () => {
     // Search should be empty and all games visible
     await expect(searchInput).toHaveValue('');
     const gameCards = page.locator('app-game-card');
-    await expect(gameCards).toHaveCount(105);
+    await expect(gameCards).toHaveCount(109);
   });
 
   test('should reset category filter', async ({ page }) => {
@@ -107,7 +107,7 @@ test.describe('Game Browser', () => {
     // Games should be filtered
     let gameCards = page.locator('app-game-card');
     const filteredCount = await gameCards.count();
-    expect(filteredCount).toBeLessThan(105);
+    expect(filteredCount).toBeLessThan(109);
 
     // Click Reset button
     const resetButton = page.locator('button:has-text("Reset")');
@@ -115,7 +115,7 @@ test.describe('Game Browser', () => {
 
     // All games should be visible again
     gameCards = page.locator('app-game-card');
-    await expect(gameCards).toHaveCount(105);
+    await expect(gameCards).toHaveCount(109);
   });
 
   test('should display game card details', async ({ page }) => {
