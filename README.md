@@ -126,6 +126,7 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Marble Spiral | [MarbleSpiral/](MarbleSpiral/) | Complete |
 | Barrel Climb | [BarrelClimb/](BarrelClimb/) | Complete |
 | BurgerTime | [BurgerTime/](BurgerTime/) | Complete |
+| Peg Blast | [PegBlast/](PegBlast/) | Complete |
 | Rally-X | [RallyX/](RallyX/) | Complete |
 | Sky Climber | [SkyClimber/](SkyClimber/) | Complete |
 | Robot Arena | [RobotArena/](RobotArena/) | Complete |
