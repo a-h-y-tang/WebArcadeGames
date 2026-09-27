@@ -828,6 +828,15 @@
     "thumbnail": ""
   },
   {
+    "id": "slitherlink",
+    "name": "Slitherlink",
+    "description": "Loop logic puzzle - draw one closed loop that fits every clue",
+    "category": "Puzzle",
+    "dir": "Slitherlink",
+    "path": "games/Slitherlink/index.html",
+    "thumbnail": "games/Slitherlink/screenshot.png"
+  },
+  {
     "id": "slime-volley",
     "name": "Slime Volley",
     "description": "Physics volleyball - outjump a slime rival to 7 points",
