@@ -122,7 +122,7 @@ game-browser/
 │   │   ├── app.html              # Root template
 │   │   └── app.css               # Root styles
 │   ├── assets/
-│   │   └── games.json            # Game metadata (104 games)
+│   │   └── games.json            # Game metadata (105 games)
 │   ├── styles.css                # Global styles
 │   └── index.html                # HTML entry point
 ├── angular.json                  # Angular configuration
