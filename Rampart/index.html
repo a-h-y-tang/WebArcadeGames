@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rampart</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="game">
+        <header class="hud">
+            <h1>RAMPART</h1>
+            <div class="stats">
+                <div class="stat"><span class="label">Score</span><span id="score">0</span></div>
+                <div class="stat"><span class="label">Round</span><span id="round">1</span></div>
+                <div class="stat"><span class="label">Phase</span><span id="phase">Place Cannons</span></div>
+                <div class="stat"><span class="label">Time</span><span id="timer">10</span></div>
+                <div class="stat"><span class="label">Cannons</span><span id="cannons">0</span></div>
+                <div class="stat"><span class="label">Best</span><span id="best">0</span></div>
+            </div>
+        </header>
+
+        <div class="board-wrap">
+            <canvas id="canvas" width="560" height="440"></canvas>
+            <div id="overlay" class="overlay visible">
+                <h2 id="overlay-title">RAMPART</h2>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Press Space or click Start to play</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+
+        <div class="help">
+            <p><strong>Place</strong> — drop cannons inside your walls</p>
+            <p><strong>Battle</strong> — click to shell the fleet</p>
+            <p><strong>Repair</strong> — rebuild the ring before the clock runs out</p>
+            <p><kbd>←</kbd> <kbd>↑</kbd> <kbd>↓</kbd> <kbd>→</kbd> move cursor</p>
+            <p><kbd>Space</kbd> act &nbsp; <kbd>R</kbd> / right-click rotate &nbsp; <kbd>P</kbd> pause</p>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>
