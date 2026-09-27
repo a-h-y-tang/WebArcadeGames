@@ -693,6 +693,15 @@
     "thumbnail": "games/Pang/screenshot.png"
   },
   {
+    "id": "paratrooper",
+    "name": "Paratrooper",
+    "description": "Defend the tower - shoot down helicopters and their paratroopers",
+    "category": "Action",
+    "dir": "Paratrooper",
+    "path": "games/Paratrooper/index.html",
+    "thumbnail": "games/Paratrooper/screenshot.png"
+  },
+  {
     "id": "peg-blast",
     "name": "Peg Blast",
     "description": "Aim-and-drop physics game - clear every orange peg",
