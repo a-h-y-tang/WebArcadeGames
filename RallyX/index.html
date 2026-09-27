@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rally-X</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="game">
+        <header class="hud">
+            <h1>RALLY-X</h1>
+            <div class="stats">
+                <div class="stat"><span class="label">Score</span><span id="score">0</span></div>
+                <div class="stat"><span class="label">Level</span><span id="level">1</span></div>
+                <div class="stat"><span class="label">Flags</span><span id="flags">10</span></div>
+                <div class="stat"><span class="label">Cars</span><span id="lives">3</span></div>
+            </div>
+        </header>
+
+        <div class="table">
+            <div class="board-wrap">
+                <canvas id="canvas" width="480" height="480"></canvas>
+                <div id="overlay" class="overlay visible">
+                    <h2 id="overlay-title">RALLY-X</h2>
+                    <p id="overlay-score"></p>
+                    <p id="overlay-sub">Press Space or click Start to play</p>
+                    <button id="btn-start">Start Game</button>
+                </div>
+            </div>
+
+            <aside class="panel">
+                <h2 class="panel-title">Radar</h2>
+                <canvas id="radar" width="144" height="144"></canvas>
+                <div class="legend">
+                    <p><i class="swatch you"></i>You</p>
+                    <p><i class="swatch foe"></i>Chaser</p>
+                    <p><i class="swatch flag"></i>Flag</p>
+                    <p><i class="swatch lucky"></i>Lucky flag</p>
+                </div>
+                <div class="gauge">
+                    <span class="label">Fuel</span>
+                    <div class="fuel-track"><div id="fuel-bar" class="fuel-bar" style="width: 100%"></div></div>
+                </div>
+            </aside>
+        </div>
+
+        <div class="help">
+            <p><kbd>&larr;</kbd> <kbd>&uarr;</kbd> <kbd>&darr;</kbd> <kbd>&rarr;</kbd> / <kbd>WASD</kbd> steer</p>
+            <p><kbd>Space</kbd> smoke screen</p>
+            <p><kbd>P</kbd> pause</p>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>
