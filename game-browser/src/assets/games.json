@@ -774,6 +774,15 @@
     "thumbnail": ""
   },
   {
+    "id": "rally-x",
+    "name": "Rally-X",
+    "description": "Top-down maze driving - collect the flags, smoke out the chase cars",
+    "category": "Action",
+    "dir": "RallyX",
+    "path": "games/RallyX/index.html",
+    "thumbnail": "games/RallyX/screenshot.png"
+  },
+  {
     "id": "quoridor",
     "name": "Quoridor",
     "description": "Race your pawn across the board while fencing off the computer",
