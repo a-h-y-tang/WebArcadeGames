@@ -1,4 +1,11 @@
 import { test, expect } from '@playwright/test';
+import { readFileSync } from 'fs';
+import { join } from 'path';
+
+// Derived from the catalogue itself so adding a game cannot make the suite stale.
+const GAME_COUNT = JSON.parse(
+  readFileSync(join(__dirname, '../src/assets/games.json'), 'utf8')
+).length;
 
 test.describe('Game Browser', () => {
   test.beforeEach(async ({ page }) => {
