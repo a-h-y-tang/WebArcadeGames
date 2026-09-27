@@ -9,6 +9,15 @@
     "thumbnail": ""
   },
   {
+    "id": "pool",
+    "name": "8-Ball Pool",
+    "description": "Two-player 8-ball pool with cue physics and pocket play",
+    "category": "Sports",
+    "dir": "Pool",
+    "path": "games/Pool/index.html",
+    "thumbnail": "games/Pool/screenshot.png"
+  },
+  {
     "id": "air-hockey",
     "name": "Air Hockey",
     "description": "Fast-paced air hockey match against the computer",
@@ -61,6 +70,15 @@
     "dir": "Battleship",
     "path": "games/Battleship/index.html",
     "thumbnail": ""
+  },
+  {
+    "id": "berzerk",
+    "name": "Berzerk",
+    "description": "Maze shoot-'em-up - blast robots and escape Evil Otto",
+    "category": "Action",
+    "dir": "Berzerk",
+    "path": "games/Berzerk/index.html",
+    "thumbnail": "games/Berzerk/screenshot.png"
   },
   {
     "id": "blackjack",
@@ -189,6 +207,15 @@
     "thumbnail": ""
   },
   {
+    "id": "curling",
+    "name": "Curling",
+    "description": "Slide stones down the ice and outscore the computer",
+    "category": "Sports",
+    "dir": "Curling",
+    "path": "games/Curling/index.html",
+    "thumbnail": "games/Curling/screenshot.png"
+  },
+  {
     "id": "darts",
     "name": "Darts",
     "description": "Aim and throw darts at the board",
@@ -196,6 +223,15 @@
     "dir": "Darts",
     "path": "games/Darts/index.html",
     "thumbnail": ""
+  },
+  {
+    "id": "defender",
+    "name": "Defender",
+    "description": "Side-scrolling rescue shooter - protect the humanoids from alien landers",
+    "category": "Action",
+    "dir": "Defender",
+    "path": "games/Defender/index.html",
+    "thumbnail": "games/Defender/screenshot.png"
   },
   {
     "id": "dig-dug",
@@ -360,6 +396,15 @@
     "thumbnail": ""
   },
   {
+    "id": "gold-runner",
+    "name": "Gold Runner",
+    "description": "Collect the gold, trap the guards in dug bricks, climb out",
+    "category": "Action",
+    "dir": "GoldRunner",
+    "path": "games/GoldRunner/index.html",
+    "thumbnail": "games/GoldRunner/screenshot.png"
+  },
+  {
     "id": "golf-solitaire",
     "name": "Golf Solitaire",
     "description": "Card solitaire with golf-themed scoring",
@@ -477,6 +522,15 @@
     "thumbnail": ""
   },
   {
+    "id": "lode-runner",
+    "name": "Lode Runner",
+    "description": "Dig holes to trap guards while you steal every bar of gold",
+    "category": "Action",
+    "dir": "LodeRunner",
+    "path": "games/LodeRunner/index.html",
+    "thumbnail": "games/LodeRunner/screenshot.png"
+  },
+  {
     "id": "lumberjack",
     "name": "Lumberjack",
     "description": "Action game - fell trees and avoid obstacles",
@@ -513,13 +567,13 @@
     "thumbnail": ""
   },
   {
-    "id": "marble-spiral",
-    "name": "Marble Spiral",
-    "description": "Shoot marbles into the spiralling train and match three to clear it",
+    "id": "marble-loop",
+    "name": "Marble Loop",
+    "description": "Spiral marble shooter - burst three of a colour before the chain reaches the pit",
     "category": "Puzzle",
-    "dir": "MarbleSpiral",
-    "path": "games/MarbleSpiral/index.html",
-    "thumbnail": "games/MarbleSpiral/screenshot.png"
+    "dir": "MarbleLoop",
+    "path": "games/MarbleLoop/index.html",
+    "thumbnail": "games/MarbleLoop/screenshot.png"
   },
   {
     "id": "mastermind",
@@ -702,6 +756,15 @@
     "thumbnail": ""
   },
   {
+    "id": "quoridor",
+    "name": "Quoridor",
+    "description": "Race your pawn across the board while fencing off the computer",
+    "category": "Board Game",
+    "dir": "Quoridor",
+    "path": "games/Quoridor/index.html",
+    "thumbnail": "games/Quoridor/screenshot.png"
+  },
+  {
     "id": "reversi",
     "name": "Reversi",
     "description": "Othello strategy game - flip opponent's pieces",
@@ -709,6 +772,15 @@
     "dir": "Reversi",
     "path": "games/Reversi/index.html",
     "thumbnail": ""
+  },
+  {
+    "id": "river-raid",
+    "name": "River Raid",
+    "description": "Fly a winding river - shoot traffic, refuel and bomb the bridges",
+    "category": "Action",
+    "dir": "RiverRaid",
+    "path": "games/RiverRaid/index.html",
+    "thumbnail": "games/RiverRaid/screenshot.png"
   },
   {
     "id": "road-racer",
@@ -774,6 +846,15 @@
     "thumbnail": "games/SkeetShooter/screenshot.png"
   },
   {
+    "id": "ski-slalom",
+    "name": "Ski Slalom",
+    "description": "Downhill ski racing - carve through the gates and dodge the trees",
+    "category": "Sports",
+    "dir": "SkiSlalom",
+    "path": "games/SkiSlalom/index.html",
+    "thumbnail": "games/SkiSlalom/screenshot.png"
+  },
+  {
     "id": "sliding-puzzle",
     "name": "Sliding Puzzle",
     "description": "Slide tiles into the correct order",
@@ -781,6 +862,15 @@
     "dir": "SlidingPuzzle",
     "path": "games/SlidingPuzzle/index.html",
     "thumbnail": ""
+  },
+  {
+    "id": "slitherlink",
+    "name": "Slitherlink",
+    "description": "Loop logic puzzle - draw one closed loop that fits every clue",
+    "category": "Puzzle",
+    "dir": "Slitherlink",
+    "path": "games/Slitherlink/index.html",
+    "thumbnail": "games/Slitherlink/screenshot.png"
   },
   {
     "id": "slime-volley",
@@ -855,6 +945,15 @@
     "thumbnail": ""
   },
   {
+    "id": "tank-battle",
+    "name": "Tank Battle",
+    "description": "Defend the eagle base and blast every enemy tank",
+    "category": "Action",
+    "dir": "TankBattle",
+    "path": "games/TankBattle/index.html",
+    "thumbnail": "games/TankBattle/screenshot.png"
+  },
+  {
     "id": "tempest",
     "name": "Tempest",
     "description": "Arcade action game - navigate tube mazes",
@@ -871,6 +970,15 @@
     "dir": "Tetris",
     "path": "games/Tetris/index.html",
     "thumbnail": "games/Tetris/screenshot.png"
+  },
+  {
+    "id": "tower-defense",
+    "name": "Tower Defense",
+    "description": "Build and upgrade towers to stop ten waves of creeps",
+    "category": "Strategy",
+    "dir": "TowerDefense",
+    "path": "games/TowerDefense/index.html",
+    "thumbnail": "games/TowerDefense/screenshot.png"
   },
   {
     "id": "tower-of-hanoi",
