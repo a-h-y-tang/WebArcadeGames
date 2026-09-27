@@ -882,6 +882,15 @@
     "thumbnail": "games/SkeetShooter/screenshot.png"
   },
   {
+    "id": "sky-climber",
+    "name": "Sky Climber",
+    "description": "Scale a skyscraper one hand at a time, dodging shutters and falling pots",
+    "category": "Action",
+    "dir": "SkyClimber",
+    "path": "games/SkyClimber/index.html",
+    "thumbnail": "games/SkyClimber/screenshot.png"
+  },
+  {
     "id": "ski-slalom",
     "name": "Ski Slalom",
     "description": "Downhill ski racing - carve through the gates and dodge the trees",
