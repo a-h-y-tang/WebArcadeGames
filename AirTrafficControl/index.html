@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Air Traffic Control</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="game">
+        <header class="hud">
+            <h1>AIR TRAFFIC CONTROL</h1>
+            <div class="stats">
+                <div class="stat"><span class="label">Landed</span><span id="score">0</span></div>
+                <div class="stat"><span class="label">Best</span><span id="best">0</span></div>
+                <div class="stat"><span class="label">Traffic</span><span id="traffic">0</span></div>
+            </div>
+        </header>
+
+        <div class="board-wrap">
+            <canvas id="canvas" width="720" height="480"></canvas>
+            <div id="warning" class="warning">⚠ TOO CLOSE</div>
+            <div id="overlay" class="overlay visible">
+                <h2 id="overlay-title">AIR TRAFFIC CONTROL</h2>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Drag from an aircraft to route it. Press Space or click Start.</p>
+                <button id="btn-start">Start Shift</button>
+            </div>
+        </div>
+
+        <div class="help">
+            <p><strong>Drag</strong> from an aircraft to draw its flight path</p>
+            <p><strong>Click</strong> an aircraft to clear its path</p>
+            <p><span class="key jet"></span> jets land on the <strong>runway</strong></p>
+            <p><span class="key heli"></span> helicopters land on the <strong>helipad</strong></p>
+            <p><kbd>Space</kbd> start &middot; <kbd>P</kbd> pause</p>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>
