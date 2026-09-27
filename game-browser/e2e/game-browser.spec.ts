@@ -1,4 +1,11 @@
 import { test, expect } from '@playwright/test';
+import { readFileSync } from 'fs';
+import { join } from 'path';
+
+// Derived from the catalogue itself so adding a game cannot make the suite stale.
+const GAME_COUNT = JSON.parse(
+  readFileSync(join(__dirname, '../src/assets/games.json'), 'utf8')
+).length;
 
 test.describe('Game Browser', () => {
   test.beforeEach(async ({ page }) => {
@@ -107,7 +114,7 @@ test.describe('Game Browser', () => {
     // Games should be filtered
     let gameCards = page.locator('app-game-card');
     const filteredCount = await gameCards.count();
-    expect(filteredCount).toBeLessThan(105);
+    expect(filteredCount).toBeLessThan(GAME_COUNT);
 
     // Click Reset button
     const resetButton = page.locator('button:has-text("Reset")');
