@@ -109,6 +109,9 @@ For each new game, put it in a new folder. Each game should have its own README.
 | TriPeaks Solitaire | [TriPeaks/](TriPeaks/) | Complete |
 | Kakuro | [Kakuro/](Kakuro/) | Complete |
 | Kaboom! | [Kaboom/](Kaboom/) | Complete |
+| Ski Slalom | [SkiSlalom/](SkiSlalom/) | Complete |
+| River Raid | [RiverRaid/](RiverRaid/) | Complete |
+| Slitherlink | [Slitherlink/](Slitherlink/) | Complete |
 | Lode Runner | [LodeRunner/](LodeRunner/) | Complete |
 | Tank Battle | [TankBattle/](TankBattle/) | Complete |
 | Marble Loop | [MarbleLoop/](MarbleLoop/) | Complete |
@@ -124,6 +127,21 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Barrel Climb | [BarrelClimb/](BarrelClimb/) | Complete |
 | BurgerTime | [BurgerTime/](BurgerTime/) | Complete |
 | Peg Pop | [PegPop/](PegPop/) | Complete |
+| Rampart | [Rampart/](Rampart/) | Complete |
+| Pooyan | [Pooyan/](Pooyan/) | Complete |
+| Cavern Raider | [CavernRaider/](CavernRaider/) | Complete |
+| Droid Arena | [DroidArena/](DroidArena/) | Complete |
+| Paratrooper | [Paratrooper/](Paratrooper/) | Complete |
+| Rally Chase | [RallyChase/](RallyChase/) | Complete |
+| Peg Blast | [PegBlast/](PegBlast/) | Complete |
+| Rally-X | [RallyX/](RallyX/) | Complete |
+| Sky Climber | [SkyClimber/](SkyClimber/) | Complete |
+| Robot Arena | [RobotArena/](RobotArena/) | Complete |
+| Scramble | [Scramble/](Scramble/) | Complete |
+| Planet Defender | [PlanetDefender/](PlanetDefender/) | Complete |
+| Canyon Raider | [CanyonRaider/](CanyonRaider/) | Complete |
+| Air Traffic Control | [AirTrafficControl/](AirTrafficControl/) | Complete |
+| Gold Runner | [GoldRunner/](GoldRunner/) | Complete |
 
 ## Playing
 

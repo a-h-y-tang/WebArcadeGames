@@ -27,6 +27,15 @@
     "thumbnail": "games/AirHockey/screenshot.png"
   },
   {
+    "id": "air-traffic-control",
+    "name": "Air Traffic Control",
+    "description": "Draw flight paths to land jets and helicopters without collisions",
+    "category": "Strategy",
+    "dir": "AirTrafficControl",
+    "path": "games/AirTrafficControl/index.html",
+    "thumbnail": "games/AirTrafficControl/screenshot.png"
+  },
+  {
     "id": "artillery-duel",
     "name": "Artillery Duel",
     "description": "Strategic turn-based artillery combat game",
@@ -153,6 +162,24 @@
     "thumbnail": ""
   },
   {
+    "id": "cavern-raider",
+    "name": "Cavern Raider",
+    "description": "Fly a scout ship through a winding cave, bombing fuel tanks and missile bases",
+    "category": "Action",
+    "dir": "CavernRaider",
+    "path": "games/CavernRaider/index.html",
+    "thumbnail": "games/CavernRaider/screenshot.png"
+  },
+  {
+    "id": "canyon-raider",
+    "name": "Canyon Raider",
+    "description": "Fly a river canyon - shoot the traffic, blow the bridges, don't run dry",
+    "category": "Action",
+    "dir": "CanyonRaider",
+    "path": "games/CanyonRaider/index.html",
+    "thumbnail": "games/CanyonRaider/screenshot.png"
+  },
+  {
     "id": "centipede",
     "name": "Centipede",
     "description": "Classic arcade shooter - defeat the centipede",
@@ -259,6 +286,15 @@
     "dir": "DotsAndBoxes",
     "path": "games/DotsAndBoxes/index.html",
     "thumbnail": ""
+  },
+  {
+    "id": "droid-arena",
+    "name": "Droid Arena",
+    "description": "Twin-stick arena shooter - clear waves of droids and rescue civilians",
+    "category": "Action",
+    "dir": "DroidArena",
+    "path": "games/DroidArena/index.html",
+    "thumbnail": "games/DroidArena/screenshot.png"
   },
   {
     "id": "farkle",
@@ -385,6 +421,15 @@
     "dir": "GeoDash",
     "path": "games/GeoDash/index.html",
     "thumbnail": ""
+  },
+  {
+    "id": "gold-runner",
+    "name": "Gold Runner",
+    "description": "Collect the gold, trap the guards in dug bricks, climb out",
+    "category": "Action",
+    "dir": "GoldRunner",
+    "path": "games/GoldRunner/index.html",
+    "thumbnail": "games/GoldRunner/screenshot.png"
   },
   {
     "id": "golf-solitaire",
@@ -675,6 +720,24 @@
     "thumbnail": "games/PegPop/screenshot.png"
   },
   {
+    "id": "paratrooper",
+    "name": "Paratrooper",
+    "description": "Defend the tower - shoot down helicopters and their paratroopers",
+    "category": "Action",
+    "dir": "Paratrooper",
+    "path": "games/Paratrooper/index.html",
+    "thumbnail": "games/Paratrooper/screenshot.png"
+  },
+  {
+    "id": "peg-blast",
+    "name": "Peg Blast",
+    "description": "Aim-and-drop physics game - clear every orange peg",
+    "category": "Action",
+    "dir": "PegBlast",
+    "path": "games/PegBlast/index.html",
+    "thumbnail": "games/PegBlast/screenshot.png"
+  },
+  {
     "id": "peg-solitaire",
     "name": "Peg Solitaire",
     "description": "Jump pegs to eliminate them from the board",
@@ -720,6 +783,15 @@
     "thumbnail": "games/PipeDream/screenshot.png"
   },
   {
+    "id": "planet-defender",
+    "name": "Planet Defender",
+    "description": "Side-scrolling rescue shooter - stop the aliens abducting the humanoids",
+    "category": "Action",
+    "dir": "PlanetDefender",
+    "path": "games/PlanetDefender/index.html",
+    "thumbnail": "games/PlanetDefender/screenshot.png"
+  },
+  {
     "id": "pong",
     "name": "Pong",
     "description": "Classic arcade paddle game",
@@ -727,6 +799,15 @@
     "dir": "Pong",
     "path": "games/Pong/index.html",
     "thumbnail": ""
+  },
+  {
+    "id": "pooyan",
+    "name": "Pooyan",
+    "description": "Shoot arrows at balloon-riding wolves before they reach the house",
+    "category": "Action",
+    "dir": "Pooyan",
+    "path": "games/Pooyan/index.html",
+    "thumbnail": "games/Pooyan/screenshot.png"
   },
   {
     "id": "pyramid-solitaire",
@@ -747,6 +828,24 @@
     "thumbnail": ""
   },
   {
+    "id": "rally-chase",
+    "name": "Rally Chase",
+    "description": "Drive a scrolling maze for flags and shake pursuers with smoke",
+    "category": "Action",
+    "dir": "RallyChase",
+    "path": "games/RallyChase/index.html",
+    "thumbnail": "games/RallyChase/screenshot.png"
+  },
+  {
+    "id": "rally-x",
+    "name": "Rally-X",
+    "description": "Top-down maze driving - collect the flags, smoke out the chase cars",
+    "category": "Action",
+    "dir": "RallyX",
+    "path": "games/RallyX/index.html",
+    "thumbnail": "games/RallyX/screenshot.png"
+  },
+  {
     "id": "quoridor",
     "name": "Quoridor",
     "description": "Race your pawn across the board while fencing off the computer",
@@ -756,6 +855,15 @@
     "thumbnail": "games/Quoridor/screenshot.png"
   },
   {
+    "id": "rampart",
+    "name": "Rampart",
+    "description": "Siege game - shell the fleet, then wall your castle back in",
+    "category": "Strategy",
+    "dir": "Rampart",
+    "path": "games/Rampart/index.html",
+    "thumbnail": "games/Rampart/screenshot.png"
+  },
+  {
     "id": "reversi",
     "name": "Reversi",
     "description": "Othello strategy game - flip opponent's pieces",
@@ -763,6 +871,15 @@
     "dir": "Reversi",
     "path": "games/Reversi/index.html",
     "thumbnail": ""
+  },
+  {
+    "id": "river-raid",
+    "name": "River Raid",
+    "description": "Fly a winding river - shoot traffic, refuel and bomb the bridges",
+    "category": "Action",
+    "dir": "RiverRaid",
+    "path": "games/RiverRaid/index.html",
+    "thumbnail": "games/RiverRaid/screenshot.png"
   },
   {
     "id": "road-racer",
@@ -783,6 +900,15 @@
     "thumbnail": ""
   },
   {
+    "id": "robot-arena",
+    "name": "Robot Arena",
+    "description": "Twin-stick arena shooter - blast robot waves and rescue the scientists",
+    "category": "Action",
+    "dir": "RobotArena",
+    "path": "games/RobotArena/index.html",
+    "thumbnail": "games/RobotArena/screenshot.png"
+  },
+  {
     "id": "rush-hour",
     "name": "Rush Hour",
     "description": "Sliding block puzzle - get the red car out",
@@ -799,6 +925,15 @@
     "dir": "SameGame",
     "path": "games/SameGame/index.html",
     "thumbnail": "games/SameGame/screenshot.png"
+  },
+  {
+    "id": "scramble",
+    "name": "Scramble",
+    "description": "Fly a cavern, bomb fuel dumps and reach the base before you run dry",
+    "category": "Action",
+    "dir": "Scramble",
+    "path": "games/Scramble/index.html",
+    "thumbnail": "games/Scramble/screenshot.png"
   },
   {
     "id": "set-game",
@@ -828,6 +963,24 @@
     "thumbnail": "games/SkeetShooter/screenshot.png"
   },
   {
+    "id": "sky-climber",
+    "name": "Sky Climber",
+    "description": "Scale a skyscraper one hand at a time, dodging shutters and falling pots",
+    "category": "Action",
+    "dir": "SkyClimber",
+    "path": "games/SkyClimber/index.html",
+    "thumbnail": "games/SkyClimber/screenshot.png"
+  },
+  {
+    "id": "ski-slalom",
+    "name": "Ski Slalom",
+    "description": "Downhill ski racing - carve through the gates and dodge the trees",
+    "category": "Sports",
+    "dir": "SkiSlalom",
+    "path": "games/SkiSlalom/index.html",
+    "thumbnail": "games/SkiSlalom/screenshot.png"
+  },
+  {
     "id": "sliding-puzzle",
     "name": "Sliding Puzzle",
     "description": "Slide tiles into the correct order",
@@ -835,6 +988,15 @@
     "dir": "SlidingPuzzle",
     "path": "games/SlidingPuzzle/index.html",
     "thumbnail": ""
+  },
+  {
+    "id": "slitherlink",
+    "name": "Slitherlink",
+    "description": "Loop logic puzzle - draw one closed loop that fits every clue",
+    "category": "Puzzle",
+    "dir": "Slitherlink",
+    "path": "games/Slitherlink/index.html",
+    "thumbnail": "games/Slitherlink/screenshot.png"
   },
   {
     "id": "slime-volley",
