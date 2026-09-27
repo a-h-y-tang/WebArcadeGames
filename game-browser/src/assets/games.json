@@ -162,6 +162,15 @@
     "thumbnail": ""
   },
   {
+    "id": "cavern-raider",
+    "name": "Cavern Raider",
+    "description": "Fly a scout ship through a winding cave, bombing fuel tanks and missile bases",
+    "category": "Action",
+    "dir": "CavernRaider",
+    "path": "games/CavernRaider/index.html",
+    "thumbnail": "games/CavernRaider/screenshot.png"
+  },
+  {
     "id": "canyon-raider",
     "name": "Canyon Raider",
     "description": "Fly a river canyon - shoot the traffic, blow the bridges, don't run dry",
