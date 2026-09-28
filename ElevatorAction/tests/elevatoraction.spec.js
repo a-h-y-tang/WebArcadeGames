@@ -2,7 +2,10 @@ const { test, expect } = require('@playwright/test');
 const path = require('path');
 const { pathToFileURL } = require('url');
 
+const fs = require('fs');
+
 const GAME_URL = pathToFileURL(path.resolve(__dirname, '../index.html')).href;
+const REPO_ROOT = path.resolve(__dirname, '../..');
 
 // Advance the simulation deterministically: `frames` calls to step(dt).
 const advance = (page, frames, dt = 1 / 60) =>
@@ -658,6 +661,23 @@ test.describe('Elevator Action', () => {
             expect(await page.evaluate(() => bullets.length)).toBe(0);
         });
 
+        test('a death clears bullets that were still to be stepped this frame', async ({ page }) => {
+            await startQuiet(page);
+            await page.evaluate(() => {
+                player.x = 300;
+                player.floor = 2;
+                player.ride = -1;
+                player.invuln = 0;
+                // The hit is resolved first; the trailing bullets are later in the
+                // same array and must not survive the wipe.
+                bullets.push({ x: 303, floor: 2, dir: -1, from: 'agent' });
+                bullets.push({ x: 600, floor: 2, dir: -1, from: 'agent' });
+                bullets.push({ x: 650, floor: 4, dir: 1, from: 'agent' });
+            });
+            await advance(page, 1);
+            expect(await page.evaluate(() => [lives, bullets.length])).toEqual([2, 0]);
+        });
+
         test('the spy is briefly invulnerable after being hit', async ({ page }) => {
             await startQuiet(page);
             await shootAtPlayer(page);
@@ -879,6 +899,48 @@ test.describe('Elevator Action', () => {
             await page.keyboard.press('p');
             await page.keyboard.press('Space');
             expect(await page.evaluate(() => [state, score])).toEqual(['playing', 500]);
+        });
+    });
+
+    // -----------------------------------------------------------------------
+    // Game browser integration
+    // -----------------------------------------------------------------------
+    test.describe('game browser integration', () => {
+        const readGames = () =>
+            JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'game-browser/src/assets/games.json'), 'utf8'));
+
+        test('games.json lists Elevator Action', () => {
+            const entry = readGames().find((g) => g.id === 'elevator-action');
+            expect(entry).toBeTruthy();
+            expect(entry.name).toBe('Elevator Action');
+            expect(entry.dir).toBe('ElevatorAction');
+            expect(entry.path).toBe('games/ElevatorAction/index.html');
+            expect(entry.thumbnail).toBe('games/ElevatorAction/screenshot.png');
+            expect(entry.category).toBe('Action');
+            expect(entry.description.length).toBeGreaterThan(10);
+        });
+
+        test('the games.json entry stays alphabetically sorted by name', () => {
+            const games = readGames();
+            const i = games.findIndex((g) => g.id === 'elevator-action');
+            expect(i).toBeGreaterThan(0);
+            expect(games[i - 1].name.localeCompare(games[i].name)).toBeLessThanOrEqual(0);
+            expect(games[i].name.localeCompare(games[i + 1].name)).toBeLessThanOrEqual(0);
+        });
+
+        test('the thumbnail the browser points at exists', () => {
+            expect(fs.existsSync(path.join(REPO_ROOT, 'ElevatorAction/screenshot.png'))).toBe(true);
+        });
+
+        test('the root README lists the game', () => {
+            const readme = fs.readFileSync(path.join(REPO_ROOT, 'README.md'), 'utf8');
+            expect(readme).toMatch(
+                /\|\s*Elevator Action\s*\|\s*\[ElevatorAction\/\]\(ElevatorAction\/\)\s*\|\s*(Complete|In Progress)\s*\|/);
+        });
+
+        test('the game ships its own README and DESIGN docs', () => {
+            expect(fs.existsSync(path.join(REPO_ROOT, 'ElevatorAction/README.md'))).toBe(true);
+            expect(fs.existsSync(path.join(REPO_ROOT, 'ElevatorAction/DESIGN.md'))).toBe(true);
         });
     });
 

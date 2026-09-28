@@ -435,7 +435,18 @@ function spawnAgents(dt) {
 }
 
 // --- Bullets and collisions -------------------------------------------------
+// Bumped whenever the whole field of bullets is wiped (a death). `updateBullets`
+// watches it so a wipe that happens part way through its own loop is not undone
+// by the survivors it had already collected.
+let bulletEpoch = 0;
+
+function clearBullets() {
+    bullets = [];
+    bulletEpoch++;
+}
+
 function updateBullets(dt) {
+    const epoch = bulletEpoch;
     const alive = [];
     for (const b of bullets) {
         const speed = b.from === 'player' ? PLAYER_BULLET_SPEED : AGENT_BULLET_SPEED;
@@ -444,7 +455,7 @@ function updateBullets(dt) {
         if (resolveBullet(b)) continue;
         alive.push(b);
     }
-    bullets = alive;
+    if (bulletEpoch === epoch) bullets = alive;
 }
 
 // Returns true when the bullet was spent on something.
@@ -481,7 +492,7 @@ function checkContact() {
 
 function hitPlayer() {
     lives--;
-    bullets = [];
+    clearBullets();
     resetPlayer();
     player.invuln = INVULN_TIME;
     updateHud();
