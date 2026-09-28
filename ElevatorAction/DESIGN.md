@@ -69,9 +69,12 @@ Bullets travel along their floor at 330 px/s (player) or 260 px/s (agent) and ar
 removed at the walls. A player bullet that reaches an agent on the same floor
 kills it (+200); an agent bullet that reaches the player costs a life.
 
-**Agents.** Agents patrol their floor, reversing at walls and closed shaft
-openings. When the player is on their floor they turn to face them, close in, and
-fire on a cooldown. Touching an agent also costs a life. Fresh agents step out of
+**Agents.** Agents never ride, so a shaft is a wall to them whether or not a car
+is there: they patrol their own floor and their own segment, reversing at the
+walls and at both shaft openings. When the player is on their floor they turn to
+face them, close in — holding position at a shaft edge rather than bouncing off
+it — and fire on a cooldown. Because bullets cross shafts, an agent can shoot
+across one it cannot walk through. Touching an agent also costs a life. Fresh agents step out of
 grey doors every few seconds, up to a per-level cap; agent speed, fire rate and
 cap all scale with the level.
 
