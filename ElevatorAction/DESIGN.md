@@ -15,8 +15,9 @@ The game is one self-contained HTML5 canvas page (`index.html` + `style.css` +
 ## Layout and geometry
 
 The canvas is 720x480. Six floors are stacked 70px apart, the top floor's walking
-surface at y = 50 and the ground floor at y = 400; the strip below the ground
-floor is the lobby where the escape door sits.
+surface at y = 50 and the ground floor at y = 400. The escape door stands in the
+ground floor's left corner (x <= 70); the strip beneath it is the lobby, drawn as
+scenery so the building has a base.
 
 ```
 floorY(f) = 50 + f * 70          f = 0 (roof) .. 5 (ground)
@@ -89,7 +90,7 @@ difficulty keeps climbing.
 | Key | Action |
 |---|---|
 | Left / Right (or A / D) | Walk, or step off an elevator |
-| Up / Down (or W / S) | Drive the elevator you are riding |
+| Up / Down (or W / S) | Send the elevator you are riding one floor |
 | Space | Start the game; fire once playing |
 | P | Pause / resume |
 
@@ -117,6 +118,11 @@ the simpler reading.
   whole floors and keeps the "the elevator is the only way around" pressure.
 - **Riders are locked to the shaft centre.** You cannot walk along an elevator
   car; boarding snaps you to the middle of the shaft.
+- **A car travels one floor per press.** Holding Up or Down does not run an
+  express to the top or bottom: each press books a single floor, and the car
+  ignores input until it arrives. Stopping exactly on a floor keeps alignment a
+  plain equality test rather than a tolerance, which keeps every floor-based
+  rule decidable.
 - **Space both starts and shoots.** Space starts the game from the idle and
   game-over states and fires while playing, so the game needs no extra fire key.
 - **Bullets ignore shafts.** A bullet crosses a shaft opening whether or not a car
