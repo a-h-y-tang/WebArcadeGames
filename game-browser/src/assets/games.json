@@ -297,6 +297,15 @@
     "thumbnail": "games/DroidArena/screenshot.png"
   },
   {
+    "id": "elevator-action",
+    "name": "Elevator Action",
+    "description": "Raid a six-storey building - ride the elevators, grab the secret documents and escape",
+    "category": "Action",
+    "dir": "ElevatorAction",
+    "path": "games/ElevatorAction/index.html",
+    "thumbnail": "games/ElevatorAction/screenshot.png"
+  },
+  {
     "id": "farkle",
     "name": "Farkle",
     "description": "Dice-rolling game - score combinations wisely",
@@ -711,15 +720,6 @@
     "thumbnail": "games/Pang/screenshot.png"
   },
   {
-    "id": "peg-pop",
-    "name": "Peg Pop",
-    "description": "Drop balls into a field of pegs and clear every orange target",
-    "category": "Action",
-    "dir": "PegPop",
-    "path": "games/PegPop/index.html",
-    "thumbnail": "games/PegPop/screenshot.png"
-  },
-  {
     "id": "paratrooper",
     "name": "Paratrooper",
     "description": "Defend the tower - shoot down helicopters and their paratroopers",
@@ -736,6 +736,15 @@
     "dir": "PegBlast",
     "path": "games/PegBlast/index.html",
     "thumbnail": "games/PegBlast/screenshot.png"
+  },
+  {
+    "id": "peg-pop",
+    "name": "Peg Pop",
+    "description": "Drop balls into a field of pegs and clear every orange target",
+    "category": "Action",
+    "dir": "PegPop",
+    "path": "games/PegPop/index.html",
+    "thumbnail": "games/PegPop/screenshot.png"
   },
   {
     "id": "peg-solitaire",
