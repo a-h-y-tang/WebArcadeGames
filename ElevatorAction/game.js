@@ -121,7 +121,7 @@ const player = {
     y: 0,
     floor: SPAWN.floor,
     ride: -1,               // shaft index while riding, -1 while walking
-    rideLatch: false,       // true until the boarding key is released
+    rideLatch: null,        // 'left'/'right' until the boarding key is released
     dir: 1,
     shootCd: 0,
     invuln: 0,
@@ -239,7 +239,7 @@ function resetPlayer() {
     player.x = SPAWN.x;
     player.floor = SPAWN.floor;
     player.ride = -1;
-    player.rideLatch = false;
+    player.rideLatch = null;
     player.dir = 1;
     player.shootCd = 0;
     player.y = floorY(SPAWN.floor) - PLAYER_H;
@@ -296,12 +296,12 @@ function updateElevators(dt) {
 function boardElevator(i) {
     player.ride = i;
     player.x = SHAFT_XS[i];
-    player.rideLatch = true;
+    player.rideLatch = player.dir > 0 ? 'right' : 'left';
 }
 
 function stepOff(i, dir) {
     player.ride = -1;
-    player.rideLatch = false;
+    player.rideLatch = null;
     player.x = SHAFT_XS[i] + dir * (SHAFT_W / 2 + PLAYER_W / 2 + STEP_OFF_GAP);
 }
 
@@ -328,8 +328,9 @@ function updateRider() {
     if (at < 0) return;     // in transit: the car ignores input and so does the spy
 
     // Boarding latches the direction key that carried the spy in, so walking
-    // into a car does not immediately walk back out of it.
-    if (!keys.left && !keys.right) player.rideLatch = false;
+    // into a car does not immediately walk back out of it. Releasing that key —
+    // or pressing the opposite one — frees the latch again.
+    if (player.rideLatch && !keys[player.rideLatch]) player.rideLatch = null;
 
     if (keys.up && at > 0) car.target = at - 1;
     else if (keys.down && at < FLOORS - 1) car.target = at + 1;

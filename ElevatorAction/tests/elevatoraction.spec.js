@@ -139,6 +139,33 @@ test.describe('Elevator Action', () => {
             expect(bad).toEqual([]);
         });
 
+        test('every floor plan is well formed', async ({ page }) => {
+            await startQuiet(page);
+            const problems = await page.evaluate(() => {
+                const bad = [];
+                LAYOUTS.forEach((layout, i) => {
+                    if (!layout.doors.some(([, , red]) => red)) bad.push(`layout ${i} has no documents`);
+                    layout.doors.concat(layout.agents).forEach(([floor, x]) => {
+                        if (floor < 0 || floor >= FLOORS) bad.push(`layout ${i}: floor ${floor}`);
+                        if (SHAFT_XS.some((sx) => Math.abs(x - sx) < SHAFT_W / 2 + DOOR_W / 2)) {
+                            bad.push(`layout ${i}: x ${x} on floor ${floor} overlaps a shaft`);
+                        }
+                        if (x - DOOR_W / 2 < WALL || x + DOOR_W / 2 > CANVAS_W - WALL) {
+                            bad.push(`layout ${i}: x ${x} on floor ${floor} is inside a wall`);
+                        }
+                    });
+                    // Nothing may sit on top of the escape door.
+                    layout.doors.forEach(([floor, x]) => {
+                        if (floor === FLOORS - 1 && x - DOOR_W / 2 <= EXIT_X) {
+                            bad.push(`layout ${i}: door at ${x} blocks the exit`);
+                        }
+                    });
+                });
+                return bad;
+            });
+            expect(problems).toEqual([]);
+        });
+
         test('one car waits on the roof so the spy can move', async ({ page }) => {
             await startQuiet(page);
             expect(await page.evaluate(() => carFloor(cars[0]))).toBe(0);
@@ -763,6 +790,58 @@ test.describe('Elevator Action', () => {
             const slow = await page.evaluate(() => agentSpeed());
             await page.evaluate(() => { level = 5; });
             expect(await page.evaluate(() => agentSpeed())).toBeGreaterThan(slow);
+        });
+    });
+
+    // -----------------------------------------------------------------------
+    // A whole level, start to finish
+    // -----------------------------------------------------------------------
+    test.describe('playthrough', () => {
+        // Every document on level 1 sits in a different segment, so clearing the
+        // level exercises both shafts and every step-off direction. Driving the
+        // real key state through the real step loop proves the floor plan is
+        // actually solvable rather than merely well formed.
+        test('a scripted route collects all three documents and escapes', async ({ page }) => {
+            await startQuiet(page);
+            const result = await page.evaluate(() => {
+                const press = (k) => {
+                    keys.left = keys.right = keys.up = keys.down = false;
+                    if (k) keys[k] = true;
+                };
+                // A key is always released between legs: boarding latches the key
+                // that carried the spy in, exactly as it does for a human player.
+                const run = (k, frames) => {
+                    press(k);
+                    for (let i = 0; i < frames; i++) step(1 / 60);
+                    press(null);
+                    step(1 / 60);   // one frame with the key released, as a real player gets
+                };
+                const rideDown = () => { run('down', 1); run(null, 70); };
+
+                run('right', 60);           // roof: walk into the levelled car
+                rideDown();                 // -> floor 1
+                run('left', 60);            // step off left, walk over the red door at 100
+                run('right', 75);           // back to the car
+                rideDown();                 // -> floor 2
+                run('right', 60);           // step off right, walk over the red door at 400
+                run('left', 75);            // back to the car
+                rideDown();                 // -> floor 3
+                run('right', 90);           // step off right, cross to the second shaft
+                run('right', 90);           // step off it right, walk over the red door at 660
+                run('left', 110);           // back to the second shaft
+                run('left', 130);           // step off left, back to the first shaft
+                rideDown();                 // -> floor 4
+                rideDown();                 // -> floor 5
+                run('left', 90);            // step off left and walk into the exit
+
+                return { level, score, docs: docsCollected, required: docsRequired, lives };
+            });
+
+            expect(result.level).toBe(2);
+            expect(result.score).toBe(1300);        // three documents plus the level bonus
+            expect(result.lives).toBe(3);           // no agents were in the building
+            expect(result.docs).toBe(0);            // the next level starts empty-handed
+            expect(result.required).toBeGreaterThan(0);
         });
     });
 
