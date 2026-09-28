@@ -297,6 +297,15 @@
     "thumbnail": "games/DroidArena/screenshot.png"
   },
   {
+    "id": "elevator-action",
+    "name": "Elevator Action",
+    "description": "Raid a six-storey building - ride the elevators, grab the secret documents and escape",
+    "category": "Action",
+    "dir": "ElevatorAction",
+    "path": "games/ElevatorAction/index.html",
+    "thumbnail": "games/ElevatorAction/screenshot.png"
+  },
+  {
     "id": "farkle",
     "name": "Farkle",
     "description": "Dice-rolling game - score combinations wisely",
