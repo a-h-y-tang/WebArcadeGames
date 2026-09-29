@@ -25,7 +25,7 @@ const LANE_GAP = 96;         // vertical distance between bars
 const BAR_LEFT = 60;         // far end: customers enter, stray mugs fall off
 const BAR_RIGHT = 620;       // bartender end: mugs are poured from here
 const GRAB_X = 590;          // a customer this far along grabs the bartender
-const CATCH_X = 600;         // an empty this far along is caught, if you're there
+const CATCH_X = 555;         // the near stretch of bar: empties past here are catchable
 
 const CUSTOMER_W = 30;
 const CUSTOMER_H = 40;
@@ -37,7 +37,7 @@ const BAR_TOP = 11;          // laneY() is the middle of the bar; this is its su
 const MUG_SPEED = 260;             // full mug, sliding away from the bartender
 const EMPTY_SPEED = 180;           // empty mug, coming home
 const BASE_CUSTOMER_SPEED = 26;    // level 1 walking pace
-const LEVEL_SPEEDUP = 6;           // added per level
+const LEVEL_SPEEDUP = 4;           // added per level
 const PUSHBACK = 110;              // stagger per drink
 const DRINK_TIME = 0.8;
 const POUR_COOLDOWN = 0.18;
@@ -129,6 +129,7 @@ function makeCustomer(lane) {
         x: BAR_LEFT - CUSTOMER_W,
         state: 'advancing',   // 'advancing' | 'drinking'
         timer: 0,
+        queued: 0,            // mugs taken while already drinking
         bob: rand() * Math.PI * 2,
     };
 }
@@ -188,9 +189,10 @@ function loseLife() {
         const c = customers[i];
         if (c.x >= GRAB_X - CUSTOMER_W) customers.splice(i, 1);
         else {
-            c.x -= PUSHBACK;
+            c.x = Math.max(BAR_LEFT - CUSTOMER_W, c.x - PUSHBACK);
             c.state = 'advancing';
             c.timer = 0;
+            c.queued = 0;
         }
     }
 
@@ -300,14 +302,22 @@ function stepCustomers(dt) {
 
             // Done drinking: the empty comes back and the customer staggers off.
             empties.push(makeEmpty(c.lane, c.x + CUSTOMER_W));
-            c.state = 'advancing';
-            c.timer = 0;
             c.x -= PUSHBACK;
 
             if (c.x < BAR_LEFT) {
                 customers.splice(i, 1);
                 served += 1;
                 score += SCORE_SERVE;
+                continue;
+            }
+
+            // A mug taken mid-drink is simply the next round.
+            if (c.queued > 0) {
+                c.queued -= 1;
+                c.timer = DRINK_TIME;
+            } else {
+                c.state = 'advancing';
+                c.timer = 0;
             }
             continue;
         }
@@ -330,8 +340,13 @@ function stepMugs(dt) {
         const taker = customerFor(m);
         if (taker) {
             mugs.splice(i, 1);
-            taker.state = 'drinking';
-            taker.timer = DRINK_TIME;
+            if (taker.state === 'drinking') {
+                // Already got one to their lips — this one waits its turn.
+                taker.queued += 1;
+            } else {
+                taker.state = 'drinking';
+                taker.timer = DRINK_TIME;
+            }
             continue;
         }
 
@@ -345,11 +360,13 @@ function stepMugs(dt) {
 }
 
 // The customer nearest the bartender is the one who reaches out for a mug, so
-// mugs never slip past a thirsty customer to reach someone further down the bar.
+// mugs never slip past a thirsty customer to reach someone further down the bar
+// — including a customer who is still working on the last one, which is what
+// makes queuing mugs into a lane a real tactic rather than a suicide note.
 function customerFor(mug) {
     let nearest = null;
     for (const c of customers) {
-        if (c.lane !== mug.lane || c.state !== 'advancing') continue;
+        if (c.lane !== mug.lane) continue;
         if (mug.x > c.x + CUSTOMER_W || mug.x + MUG_W < c.x) continue;
         if (!nearest || c.x > nearest.x) nearest = c;
     }
@@ -494,6 +511,12 @@ function drawBar(lane) {
     top.addColorStop(1, '#2e1e10');
     ctx.fillStyle = top;
     ctx.fillRect(x0, y - 11, w, 22);
+
+    // The stretch of bar where an empty can still be caught
+    ctx.fillStyle = active ? 'rgba(255, 176, 54, 0.22)' : 'rgba(255, 176, 54, 0.07)';
+    ctx.fillRect(CATCH_X, y - 11, BAR_RIGHT - CATCH_X, 22);
+    ctx.fillStyle = active ? 'rgba(255, 210, 130, 0.7)' : 'rgba(255, 176, 54, 0.22)';
+    ctx.fillRect(CATCH_X, y - 11, 2, 22);
 
     // Polished front edge
     ctx.fillStyle = active ? 'rgba(255, 210, 130, 0.75)' : 'rgba(255, 176, 54, 0.18)';

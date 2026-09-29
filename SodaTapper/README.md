@@ -15,9 +15,9 @@ drink, stops to drink it, and staggers back the way they came. Keep pushing and
 they eventually fall off the far end of the bar — served, and worth points.
 
 Every drink comes back at you. A customer who finishes a mug sends the empty
-gliding down the bar; be standing in that lane when it arrives and you catch it
-for a bonus. Be somewhere else and it sails past your end and smashes, and that
-costs a life.
+gliding down the bar; be standing in that lane when it reaches the lit stretch in
+front of you and you catch it for a bonus. Be somewhere else and it sails past
+your end and smashes, and that costs a life.
 
 So does a mug you poured down an empty lane — it runs off the far end and
 shatters. And so does a customer who reaches your end of the bar, because they
@@ -51,16 +51,19 @@ The best score is kept in `localStorage` under `sodatapper-best`.
 
 ## Strategy
 
-- **Serve early.** A customer near the far end needs one mug; a customer
-  halfway down needs three. The cost of ignoring a lane compounds.
-- **Pouring is a commitment.** Every mug you send out is an empty you have to
-  come back for, so do not pour into a lane you are about to leave.
-- **Watch for two empties at once.** Two customers finishing in different lanes
-  at the same moment is a life you cannot save — space out your pours so their
-  drinks do not land together.
-- **The far end of the bar is free.** A mug aimed at a customer who is nearly
-  served still costs you nothing if it connects; it is only the miss that breaks
-  glass.
+- **Count the drinks you have already committed.** A mug in flight, a customer
+  mid-drink and a queued round all push that customer back 110px each. Pour a mug
+  the lane no longer needs and it runs off the far end and smashes — this is the
+  single most common way to lose.
+- **Stack mugs on the ones who are getting close.** A mug that reaches a customer
+  who is already drinking waits its turn rather than being wasted, so two or
+  three mugs in a lane will shove someone off the bar far faster than feeding
+  them one at a time. On the later levels it is the only thing that outruns them.
+- **Every mug you pour is an empty you owe.** Stacking three mugs means three
+  empties coming home together, and you can only be in one lane at a time. Space
+  out pours across lanes so their returns do not collide.
+- **Serve early.** A customer near the far end needs one mug; a customer halfway
+  down needs three. The cost of ignoring a lane compounds.
 
 ## Implementation
 

@@ -1,8 +1,10 @@
 const { test, expect } = require('@playwright/test');
+const fs = require('fs');
 const path = require('path');
 const { pathToFileURL } = require('url');
 
 const GAME_URL = pathToFileURL(path.resolve(__dirname, '../index.html')).href;
+const REPO_ROOT = path.resolve(__dirname, '../..');
 
 // Advance the simulation deterministically: `frames` calls to step(dt).
 const advance = (page, frames, dt = 1 / 60) =>
@@ -69,9 +71,12 @@ test.describe('Soda Tapper', () => {
                 catch: CATCH_X,
             }));
             expect(geometry.left).toBeGreaterThan(0);
-            expect(geometry.left).toBeLessThan(geometry.grab);
-            expect(geometry.grab).toBeLessThan(geometry.catch);
-            expect(geometry.catch).toBeLessThan(geometry.right);
+            expect(geometry.left).toBeLessThan(geometry.catch);
+            // The catch zone is the near stretch of bar, wide enough to give the
+            // player a real window on an empty rather than a single frame.
+            expect(geometry.right - geometry.catch).toBeGreaterThanOrEqual(50);
+            expect(geometry.catch).toBeLessThan(geometry.grab);
+            expect(geometry.grab).toBeLessThan(geometry.right);
             expect(geometry.right).toBeLessThan(720);
         });
 
@@ -360,6 +365,60 @@ test.describe('Soda Tapper', () => {
             expect(await page.evaluate(() => lives)).toBe(2);
         });
 
+        test('a customer already drinking still takes the next mug', async ({ page }) => {
+            await page.evaluate(() => {
+                spawnCustomer(0);
+                customers[0].x = 300;
+                customers[0].state = 'drinking';
+                customers[0].timer = DRINK_TIME;
+                mugs.push(makeMug(0, 450));
+            });
+            await advance(page, 45);
+            expect(await page.evaluate(() => mugs.length)).toBe(0);
+            expect(await page.evaluate(() => customers[0].queued)).toBe(1);
+            expect(await page.evaluate(() => lives)).toBe(3);
+        });
+
+        test('a queued mug becomes a second drink, a second empty and a second shove', async ({ page }) => {
+            // Lane 3, away from the bartender, so both empties are still in
+            // flight to be counted rather than caught as they arrive.
+            await page.evaluate(() => {
+                spawnCustomer(3);
+                customers[0].x = 400;
+                customers[0].state = 'drinking';
+                customers[0].timer = DRINK_TIME;
+                customers[0].queued = 1;
+            });
+            await advance(page, Math.ceil(60 * 1.7));
+            expect(await page.evaluate(() => empties.length)).toBe(2);
+            expect(await page.evaluate(() => customers[0].state)).toBe('advancing');
+            expect(await page.evaluate(() => customers[0].queued)).toBe(0);
+            // Two shoves, less the little walking done between them.
+            expect(await page.evaluate(() => customers[0].x)).toBeLessThan(400 - 2 * 110 + 20);
+        });
+
+        test('queuing mugs pushes a customer off the bar faster than one at a time', async ({ page }) => {
+            const run = (queue) =>
+                page.evaluate((q) => {
+                    startGame();
+                    autoStep = false;
+                    autoSpawn = false;
+                    customers.length = 0;
+                    mugs.length = 0;
+                    empties.length = 0;
+                    spawnCustomer(0);
+                    customers[0].x = 400;
+                    for (let f = 0; f < 60 * 12 && customers.length; f++) {
+                        if (mugs.length < q) pour();
+                        step(1 / 60);
+                    }
+                    return { frames: served ? 1 : 0, left: customers.length };
+                }, queue);
+
+            expect(await run(1)).toEqual({ frames: 1, left: 0 });
+            expect(await run(3)).toEqual({ frames: 1, left: 0 });
+        });
+
         test('the nearest customer to the bartender takes the mug', async ({ page }) => {
             await page.evaluate(() => {
                 spawnCustomer(0);
@@ -639,6 +698,51 @@ test.describe('Soda Tapper', () => {
             await page.evaluate(() => draw());
             const painted = await page.evaluate(() => canvas.toDataURL());
             expect(painted).not.toBe(blank);
+        });
+    });
+    // -----------------------------------------------------------------------
+    // Game browser integration — the catalogue entry has to stay honest
+    // -----------------------------------------------------------------------
+    test.describe('game browser integration', () => {
+        const catalogue = () =>
+            JSON.parse(
+                fs.readFileSync(path.join(REPO_ROOT, 'game-browser/src/assets/games.json'), 'utf8')
+            );
+
+        test('the game is listed in games.json', () => {
+            const entry = catalogue().find((g) => g.id === 'soda-tapper');
+            expect(entry).toBeTruthy();
+            expect(entry.name).toBe('Soda Tapper');
+            expect(entry.dir).toBe('SodaTapper');
+            expect(entry.path).toBe('games/SodaTapper/index.html');
+            expect(entry.thumbnail).toBe('games/SodaTapper/screenshot.png');
+            expect(entry.description.length).toBeGreaterThan(10);
+        });
+
+        test('the games.json entry stays alphabetically sorted by name', () => {
+            const games = catalogue();
+            const i = games.findIndex((g) => g.id === 'soda-tapper');
+            expect(i).toBeGreaterThan(0);
+            expect(games[i - 1].name.localeCompare(games[i].name)).toBeLessThanOrEqual(0);
+            if (i + 1 < games.length) {
+                expect(games[i].name.localeCompare(games[i + 1].name)).toBeLessThanOrEqual(0);
+            }
+        });
+
+        test('the thumbnail the browser points at exists', () => {
+            expect(fs.existsSync(path.join(REPO_ROOT, 'SodaTapper/screenshot.png'))).toBe(true);
+        });
+
+        test('the root README lists the game', () => {
+            const readme = fs.readFileSync(path.join(REPO_ROOT, 'README.md'), 'utf8');
+            expect(readme).toMatch(
+                /\|\s*Soda Tapper\s*\|\s*\[SodaTapper\/\]\(SodaTapper\/\)\s*\|\s*(Complete|In Progress)\s*\|/
+            );
+        });
+
+        test('the game ships its own README and DESIGN docs', () => {
+            expect(fs.existsSync(path.join(REPO_ROOT, 'SodaTapper/README.md'))).toBe(true);
+            expect(fs.existsSync(path.join(REPO_ROOT, 'SodaTapper/DESIGN.md'))).toBe(true);
         });
     });
 });

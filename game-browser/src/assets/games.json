@@ -711,15 +711,6 @@
     "thumbnail": "games/Pang/screenshot.png"
   },
   {
-    "id": "peg-pop",
-    "name": "Peg Pop",
-    "description": "Drop balls into a field of pegs and clear every orange target",
-    "category": "Action",
-    "dir": "PegPop",
-    "path": "games/PegPop/index.html",
-    "thumbnail": "games/PegPop/screenshot.png"
-  },
-  {
     "id": "paratrooper",
     "name": "Paratrooper",
     "description": "Defend the tower - shoot down helicopters and their paratroopers",
@@ -736,6 +727,15 @@
     "dir": "PegBlast",
     "path": "games/PegBlast/index.html",
     "thumbnail": "games/PegBlast/screenshot.png"
+  },
+  {
+    "id": "peg-pop",
+    "name": "Peg Pop",
+    "description": "Drop balls into a field of pegs and clear every orange target",
+    "category": "Action",
+    "dir": "PegPop",
+    "path": "games/PegPop/index.html",
+    "thumbnail": "games/PegPop/screenshot.png"
   },
   {
     "id": "peg-solitaire",

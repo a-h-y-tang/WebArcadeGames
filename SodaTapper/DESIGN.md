@@ -30,7 +30,7 @@ lane 3  |=====================================|
 ## Mechanics
 
 **Customers.** A customer enters at the left end of a lane and advances right at
-`BASE_CUSTOMER_SPEED + 6 * (level - 1)` px/s. A customer whose leading edge
+`BASE_CUSTOMER_SPEED + 4 * (level - 1)` px/s. A customer whose leading edge
 reaches `GRAB_X` (620) grabs the bartender: the customer is removed and a life is
 lost.
 
@@ -39,22 +39,33 @@ bartender's current lane at `MUG_SPEED` (260 px/s) leftward. A short
 `POUR_COOLDOWN` (0.18 s) and a per-lane cap of `MUGS_PER_LANE` (4) keep the key
 from being spammed into a solid wall of glass.
 
-**Drinking and push-back.** A full mug that overlaps an advancing customer is
-consumed: the customer enters the `drinking` state for `DRINK_TIME` (0.8 s), then
-sends an empty mug back toward the bartender at `EMPTY_SPEED` (180 px/s) and
-staggers `PUSHBACK` (110 px) to the left. A customer pushed left of `BAR_LEFT` is
-**served** — they leave happy and score `SCORE_SERVE` (150).
+**Drinking and push-back.** A full mug that overlaps a customer is consumed: the
+customer enters the `drinking` state for `DRINK_TIME` (0.8 s), then sends an empty
+mug back toward the bartender at `EMPTY_SPEED` (180 px/s) and staggers `PUSHBACK`
+(110 px) to the left. A customer pushed left of `BAR_LEFT` is **served** — they
+leave happy and score `SCORE_SERVE` (150).
+
+**Queued drinks.** A mug that catches a customer who is *already* drinking is not
+wasted: it is queued (`customer.queued`) and becomes their next round the moment
+the current one is finished, with its own empty and its own shove. This is what
+makes stacking two or three mugs into one lane a real tactic — it is the only way
+to out-push a customer on the later levels — and the price is a burst of empties
+all coming home at once.
 
 **Empties.** An empty mug travelling right is caught for `SCORE_CATCH` (50) if the
-bartender is standing in that lane when the mug reaches `CATCH_X` (630). Otherwise
-it sails past `BAR_RIGHT` and shatters, costing a life.
+bartender is standing in its lane once it enters the catch zone — the near stretch
+of bar from `CATCH_X` (555) to `BAR_RIGHT` (620), painted brighter than the rest.
+Otherwise it sails past the end and shatters, costing a life. The zone is 65 px
+wide, about a third of a second: enough that a player can plan a route between
+lanes, which a single-frame catch line would not allow.
 
 **Runaway mugs.** A full mug that reaches `BAR_LEFT` without meeting a customer
 falls off the far end of the bar and shatters, costing a life.
 
-**Losing a life.** All mugs and empties in flight are swept away, any customer
-already at the bartender's end is removed, and the remaining customers stagger
-back by `PUSHBACK`. At zero lives the game is over and the best score is written
+**Losing a life.** All mugs and empties in flight are swept away (pending queued
+drinks with them), any customer already at the bartender's end is removed, and the
+remaining customers stagger back by `PUSHBACK`, clamped so nobody is shoved off
+the far end of the bar. At zero lives the game is over and the best score is written
 to `localStorage` under `sodatapper-best`.
 
 **Waves.** Level *n* spawns `4 + 2n` customers on a timer that shortens as the
@@ -83,6 +94,27 @@ result exact rather than timing-dependent.
 
 Lane choice for spawning uses a small seeded LCG (`setSeed`, `rand`) rather than
 `Math.random`, so a spec can pin a wave to a known sequence of lanes.
+
+## Balance
+
+The tuning above was settled by running scripted players against the simulation
+rather than by eye. Three findings shaped it:
+
+- **The catch zone had to be widened.** At its first size the window on a
+  returning empty was 0.11 s, which made pouring more than one mug at a time a
+  guaranteed death and flattened the game into a one-mug treadmill.
+- **Mugs had to survive meeting a drinking customer.** Before queued drinks
+  existed, a second mug slid straight past a drinking customer and smashed, so
+  the only survivable strategy was one mug per lane — and since a fixed shove
+  cannot out-pace a customer who walks faster every level, play plateaued into
+  an endless score farm that never advanced.
+- **The speed ramp was softened** from +6 to +4 px/s per level, so difficulty
+  comes from more customers arriving faster rather than from customers who
+  outrun the mechanic outright.
+
+A player who counts the drinks already committed to a lane before pouring another
+now reaches level 5 or 6 and serves around fifty customers, and loses to customers
+reaching the bar rather than to wasted glassware.
 
 ## Assumptions
 
