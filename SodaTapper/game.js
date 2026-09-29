@@ -305,6 +305,12 @@ function stepCustomers(dt) {
             c.x -= PUSHBACK;
 
             if (c.x < BAR_LEFT) {
+                // Leaving does not cancel the round: a mug poured is an empty
+                // owed, so anything still queued comes back down the bar too,
+                // spaced out rather than stacked into one free catch.
+                for (let q = 0; q < c.queued; q++) {
+                    empties.push(makeEmpty(c.lane, c.x + CUSTOMER_W - (q + 1) * 26));
+                }
                 customers.splice(i, 1);
                 served += 1;
                 score += SCORE_SERVE;

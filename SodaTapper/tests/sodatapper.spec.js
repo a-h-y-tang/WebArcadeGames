@@ -358,6 +358,25 @@ test.describe('Soda Tapper', () => {
             expect(await page.evaluate(() => score)).toBeGreaterThanOrEqual(await page.evaluate(() => SCORE_SERVE));
         });
 
+        test('a served customer still sends back the empties they were holding', async ({ page }) => {
+            // Lane 3, away from the bartender, so the empties can be counted in
+            // flight rather than caught as they arrive.
+            await page.evaluate(() => {
+                spawnCustomer(3);
+                customers[0].x = BAR_LEFT + 20;
+                customers[0].state = 'drinking';
+                customers[0].timer = DRINK_TIME;
+                customers[0].queued = 2;
+            });
+            await advance(page, Math.ceil(60 * 0.9));
+            expect(await page.evaluate(() => served)).toBe(1);
+            expect(await page.evaluate(() => customers.length)).toBe(0);
+            // Every mug poured is an empty owed, even the ones still queued.
+            expect(await page.evaluate(() => empties.length)).toBe(3);
+            const xs = await page.evaluate(() => empties.map((e) => Math.round(e.x)));
+            expect(new Set(xs).size).toBe(3);
+        });
+
         test('a mug that meets nobody shatters at the far end and costs a life', async ({ page }) => {
             await page.evaluate(() => pour());
             await advance(page, 60 * 4);

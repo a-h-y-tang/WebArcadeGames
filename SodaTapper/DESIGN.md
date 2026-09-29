@@ -50,7 +50,10 @@ wasted: it is queued (`customer.queued`) and becomes their next round the moment
 the current one is finished, with its own empty and its own shove. This is what
 makes stacking two or three mugs into one lane a real tactic — it is the only way
 to out-push a customer on the later levels — and the price is a burst of empties
-all coming home at once.
+all coming home at once. A customer served while still holding queued rounds
+sends those empties back as they go, spaced out down the bar, so a mug poured is
+always an empty owed and stacking mugs onto a nearly-served customer is never
+free.
 
 **Empties.** An empty mug travelling right is caught for `SCORE_CATCH` (50) if the
 bartender is standing in its lane once it enters the catch zone — the near stretch
