@@ -215,6 +215,15 @@ test.describe('Tapper', () => {
             expect(moved.travelled).toBeCloseTo(moved.expected, 1);
         });
 
+        test('clicking a lane moves the bartender there and pours', async ({ page }) => {
+            await startQuiet(page);
+            const box = await page.locator('#canvas').boundingBox();
+            const y = await page.evaluate(() => laneY(2));
+            await page.mouse.click(box.x + box.width / 2, box.y + (y / 480) * box.height);
+            expect(await page.evaluate(() => player.lane)).toBe(2);
+            expect(await page.evaluate(() => mugs.map((m) => m.lane))).toEqual([2]);
+        });
+
         test('pouring does nothing while paused', async ({ page }) => {
             await startQuiet(page);
             await page.evaluate(() => {
@@ -281,6 +290,19 @@ test.describe('Tapper', () => {
             const states = await page.evaluate(() => customers.map((c) => c.state));
             expect(states[0]).toBe('advancing');
             expect(states[1]).not.toBe('advancing');
+        });
+
+        test('a patron on their way out does not take another mug', async ({ page }) => {
+            await startQuiet(page);
+            await page.evaluate(() => {
+                spawnCustomer(0, 300);
+                customers[0].state = 'leaving';
+                pour();
+            });
+            await advance(page, 90);
+            expect(await page.evaluate(() => mugs.length)).toBe(1);
+            expect(await page.evaluate(() => mugs[0].x)).toBeLessThan(300);
+            expect(await page.evaluate(() => score)).toBe(0);
         });
 
         test('a drinking patron sends an empty mug back up the lane', async ({ page }) => {

@@ -409,50 +409,77 @@ function draw() {
     ctx.fillStyle = wall;
     ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
 
-    for (let lane = 0; lane < LANES; lane++) drawLane(lane);
+    // Each lane is drawn in three passes so the bar has some depth: the back
+    // of the lane, then everyone standing at it, then the front of the
+    // counter over the top of them.
+    for (let lane = 0; lane < LANES; lane++) drawLaneBack(lane);
 
     for (const s of splashes) drawSplash(s);
     for (const c of customers) drawCustomer(c);
-    for (const m of mugs) drawMug(m.x, laneY(m.lane), true);
-    for (const e of empties) drawMug(e.x, laneY(e.lane), false);
     drawPlayer();
+    for (let lane = 0; lane < LANES; lane++) drawLaneFront(lane);
+    for (const m of mugs) drawMug(m.x, laneY(m.lane) - 1, true);
+    for (const e of empties) drawMug(e.x, laneY(e.lane) - 1, false);
 
     if (state === 'dying') drawBanner(lastLoss);
     else if (state === 'clear') drawBanner(`BAR CLEARED  +${CLEAR_BONUS * level}`);
 }
 
-function drawLane(lane) {
+function drawLaneBack(lane) {
     const y = laneY(lane);
     const top = LANE_TOP + lane * LANE_H;
 
-    // Bar counter.
-    const counter = ctx.createLinearGradient(0, y - 20, 0, y + 26);
-    counter.addColorStop(0, '#6b4524');
-    counter.addColorStop(0.5, '#8a5a2e');
-    counter.addColorStop(1, '#4a2e17');
-    ctx.fillStyle = counter;
-    ctx.fillRect(BAR_LEFT - 34, y - 20, TAP_X - BAR_LEFT + 60, 46);
-
-    ctx.strokeStyle = 'rgba(255, 220, 160, 0.18)';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(BAR_LEFT - 34, y - 19);
-    ctx.lineTo(TAP_X + 26, y - 19);
-    ctx.stroke();
+    // Panelled back wall for the lane; the one you are serving is lit.
+    ctx.fillStyle = lane === player.lane ? '#1e2738' : '#161d2b';
+    ctx.fillRect(0, top + 4, CANVAS_W, LANE_H - 8);
+    ctx.strokeStyle = '#222c3d';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(0.5, top + 4.5, CANVAS_W - 1, LANE_H - 9);
 
     // Doorway at the far end.
-    ctx.fillStyle = '#121724';
-    ctx.fillRect(0, top + 8, 36, LANE_H - 16);
-    ctx.strokeStyle = '#2a3348';
+    ctx.fillStyle = '#0a0e16';
+    ctx.fillRect(0, top + 12, 38, LANE_H - 26);
+    ctx.strokeStyle = '#2f3a52';
     ctx.lineWidth = 2;
-    ctx.strokeRect(0.5, top + 8.5, 36, LANE_H - 17);
+    ctx.strokeRect(0.5, top + 12.5, 38, LANE_H - 27);
 
-    // Tap at the service end.
-    ctx.fillStyle = '#9aa7bd';
-    ctx.fillRect(TAP_X + 10, y - 40, 8, 22);
-    ctx.fillRect(TAP_X + 4, y - 22, 20, 7);
+    // Tap tower at the service end.
+    ctx.fillStyle = '#8c99af';
+    ctx.fillRect(TAP_X + 12, y - 52, 9, 34);
+    ctx.fillStyle = '#b9c5d8';
+    ctx.fillRect(TAP_X + 4, y - 26, 25, 8);
     ctx.fillStyle = '#f5b942';
-    ctx.fillRect(TAP_X + 12, y - 48, 4, 8);
+    ctx.fillRect(TAP_X + 14, y - 58, 5, 8);
+}
+
+function drawLaneFront(lane) {
+    const y = laneY(lane);
+    const top = y + 8;        // the surface the mugs rest on
+
+    // Counter top.
+    const surface = ctx.createLinearGradient(0, top, 0, top + 8);
+    surface.addColorStop(0, '#b0763b');
+    surface.addColorStop(1, '#85542a');
+    ctx.fillStyle = surface;
+    ctx.fillRect(0, top, CANVAS_W, 8);
+
+    // Front face of the bar, drawn over the bottom of everyone standing at it.
+    const front = ctx.createLinearGradient(0, top + 8, 0, top + 26);
+    front.addColorStop(0, '#5c3a1c');
+    front.addColorStop(1, '#2f1d0e');
+    ctx.fillStyle = front;
+    ctx.fillRect(0, top + 8, CANVAS_W, 18);
+
+    ctx.strokeStyle = 'rgba(255, 224, 170, 0.25)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, top + 1);
+    ctx.lineTo(CANVAS_W, top + 1);
+    ctx.stroke();
+
+    // Catch notch: where an empty mug is either caught or lost.
+    ctx.fillStyle = lane === player.lane ? 'rgba(245, 185, 66, 0.85)' : 'rgba(245, 185, 66, 0.22)';
+    ctx.fillRect(CATCH_X - 1, top, 3, 8);
 }
 
 function drawCustomer(c) {
@@ -460,25 +487,27 @@ function drawCustomer(c) {
     const lean = c.state === 'drinking' ? -3 : 0;
     const x = c.x;
 
-    // Body.
+    // Body — the bar front is painted over the bottom of it afterwards.
     ctx.fillStyle = c.state === 'leaving' ? '#5a6b8c' : '#c0543f';
-    ctx.fillRect(x - 11, y - 16, 22, 30);
+    ctx.fillRect(x - 12, y - 18, 24, 30);
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.18)';
+    ctx.fillRect(x - 12, y - 18, 24, 6);
     // Head.
     ctx.fillStyle = '#e8c39a';
     ctx.beginPath();
-    ctx.arc(x, y - 24 + lean, 9, 0, Math.PI * 2);
+    ctx.arc(x, y - 27 + lean, 9, 0, Math.PI * 2);
     ctx.fill();
-    // Hat brim.
+    // Flat cap.
     ctx.fillStyle = '#2d3650';
-    ctx.fillRect(x - 11, y - 31 + lean, 22, 4);
+    ctx.fillRect(x - 11, y - 35 + lean, 22, 5);
 
-    // Thirst pips: one per drink still wanted.
+    // Thirst: one mug pip above the head per drink still wanted.
     ctx.fillStyle = '#f5b942';
     for (let i = 0; i < c.need; i++) {
-        ctx.fillRect(x - 10 + i * 8, y + 18, 6, 4);
+        ctx.fillRect(x - 3 - (c.need - 1) * 5 + i * 10, y - 47, 6, 7);
     }
 
-    if (c.state === 'drinking') drawMug(x + 14, y - 18, true, 0.9);
+    if (c.state === 'drinking') drawMug(x + 15, y - 20, true, 0.85);
 }
 
 function drawMug(x, y, full, scale = 1) {
@@ -502,27 +531,33 @@ function drawMug(x, y, full, scale = 1) {
 function drawPlayer() {
     const y = laneY(player.lane);
 
-    // Apron and body.
+    // Reaching arm, laid along the counter towards the catch line.
+    ctx.strokeStyle = '#e8c39a';
+    ctx.lineWidth = 6;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(PLAYER_X - 8, y - 8);
+    ctx.lineTo(CATCH_X - 4, y - 2);
+    ctx.stroke();
+    ctx.lineCap = 'butt';
+
+    // Shirt and apron.
     ctx.fillStyle = '#eceff6';
-    ctx.fillRect(PLAYER_X - 13, y - 14, 26, 32);
-    ctx.fillStyle = '#4a5a7a';
-    ctx.fillRect(PLAYER_X - 13, y + 2, 26, 16);
+    ctx.fillRect(PLAYER_X - 14, y - 18, 28, 30);
+    ctx.fillStyle = '#44547a';
+    ctx.fillRect(PLAYER_X - 14, y - 2, 28, 14);
     // Head.
     ctx.fillStyle = '#e8c39a';
     ctx.beginPath();
-    ctx.arc(PLAYER_X, y - 23, 9, 0, Math.PI * 2);
+    ctx.arc(PLAYER_X, y - 27, 9, 0, Math.PI * 2);
     ctx.fill();
-    // Catching arm, reaching back down the bar.
-    ctx.strokeStyle = '#e8c39a';
-    ctx.lineWidth = 5;
-    ctx.beginPath();
-    ctx.moveTo(PLAYER_X - 10, y - 6);
-    ctx.lineTo(CATCH_X - 6, y - 2);
-    ctx.stroke();
+    // Hair.
+    ctx.fillStyle = '#3a2c20';
+    ctx.fillRect(PLAYER_X - 9, y - 36, 18, 6);
 }
 
 function drawSplash(s) {
-    const y = laneY(s.lane);
+    const y = laneY(s.lane) - 1;
     const a = Math.max(0, s.life / 0.6);
     ctx.strokeStyle = `rgba(245, 185, 66, ${a})`;
     ctx.lineWidth = 2;

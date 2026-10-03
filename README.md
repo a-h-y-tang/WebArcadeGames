@@ -142,7 +142,7 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Canyon Raider | [CanyonRaider/](CanyonRaider/) | Complete |
 | Air Traffic Control | [AirTrafficControl/](AirTrafficControl/) | Complete |
 | Gold Runner | [GoldRunner/](GoldRunner/) | Complete |
-| Tapper | [Tapper/](Tapper/) | In Progress |
+| Tapper | [Tapper/](Tapper/) | Complete |
 
 ## Playing
 

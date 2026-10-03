@@ -73,8 +73,26 @@ writes the best score to `localStorage` under `tapper-best`.
 |---|---|
 | ↑ / ↓ (or W / S) | move between lanes |
 | Space | pour a mug down the current lane (`POUR_COOLDOWN` between pours) |
+| Click a lane | jump to that lane and pour (mouse shortcut for the two above) |
 | P | pause / resume |
 | Space (idle or game over) | start a new game |
+
+## Drawing
+
+Each lane is drawn in three passes — the back wall, doorway and tap tower;
+then everyone standing at the bar; then the counter top and its front face over
+the bottom of them — so the patrons read as standing *behind* the bar rather
+than on it. Mugs are drawn last, resting on the counter surface. The lane you
+are serving is lit slightly brighter and its catch notch is picked out in
+amber, so a glance at the board tells you which lane you are in.
+
+## Balance
+
+A greedy bot that always covers the patron nearest the taps, and drops
+everything to catch an incoming empty, clears six levels and dies on level 7,
+where patrons walk at 58 px/s and want three drinks each. That is the curve the
+constants above are tuned for: comfortable at first, out of reach of
+one-lane-at-a-time play by level 7.
 
 ## Code shape
 
