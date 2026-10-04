@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prism Path</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="game">
+        <header class="hud">
+            <h1>PRISM PATH</h1>
+            <div class="stats">
+                <div class="stat"><span class="label">Level</span><span id="level">1</span></div>
+                <div class="stat"><span class="label">Moves</span><span id="moves">0</span></div>
+                <div class="stat"><span class="label">Par</span><span id="par">0</span></div>
+                <div class="stat"><span class="label">Lit</span><span id="lit">0/0</span></div>
+                <div class="stat"><span class="label">Score</span><span id="score">0</span></div>
+                <div class="stat"><span class="label">Best</span><span id="best">0</span></div>
+            </div>
+            <p id="level-name" class="level-name"></p>
+        </header>
+
+        <div class="board-wrap">
+            <canvas id="canvas" width="480" height="480"></canvas>
+            <div id="overlay" class="overlay visible">
+                <h2 id="overlay-title">PRISM PATH</h2>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Press Space or click Start to play</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+
+        <div class="help">
+            <p><kbd>&larr;</kbd><kbd>&uarr;</kbd><kbd>&darr;</kbd><kbd>&rarr;</kbd> / <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> move the cursor &mdash; or just use the mouse</p>
+            <p><kbd>Space</kbd> or click a mirror to turn it &mdash; <kbd>R</kbd> restart level &mdash; <kbd>N</kbd> next level</p>
+            <p>Turn the mirrors until every target glows in the colour it asks for.</p>
+            <div class="legend">
+                <span class="key"><i class="sw mirror"></i>mirror &mdash; turn it</span>
+                <span class="key"><i class="sw prism"></i>prism &mdash; splits the beam</span>
+                <span class="key"><i class="sw filter"></i>filter &mdash; tints the beam</span>
+                <span class="key"><i class="sw target"></i>target &mdash; light it up</span>
+            </div>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>
