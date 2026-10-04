@@ -810,6 +810,15 @@
     "thumbnail": "games/Pooyan/screenshot.png"
   },
   {
+    "id": "prism-path",
+    "name": "Prism Path",
+    "description": "Turn mirrors to route a laser through prisms and filters onto every target",
+    "category": "Puzzle",
+    "dir": "PrismPath",
+    "path": "games/PrismPath/index.html",
+    "thumbnail": "games/PrismPath/screenshot.png"
+  },
+  {
     "id": "pyramid-solitaire",
     "name": "Pyramid Solitaire",
     "description": "Card solitaire with pyramid layout",
