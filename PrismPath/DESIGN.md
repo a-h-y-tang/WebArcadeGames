@@ -65,6 +65,13 @@ The walk emits a list of drawable segments (centre to centre, so a filter's
 colour change happens visually at the filter) and sets `lit` on every target it
 satisfies. `isSolved()` is then just "every target is lit".
 
+## Readability
+
+Colour is the whole mechanic, so nothing depends on it alone: every filter and
+target is drawn with its colour's letter (`R G B Y C M W`) and the HUD carries a
+`lit / total` target tally, which is also what tells the player how much of a
+multi-target board is already done.
+
 ## Scoring
 
 Each level has a **par** — the number of rotations in the intended solution.

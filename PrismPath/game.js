@@ -33,6 +33,12 @@ const INK = {
     7: '#ffffff',                    // white
 };
 
+// One-letter name per mask, drawn on targets and filters so the board reads
+// without relying on colour alone.
+const LETTER = {
+    1: 'R', 2: 'G', 4: 'B', 3: 'Y', 6: 'C', 5: 'M', 7: 'W',
+};
+
 const DIRS = {
     right: { dx: 1, dy: 0 },
     left: { dx: -1, dy: 0 },
@@ -194,9 +200,9 @@ function makeCell(ch) {
     if (ch === '(') return { type: 'splitter', orient: '/' };
     if (ch === ')') return { type: 'splitter', orient: '\\' };
     if (MASKS[ch] !== undefined) return { type: 'filter', mask: MASKS[ch] };
-    const upper = ch.toLowerCase();
-    if (ch !== upper && MASKS[upper] !== undefined) {
-        return { type: 'target', mask: MASKS[upper], lit: false };
+    const lower = ch.toLowerCase();
+    if (ch !== lower && MASKS[lower] !== undefined) {
+        return { type: 'target', mask: MASKS[lower], lit: false };
     }
     return { type: 'empty' };
 }
@@ -210,6 +216,7 @@ function loadBoard(rows) {
         return cells;
     });
     traceBeams();
+    updateHud();
     draw();
     return grid;
 }
@@ -368,6 +375,7 @@ const el = {
     par: document.getElementById('par'),
     score: document.getElementById('score'),
     best: document.getElementById('best'),
+    lit: document.getElementById('lit'),
     name: document.getElementById('level-name'),
     overlay: document.getElementById('overlay'),
     title: document.getElementById('overlay-title'),
@@ -376,7 +384,15 @@ const el = {
     start: document.getElementById('btn-start'),
 };
 
+// How many targets are currently lit, and how many there are in total.
+function targetTally() {
+    const targets = grid.flat().filter((c) => c.type === 'target');
+    return { lit: targets.filter((c) => c.lit).length, total: targets.length };
+}
+
 function updateHud() {
+    const tally = targetTally();
+    el.lit.textContent = `${tally.lit}/${tally.total}`;
     el.level.textContent = String(level);
     el.moves.textContent = String(moves);
     el.par.textContent = String(levels[levelIndex].par);
@@ -492,7 +508,7 @@ function drawCell(x, y, cell) {
         case 'mirror':
         case 'splitter': {
             const slash = cell.orient === '/';
-            const x1 = px + (slash ? -half : -half);
+            const x1 = px - half;
             const y1 = py + (slash ? half : -half);
             const x2 = px + half;
             const y2 = py + (slash ? -half : half);
@@ -528,6 +544,7 @@ function drawCell(x, y, cell) {
             ctx.fill();
             ctx.stroke();
             ctx.restore();
+            label(px, py, LETTER[cell.mask], ink, 11);
             break;
         }
 
@@ -557,6 +574,7 @@ function drawCell(x, y, cell) {
                 ctx.fill();
                 ctx.restore();
             }
+            label(px, py, LETTER[cell.mask], cell.lit ? '#06101d' : ink, 13);
             break;
         }
 
@@ -576,6 +594,16 @@ function drawCursor() {
     roundRect(x + 2, y + 2, CELL - 4, CELL - 4, 7);
     ctx.stroke();
     ctx.setLineDash([]);
+}
+
+function label(px, py, text, ink, size) {
+    ctx.save();
+    ctx.fillStyle = ink;
+    ctx.font = `700 ${size}px "Segoe UI", Roboto, Helvetica, Arial, sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(text, px, py + 0.5);
+    ctx.restore();
 }
 
 function roundRect(x, y, w, h, r) {
@@ -652,7 +680,7 @@ canvas.addEventListener('click', (e) => {
     rotate(x, y);
 });
 
-el.start.addEventListener('click', () => advance());
+el.overlay.addEventListener('click', () => advance());
 
 // --- boot ------------------------------------------------------------------
 

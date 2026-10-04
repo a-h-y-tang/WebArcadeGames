@@ -111,6 +111,7 @@ test.describe('Prism Path', () => {
             await expect(page.locator('#moves')).toHaveText('0');
             await expect(page.locator('#score')).toHaveText('0');
             await expect(page.locator('#best')).toHaveText('0');
+            await expect(page.locator('#par')).toHaveText('1');
         });
 
         test('state starts idle', async ({ page }) => {
@@ -519,6 +520,60 @@ test.describe('Prism Path', () => {
     });
 
     // -----------------------------------------------------------------------
+    // Target counter and colour labels
+    // -----------------------------------------------------------------------
+    test.describe('readability', () => {
+        test('the HUD counts lit targets out of the total', async ({ page }) => {
+            await start(page);
+            await expect(page.locator('#lit')).toHaveText('0/1');
+            await applySolution(page, await findSolution(page));
+            await expect(page.locator('#lit')).toHaveText('1/1');
+        });
+
+        test('the counter tracks a board with several targets', async ({ page }) => {
+            await start(page);
+            await setBoard(page, [
+                '>........W',
+                '..........', '..........', '..........', '..........',
+                '..........', '..........', '..........', '..........',
+                'W........<',
+            ]);
+            await expect(page.locator('#lit')).toHaveText('2/2');
+            await setBoard(page, [
+                '>...#....W',
+                '..........', '..........', '..........', '..........',
+                '..........', '..........', '..........', '..........',
+                'W........<',
+            ]);
+            await expect(page.locator('#lit')).toHaveText('1/2');
+        });
+
+        test('every colour has a one-letter label', async ({ page }) => {
+            const labels = await page.evaluate(() =>
+                [1, 2, 4, 3, 6, 5, 7].map((mask) => LETTER[mask]));
+            expect(labels).toEqual(['R', 'G', 'B', 'Y', 'C', 'M', 'W']);
+        });
+
+        test('targets and filters are labelled on the canvas', async ({ page }) => {
+            await setBoard(page, [
+                '..g.R.....',
+                '..........', '..........', '..........', '..........',
+                '..........', '..........', '..........', '..........', '..........',
+            ]);
+            const drawn = await page.evaluate(() => {
+                const seen = [];
+                const real = ctx.fillText.bind(ctx);
+                ctx.fillText = (t, ...rest) => { seen.push(t); return real(t, ...rest); };
+                draw();
+                ctx.fillText = real;
+                return seen;
+            });
+            expect(drawn).toContain('R');
+            expect(drawn).toContain('G');
+        });
+    });
+
+    // -----------------------------------------------------------------------
     // Input
     // -----------------------------------------------------------------------
     test.describe('input', () => {
@@ -694,6 +749,16 @@ test.describe('Prism Path', () => {
             await applySolution(page, await findSolution(page));
             await page.keyboard.press('Space');
             expect(await page.evaluate(() => level)).toBe(2);
+        });
+
+        test('clicking the overlay advances exactly one level', async ({ page }) => {
+            await start(page);
+            await applySolution(page, await findSolution(page));
+            await page.locator('#btn-start').click();
+            expect(await page.evaluate(() => level)).toBe(2);
+            await applySolution(page, await findSolution(page));
+            await page.locator('#overlay-title').click();
+            expect(await page.evaluate(() => level)).toBe(3);
         });
 
         test('the score carries across levels', async ({ page }) => {

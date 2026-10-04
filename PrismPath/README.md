@@ -36,6 +36,10 @@ shares with the beam:
 Targets match exactly, so a white beam will *not* light a red target. If a
 target wants red, the beam has to pass a red filter on the way.
 
+Every filter and target carries its colour's letter — **R G B Y C M W** — so the
+board reads without relying on colour alone. The **LIT** counter in the HUD
+shows how many targets you have lit out of the total.
+
 ## Controls
 
 | Input | Action |
