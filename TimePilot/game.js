@@ -20,7 +20,7 @@ const PLAYER_SPEED = 150;            // px/s, constant — there is no throttle
 const TURN_RATE = 2.6;               // radians/second
 const PLAYER_R = 11;                 // collision radius
 const NOSE = 14;                     // muzzle offset from the plane's centre
-const INVULN_TIME = 2;               // seconds of grace after a hit
+const INVULN_TIME = 2.5;             // seconds of grace after a hit
 const START_LIVES = 3;
 
 // --- guns ------------------------------------------------------------------
@@ -37,7 +37,7 @@ const ENEMY_BULLET_LIFE = 2.6;
 // --- enemies ---------------------------------------------------------------
 
 const ENEMY_R = 13;
-const ENEMY_TURN = 2.8;              // radians/second of weak homing
+const ENEMY_TURN = 1.8;              // radians/second — below the player's 2.6 on purpose
 const ENEMY_RANGE = 320;             // will not shoot from further than this
 const ENEMY_AIM = 0.5;               // radians of aim error it will shoot through
 const ENEMY_SPAWN_GAP = 0.9;         // seconds between arrivals
@@ -61,11 +61,11 @@ const SPEED_STEP = 0.08;             // extra enemy speed per completed cycle
 const BEST_KEY = 'timepilot-best';
 
 const ERAS = [
-    { year: 1910, name: 'BIPLANES',      speed: 95,  maxAlive: 4, quota: 8,  points: 100, fireGap: 1.9,  tint: '#86efac' },
-    { year: 1940, name: 'PROP FIGHTERS', speed: 112, maxAlive: 5, quota: 10, points: 200, fireGap: 1.6,  tint: '#fde047' },
-    { year: 1970, name: 'JETS',          speed: 130, maxAlive: 5, quota: 12, points: 300, fireGap: 1.35, tint: '#93c5fd' },
-    { year: 1983, name: 'GUNSHIPS',      speed: 146, maxAlive: 6, quota: 14, points: 400, fireGap: 1.15, tint: '#fda4af' },
-    { year: 2001, name: 'SAUCERS',       speed: 162, maxAlive: 6, quota: 16, points: 500, fireGap: 0.95, tint: '#d8b4fe' },
+    { year: 1910, name: 'BIPLANES',      speed: 95,  maxAlive: 3, quota: 8,  points: 100, fireGap: 2.6, tint: '#86efac' },
+    { year: 1940, name: 'PROP FIGHTERS', speed: 112, maxAlive: 4, quota: 10, points: 200, fireGap: 2.2, tint: '#fde047' },
+    { year: 1970, name: 'JETS',          speed: 130, maxAlive: 4, quota: 12, points: 300, fireGap: 1.8, tint: '#93c5fd' },
+    { year: 1983, name: 'GUNSHIPS',      speed: 146, maxAlive: 5, quota: 14, points: 400, fireGap: 1.5, tint: '#fda4af' },
+    { year: 2001, name: 'SAUCERS',       speed: 162, maxAlive: 5, quota: 16, points: 500, fireGap: 1.2, tint: '#d8b4fe' },
 ];
 
 // --- state -----------------------------------------------------------------
@@ -191,7 +191,7 @@ function announceEra() {
 function togglePause() {
     if (state === 'running') {
         state = 'paused';
-        showOverlay('PAUSED', 'Score ' + score, 'Press P to resume');
+        showOverlay('PAUSED', 'Score ' + score, 'Press P to resume', 'Resume');
     } else if (state === 'paused') {
         state = 'running';
         hideOverlay();
@@ -205,10 +205,12 @@ function gameOver() {
         saveBest();
     }
     updateHud();
+    const rescues = rescued === 1 ? '1 pilot rescued' : rescued + ' pilots rescued';
     showOverlay(
         'GAME OVER',
         'Score ' + score + '  •  Best ' + best,
-        'Press Space to fly again',
+        'Reached ' + era().year + '  •  ' + rescues + '. Press Space to fly again.',
+        'Fly Again',
     );
 }
 
@@ -455,10 +457,11 @@ function updateHud() {
     els.best.textContent = String(best);
 }
 
-function showOverlay(title, scoreLine, sub) {
+function showOverlay(title, scoreLine, sub, button) {
     els.title.textContent = title;
     els.overlayScore.textContent = scoreLine;
     els.sub.textContent = sub;
+    els.start.textContent = button;
     els.overlay.classList.add('visible');
 }
 
@@ -779,10 +782,20 @@ function draw() {
         ctx.stroke();
     }
 
-    // The plane, forever at the centre. It blinks while invulnerable.
-    const blink = player.invuln > 0 && Math.floor(player.invuln * 10) % 2 === 0;
-    if (state !== 'gameover' && !blink) {
+    // The plane, forever at the centre. While invulnerable it pulses inside a
+    // shield ring rather than blinking out: a plane that is missing on half the
+    // frames is a plane you cannot aim.
+    if (state !== 'gameover') {
         ctx.save();
+        if (player.invuln > 0) {
+            const pulse = 0.5 + 0.5 * Math.sin(player.invuln * 14);
+            ctx.globalAlpha = 0.5 + 0.5 * pulse;
+            ctx.strokeStyle = 'rgba(103, 232, 249, ' + (0.2 + 0.3 * pulse).toFixed(3) + ')';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(W / 2, H / 2, 26, 0, Math.PI * 2);
+            ctx.stroke();
+        }
         ctx.shadowColor = 'rgba(56, 189, 248, 0.55)';
         ctx.shadowBlur = 12;
         drawCraft(W / 2, H / 2, player.heading, 19, '#38bdf8', '#e0f2fe', 'prop', spin);

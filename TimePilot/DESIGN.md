@@ -16,8 +16,9 @@ moving and can point anywhere.
   prop fighters, 1970 jets, 1983 gunships, 2001 saucers.
 - Each era has a kill quota. Fill it and the clock jumps to the next era;
   clear 2001 and the cycle restarts one difficulty step harder.
-- Pilots shot down over the battlefield bail out. Fly *into* a parachute to
-  rescue the pilot for a 1000-point bonus — the only way to score big.
+- Pilots bail out over the battlefield from time to time (on a timer, not off
+  the back of a kill). Fly *into* a parachute to rescue one for a 1000-point
+  bonus — worth more than any kill in any era.
 - Three lives. An enemy plane, or one of its bullets, costs one.
 
 ## Mechanics
@@ -46,28 +47,45 @@ The world is unbounded — there are no walls. Any enemy or bullet further than
 
 ### Enemies
 
-Enemies spawn on the despawn ring at a random bearing and fly a weak homing
-course: each tick they steer toward the player at `ENEMY_TURN` (1.1 rad/s) and
-move at their era's speed. Weak homing means they overshoot and come back round,
-which produces the swirling dogfight the original arcade game is known for,
-without any per-enemy state machine.
+Enemies spawn on the spawn ring at a random bearing and fly a weak homing
+course: each tick they steer toward the player at `ENEMY_TURN` and move at
+their era's speed. Weak homing means they overshoot and come back round, which
+produces the swirling dogfight without any per-enemy state machine.
 
-An enemy whose nose is within ~0.5 rad of the player and inside 320 px may fire;
-the chance per second is the era's `fireRate`. Enemy bullets are slower
-(190 px/s) than the player's and live 2.6 s.
+`ENEMY_TURN` is 1.8 rad/s against the player's 2.6, and that gap is the whole
+fight. The first build had enemies turning at 2.8 — faster than the player —
+and a bot that flew at the nearest enemy died on contact every time, because
+nothing could ever be shaken or out-turned. Enemies are also slower in a
+straight line (95–162 px/s against 150), so running away works in the early
+eras and stops working in the late ones.
+
+An enemy whose nose is within `ENEMY_AIM` (0.5 rad) of the player and inside
+`ENEMY_RANGE` (320 px) fires when its own cooldown expires; the cooldown is the
+era's `fireGap` jittered by ±30%, which is deterministic enough to test and
+irregular enough not to sound like a metronome. Enemy bullets leave the hull
+rather than the centre, are slower (190 px/s) than the player's, and live
+2.6 s.
 
 The number of enemies alive at once is capped per era (`maxAlive`), and a fresh
 one is dripped in on `ENEMY_SPAWN_GAP` (0.9 s) while below the cap.
 
 ### Eras and waves
 
-| Wave era | Year | Enemy speed | Max alive | Quota | Points |
-|---|---|---|---|---|---|
-| Biplanes | 1910 | 95 | 4 | 8 | 100 |
-| Prop fighters | 1940 | 112 | 5 | 10 | 200 |
-| Jets | 1970 | 130 | 5 | 12 | 300 |
-| Gunships | 1983 | 146 | 6 | 14 | 400 |
-| Saucers | 2001 | 162 | 6 | 16 | 500 |
+| Era | Year | Enemy speed | Max alive | Fire gap | Quota | Points |
+|---|---|---|---|---|---|---|
+| Biplanes | 1910 | 95 | 3 | 2.6 s | 8 | 100 |
+| Prop fighters | 1940 | 112 | 4 | 2.2 s | 10 | 200 |
+| Jets | 1970 | 130 | 4 | 1.8 s | 12 | 300 |
+| Gunships | 1983 | 146 | 5 | 1.5 s | 14 | 400 |
+| Saucers | 2001 | 162 | 5 | 1.2 s | 16 | 500 |
+
+These came out of a scripted pilot rather than guesswork: a bot that flies at
+the nearest enemy and shoots, run over several seeds, plus a "passive" run that
+never touches the controls. The first numbers (4–6 enemies alive, a 1.9 s fire
+gap in 1910) killed a passive pilot in 30–80 s and burned all three lives
+inside 8 s on a bad seed — the early eras were doing late-era work. At the
+numbers above a passive pilot lasts 83–175 s, and the lives a player loses are
+lost while engaging rather than while arriving.
 
 `wave` is 1-based and never resets; the era is `(wave - 1) % 5`, so wave 6 is
 1910 again but every enemy speed is multiplied by `1 + 0.08 * cycle`. Hitting
@@ -90,8 +108,11 @@ harmless; the risk is that chasing one means not watching the dogfight.
 ### Damage and lives
 
 A hit (enemy bullet, or flying into an enemy) costs a life and grants
-`INVULN_TIME` 2 s of blinking invulnerability during which nothing can hurt the
-player and the battlefield's enemy bullets are cleared. At zero lives the state
+`INVULN_TIME` 2.5 s of invulnerability during which nothing can hurt the player
+and the battlefield's enemy bullets are cleared. The plane pulses inside a
+shield ring for the duration rather than blinking out of existence — an earlier
+version hid it on alternate tenths of a second, which made the one moment you
+most need to re-orient the moment you cannot see your own nose. At zero lives the state
 becomes `gameover`, the best score is written to `localStorage`
 (`timepilot-best`), and the overlay returns.
 
