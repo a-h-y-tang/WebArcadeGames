@@ -76,7 +76,7 @@ assumptions behind them.
 npx playwright test ElevatorAction/tests/
 ```
 
-110 Playwright specs cover the building layout, walking and crouching, calling
+111 Playwright specs cover the building layout, walking and crouching, calling
 and driving the lifts, documents and the exit, shooting, the agents and their
 AI, getting hit, crushing, scoring and rendering. The whole simulation runs
 through `step(dt)` with the animation loop switched off, so every spec is

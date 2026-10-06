@@ -731,21 +731,30 @@ function drawCars() {
 // legs, drawn from the feet up so crouching is just a shorter body.
 function drawFigure(x, y, h, facing, coat, skin) {
     const left = x - PLAYER_W / 2;
-    const top = y - camY - h;
-    const bodyH = Math.max(6, h - 10);
+    const base = y - camY;
+    const top = base - h;
+    // A crouch is not a scaled-down stand: the legs fold away and the head
+    // shrinks, so the coat still has a body's worth of height to fill.
+    const headH = h >= 28 ? 9 : 7;
+    const legH = h >= 28 ? 8 : 0;
+    const bodyTop = top + headH;
+    const bodyH = Math.max(3, base - legH - bodyTop);
 
     ctx.fillStyle = coat;
-    ctx.fillRect(left + 3, top + 8, PLAYER_W - 6, bodyH - 8);
+    ctx.fillRect(left + 3, bodyTop, PLAYER_W - 6, bodyH);
     ctx.fillStyle = skin;
-    ctx.fillRect(left + 6, top, PLAYER_W - 12, 9);
+    ctx.fillRect(left + 6, top, PLAYER_W - 12, headH);
     ctx.fillStyle = '#131a26';
     ctx.fillRect(left + 4, top - 2, PLAYER_W - 8, 3);   // hat
-    ctx.fillStyle = coat;
-    ctx.fillRect(left + 4, y - camY - 8, 5, 8);
-    ctx.fillRect(left + PLAYER_W - 9, y - camY - 8, 5, 8);
-    // The gun arm, pointing the way the figure faces.
+    if (legH) {
+        ctx.fillStyle = coat;
+        ctx.fillRect(left + 4, base - legH, 5, legH);
+        ctx.fillRect(left + PLAYER_W - 9, base - legH, 5, legH);
+    }
+    // The gun arm, pointing the way the figure faces and sitting at the height
+    // the shot actually leaves from.
     ctx.fillStyle = '#d7dce6';
-    const gunY = top + (h === CROUCH_H ? bodyH - 10 : 12);
+    const gunY = bodyTop + Math.min(4, bodyH - 3);
     ctx.fillRect(facing > 0 ? left + PLAYER_W - 2 : left - 7, gunY, 9, 3);
 }
 
