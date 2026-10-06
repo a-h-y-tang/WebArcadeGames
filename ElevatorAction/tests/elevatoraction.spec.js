@@ -1002,6 +1002,30 @@ test.describe('Elevator Action', () => {
             expect(spawned.every(Boolean)).toBe(true);
         });
 
+        test('the spawner never drops an agent into the player\'s lap', async ({ page }) => {
+            await startQuiet(page);
+            // Floor 6 of the first building has a blue door at slot 1; stand on
+            // its threshold and nothing may be born on top of us.
+            await page.evaluate(() => {
+                const d = doors.find((x) => x.kind === 'blue' && x.floor === 6);
+                player.floor = 6;
+                player.y = floorY(6);
+                player.x = d.x + DOOR_W / 2;
+                player.onElevator = -1;
+                spawnTimer = 0;
+                for (let i = 0; i < 600; i++) {
+                    step(1 / 60);
+                    bullets.length = 0;
+                }
+            });
+            const tooClose = await page.evaluate(() =>
+                enemies.filter((e) => e.y === player.y && Math.abs(e.x - player.x) < SPAWN_CLEARANCE).length,
+            );
+            expect(await page.evaluate(() => enemies.length)).toBeGreaterThan(0);
+            expect(tooClose).toBe(0);
+            expect(await page.evaluate(() => lives)).toBe(3);
+        });
+
         test('the spawner respects the level agent cap', async ({ page }) => {
             await startQuiet(page);
             await place(page, 6, 300);

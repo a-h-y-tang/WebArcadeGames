@@ -46,6 +46,7 @@ const ENEMY_W = 22;
 const ENEMY_H = 34;
 const ENEMY_RANGE = 260;      // how far an agent will shoot
 const ENEMY_STANDOFF = 90;    // how close an agent walks before it settles in to fire
+const SPAWN_CLEARANCE = 70;   // no agent is born this close to the player
 const PATROL_FACTOR = 0.6;    // agents amble when the player is not on their line
 
 // --- Guns ----------------------------------------------------------------
@@ -472,7 +473,13 @@ function updateSpawner(dt) {
     spawnTimer = cfg.spawnInterval;
     if (enemies.length >= cfg.maxEnemies) return;
 
-    const blue = doors.filter((d) => d.kind === 'blue');
+    // Nothing is born within arm's reach of the player: walking past a blue
+    // door should not be an unavoidable death.
+    const blue = doors.filter((d) => {
+        if (d.kind !== 'blue') return false;
+        if (d.floor !== player.floor || player.onElevator >= 0) return true;
+        return Math.abs(d.x + DOOR_W / 2 - player.x) >= SPAWN_CLEARANCE;
+    });
     const near = blue.filter((d) => Math.abs(d.floor - player.floor) <= 2);
     const pool = near.length ? near : blue;
     if (!pool.length) return;
