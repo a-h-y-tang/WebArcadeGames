@@ -70,9 +70,12 @@ nothing.
 ### Agents, shooting and crouching
 
 Agents emerge from blue doors. A spawner picks a blue door on a floor near the
-player every `spawnInterval` seconds, up to `maxEnemies` alive at once. An agent
-walks towards the player's x on its own floor and, when the player shares that
-floor and is within `ENEMY_RANGE`, fires on a cooldown.
+player every `spawnInterval` seconds, up to `maxEnemies` alive at once, and
+never one within `SPAWN_CLEARANCE` of the player themselves — walking past a
+blue door should not be an unavoidable death. An agent walks towards the
+player's x on its own floor, stopping at `ENEMY_STANDOFF`, and fires on a
+cooldown once the player is on its line and within `ENEMY_RANGE`. A player
+stopped between floors is on nobody's line, so a parked car is cover.
 
 Bullets are points that travel horizontally and are tested against actor
 rectangles, so **height is the whole combat system**:
@@ -130,9 +133,12 @@ All motion is expressed per second and applied by `step(dt)`. The
 so a spec can switch it off and advance exactly the frames it wants — the whole
 suite is deterministic and never waits on wall clock timing.
 
-Order inside `step(dt)`: player input and movement → elevator summon/drive →
-door pickups → enemy spawner → enemy movement and firing → bullets → crush
-checks → death and win conditions.
+Order inside `step(dt)`: player input, which covers walking, crouching and the
+elevator → door pickups → the agent spawner → agent movement and firing →
+bullets → the elevator crush → agent contact → the basement exit → camera and
+HUD. The crush is settled before contact so that a car running an agent down
+resolves as a kill rather than as a collision with the rider standing on its
+deck.
 
 ## Assumptions
 
