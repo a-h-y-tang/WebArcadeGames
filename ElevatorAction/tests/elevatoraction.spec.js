@@ -1,8 +1,10 @@
 const { test, expect } = require('@playwright/test');
+const fs = require('fs');
 const path = require('path');
 const { pathToFileURL } = require('url');
 
 const GAME_URL = pathToFileURL(path.resolve(__dirname, '../index.html')).href;
+const REPO_ROOT = path.resolve(__dirname, '../..');
 
 // Advance the simulation deterministically: `frames` calls to step(dt).
 const advance = (page, frames, dt = 1 / 60) =>
@@ -1282,6 +1284,57 @@ test.describe('Elevator Action', () => {
             await advance(page, 10);
             await page.keyboard.press('Space');
             expect(await page.evaluate(() => [state, score, lives, level])).toEqual(['playing', 0, 3, 1]);
+        });
+    });
+
+    // -----------------------------------------------------------------------
+    // Game browser integration
+    // -----------------------------------------------------------------------
+    test.describe('game browser integration', () => {
+        const games = () =>
+            JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'game-browser/src/assets/games.json'), 'utf8'));
+
+        test('games.json lists Elevator Action', () => {
+            const entry = games().find((g) => g.id === 'elevator-action');
+            expect(entry).toBeTruthy();
+            expect(entry.name).toBe('Elevator Action');
+            expect(entry.dir).toBe('ElevatorAction');
+            expect(entry.path).toBe('games/ElevatorAction/index.html');
+            expect(entry.thumbnail).toBe('games/ElevatorAction/screenshot.png');
+            expect(entry.description.length).toBeGreaterThan(10);
+        });
+
+        test('the game is filed under a category the browser already knows', () => {
+            const all = games();
+            const entry = all.find((g) => g.id === 'elevator-action');
+            const known = new Set(all.filter((g) => g.id !== 'elevator-action').map((g) => g.category));
+            expect(known.has(entry.category)).toBe(true);
+        });
+
+        test('the games.json entry stays alphabetically sorted by name', () => {
+            const all = games();
+            const i = all.findIndex((g) => g.id === 'elevator-action');
+            expect(i).toBeGreaterThan(0);
+            expect(all[i - 1].name.localeCompare(all[i].name)).toBeLessThanOrEqual(0);
+            if (i + 1 < all.length) {
+                expect(all[i].name.localeCompare(all[i + 1].name)).toBeLessThanOrEqual(0);
+            }
+        });
+
+        test('the thumbnail the browser points at exists', () => {
+            expect(fs.existsSync(path.join(REPO_ROOT, 'ElevatorAction/screenshot.png'))).toBe(true);
+        });
+
+        test('the root README lists the game', () => {
+            const readme = fs.readFileSync(path.join(REPO_ROOT, 'README.md'), 'utf8');
+            expect(readme).toMatch(
+                /\|\s*Elevator Action\s*\|\s*\[ElevatorAction\/\]\(ElevatorAction\/\)\s*\|\s*(Complete|In Progress)\s*\|/,
+            );
+        });
+
+        test('the game ships its own README and DESIGN docs', () => {
+            expect(fs.existsSync(path.join(REPO_ROOT, 'ElevatorAction/README.md'))).toBe(true);
+            expect(fs.existsSync(path.join(REPO_ROOT, 'ElevatorAction/DESIGN.md'))).toBe(true);
         });
     });
 
