@@ -91,10 +91,12 @@ hits when it reaches the ship's plane within 12 of the ship in both `x` and
 
 ### Fuel, crashes and lives
 
-Fuel starts at `FUEL_MAX` 100 and drains at `FUEL_RATE` 3.2/s, so a full tank
-lasts about 31 seconds — less than a level, which forces at least a couple of
-descents onto the deck. A fuel tank returns `FUEL_PER_TANK` 30, capped at the
-maximum.
+Fuel starts at `FUEL_MAX` 100 and drains at `FUEL_RATE` 5.5/s, so a full tank
+lasts about 18 seconds while the shortest fortress takes 15 and the first takes
+21. Crossing level 1 on the tank you start with is therefore impossible, which is
+the point: the only refill is a tank on the deck, and the only way to shoot one
+is to drop into the layer that can kill you. A fuel tank returns
+`FUEL_PER_TANK` 30, capped at the maximum.
 
 `crash()` costs a life, refills the tank, recentres the ship and grants
 `INVULN` 1.5 s of invulnerability so the ship cannot be killed twice by the same
@@ -114,6 +116,17 @@ The scroll runs at `SCROLL_BASE + (level - 1) * SCROLL_STEP` = 110, 128, 146,
 destroyed or has passed behind the ship — which is always the boss, since it is
 the last entry of every plan. Clearing a level pays `LEVEL_BONUS` 1000 plus 10
 per unit of fuel still in the tank; clearing level `LEVEL_COUNT` 4 wins the run.
+
+### Difficulty
+
+Difficulty was checked by simulation rather than by feel. A greedy scripted
+pilot — line up on the next opening when a wall is coming, otherwise sit on the
+next target's altitude and hold the trigger — clears all four fortresses losing
+one ship, on level 3. The same pilot told to cruise high and never fire loses
+ships instead: a predictable altitude is a free shot for every turret it passes.
+Both runs are in the Playwright suite under `difficulty`, so a change to a level
+plan, the scroll speed or the fuel burn that makes the game unflyable (or
+trivial) fails the build rather than waiting to be noticed.
 
 ### Simulation
 

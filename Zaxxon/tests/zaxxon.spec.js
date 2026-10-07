@@ -969,6 +969,97 @@ test.describe('Zaxxon', () => {
     });
 
     // -----------------------------------------------------------------------
+    // Difficulty — checked by simulation rather than by feel
+    // -----------------------------------------------------------------------
+    test.describe('difficulty', () => {
+        test('a full tank cannot outlast a fortress', async ({ page }) => {
+            // If it could, every fuel tank on the deck would be decoration.
+            const ok = await page.evaluate(() => {
+                const tank = FUEL_MAX / FUEL_RATE;
+                const crossing = Math.max(...buildLevel(1).map((o) => o.z)) / scrollSpeedFor(1);
+                return { tank, crossing };
+            });
+            expect(ok.tank).toBeLessThan(ok.crossing);
+        });
+
+        test('every fortress is long enough to need the deck', async ({ page }) => {
+            const lengths = await page.evaluate(() =>
+                [1, 2, 3, 4].map((n) => Math.max(...buildLevel(n).map((o) => o.z)) / scrollSpeedFor(n))
+            );
+            lengths.forEach((seconds) => expect(seconds).toBeGreaterThan(12));
+        });
+
+        test('a scripted pilot can fly the first fortress end to end', async ({ page }) => {
+            // A greedy pilot: line up on the next opening if a wall is coming,
+            // otherwise sit on the next target's altitude and hold the trigger.
+            const result = await page.evaluate(() => {
+                startGame();
+                autoRun = false;
+                let steps = 0;
+                while (state === 'running' && steps < 120 * 90) {
+                    const wall = objects
+                        .filter((o) => o.kind === 'wall' && o.z > -10)
+                        .sort((a, b) => a.z - b.z)[0];
+                    let tx = FIELD_W / 2;
+                    let ta = MAX_ALT / 2;
+                    if (wall && wall.z < 360) {
+                        tx = (wall.openX[0] + wall.openX[1]) / 2;
+                        ta = (wall.openAlt[0] + wall.openAlt[1]) / 2;
+                    } else {
+                        const next = objects
+                            .filter((o) => o.kind !== 'wall' && o.z > 30)
+                            .sort((a, b) => a.z - b.z)[0];
+                        if (next) {
+                            tx = next.x;
+                            ta = (next.low + next.high) / 2;
+                        }
+                    }
+                    keys.ArrowLeft = ship.x > tx + 1.5;
+                    keys.ArrowRight = ship.x < tx - 1.5;
+                    keys.ArrowDown = ship.alt > ta + 1.5;
+                    keys.ArrowUp = ship.alt < ta - 1.5;
+                    keys.Space = true;
+                    physicsStep(1 / 120);
+                    steps++;
+                }
+                return { state, lives, score };
+            });
+            expect(result.state).toBe('levelclear');
+            expect(result.lives).toBe(3);
+            expect(result.score).toBeGreaterThan(1000);
+        });
+
+        test('that same pilot is punished for ignoring the deck', async ({ page }) => {
+            // Cruising high without firing: the turrets get a free shot at a
+            // predictable target, so passivity costs ships.
+            const result = await page.evaluate(() => {
+                startGame();
+                autoRun = false;
+                let steps = 0;
+                while (state === 'running' && steps < 120 * 90) {
+                    const wall = objects
+                        .filter((o) => o.kind === 'wall' && o.z > -10)
+                        .sort((a, b) => a.z - b.z)[0];
+                    let tx = FIELD_W / 2;
+                    let ta = 70;
+                    if (wall && wall.z < 360) {
+                        tx = (wall.openX[0] + wall.openX[1]) / 2;
+                        ta = (wall.openAlt[0] + wall.openAlt[1]) / 2;
+                    }
+                    keys.ArrowLeft = ship.x > tx + 1.5;
+                    keys.ArrowRight = ship.x < tx - 1.5;
+                    keys.ArrowDown = ship.alt > ta + 1.5;
+                    keys.ArrowUp = ship.alt < ta - 1.5;
+                    physicsStep(1 / 120);
+                    steps++;
+                }
+                return { state, lives };
+            });
+            expect(result.lives).toBeLessThan(3);
+        });
+    });
+
+    // -----------------------------------------------------------------------
     // Pausing
     // -----------------------------------------------------------------------
     test.describe('pausing', () => {

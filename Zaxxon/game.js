@@ -60,7 +60,7 @@ const HIT_ALT = 12;
 // --- fuel and lives --------------------------------------------------------
 
 const FUEL_MAX = 100;
-const FUEL_RATE = 3.2;               // fuel/s burned in flight
+const FUEL_RATE = 5.5;               // fuel/s burned in flight
 const FUEL_PER_TANK = 30;            // fuel returned by a destroyed tank
 const START_LIVES = 3;
 const INVULN = 1.5;                  // seconds of grace after a crash
@@ -1002,6 +1002,22 @@ function drawBooms() {
     });
 }
 
+// The deck has to stop somewhere, and a hard edge hanging in the starfield
+// looks like a bug. Haze over the far band hides the seam and doubles as the
+// fade-in for objects arriving from the distance.
+function drawHaze() {
+    const edge = proj(0, 0, VIEW_DEPTH).sy;
+    const top = edge - 34;
+    const bottom = edge + 56;
+    const haze = ctx.createLinearGradient(0, top, 0, bottom);
+    haze.addColorStop(0, 'rgba(6, 11, 26, 0)');
+    haze.addColorStop(0.38, 'rgba(6, 11, 26, 0.94)');
+    haze.addColorStop(0.5, 'rgba(6, 11, 26, 0.82)');
+    haze.addColorStop(1, 'rgba(6, 11, 26, 0)');
+    ctx.fillStyle = haze;
+    ctx.fillRect(0, top, W, bottom - top);
+}
+
 function drawLadder() {
     ctx.fillStyle = 'rgba(8, 14, 30, 0.72)';
     ctx.fillRect(LADDER_X - 7, LADDER_TOP - 18, 16, LADDER_H + 34);
@@ -1090,6 +1106,7 @@ function draw() {
     drawShots();
     drawShip();
     drawBooms();
+    drawHaze();
     drawLadder();
     drawFuelGauge();
     drawLives();
