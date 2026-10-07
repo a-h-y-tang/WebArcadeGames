@@ -1213,5 +1213,14 @@
     "dir": "Yahtzee",
     "path": "games/Yahtzee/index.html",
     "thumbnail": ""
+  },
+  {
+    "id": "zaxxon",
+    "name": "Zaxxon",
+    "description": "Isometric fortress raid where your altitude is both your aim and your armour",
+    "category": "Action",
+    "dir": "Zaxxon",
+    "path": "games/Zaxxon/index.html",
+    "thumbnail": "games/Zaxxon/screenshot.png"
   }
 ]
