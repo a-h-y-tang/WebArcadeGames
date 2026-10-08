@@ -33,9 +33,11 @@ traversal as its core movement.
 ### Core loop
 
 1. **Walk** a floor left/right at 160 px/s.
-2. **Ride** a car: step into a shaft when its car is level with your floor, then
-   hold up/down to drive it. Step out sideways only when the car is level with a
-   floor again.
+2. **Ride** a car: press up in a shaft doorway. If the car is there you board
+   it; if it is elsewhere you call it and it comes to you (without this, a
+   player on a floor both cars had left would be stranded for good). Hold
+   up/down to drive it, and let go to have it settle at the nearest floor. Step
+   out sideways only when the car is level with a floor.
 3. **Raid** a door: stand in front of it and press up. A document door scores 200
    and counts toward the three you need. An empty door is a trap — a security
    agent steps out of it.
@@ -45,10 +47,14 @@ traversal as its core movement.
 ### Threats
 
 - Security agents patrol a floor, turn around at the walls, and turn to face you
-  the moment you share their floor. They fire roughly every 1.4s when they are
-  facing you on your floor, and touching one costs a life.
-- Agents cannot see or shoot a player whose car is between floors (`player.floor`
-  is `-1` there) — the shaft is the game's safe room.
+  the moment you share their floor. Spotting you is not the same as having you
+  in their sights: an agent needs 0.5s to aim after acquiring you, which is the
+  window you get to shoot first or step back into a car. After that they fire
+  roughly every 1.4s while facing you on your floor, and touching one costs a
+  life.
+- Agents cannot see, shoot or touch a player who is inside a car — the shaft is
+  the game's safe room. The player cannot fire out of one either, so every
+  moment of safety is a moment of lost firepower.
 - You fire back along your facing direction: 420 px/s bullets, at most three in
   the air, 0.3s between shots, 150 points per agent.
 - Losing a life clears all bullets, returns you to the roof with 1.5s of
@@ -112,6 +118,14 @@ Decisions made without a human to ask, each resolved toward the simpler reading:
   coordinates.
 - **Agents are grounded.** They never ride elevators or change floors; a floor you
   have cleared stays clear until an empty door spawns a new one.
+- **Cars answer a call button but never move on their own.** An idle car with no
+  call stays put, so the building state is always something the player chose.
+- **Balance was measured, not guessed.** A scripted bot that walks, calls cars,
+  loots and shoots plays the game headlessly: it clears level 1 with a life to
+  spare and dies on level 2 by walking into an agent, which is the curve this
+  game is aiming for. The call button and the aim delay both came out of that
+  play-testing — the first fixed a stranding softlock, the second a death with
+  no reaction window.
 - **Agents never spawn on the roof at level start**, so a run can never open with
   an unavoidable hit.
 - **Score persistence** is `localStorage` only (`elevatorHeist.best`); there is no

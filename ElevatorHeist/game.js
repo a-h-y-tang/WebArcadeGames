@@ -31,9 +31,9 @@ const SHOOT_CD = 0.3;
 const MAX_PLAYER_BULLETS = 3;
 const INVULN = 1.5;
 
-const AGENT_W = 22;
-const AGENT_H = 34;
+const AGENT_W = 22;   // agents are built to the same frame as the player
 const AGENT_SHOOT_CD = 1.4;
+const AGENT_AIM_DELAY = 0.5;   // reaction time after spotting the player
 const AGENT_SIGHT = 420;
 
 const PLAYER_BULLET_SPEED = 420;
@@ -74,8 +74,8 @@ let docsRequired = 3;
 
 let player = makePlayer();
 const elevators = [
-    { x: SHAFTS[0], y: TOP_Y },
-    { x: SHAFTS[1], y: TOP_Y },
+    { x: SHAFTS[0], y: TOP_Y, call: null },
+    { x: SHAFTS[1], y: TOP_Y, call: null },
 ];
 const doors = [];
 const agents = [];
@@ -114,7 +114,7 @@ function makePlayer() {
 }
 
 function makeAgent(floor, x, dir) {
-    return { floor, x, y: floorY(floor), dir: dir || 1, shootCd: 0.8 };
+    return { floor, x, y: floorY(floor), dir: dir || 1, shootCd: 0.8, sawPlayer: false };
 }
 
 function agentSpeed() {
@@ -171,6 +171,7 @@ function buildLevel() {
 
     elevators[0].y = floorY(0);
     elevators[1].y = floorY(FLOORS - 1);
+    elevators.forEach((car) => { car.call = null; });
 
     agents.length = 0;
     const count = Math.min(2 + level, 6);
@@ -225,7 +226,8 @@ function togglePause() {
 // Player actions (edge triggered — keyboard handlers and tests call these)
 // ---------------------------------------------------------------------------
 
-// Up/down press: board a car that is level with the player, else open the door
+// Up/down press, in order: board a car that is level with the player, call a car
+// to this floor if the player is standing in a shaft doorway, or open the door
 // in front of them. Doors never sit near a shaft, so this is never ambiguous.
 function pressVertical(dir) {
     if (state !== 'running') return;
@@ -237,8 +239,17 @@ function pressVertical(dir) {
             player.inShaft = i;
             player.x = car.x;
             player.y = car.y;
+            car.call = null;
             return;
         }
+    }
+
+    // Standing in a doorway with no car there: push the button and wait for one.
+    // Without this a player could be stranded on a floor both cars have left.
+    const shaft = elevators.findIndex((car) => Math.abs(player.x - car.x) <= SHAFT_W / 2);
+    if (shaft >= 0 && player.floor >= 0) {
+        elevators[shaft].call = player.floor;
+        return;
     }
 
     if (dir < 0) openDoor();
@@ -279,6 +290,9 @@ function openDoor() {
 
 function firePlayerBullet() {
     if (state !== 'running') return;
+    // Inside a car you are behind its doors: safe from gunfire, but no shooting
+    // out either. Safety and firepower are the trade the player keeps making.
+    if (player.inShaft !== null) return;
     if (player.shootCd > 0) return;
     if (bullets.filter((b) => b.from === 'player').length >= MAX_PLAYER_BULLETS) return;
 
@@ -296,6 +310,7 @@ function firePlayerBullet() {
 // ---------------------------------------------------------------------------
 function physicsStep(dt) {
     updatePlayer(dt);
+    updateElevators(dt);
     updateAgents(dt);
     updateBullets(dt);
     checkContacts();
@@ -309,6 +324,22 @@ function physicsStep(dt) {
 function tick(dt) {
     if (state !== 'running') return;
     physicsStep(dt);
+}
+
+// Cars nobody is riding answer the call button and then sit still.
+function updateElevators(dt) {
+    for (let i = 0; i < elevators.length; i++) {
+        const car = elevators[i];
+        if (player.inShaft === i || car.call === null) continue;
+        const target = floorY(car.call);
+        const delta = target - car.y;
+        if (Math.abs(delta) <= ELEV_SPEED * dt) {
+            car.y = target;
+            car.call = null;
+        } else {
+            car.y += Math.sign(delta) * ELEV_SPEED * dt;
+        }
+    }
 }
 
 function updatePlayer(dt) {
@@ -352,7 +383,14 @@ function updateAgents(dt) {
 
     for (const agent of agents) {
         const sees = playerExposed() && agent.floor === player.floor;
-        if (sees) agent.dir = Math.sign(player.x - agent.x) || agent.dir;
+        if (sees) {
+            agent.dir = Math.sign(player.x - agent.x) || agent.dir;
+            // Spotting someone is not the same as having them in your sights:
+            // every acquisition costs the agent a moment, which is the window
+            // the player gets to shoot first or duck back into a car.
+            if (!agent.sawPlayer) agent.shootCd = Math.max(agent.shootCd, AGENT_AIM_DELAY);
+        }
+        agent.sawPlayer = sees;
 
         agent.x += agent.dir * speed * dt;
         if (agent.x <= minX) {
@@ -561,6 +599,17 @@ function drawShafts() {
         ctx.fillStyle = 'rgba(55, 214, 196, 0.18)';
         for (let f = 0; f < FLOORS; f++) {
             ctx.fillRect(left, floorY(f) - 3, SHAFT_W, 3);
+        }
+
+        if (car.call !== null) {
+            const y = floorY(car.call);
+            ctx.fillStyle = '#ffd36b';
+            ctx.beginPath();
+            ctx.moveTo(car.x, y - 8);
+            ctx.lineTo(car.x - 6, y - 18);
+            ctx.lineTo(car.x + 6, y - 18);
+            ctx.closePath();
+            ctx.fill();
         }
 
         ctx.strokeStyle = '#33456b';

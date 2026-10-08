@@ -12,8 +12,9 @@ You start on the roof level. Each of floors 0–4 has red office doors; three of
 the six doors in the building hide a document. The only way between floors is an
 elevator car, and the only place agents cannot shoot you is inside one.
 
-1. Walk to a shaft while its car is level with your floor and press `↑` to step
-   in.
+1. Walk into a shaft doorway and press `↑`. If the car is level with you, you
+   step in; if it is elsewhere in the building, you call it and a yellow arrow
+   marks the landing it is coming to.
 2. Hold `↑` / `↓` to drive the car. Let go and it settles at the nearest floor.
 3. Press `←` or `→` to step out — this only works when the car is level with a
    floor.
@@ -23,9 +24,12 @@ elevator car, and the only place agents cannot shoot you is inside one.
    escape and start the next, harder level (+500).
 
 Shoot agents with `Space` for 150 each — three bullets in the air at most. An
-agent's bullet, or simply bumping into one, costs a life; you have three, and
+agent that spots you needs half a second to bring its gun up, which is the
+window you have to shoot first or duck back into a car. An agent's bullet, or
+simply bumping into one, costs a life; you have three, and
 you restart on the roof with a moment of invulnerability. Agents cannot see you
-while your car is between floors, so the shaft is where you go to think.
+while you are in a car, so the shaft is where you go to think — but you cannot
+shoot out of one either, so safety always costs you your gun.
 
 ## Controls
 
@@ -33,7 +37,7 @@ while your car is between floors, so the shaft is where you go to think.
 |---|---|
 | `←` `→` / `A` `D` | Walk; step out of a car (only when level with a floor) |
 | `↑` `↓` / `W` `S` | Drive the car you are standing in |
-| `↑` / `W` | Board a car level with you, or open the door in front of you |
+| `↑` / `W` | Board a car level with you, call one that is elsewhere, or open the door in front of you |
 | `Space` | Fire |
 | `P` | Pause / resume |
 | `Space` / `Start` | Begin a run, or restart after game over |

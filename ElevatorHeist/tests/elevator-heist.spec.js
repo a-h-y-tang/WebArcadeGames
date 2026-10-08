@@ -311,6 +311,49 @@ test.describe('Elevator Heist', () => {
             expect(await read(page, () => player.inShaft)).toBe(0);
         });
 
+        test('pressing up at a shaft with no car summons the nearest one', async ({ page }) => {
+            await startFrozen(page);
+            await placePlayer(page, 3, 180);
+            await page.evaluate(() => pressVertical(-1));
+            expect(await read(page, () => player.inShaft)).toBeNull();
+            expect(await read(page, () => elevators[0].call)).toBe(3);
+        });
+
+        test('a summoned car travels to the calling floor and stops there', async ({ page }) => {
+            await startFrozen(page);
+            await placePlayer(page, 3, 180);
+            await page.evaluate(() => pressVertical(-1));
+            await step(page, 300);
+            expect(await read(page, () => elevators[0].y)).toBe(await read(page, () => floorY(3)));
+            expect(await read(page, () => elevators[0].call)).toBeNull();
+        });
+
+        test('a summoned car can then be boarded, so nobody is ever stranded', async ({ page }) => {
+            await startFrozen(page);
+            await placePlayer(page, 3, 180);
+            await page.evaluate(() => pressVertical(-1));
+            await step(page, 300);
+            await page.evaluate(() => pressVertical(-1));
+            expect(await read(page, () => player.inShaft)).toBe(0);
+            expect(await read(page, () => elevators[0].call)).toBeNull();
+        });
+
+        test('a car being ridden ignores a call', async ({ page }) => {
+            await startFrozen(page);
+            await placePlayer(page, 0, 180);
+            await page.evaluate(() => { pressVertical(-1); elevators[0].call = 0; keys.down = true; });
+            await step(page, 60);
+            expect(await read(page, () => elevators[0].y)).toBeGreaterThan(await read(page, () => floorY(0)));
+        });
+
+        test('an idle car with no call stays where it is', async ({ page }) => {
+            await startFrozen(page);
+            await placePlayer(page, 0, 60);
+            const before = await read(page, () => elevators[1].y);
+            await step(page, 120);
+            expect(await read(page, () => elevators[1].y)).toBe(before);
+        });
+
         test('the second car can be boarded from the ground floor', async ({ page }) => {
             await startFrozen(page);
             await placePlayer(page, 5, 420);
@@ -425,6 +468,21 @@ test.describe('Elevator Heist', () => {
             expect(await read(page, () => bullets[0].vx)).toBeLessThan(0);
         });
 
+        test('the player cannot shoot from inside a car', async ({ page }) => {
+            await startFrozen(page);
+            await placePlayer(page, 0, 180, 1);
+            await page.evaluate(() => { pressVertical(-1); player.shootCd = 0; firePlayerBullet(); });
+            expect(await read(page, () => player.inShaft)).toBe(0);
+            expect(await read(page, () => bullets.length)).toBe(0);
+        });
+
+        test('stepping out of a car restores the ability to shoot', async ({ page }) => {
+            await startFrozen(page);
+            await placePlayer(page, 0, 180, 1);
+            await page.evaluate(() => { pressVertical(-1); pressHorizontal(1); player.shootCd = 0; firePlayerBullet(); });
+            expect(await read(page, () => bullets.length)).toBe(1);
+        });
+
         test('a cooldown stops the player machine-gunning', async ({ page }) => {
             await startFrozen(page);
             await placePlayer(page, 0, 300, 1);
@@ -510,12 +568,22 @@ test.describe('Elevator Heist', () => {
             expect(await read(page, () => agents[0].dir)).toBe(-1);
         });
 
-        test('an agent facing the player on their floor opens fire', async ({ page }) => {
+        test('an agent takes a moment to aim before it fires', async ({ page }) => {
             await startFrozen(page);
             await placePlayer(page, 2, 100);
             await setAgents(page, [{ floor: 2, x: 400, dir: -1 }]);
             await page.evaluate(() => { agents[0].shootCd = 0; });
             await step(page, 1);
+            expect(await read(page, () => bullets.length)).toBe(0);
+            expect(await read(page, () => agents[0].shootCd)).toBeGreaterThan(0);
+        });
+
+        test('an agent facing the player on their floor opens fire', async ({ page }) => {
+            await startFrozen(page);
+            await placePlayer(page, 2, 100);
+            await setAgents(page, [{ floor: 2, x: 400, dir: -1 }]);
+            await page.evaluate(() => { agents[0].shootCd = 0; });
+            await step(page, 40);
             const shots = await read(page, () => bullets.filter((b) => b.from === 'agent'));
             expect(shots.length).toBe(1);
             expect(shots[0].vx).toBeLessThan(0);
@@ -526,10 +594,24 @@ test.describe('Elevator Heist', () => {
             await placePlayer(page, 2, 100);
             await setAgents(page, [{ floor: 2, x: 400, dir: -1 }]);
             await page.evaluate(() => { agents[0].shootCd = 0; });
-            await step(page, 1);
+            await step(page, 40);
             await page.evaluate(() => { bullets.length = 0; });
-            await step(page, 30);
+            await step(page, 60);
             expect(await read(page, () => bullets.filter((b) => b.from === 'agent').length)).toBe(0);
+        });
+
+        test('breaking line of sight makes an agent aim again', async ({ page }) => {
+            await startFrozen(page);
+            await placePlayer(page, 2, 100);
+            await setAgents(page, [{ floor: 2, x: 400, dir: -1 }]);
+            await page.evaluate(() => { agents[0].shootCd = 0; });
+            await step(page, 40);
+            await page.evaluate(() => { bullets.length = 0; player.floor = 4; player.y = floorY(4); });
+            await step(page, 120);
+            await page.evaluate(() => { player.floor = 2; player.y = floorY(2); player.x = 100; });
+            await step(page, 1);
+            expect(await read(page, () => bullets.length)).toBe(0);
+            expect(await read(page, () => agents[0].shootCd)).toBeGreaterThan(0);
         });
 
         test('agents cannot shoot a player riding between floors', async ({ page }) => {
