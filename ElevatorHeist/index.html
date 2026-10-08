@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elevator Heist</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="game">
+        <header class="hud">
+            <h1>ELEVATOR HEIST</h1>
+            <div class="stats">
+                <div class="stat"><span class="label">Score</span><span id="score">0</span></div>
+                <div class="stat"><span class="label">Level</span><span id="level">1</span></div>
+                <div class="stat"><span class="label">Docs</span><span id="docs">0/3</span></div>
+                <div class="stat"><span class="label">Lives</span><span id="lives">3</span></div>
+                <div class="stat"><span class="label">Best</span><span id="best">0</span></div>
+            </div>
+        </header>
+
+        <div class="board-wrap">
+            <canvas id="canvas" width="720" height="640"></canvas>
+            <div id="overlay" class="overlay visible">
+                <h2 id="overlay-title">ELEVATOR HEIST</h2>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Press Space or click Start to play</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+
+        <div class="help">
+            <p><kbd>&larr;</kbd> <kbd>&rarr;</kbd> / <kbd>A</kbd> <kbd>D</kbd> walk &mdash; step out of a car</p>
+            <p><kbd>&uarr;</kbd> <kbd>&darr;</kbd> / <kbd>W</kbd> <kbd>S</kbd> drive the elevator car you are standing in</p>
+            <p><kbd>&uarr;</kbd> board a car level with you, call one if it is elsewhere, or open the door in front of you</p>
+            <p><kbd>Space</kbd> fire &mdash; <kbd>P</kbd> pause</p>
+            <p>Find all three documents, then escape through the ground-floor exit. A car between floors is the only place agents cannot shoot you.</p>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>
