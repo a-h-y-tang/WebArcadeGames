@@ -639,51 +639,87 @@ function drawBartender() {
     const y = laneY(bartender.lane);
     const x = bartender.x;
     const feet = y + COUNTER_TOP + 14;
-    const bodyTop = feet - 40;
+    const bodyTop = feet - 42;
 
     // shadow
     ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
     ctx.beginPath();
-    ctx.ellipse(x, feet + 2, 17, 5, 0, 0, Math.PI * 2);
+    ctx.ellipse(x, feet + 2, 16, 5, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    // legs
-    ctx.fillStyle = '#2f2018';
-    ctx.fillRect(x - 9, feet - 11, 7, 11);
-    ctx.fillRect(x + 2, feet - 11, 7, 11);
+    // trousers and shoes
+    ctx.fillStyle = '#33231b';
+    ctx.fillRect(x - 9, feet - 14, 7, 12);
+    ctx.fillRect(x + 2, feet - 14, 7, 12);
+    ctx.fillStyle = '#1d140f';
+    ctx.fillRect(x - 11, feet - 3, 9, 3);
+    ctx.fillRect(x + 2, feet - 3, 9, 3);
 
-    // shirt
-    ctx.fillStyle = '#f6ead6';
-    roundRect(x - 14, bodyTop, 28, 32, 7);
-    ctx.fill();
-
-    // apron
-    ctx.fillStyle = COLORS.apron;
-    roundRect(x - 11, bodyTop + 14, 22, 20, 4);
-    ctx.fill();
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.18)';
-    ctx.fillRect(x - 11, bodyTop + 14, 22, 2);
-
-    // head, moustache, cap
-    ctx.fillStyle = COLORS.skin;
-    ctx.beginPath();
-    ctx.arc(x, bodyTop - 9, 11, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = '#2f2018';
-    ctx.fillRect(x - 4, bodyTop - 13, 2, 3);
-    ctx.fillRect(x + 2, bodyTop - 13, 2, 3);
-    ctx.fillRect(x - 7, bodyTop - 7, 14, 3);
-    ctx.fillStyle = '#5c3620';
-    roundRect(x - 12, bodyTop - 22, 24, 9, 4);
-    ctx.fill();
-
-    // arm reaching for the tap
-    ctx.strokeStyle = COLORS.skin;
-    ctx.lineWidth = 6;
+    // rolled-up sleeves
+    ctx.strokeStyle = '#efe0c6';
+    ctx.lineWidth = 7;
     ctx.lineCap = 'round';
     ctx.beginPath();
-    ctx.moveTo(x + 11, bodyTop + 10);
-    ctx.lineTo(x + 26, bodyTop + (pourTimer > 0 ? 2 : 8));
+    ctx.moveTo(x - 9, bodyTop + 8);
+    ctx.lineTo(x - 15, bodyTop + 17);
+    ctx.stroke();
+
+    // shirt
+    ctx.fillStyle = '#efe0c6';
+    roundRect(x - 11, bodyTop, 22, 26, 6);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.22)';
+    ctx.lineWidth = 1.5;
+    roundRect(x - 11, bodyTop, 22, 26, 6);
+    ctx.stroke();
+
+    // apron with straps
+    ctx.strokeStyle = COLORS.apron;
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(x - 5, bodyTop + 2);
+    ctx.lineTo(x - 7, bodyTop + 14);
+    ctx.moveTo(x + 5, bodyTop + 2);
+    ctx.lineTo(x + 7, bodyTop + 14);
+    ctx.stroke();
+    ctx.fillStyle = COLORS.apron;
+    roundRect(x - 9, bodyTop + 13, 18, 19, 3);
+    ctx.fill();
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.16)';
+    ctx.fillRect(x - 9, bodyTop + 21, 18, 2);
+
+    // bow tie
+    ctx.fillStyle = '#9b3b2f';
+    ctx.beginPath();
+    ctx.moveTo(x - 6, bodyTop - 1);
+    ctx.lineTo(x, bodyTop + 3);
+    ctx.lineTo(x - 6, bodyTop + 6);
+    ctx.closePath();
+    ctx.moveTo(x + 6, bodyTop - 1);
+    ctx.lineTo(x, bodyTop + 3);
+    ctx.lineTo(x + 6, bodyTop + 6);
+    ctx.closePath();
+    ctx.fill();
+
+    // head, moustache, hair
+    ctx.fillStyle = COLORS.skin;
+    ctx.beginPath();
+    ctx.arc(x, bodyTop - 10, 10, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#2f2018';
+    ctx.fillRect(x - 5, bodyTop - 14, 2, 3);
+    ctx.fillRect(x + 3, bodyTop - 14, 2, 3);
+    ctx.fillRect(x - 6, bodyTop - 8, 12, 3);
+    ctx.beginPath();
+    ctx.arc(x, bodyTop - 12, 10, Math.PI, Math.PI * 2);
+    ctx.fill();
+
+    // serving arm, lifted while a pour is still running
+    ctx.strokeStyle = COLORS.skin;
+    ctx.lineWidth = 6;
+    ctx.beginPath();
+    ctx.moveTo(x + 9, bodyTop + 9);
+    ctx.lineTo(x + 26, bodyTop + (pourTimer > 0 ? 1 : 9));
     ctx.stroke();
 }
 
@@ -738,7 +774,7 @@ function drawSplat(s) {
     ctx.font = 'bold 14px "Segoe UI", sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(s.label || 'SMASH!', s.x, s.y - 10);
+    ctx.fillText(s.label || 'SMASH!', Math.max(62, Math.min(W - 62, s.x)), s.y - 10);
 }
 
 function roundRect(x, y, w, h, r) {
