@@ -1080,6 +1080,15 @@
     "thumbnail": "games/TankBattle/screenshot.png"
   },
   {
+    "id": "tap-rush",
+    "name": "Tap Rush",
+    "description": "Four-lane bar rush - slide mugs to thirsty patrons and catch the empties",
+    "category": "Action",
+    "dir": "TapRush",
+    "path": "games/TapRush/index.html",
+    "thumbnail": "games/TapRush/screenshot.png"
+  },
+  {
     "id": "tempest",
     "name": "Tempest",
     "description": "Arcade action game - navigate tube mazes",
