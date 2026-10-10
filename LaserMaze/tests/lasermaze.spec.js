@@ -1,8 +1,10 @@
 const { test, expect } = require('@playwright/test');
+const fs = require('fs');
 const path = require('path');
 const { pathToFileURL } = require('url');
 
 const GAME_URL = pathToFileURL(path.resolve(__dirname, '../index.html')).href;
+const REPO_ROOT = path.resolve(__dirname, '../..');
 
 const COLS = 10;
 const ROWS = 8;
@@ -624,6 +626,48 @@ test.describe('Laser Maze', () => {
 
         test('the current level button is marked', async ({ page }) => {
             await expect(page.locator('.level-btn').nth(0)).toHaveClass(/current/);
+        });
+    });
+
+    // -----------------------------------------------------------------------
+    // Game browser integration
+    // -----------------------------------------------------------------------
+    test.describe('game browser integration', () => {
+        const catalog = () => JSON.parse(
+            fs.readFileSync(path.join(REPO_ROOT, 'game-browser/src/assets/games.json'), 'utf8'),
+        );
+
+        test('games.json lists Laser Maze', () => {
+            const entry = catalog().find((g) => g.id === 'laser-maze');
+            expect(entry).toBeTruthy();
+            expect(entry.name).toBe('Laser Maze');
+            expect(entry.dir).toBe('LaserMaze');
+            expect(entry.path).toBe('games/LaserMaze/index.html');
+            expect(entry.thumbnail).toBe('games/LaserMaze/screenshot.png');
+            expect(entry.category).toBe('Puzzle');
+            expect(entry.description.length).toBeGreaterThan(10);
+        });
+
+        test('the games.json entry sits alphabetically among its neighbours', () => {
+            const games = catalog();
+            const i = games.findIndex((g) => g.id === 'laser-maze');
+            expect(i).toBeGreaterThan(0);
+            expect(games[i - 1].name.localeCompare(games[i].name)).toBeLessThanOrEqual(0);
+            expect(games[i].name.localeCompare(games[i + 1].name)).toBeLessThanOrEqual(0);
+        });
+
+        test('the thumbnail the browser points at exists', () => {
+            expect(fs.existsSync(path.join(REPO_ROOT, 'LaserMaze/screenshot.png'))).toBe(true);
+        });
+
+        test('the root README lists the game', () => {
+            const readme = fs.readFileSync(path.join(REPO_ROOT, 'README.md'), 'utf8');
+            expect(readme).toMatch(/\|\s*Laser Maze\s*\|\s*\[LaserMaze\/\]\(LaserMaze\/\)\s*\|\s*(Complete|In Progress)\s*\|/);
+        });
+
+        test('the game ships its own README and DESIGN docs', () => {
+            expect(fs.existsSync(path.join(REPO_ROOT, 'LaserMaze/README.md'))).toBe(true);
+            expect(fs.existsSync(path.join(REPO_ROOT, 'LaserMaze/DESIGN.md'))).toBe(true);
         });
     });
 

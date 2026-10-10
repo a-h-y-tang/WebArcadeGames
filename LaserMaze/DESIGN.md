@@ -100,7 +100,7 @@ level map or a reflection rule can never drift away from its par unnoticed.
 | `index.html` | HUD, canvas, solved overlay, level strip, help text |
 | `style.css` | Dark lab styling; the canvas scales to the page width |
 | `game.js` | Level maps, beam tracer, input, HUD, canvas rendering |
-| `tests/lasermaze.spec.js` | Playwright suite (75 tests) |
+| `tests/lasermaze.spec.js` | Playwright suite (80 tests) |
 
 `game.js` keeps its state on the global scope (`grid`, `beam`, `level`, `moves`,
 `state`, `cursor`) and exposes `loadLevel`, `resetLevel`, `rotate`, `traceBeam`,
@@ -137,7 +137,11 @@ simpler reading:
 - **Progress is per-browser.** Levels unlock in order and the unlock point is
   remembered in `localStorage`, so returning to the page resumes at the furthest
   level reached. There is no reset-progress button; clearing site data does it.
-- **The game-browser e2e count was left alone.** `game-browser/e2e/game-browser.spec.ts`
+- **Two pre-existing test failures were left alone.** `game-browser/e2e/game-browser.spec.ts`
   asserts a hard-coded card count that was already stale before this change (109
-  against 135 games), so it was not touched — fixing it is unrelated to this game
-  and would hide the drift.
+  against 135 games). `PegPop/tests/peg-pop.spec.js` asserts that `games.json` is
+  sorted by name, which it is not — six pairs are out of order on `main`, Peg Pop
+  among them. Neither is caused by this game (Laser Maze is inserted in its
+  correct alphabetical slot, between Klotski and Light Cycles), and re-sorting the
+  catalog would shuffle unrelated entries, so both were reported rather than
+  patched over.
