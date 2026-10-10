@@ -522,6 +522,15 @@
     "thumbnail": ""
   },
   {
+    "id": "laser-maze",
+    "name": "Laser Maze",
+    "description": "Rotate mirrors to light every target with one laser beam",
+    "category": "Puzzle",
+    "dir": "LaserMaze",
+    "path": "games/LaserMaze/index.html",
+    "thumbnail": "games/LaserMaze/screenshot.png"
+  },
+  {
     "id": "light-cycles",
     "name": "Light Cycles",
     "description": "High-speed action game - avoid collisions",
