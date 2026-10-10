@@ -160,8 +160,8 @@ button:disabled {
 }
 
 .level-btn {
-    flex: 1 1 auto;
-    min-width: 40px;
+    flex: 1 1 0;
+    min-width: 30px;
     padding: 8px 0;
     letter-spacing: 0;
 }
