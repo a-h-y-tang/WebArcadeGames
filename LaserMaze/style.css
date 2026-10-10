@@ -106,7 +106,8 @@ canvas {
     align-items: center;
     justify-content: center;
     gap: 10px;
-    background: rgba(6, 9, 17, 0.88);
+    background: rgba(6, 9, 17, 0.72);
+    backdrop-filter: blur(1px);
     text-align: center;
     padding: 20px;
 }

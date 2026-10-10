@@ -100,7 +100,7 @@ level map or a reflection rule can never drift away from its par unnoticed.
 | `index.html` | HUD, canvas, solved overlay, level strip, help text |
 | `style.css` | Dark lab styling; the canvas scales to the page width |
 | `game.js` | Level maps, beam tracer, input, HUD, canvas rendering |
-| `tests/lasermaze.spec.js` | Playwright suite (73 tests) |
+| `tests/lasermaze.spec.js` | Playwright suite (75 tests) |
 
 `game.js` keeps its state on the global scope (`grid`, `beam`, `level`, `moves`,
 `state`, `cursor`) and exposes `loadLevel`, `resetLevel`, `rotate`, `traceBeam`,

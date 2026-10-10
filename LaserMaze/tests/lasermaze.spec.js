@@ -519,6 +519,23 @@ test.describe('Laser Maze', () => {
             await expect(page.locator('#overlay-sub')).toContainText(/1 move/i);
         });
 
+        test('a run that matches par is called perfect', async ({ page }) => {
+            await solveLevel(page, 0);
+            await expect(page.locator('#overlay-sub')).toContainText(/perfect/i);
+        });
+
+        test('a run over par is not called perfect', async ({ page }) => {
+            const { solution } = await minimumRotations(page, 1);
+            await page.evaluate((cells) => {
+                loadLevel(1);
+                rotate(cells[0][0], cells[0][1]);
+                rotate(cells[0][0], cells[0][1]);
+                for (const [c, r] of cells) rotate(c, r);
+            }, solution);
+            await expect(page.locator('#overlay-sub')).toContainText('4 moves — par 2');
+            await expect(page.locator('#overlay-sub')).not.toContainText(/perfect/i);
+        });
+
         test('rotations are ignored once the level is solved', async ({ page }) => {
             await solveLevel(page, 0);
             const before = await page.evaluate(() => moves);

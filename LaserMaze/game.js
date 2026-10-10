@@ -343,10 +343,12 @@ function finishLevel() {
 
     const last = level + 1 >= LEVELS.length;
     state = last ? 'complete' : 'solved';
+    const par = LEVELS[level].par;
     const plural = moves === 1 ? 'move' : 'moves';
+    const verdict = moves === par ? ' — perfect' : '';
     showOverlay(
         last ? 'ALL LEVELS COMPLETE' : 'LEVEL SOLVED',
-        `${moves} ${plural} — par ${LEVELS[level].par}${last ? '. Every beam is home.' : ''}`,
+        `${moves} ${plural} — par ${par}${verdict}${last ? '. Every beam is home.' : ''}`,
         !last,
     );
     renderLevelButtons();
