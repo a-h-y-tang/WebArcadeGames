@@ -759,6 +759,30 @@ test.describe('Elevator Heist', () => {
             expect(out).toEqual([]);
         });
 
+        test('later levels field more agents, up to a cap', async ({ page }) => {
+            const out = await page.evaluate(() => {
+                const seen = [];
+                for (const lv of [1, 2, 5, 9]) {
+                    level = lv;
+                    seen.push(maxEnemies());
+                }
+                return seen;
+            });
+            expect(out[0]).toBeLessThan(out[1]);
+            expect(out[1]).toBeLessThan(out[2]);
+            expect(out[3]).toBe(await page.evaluate(() => ENEMY_CAP));
+        });
+
+        test('agents arrive more often on later levels', async ({ page }) => {
+            const out = await page.evaluate(() => {
+                level = 1;
+                const early = spawnInterval();
+                level = 6;
+                return [early, spawnInterval()];
+            });
+            expect(out[1]).toBeLessThan(out[0]);
+        });
+
         test('agents get faster on later levels', async ({ page }) => {
             const out = await page.evaluate(() => {
                 const a = enemySpeed();
@@ -800,6 +824,43 @@ test.describe('Elevator Heist', () => {
             expect(out.enemies).toBe(0);
             expect(out.bullets).toBe(0);
             await expect(page.locator('#lives')).toHaveText('2');
+        });
+
+        test('the player is briefly invulnerable after respawning', async ({ page }) => {
+            await page.evaluate(() => {
+                placePlayer(4, 300);
+                spawnEnemy(4, 302, -1);
+                step(1 / 60);
+            });
+            await advance(page, 60 * 2); // sit out the death pause
+            const out = await page.evaluate(() => {
+                spawnEnemy(0, player.x + 2, -1); // right on top of the fresh spawn
+                step(1 / 60);
+                return { state, lives, grace: player.grace > 0 };
+            });
+            expect(out.grace).toBe(true);
+            expect(out.state).toBe('running');
+            expect(out.lives).toBe(2);
+        });
+
+        test('the invulnerability runs out', async ({ page }) => {
+            await page.evaluate(() => {
+                placePlayer(4, 300);
+                spawnEnemy(4, 302, -1);
+                step(1 / 60);
+            });
+            await advance(page, 60 * 2);
+            await page.evaluate(() => {
+                enemies.length = 0;
+            });
+            await advance(page, 60 * 2); // outlast the grace
+            const out = await page.evaluate(() => {
+                spawnEnemy(0, player.x + 2, -1);
+                step(1 / 60);
+                return { state, lives };
+            });
+            expect(out.state).toBe('dying');
+            expect(out.lives).toBe(1);
         });
 
         test('collected documents survive a death', async ({ page }) => {

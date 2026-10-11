@@ -49,7 +49,8 @@ fired low, it still hits a standing agent. You cannot run while crouched.
 | Level cleared | 2000 |
 
 Three lives. Dying costs one and puts you back on the top floor with the
-documents you have already banked; the agents and the gunfire clear out. Each
+documents you have already banked; the agents and the gunfire clear out, and
+you flicker — untouchable — for a moment and a half while you get going. Each
 level loads a new door layout and sends agents at you faster. The best score is
 kept in `localStorage`.
 

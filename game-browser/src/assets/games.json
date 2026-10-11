@@ -297,6 +297,15 @@
     "thumbnail": "games/DroidArena/screenshot.png"
   },
   {
+    "id": "elevator-heist",
+    "name": "Elevator Heist",
+    "description": "Ride the elevators, grab the documents and dodge the agents",
+    "category": "Action",
+    "dir": "ElevatorHeist",
+    "path": "games/ElevatorHeist/index.html",
+    "thumbnail": "games/ElevatorHeist/screenshot.png"
+  },
+  {
     "id": "farkle",
     "name": "Farkle",
     "description": "Dice-rolling game - score combinations wisely",

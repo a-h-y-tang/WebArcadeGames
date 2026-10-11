@@ -67,7 +67,7 @@ const ENEMY_SPEED_CAP = 118;
 const MAX_PLAYER_BULLETS = 2;
 const SHOT_COOLDOWN = 0.25;
 const ENEMY_RANGE = 320;
-const ENEMY_FIRE_DELAY = 0.8;   // grace period after an agent appears
+const ENEMY_FIRE_DELAY = 1.0;   // grace period after an agent appears
 const ENEMY_FIRE_COOLDOWN = 1.4;
 
 // --- Run structure -------------------------------------------------------
@@ -77,7 +77,9 @@ const ENEMY_POINTS = 150;
 const LEVEL_BONUS = 2000;
 const DEATH_PAUSE = 1.3;
 const CLEAR_PAUSE = 1.8;
+const RESPAWN_GRACE = 1.6;      // untouchable while you find your feet
 const ENEMY_CAP = 6;
+const SPAWN_CLEARANCE = 80;     // no agent appears this close along your floor
 
 // Door layouts, one string per floor, one character per slot in SLOT_XS:
 // '.' nothing  'd' plain door  'D' red door holding a document.
@@ -186,11 +188,11 @@ function enemySpeed() {
 }
 
 function maxEnemies() {
-    return Math.min(ENEMY_CAP, 2 + level);
+    return Math.min(ENEMY_CAP, 1 + level);
 }
 
 function spawnInterval() {
-    return Math.max(1.1, 2.8 - 0.25 * (level - 1));
+    return Math.max(1.2, 3.2 - 0.3 * (level - 1));
 }
 
 // ---------------------------------------------------------------------------
@@ -218,7 +220,7 @@ function loadLevel(n) {
 
     enemies = [];
     bullets = [];
-    player = { x: SPAWN_X, y: floorY(0), dir: 1, crouch: false, onElevator: null, cooldown: 0 };
+    player = { x: SPAWN_X, y: floorY(0), dir: 1, crouch: false, onElevator: null, cooldown: 0, grace: 0 };
     spawnTimer = spawnInterval();
 }
 
@@ -228,6 +230,7 @@ function placePlayer(floor, x) {
     player.onElevator = null;
     player.crouch = false;
     player.cooldown = 0;
+    player.grace = 0;
 }
 
 function rideForTest(shaft) {
@@ -258,9 +261,6 @@ function startGame() {
     lives = START_LIVES;
     level = 1;
     enemyShotsForTest = 0;
-    autoStep = true;
-    autoSpawn = true;
-    autoElevators = true;
     keys.left = keys.right = keys.up = keys.down = false;
     loadLevel(1);
     state = 'running';
@@ -280,6 +280,7 @@ function togglePause() {
 
 function killPlayer() {
     if (state !== 'running') return;
+    if (player.grace > 0) return;
     lives--;
     bullets = [];
     state = 'dying';
@@ -292,6 +293,7 @@ function respawn() {
     bullets = [];
     placePlayer(0, SPAWN_X);
     player.dir = 1;
+    player.grace = RESPAWN_GRACE;
     spawnTimer = spawnInterval();
     state = 'running';
     hideOverlay();
@@ -388,6 +390,7 @@ function updatePlayer(dt) {
     // Crouching only makes sense on a floor: in a car, down is a command.
     player.crouch = keys.down && !player.onElevator;
     if (player.cooldown > 0) player.cooldown -= dt;
+    if (player.grace > 0) player.grace -= dt;
 
     let dx = 0;
     if (!player.crouch) {
@@ -600,7 +603,7 @@ function updateSpawner(dt) {
     const pool = near.length ? near : doors;
     const d = pool[Math.floor(Math.random() * pool.length)];
     // Never drop an agent straight on top of the player.
-    if (Math.abs(floorY(d.floor) - player.y) < 4 && Math.abs(d.x - player.x) < CONTACT_DX * 2) return;
+    if (Math.abs(floorY(d.floor) - player.y) < 4 && Math.abs(d.x - player.x) < SPAWN_CLEARANCE) return;
     spawnEnemy(d.floor, d.x, Math.sign(player.x - d.x) || 1);
 }
 
@@ -783,6 +786,7 @@ function drawPlayer() {
 
     ctx.save();
     if (dying) ctx.globalAlpha = 0.45;
+    else if (player.grace > 0) ctx.globalAlpha = 0.45 + 0.55 * Math.abs(Math.sin(player.grace * 18));
 
     // Coat.
     ctx.fillStyle = '#e9eef8';

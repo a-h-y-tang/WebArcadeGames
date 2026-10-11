@@ -79,6 +79,9 @@ car arrival into both an escape route and an ambush.
 - Dying costs a life, clears the agents and bullets, and drops you back at the
   top floor with your collected documents intact. `START_LIVES` lives; the best
   score persists in `localStorage` under `elevatorheist-best`.
+- A respawn grants `RESPAWN_GRACE` seconds of invulnerability, drawn as a
+  flicker. Without it an agent standing where you reappear can take the next
+  life before you have moved.
 
 ## Controls
 
@@ -136,3 +139,22 @@ Decisions taken without asking, resolved toward the simpler reading:
 8. **Shaft crossing is centre-based.** Blocking tests the player's centre `x`
    against the gap, not their full width, so a sliver of the sprite may
    overhang the opening. It keeps the predicate a single comparison.
+
+## Balance
+
+The numbers were set against a scripted bot that plays the real controls — it
+rides, crosses, collects and shoots, but never crouches and never fires from a
+moving car, so it is strictly worse than a person. On the first pass it cleared
+level 1 in 1 run out of 10 and usually died holding a single document. Three
+changes moved it to 2 in 10, with the losses running much deeper (most reach
+two documents):
+
+- `maxEnemies()` starts at two agents rather than three, and `spawnInterval()`
+  opens wider, so level 1 teaches the building before it crowds you.
+- `ENEMY_FIRE_DELAY` gives a fresh agent a full second before its first shot.
+- `SPAWN_CLEARANCE` keeps an agent from appearing within 80px of you along
+  your own floor, and `RESPAWN_GRACE` covers the moment you reappear.
+
+Those are the levers worth turning if the game wants to be easier or harder;
+the pressure curve itself lives entirely in `maxEnemies()`, `spawnInterval()`
+and `enemySpeed()`.
