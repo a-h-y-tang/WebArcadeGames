@@ -3,6 +3,7 @@ const path = require('path');
 const { pathToFileURL } = require('url');
 
 const GAME_URL = pathToFileURL(path.resolve(__dirname, '../index.html')).href;
+const FLOORS_EXPECTED = 6;
 
 // Advance the simulation deterministically: `frames` calls to step(dt).
 const advance = (page, frames, dt = 1 / 60) =>
@@ -138,6 +139,47 @@ test.describe('Elevator Heist', () => {
         test('no door sits inside a shaft gap', async ({ page }) => {
             await startQuiet(page);
             expect(await page.evaluate(() => doors.filter((d) => gapAt(d.x) >= 0).length)).toBe(0);
+        });
+
+        test('every level lays out three reachable documents', async ({ page }) => {
+            // A door inside a shaft gap, past a wall, or sitting on the exit
+            // would be unreachable or unwinnable, and only level 1 is played
+            // end to end elsewhere in this suite.
+            const out = await page.evaluate(() => {
+                const report = [];
+                for (let n = 1; n <= LEVELS.length; n++) {
+                    loadLevel(n);
+                    report.push({
+                        level: n,
+                        docs: docsTotal,
+                        inGap: doors.filter((d) => gapAt(d.x) >= 0).length,
+                        offPlan: doors.filter(
+                            (d) => d.x - DOOR_W / 2 < WALL_L || d.x + DOOR_W / 2 > WALL_R,
+                        ).length,
+                        blockingExit: doors.filter(
+                            (d) =>
+                                d.floor === FLOORS - 1 &&
+                                Math.abs(d.x - EXIT_X) <= EXIT_W / 2 + DOOR_W / 2,
+                        ).length,
+                        floorsServed: new Set(doors.map((d) => d.floor)).size,
+                    });
+                }
+                return report;
+            });
+            expect(out).toHaveLength(await page.evaluate(() => LEVELS.length));
+            for (const r of out) {
+                expect({ level: r.level, docs: r.docs }).toEqual({ level: r.level, docs: 3 });
+                expect({ level: r.level, inGap: r.inGap }).toEqual({ level: r.level, inGap: 0 });
+                expect({ level: r.level, offPlan: r.offPlan }).toEqual({ level: r.level, offPlan: 0 });
+                expect({ level: r.level, blockingExit: r.blockingExit }).toEqual({
+                    level: r.level,
+                    blockingExit: 0,
+                });
+                expect({ level: r.level, floorsServed: r.floorsServed }).toEqual({
+                    level: r.level,
+                    floorsServed: FLOORS_EXPECTED,
+                });
+            }
         });
 
         test('each shaft has a car inside the building', async ({ page }) => {
