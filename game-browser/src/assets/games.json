@@ -1026,6 +1026,15 @@
     "thumbnail": ""
   },
   {
+    "id": "soda-shack",
+    "name": "Soda Shack",
+    "description": "Serve four counters of thirsty patrons and catch every empty mug coming back",
+    "category": "Action",
+    "dir": "SodaShack",
+    "path": "games/SodaShack/index.html",
+    "thumbnail": "games/SodaShack/screenshot.png"
+  },
+  {
     "id": "sokoban",
     "name": "Sokoban",
     "description": "Puzzle game - push boxes to their destinations",

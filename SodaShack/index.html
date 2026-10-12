@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soda Shack</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="game">
+        <header class="hud">
+            <h1>SODA SHACK</h1>
+            <div class="stats">
+                <div class="stat"><span class="label">Score</span><span id="score">0</span></div>
+                <div class="stat"><span class="label">Shift</span><span id="level">1</span></div>
+                <div class="stat"><span class="label">Lives</span><span id="lives">3</span></div>
+                <div class="stat"><span class="label">Left</span><span id="left">0</span></div>
+                <div class="stat"><span class="label">Best</span><span id="best">0</span></div>
+            </div>
+        </header>
+
+        <div class="board-wrap">
+            <canvas id="canvas" width="640" height="520"></canvas>
+            <div id="overlay" class="overlay visible">
+                <h2 id="overlay-title">SODA SHACK</h2>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Press Space or click Start to open up</p>
+                <button id="btn-start">Start Shift</button>
+            </div>
+        </div>
+
+        <div class="help">
+            <p><kbd>&uarr;</kbd> <kbd>&darr;</kbd> / <kbd>W</kbd> <kbd>S</kbd> / mouse pick a lane</p>
+            <p><kbd>Space</kbd> or click to pour &amp; serve</p>
+            <p><kbd>P</kbd> pause</p>
+            <p>Catch every empty mug coming back &mdash; a smash costs a life.</p>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>
