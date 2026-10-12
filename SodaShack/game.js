@@ -60,7 +60,6 @@ let rngState = 1;                    // lane order for the current shift
 let autoRun = true;                  // the animation loop only simulates while true
 
 const keeper = { lane: 0 };
-const keys = Object.create(null);
 
 // --- difficulty ------------------------------------------------------------
 
@@ -211,11 +210,11 @@ function laneBy(delta) {
 }
 
 function laneAt(y) {
-    let best_ = 0;
+    let nearest = 0;
     for (let i = 1; i < LANES; i++) {
-        if (Math.abs(y - LANE_Y[i]) < Math.abs(y - LANE_Y[best_])) best_ = i;
+        if (Math.abs(y - LANE_Y[i]) < Math.abs(y - LANE_Y[nearest])) nearest = i;
     }
-    return best_;
+    return nearest;
 }
 
 function pour() {
@@ -392,11 +391,17 @@ function setText(id, value) {
     if (el) el.textContent = String(value);
 }
 
+let hudKey = '';
+
 function updateHud() {
+    const left = remaining();
+    const key = `${score}|${level}|${lives}|${left}|${best}`;
+    if (key === hudKey) return;
+    hudKey = key;
     setText('score', score);
     setText('level', level);
     setText('lives', lives);
-    setText('left', remaining());
+    setText('left', left);
     setText('best', best);
 }
 
@@ -758,7 +763,6 @@ function draw() {
 // --- input -----------------------------------------------------------------
 
 document.addEventListener('keydown', (e) => {
-    keys[e.code] = true;
     switch (e.code) {
         case 'Space':
         case 'Enter':
@@ -779,10 +783,6 @@ document.addEventListener('keydown', (e) => {
             togglePause();
             break;
     }
-});
-
-document.addEventListener('keyup', (e) => {
-    keys[e.code] = false;
 });
 
 canvas.addEventListener('mousemove', (e) => {
