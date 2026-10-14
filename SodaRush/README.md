@@ -54,7 +54,7 @@ Your best score is kept in `localStorage`.
 
 ## Tests
 
-71 Playwright specs, written before the implementation:
+72 Playwright specs, written before the implementation:
 
 ```powershell
 npx playwright test SodaRush/tests/

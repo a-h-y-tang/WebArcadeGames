@@ -106,7 +106,7 @@ immediately in that case, because `loseLife()` has already emptied the arrays.
 | `index.html` | HUD, canvas, overlay, key legend |
 | `style.css` | Diner-neon palette shared with the rest of the collection |
 | `game.js` | Single classic script: constants, state, simulation, rendering, input |
-| `tests/sodarush.spec.js` | 71 Playwright specs |
+| `tests/sodarush.spec.js` | 72 Playwright specs |
 
 `game.js` is deliberately a non-module script so every constant, state variable
 and helper is a plain global, which is what lets the Playwright suite drive the
@@ -135,6 +135,14 @@ meant to trigger the life loss, so the soda was caught before the life could be
 lost. Groups covered: idle state, starting, lane movement, pouring, customers,
 serving and scoring, returning empties, lives and game over, pausing, waves and
 levels, rendering.
+
+One spec plays a whole wave end to end through the public API — spawn a
+customer, pour until they have had enough, let them walk out, catch the empty,
+six times over — and asserts the level ticks over with all three lives intact
+and a score of exactly 900. Written as a loop over the *initial* `goal`, because
+the first draft looped on `served < goal` and, since clearing a wave resets
+`served` and raises `goal`, cheerfully played six levels before the guard
+stopped it.
 
 ```
 npx playwright test SodaRush/tests/

@@ -645,6 +645,50 @@ test.describe('Soda Rush', () => {
     });
 
     // -----------------------------------------------------------------------
+    // A whole wave, start to finish
+    // -----------------------------------------------------------------------
+    test.describe('playing a wave', () => {
+        test('a full wave can be served and cleared without losing a life', async ({ page }) => {
+            const result = await page.evaluate(() => {
+                startGame();
+                autoStep = false;
+                autoSpawn = false;
+                customers.length = 0;
+                mugs.length = 0;
+
+                const run = (seconds) => {
+                    for (let i = 0; i < Math.round(seconds * 60); i++) step(1 / 60);
+                };
+
+                // Serve the wave one customer at a time down the top counter:
+                // pour until they have had enough, then let them walk out and
+                // catch the empty they shove back. `goal` is read up front
+                // because clearing the wave resets it for the next level.
+                const target = goal;
+                for (let i = 0; i < target && lives === 3; i++) {
+                    const c = spawnCustomer(0);
+                    setLane(0);
+                    while (c.thirst > 0 && lives === 3) {
+                        serveSoda();
+                        run(2.5);
+                    }
+                    run(12);
+                }
+                return { level, lives, score, served, customers: customers.length, mugs: mugs.length };
+            });
+
+            // The wave cleared, so the level ticked over and the counters are empty.
+            expect(result.lives).toBe(3);
+            expect(result.level).toBe(2);
+            expect(result.served).toBe(0); // reset by the new wave
+            expect(result.customers).toBe(0);
+            expect(result.mugs).toBe(0);
+            // Six customers served plus six empties caught.
+            expect(result.score).toBe(6 * 100 + 6 * 50);
+        });
+    });
+
+    // -----------------------------------------------------------------------
     // Rendering
     // -----------------------------------------------------------------------
     test.describe('rendering', () => {
