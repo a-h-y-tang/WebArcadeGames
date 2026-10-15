@@ -669,10 +669,13 @@ function drawFloors() {
         ctx.fillRect(8, y, W - 16, SLAB_H);
         ctx.fillStyle = '#334160';
         ctx.fillRect(8, y, W - 16, 2);
-        // the shafts cut through the slab
+        // The shafts cut through the slab, but each floor keeps a thin landing
+        // inside the shaft — that is the ledge the agent waits on for a car.
         SHAFTS.forEach((s) => {
             ctx.fillStyle = '#0b1220';
             ctx.fillRect(s.x, y, s.w, SLAB_H);
+            ctx.fillStyle = '#1b2742';
+            ctx.fillRect(s.x, y, s.w, 2);
         });
     }
 }
