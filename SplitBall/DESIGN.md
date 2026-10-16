@@ -80,8 +80,9 @@ opposite directions — up/down for a vertical wall, left/right for a horizontal
 one — at `GROW_SPEED` cells per second, driven by an accumulator so growth is
 frame-rate independent. A head stops ("blocks") when the next cell is solid.
 
-Each `step(dt)` runs the same four phases, and the order matters:
+Each `step(dt)` runs the same phases, and the order matters:
 
+0. **Age the flashes** left behind by shattered walls (see *Feedback*).
 1. **Move the balls** against solid cells only — pending cells are not solid, a
    ball flies straight through a half-built wall.
 2. **Grow the wall** by whatever whole cells the accumulator has earned.
@@ -109,6 +110,16 @@ is cleared.
 With one wall at a time and only a few hundred cells, a full flood fill per
 commit is a handful of microseconds — there is no reason to do anything cleverer
 than the obvious BFS.
+
+## Feedback
+
+A shattered wall pushes `{ cells, life }` onto `effects`, and `step` counts
+`life` down to zero over `FLASH_TIME` (0.5 s). The renderer draws those cells as
+a red square that both fades and shrinks, so a wall that dies off-screen-centre
+still tells you *where* it died. Effects are purely cosmetic — they hold no
+grid state and are cleared with the level — but they are aged inside `step`
+rather than from the clock so that a paused game is genuinely frozen and the
+specs can assert on the fade.
 
 ## States
 
@@ -154,7 +165,7 @@ The best score is persisted in `localStorage` under `splitball-best`.
 | `index.html` | HUD, canvas, overlay, help line |
 | `style.css` | the shared arcade panel look used across this repo |
 | `game.js` | the whole game: grid, balls, walls, capture, input, render |
-| `tests/split-ball.spec.js` | the Playwright suite |
+| `tests/split-ball.spec.js` | the Playwright suite — 73 specs |
 
 ## Assumptions
 
@@ -178,6 +189,11 @@ These are the ambiguous calls, each resolved the simpler way:
    geometry prettier and the game less readable; the classic is diagonal-only.
 7. **Fill target is a flat 75%** at every level. Difficulty ramps through ball
    count and speed instead, which is one dial rather than three.
-8. **Nothing is seeded.** Ball spawn positions use `Math.random()`. Every spec
+8. **Touch is the click path.** Browsers synthesise a `click` from a tap, so
+   the canvas click handler is all a phone needs; the CSS sets
+   `touch-action: manipulation` to drop the 300 ms double-tap delay. There is
+   no separate touch code to keep in step, and a spec runs in a touch-enabled
+   context to keep it that way.
+9. **Nothing is seeded.** Ball spawn positions use `Math.random()`. Every spec
    that needs determinism clears `balls` and places its own, so no seeded RNG is
    required.

@@ -53,9 +53,9 @@ Your best score is kept in the browser's local storage.
 npx playwright test SplitBall/tests/
 ```
 
-68 Playwright specs cover ball physics and bouncing, wall growth and
+73 Playwright specs cover ball physics and bouncing, wall growth and
 frame-rate independence, region capture, wall shattering, lives, level clear,
-pausing and every input path. The game exposes `step(dt)` and an `autoStep`
+pausing, mouse, keyboard and touch input. The game exposes `step(dt)` and an `autoStep`
 flag, so the suite advances the simulation itself and never sleeps.
 
 `DESIGN.md` explains how the code works.

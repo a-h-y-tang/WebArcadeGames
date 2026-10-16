@@ -72,6 +72,7 @@ body {
 
 canvas {
     display: block;
+    touch-action: manipulation;
     border-radius: 10px;
     background: #05070b;
     border: 1px solid var(--edge);
@@ -148,4 +149,12 @@ kbd {
     color: var(--ink);
     font-family: inherit;
     font-size: 11px;
+}
+
+.help .goal {
+    width: 100%;
+    text-align: center;
+    margin-top: 2px;
+    color: var(--accent);
+    letter-spacing: 0.5px;
 }

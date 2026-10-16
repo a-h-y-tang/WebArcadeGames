@@ -15,6 +15,7 @@ const GROW_SPEED = 16;           // wall cells per second, per head
 const FILL_TARGET = 75;          // percent of the interior needed to clear
 const CAPTURE_POINTS = 5;        // per captured cell
 const LEVEL_BONUS = 250;         // x level
+const FLASH_TIME = 0.5;          // seconds a shattered wall glows red
 const START_LIVES = 3;
 const BEST_KEY = 'splitball-best';
 
@@ -31,6 +32,7 @@ let grid = [];
 let captured = [];
 let balls = [];
 let wall = null;
+let effects = [];                // fading flashes left by shattered walls
 let state = 'idle';              // idle | playing | paused | levelclear | over
 let score = 0;
 let level = 1;
@@ -76,6 +78,7 @@ function resetLevel() {
     }
     balls = [];
     wall = null;
+    effects = [];
     cursor = { col: Math.floor(COLS / 2), row: Math.floor(ROWS / 2) };
     updateHud();
 }
@@ -188,6 +191,7 @@ const wallHitByBall = () =>
 
 function destroyWall() {
     for (const [c, r] of wall.cells) grid[r][c] = OPEN;
+    effects.push({ cells: wall.cells, life: FLASH_TIME });
     wall = null;
 }
 
@@ -329,6 +333,9 @@ function moveCursor(dc, dr) {
 function step(dt) {
     if (state !== 'playing') return;
 
+    for (const fx of effects) fx.life -= dt;
+    if (effects.some((fx) => fx.life <= 0)) effects = effects.filter((fx) => fx.life > 0);
+
     for (const b of balls) moveBall(b, dt);
 
     if (!wall) return;
@@ -459,6 +466,15 @@ function draw() {
         }
     }
 
+    for (const fx of effects) {
+        const alpha = Math.max(0, fx.life / FLASH_TIME);
+        ctx.fillStyle = `rgba(255, 92, 92, ${0.55 * alpha})`;
+        for (const [c, r] of fx.cells) {
+            const pad = (1 - alpha) * 6;
+            ctx.fillRect(c * TILE + pad, r * TILE + pad, TILE - pad * 2, TILE - pad * 2);
+        }
+    }
+
     drawPreview();
 
     for (const b of balls) {
@@ -572,5 +588,9 @@ best = parseInt(localStorage.getItem(BEST_KEY) || '0', 10) || 0;
 resetLevel();
 state = 'idle';
 updateHud();
-showOverlay('SPLIT BALL', '', 'Press Space or click Start to play');
+showOverlay(
+    'SPLIT BALL',
+    `Wall off ${FILL_TARGET}% of the arena to clear a level`,
+    'Press Space or click Start to play'
+);
 requestAnimationFrame(frame);

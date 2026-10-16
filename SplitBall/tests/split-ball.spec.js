@@ -620,6 +620,49 @@ test.describe('Split Ball', () => {
     });
 
     // -----------------------------------------------------------------------
+    // Feedback
+    // -----------------------------------------------------------------------
+    test.describe('feedback', () => {
+        test('a shattered wall leaves a flash behind', async ({ page }) => {
+            await startQuiet(page);
+            await parkBall(page, 15, 14);
+            await page.evaluate(() => buildWall(15, 10));
+            await advance(page, 20);
+            expect(await page.evaluate(() => wall)).toBeNull();
+            expect(await page.evaluate(() => effects.length)).toBe(1);
+            expect(await page.evaluate(() => effects[0].cells.length)).toBeGreaterThan(1);
+        });
+
+        test('the flash fades out', async ({ page }) => {
+            await startQuiet(page);
+            await parkBall(page, 15, 14);
+            await page.evaluate(() => buildWall(15, 10));
+            await advance(page, 20);
+            await advance(page, 60);
+            expect(await page.evaluate(() => effects.length)).toBe(0);
+        });
+
+        test('the help line names the fill target', async ({ page }) => {
+            await expect(page.locator('.help')).toContainText('75%');
+        });
+
+        test('autoplay runs without page errors', async ({ page }) => {
+            const errors = [];
+            page.on('pageerror', (e) => errors.push(String(e)));
+            page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
+            await page.evaluate(() => startGame());
+            // Let the real requestAnimationFrame loop run: this exercises draw(),
+            // which the hand-stepped specs never assert on.
+            await page.waitForTimeout(600);
+            await page.evaluate(() => {
+                buildWall(cursor.col, cursor.row);
+            });
+            await page.waitForTimeout(600);
+            expect(errors).toEqual([]);
+        });
+    });
+
+    // -----------------------------------------------------------------------
     // Input
     // -----------------------------------------------------------------------
     test.describe('input', () => {
@@ -676,6 +719,19 @@ test.describe('Split Ball', () => {
             await page.keyboard.press('ArrowLeft');
             await page.keyboard.press('ArrowUp');
             expect(await page.evaluate(() => [cursor.col, cursor.row])).toEqual([1, 1]);
+        });
+
+        test.describe('touch', () => {
+            test.use({ hasTouch: true });
+
+            test('tapping builds a wall at the tapped cell', async ({ page }) => {
+                await startQuiet(page);
+                await parkBall(page, 4, 10);
+                await parkBall(page, 25, 10);
+                const point = await cellPoint(page, 12, 7);
+                await page.touchscreen.tap(point.x, point.y);
+                expect(await page.evaluate(() => wall && [wall.col, wall.row])).toEqual([12, 7]);
+            });
         });
 
         test('Space builds a wall while playing', async ({ page }) => {
