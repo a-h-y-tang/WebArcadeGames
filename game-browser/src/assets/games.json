@@ -1053,6 +1053,15 @@
     "thumbnail": ""
   },
   {
+    "id": "split-ball",
+    "name": "Split Ball",
+    "description": "Grow walls to partition the arena and fence the bouncing balls in",
+    "category": "Action",
+    "dir": "SplitBall",
+    "path": "games/SplitBall/index.html",
+    "thumbnail": "games/SplitBall/screenshot.png"
+  },
+  {
     "id": "stacker",
     "name": "Stacker",
     "description": "Stack falling blocks with precision",
