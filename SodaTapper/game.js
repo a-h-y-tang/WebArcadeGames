@@ -615,6 +615,9 @@ window.addEventListener('keydown', (e) => {
 });
 
 btnStart.addEventListener('click', () => {
+    // Without this the button keeps keyboard focus and the next Space — which
+    // the player means as "pour a drink" — would press it again.
+    btnStart.blur();
     if (state === 'paused') togglePause();
     else startGame();
 });

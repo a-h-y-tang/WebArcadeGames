@@ -75,7 +75,7 @@ The best score is kept in `localStorage` under `sodatapper-best`.
 | `style.css` | the cabinet styling around the canvas |
 | `game.js` | the whole game: state, simulation, rendering, input |
 | `DESIGN.md` | how the code is put together, and the assumptions behind it |
-| `tests/sodatapper.spec.js` | the Playwright suite (77 tests) |
+| `tests/sodatapper.spec.js` | the Playwright suite (78 tests) |
 
 ## Tests
 

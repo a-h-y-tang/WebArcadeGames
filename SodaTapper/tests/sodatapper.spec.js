@@ -125,6 +125,19 @@ test.describe('Soda Tapper', () => {
             expect(await page.evaluate(() => state)).toBe('playing');
         });
 
+        test('Space pours a drink after the start button was clicked', async ({ page }) => {
+            // The button must not keep keyboard focus, or Space would press it
+            // again and restart the shift instead of serving.
+            await page.locator('#btn-start').click();
+            await page.evaluate(() => {
+                autoStep = false;
+                score = 300;
+            });
+            await page.keyboard.press('Space');
+            await page.waitForFunction(() => mugs.length === 1);
+            expect(await page.evaluate(() => score)).toBe(300);
+        });
+
         test('starting resets score, lives and level', async ({ page }) => {
             await page.evaluate(() => {
                 score = 900;
