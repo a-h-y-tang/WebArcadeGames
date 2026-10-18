@@ -248,6 +248,14 @@ test.describe('Soda Tapper', () => {
             expect(await page.evaluate(() => mugs.length)).toBe(0);
         });
 
+        test('a click on the bars does nothing while paused', async ({ page }) => {
+            await startQuiet(page);
+            await page.evaluate(() => togglePause());
+            // The overlay covers the canvas, so the handler is driven directly.
+            await page.locator('#canvas').dispatchEvent('click', { clientX: 300, clientY: 270 });
+            expect(await page.evaluate(() => [mugs.length, bartender.lane])).toEqual([0, 0]);
+        });
+
         test('clicking a bar moves there and pours', async ({ page }) => {
             await startQuiet(page);
             const box = await page.locator('#canvas').boundingBox();
@@ -470,6 +478,53 @@ test.describe('Soda Tapper', () => {
     });
 
     // -----------------------------------------------------------------------
+    // Lanes are independent
+    // -----------------------------------------------------------------------
+    test.describe('lane separation', () => {
+        test('a mug ignores a patron on another bar', async ({ page }) => {
+            await startQuiet(page);
+            await page.evaluate(() => {
+                spawnPatron(3);
+                patrons[0].x = 300;
+                bartender.lane = 0;
+                serve();
+            });
+            await advance(page, 120);
+            expect(await page.evaluate(() => patrons[0].phase)).toBe('walking');
+            expect(await page.evaluate(() => score)).toBe(0);
+        });
+
+        test('an empty mug slides past patrons without stopping', async ({ page }) => {
+            await startQuiet(page);
+            await page.evaluate(() => {
+                spawnPatron(1);
+                patrons[0].x = 300;
+                bartender.lane = 1;
+                mugs.push({ lane: 1, x: 420, full: false });
+            });
+            await advance(page, 30);
+            const [mugX, phase] = await page.evaluate(() => [mugs[0].x, patrons[0].phase]);
+            expect(mugX).toBeLessThan(310);
+            expect(phase).toBe('walking');
+        });
+
+        test('each bar tracks its own traffic', async ({ page }) => {
+            await startQuiet(page);
+            await page.evaluate(() => {
+                for (let l = 0; l < LANE_COUNT; l++) {
+                    spawnPatron(l);
+                    patrons[l].x = 400;
+                }
+                bartender.lane = 0;
+                serve();
+            });
+            await advance(page, 70);   // the mug lands at ~0.95s, the drink runs to ~1.85s
+            const phases = await page.evaluate(() => patrons.map((p) => p.phase));
+            expect(phases.filter((p) => p === 'drinking').length).toBe(1);
+        });
+    });
+
+    // -----------------------------------------------------------------------
     // Lives and game over
     // -----------------------------------------------------------------------
     test.describe('lives', () => {
@@ -535,6 +590,46 @@ test.describe('Soda Tapper', () => {
             await page.evaluate(() => { loseLife(); loseLife(); loseLife(); });
             await page.keyboard.press('Space');
             expect(await page.evaluate(() => [state, lives, score])).toEqual(['running', 3, 0]);
+        });
+    });
+
+    // -----------------------------------------------------------------------
+    // The pause after a life is lost
+    // -----------------------------------------------------------------------
+    test.describe('the death pause', () => {
+        test('pouring is suspended while play is held', async ({ page }) => {
+            await startQuiet(page);
+            await page.evaluate(() => { loseLife(); serve(); });
+            expect(await page.evaluate(() => mugs.length)).toBe(0);
+        });
+
+        test('the bartender can still line up a bar', async ({ page }) => {
+            await startQuiet(page);
+            await page.evaluate(() => { loseLife(); moveBartender(2); });
+            expect(await page.evaluate(() => bartender.lane)).toBe(2);
+        });
+
+        test('patrons hold still while play is held', async ({ page }) => {
+            await startQuiet(page);
+            await page.evaluate(() => { spawnPatron(0); loseLife(); });
+            const before = await page.evaluate(() => patrons[0].x);
+            await advance(page, 30);
+            expect(await page.evaluate(() => patrons[0].x)).toBe(before);
+        });
+
+        test('losing a life keeps the round', async ({ page }) => {
+            await startQuiet(page);
+            await page.evaluate(() => { roundIndex = 2; loseLife(); });
+            await advance(page, 120);
+            expect(await page.evaluate(() => roundIndex)).toBe(2);
+        });
+
+        test('a worse run does not lower the best score', async ({ page }) => {
+            await page.evaluate(() => window.localStorage.setItem('sodatapper-best', '9000'));
+            await page.reload();
+            await startQuiet(page);
+            await page.evaluate(() => { score = 120; loseLife(); loseLife(); loseLife(); });
+            await expect(page.locator('#best')).toHaveText('9000');
         });
     });
 

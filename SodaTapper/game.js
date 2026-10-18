@@ -535,6 +535,24 @@ function drawTaps() {
             ctx.fillStyle = 'rgba(255, 214, 138, 0.8)';
             ctx.fillRect(TAP_X - 12, y + 2, 5, 12);
         }
+
+        // A warning chevron on the wall for every empty mug on its way back,
+        // brightening as it closes on the taps: the one thing a player cannot
+        // read from the bars themselves in time.
+        const incoming = mugs.filter((m) => !m.full && m.lane === lane);
+        if (incoming.length) {
+            const nearest = Math.min(...incoming.map((m) => m.x));
+            const urgency = clamp(1 - (nearest - CATCH_X) / 260, 0, 1);
+            ctx.globalAlpha = 0.35 + urgency * 0.65;
+            ctx.fillStyle = active ? '#8ef7c4' : '#ff8d6b';
+            ctx.beginPath();
+            ctx.moveTo(TAP_X - 40, y + 6);
+            ctx.lineTo(TAP_X - 28, y + 13);
+            ctx.lineTo(TAP_X - 40, y + 20);
+            ctx.closePath();
+            ctx.fill();
+            ctx.globalAlpha = 1;
+        }
     }
 }
 

@@ -32,6 +32,7 @@ lives and the next round brings faster, more frequent custom.
 | `CATCH_X` | 118 | an empty mug at or left of this x can be caught |
 | `SMASH_X` | 70 | an empty mug left of this x has smashed |
 | `GRAB_X` | 116 | a patron at or left of this x has reached the taps |
+| `FOOTER_Y` | 408 | top of the strip holding the lives and round progress |
 
 Lane `i` is drawn at `LANE_TOP + i * LANE_GAP`, so the four bars sit at
 y = 70, 170, 270 and 370. The bartender never moves horizontally — only
@@ -81,6 +82,20 @@ position, and then either leave satisfied (if the push-back carried them to or
 past `BAR_RIGHT`, scoring `SATISFIED_POINTS`) or resume walking. One code path
 covers both, so the empty mug is always sent back exactly once per mug served.
 
+### Reading the board
+
+Two cues are drawn rather than simulated, because the bars alone do not carry
+them in time:
+
+- **Incoming-empty chevrons.** Each tap gets a chevron on the wall whenever an
+  empty mug is heading back down its bar, brightening as the mug closes on
+  `CATCH_X` and turning green once the bartender is standing in that lane. An
+  empty approaching a lane you are not in is the one threat that is otherwise
+  easy to lose track of while pouring somewhere else.
+- **The footer strip.** Below the bars, the remaining lives are drawn as mugs
+  and the round's progress as a bar: `spawned - patrons.length` of the round's
+  quota have left the building one way or another.
+
 ### Rounds
 
 `ROUNDS` is a table of five entries, each `{ patrons, patronSpeed, spawnGap,
@@ -123,7 +138,10 @@ global, so the Playwright suite can read `patrons`, `mugs` and `state`
 directly and drive time with `step(dt)`. All motion is expressed per second
 and applied through `step(dt)`, and the requestAnimationFrame loop only calls
 `step` while `autoStep` is true — the tests switch it off and advance frames
-themselves, so nothing depends on wall-clock timing.
+themselves, so nothing depends on wall-clock timing. A second hook,
+`spawnEnabled`, stops the door: with it off a spec can put exactly the patrons
+it cares about on the bars and know nothing else will wander in between
+assertions.
 
 - `index.html` — page shell, HUD, canvas and overlay
 - `style.css` — cabinet styling
@@ -150,9 +168,9 @@ reading:
 - **No tip glasses or bonus break screens.** The original's tip-jar and
   can-shuffle bonus rounds are out of scope; scoring is serves, catches,
   satisfied patrons and a round bonus.
-- **Lane choice for spawns is random.** Tests that care about a specific lane
-  clear `patrons` and call `spawnPatron(lane)` themselves rather than seeding a
-  generator.
+- **Lane choice for spawns is random.** Rather than seed a generator, the
+  suite turns `spawnEnabled` off and calls `spawnPatron(lane)` for the lanes it
+  cares about.
 - **A life loss restarts the traffic, not the round.** Patrons already served
   stay served; survivors are sent back to the door. This is simpler than
   re-running a whole round and keeps progress legible.
