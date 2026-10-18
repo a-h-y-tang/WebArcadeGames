@@ -31,7 +31,7 @@ test.describe('Game Browser', () => {
   test('should display games in a grid', async ({ page }) => {
     // Wait for games to load
     const gameCards = page.locator('app-game-card');
-    await expect(gameCards).toHaveCount(109);
+    await expect(gameCards).toHaveCount(GAME_COUNT);
 
     // Check first game card structure
     const firstCard = gameCards.first();
@@ -42,7 +42,7 @@ test.describe('Game Browser', () => {
   test('should have search functionality', async ({ page }) => {
     // Initial state: all 109 games visible
     let gameCards = page.locator('app-game-card');
-    await expect(gameCards).toHaveCount(109);
+    await expect(gameCards).toHaveCount(GAME_COUNT);
 
     // Search for "Tetris"
     const searchInput = page.locator('input[placeholder="Search games..."]');
@@ -57,8 +57,8 @@ test.describe('Game Browser', () => {
   test('should filter by category', async ({ page }) => {
     // Get initial game count
     let gameCards = page.locator('app-game-card');
-    const initialCount = await gameCards.count();
-    expect(initialCount).toBeGreaterThan(0);
+    await expect(gameCards).toHaveCount(GAME_COUNT);
+    const initialCount = GAME_COUNT;
 
     // Click on "Puzzle" category
     const puzzleButton = page.locator('button:has-text("Puzzle")');
@@ -66,6 +66,7 @@ test.describe('Game Browser', () => {
 
     // Wait for filtered results
     gameCards = page.locator('app-game-card');
+    await expect.poll(() => gameCards.count()).toBeLessThan(initialCount);
     const puzzleCount = await gameCards.count();
 
     // Should have fewer games than total
@@ -103,7 +104,7 @@ test.describe('Game Browser', () => {
     // Search should be empty and all games visible
     await expect(searchInput).toHaveValue('');
     const gameCards = page.locator('app-game-card');
-    await expect(gameCards).toHaveCount(109);
+    await expect(gameCards).toHaveCount(GAME_COUNT);
   });
 
   test('should reset category filter', async ({ page }) => {
@@ -113,8 +114,7 @@ test.describe('Game Browser', () => {
 
     // Games should be filtered
     let gameCards = page.locator('app-game-card');
-    const filteredCount = await gameCards.count();
-    expect(filteredCount).toBeLessThan(109);
+    await expect.poll(() => gameCards.count()).toBeLessThan(GAME_COUNT);
 
     // Click Reset button
     const resetButton = page.locator('button:has-text("Reset")');
@@ -122,7 +122,7 @@ test.describe('Game Browser', () => {
 
     // All games should be visible again
     gameCards = page.locator('app-game-card');
-    await expect(gameCards).toHaveCount(109);
+    await expect(gameCards).toHaveCount(GAME_COUNT);
   });
 
   test('should display game card details', async ({ page }) => {
@@ -214,6 +214,13 @@ test.describe('Game Browser', () => {
     // Games should load
     const gameCards = page.locator('app-game-card');
     await expect(gameCards.first()).toBeVisible();
+  });
+
+  test('should not list Blackjack', async ({ page }) => {
+    await expect(page.locator('app-game-card').first()).toBeVisible();
+    await expect(
+      page.locator('app-game-card h3', { hasText: /^\s*Blackjack\s*$/ })
+    ).toHaveCount(0);
   });
 
   test('should display footer', async ({ page }) => {
