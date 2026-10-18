@@ -79,7 +79,6 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Xonix | [Xonix/](Xonix/) | Complete |
 | Sudoku | [Sudoku/](Sudoku/) | Complete |
 | Pill Drop | [PillDrop/](PillDrop/) | Complete |
-| Blackjack | [Blackjack/](Blackjack/) | Complete |
 | Road Racer | [RoadRacer/](RoadRacer/) | Complete |
 | Turbo Racer | [TurboRacer/](TurboRacer/) | Complete |
 | Columns | [Columns/](Columns/) | Complete |
