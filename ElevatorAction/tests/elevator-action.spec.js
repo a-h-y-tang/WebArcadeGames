@@ -222,7 +222,7 @@ test.describe('Elevator Action', () => {
                 Array.from({ length: FLOOR_COUNT }, (_, i) => floorY(i))
             );
             expect(ys[0]).toBe(108);
-            expect(ys[FLOOR_COUNT - 1]).toBe(568);
+            expect(ys[ys.length - 1]).toBe(568);
             for (let i = 1; i < ys.length; i++) expect(ys[i] - ys[i - 1]).toBe(92);
         });
 
@@ -1058,8 +1058,8 @@ test.describe('Elevator Action', () => {
         });
 
         test('a crouched player ducks a high shot', async ({ page }) => {
+            await holdKeys(page, ['ArrowDown']);
             await page.evaluate(() => {
-                player.crouch = true;
                 bullets.push(makeEnemyBullet(player.x + 40, player.floor, -1));
             });
             await stepSeconds(page, 1);
@@ -1575,6 +1575,47 @@ test.describe('Elevator Action', () => {
                     });
                 });
             expect(await run()).toBe(await run());
+        });
+
+        test('a scripted raid rides down and escapes', async ({ page }) => {
+            await startFrozen(page);
+            const result = await page.evaluate(() => {
+                // An empty building: this test is about the route, not the fight.
+                spawnTimer = 1e6;
+                enemies.length = 0;
+                doors.forEach((d) => {
+                    if (d.type === 'document') d.collected = true;
+                });
+
+                const run = (held, steps, until) => {
+                    for (const code of Object.keys(keys)) keys[code] = false;
+                    held.forEach((c) => (keys[c] = true));
+                    for (let i = 0; i < steps; i++) {
+                        physicsStep(1 / 120);
+                        if (until && until()) break;
+                    }
+                };
+
+                // Walk into the car parked on the roof floor, then ride it down.
+                run(['ArrowRight'], 400, () => player.inCar !== null);
+                const boarded = player.inCar;
+                run(['ArrowDown'], 1200, () => player.floor === FLOOR_COUNT - 1);
+                const arrived = player.floor;
+
+                // Tap right along the ground floor: each tap steps out of a car
+                // and walks on until the next shaft.
+                for (let tap = 0; tap < 12 && state === 'running'; tap++) {
+                    run([], 2);
+                    run(['ArrowRight'], 400, () => state !== 'running');
+                }
+
+                return { boarded, arrived, state, score };
+            });
+
+            expect(result.boarded).toBe(0);
+            expect(result.arrived).toBe(5);
+            expect(result.state).toBe('levelclear');
+            expect(result.score).toBeGreaterThan(0);
         });
 
         test('a long unattended run stays stable', async ({ page }) => {

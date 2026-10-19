@@ -117,6 +117,17 @@ rather than a rule handed down:
   exactly reproducible.
 - **Documents collect on contact** rather than on a separate "open the door"
   key press — one less key for the same decision.
+- **Boarding is sticky.** The key that walks you into a car is locked out
+  until it is released, otherwise holding a direction would board the car and
+  step straight out the far side — walking through a shaft that is supposed to
+  be a hole in the floor. `player.carLock` carries that one-shot state.
+- **A car between floors is a safe pocket.** `floorAt` only reports a floor
+  when the car is exactly level with one, so a rider mid-shaft is on floor
+  `-1`: nothing can shoot them, and their own shots hit nothing either.
+- **Crouching roots you.** A crouched player does not walk. One posture, one
+  purpose: duck a shot and fire low.
+- **A shaft is not cover.** Shots cross a shaft opening rather than stopping at
+  it, so standing in a car level with a floor is still dangerous.
 - **Agents stay on their floor.** They do not call or ride elevators. A car is
   always yours, so a descent is never softlocked by an agent parking one
   elsewhere.
