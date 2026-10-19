@@ -35,7 +35,10 @@ except where a shaft crosses it:
 - When the car **is** level with the floor, you walk straight in and are now
   riding it (`player.inCar` is the shaft index).
 - While riding, `↑`/`↓` drive the car between the top and bottom floors at
-  `ELEVATOR_SPEED` px/s. The car carries you with it.
+  `ELEVATOR_SPEED` px/s — about a floor a second. The car carries you with it.
+- Let go of both and the car settles onto the nearest floor at the same speed.
+  Stopping at a landing is therefore a matter of timing rather than pixel
+  accuracy, and a car can never be abandoned halfway up a shaft.
 - Walking left or right while the car is level with a floor steps you back out
   onto that floor.
 

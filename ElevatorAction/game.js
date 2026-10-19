@@ -27,11 +27,11 @@ const ROOF_Y = FLOOR_TOP - 56;
 
 const SHAFT_XS = [150, 330];         // shaft centres
 const SHAFT_W = 54;
-const ELEVATOR_SPEED = 70;           // px/s while a rider holds up or down
+const ELEVATOR_SPEED = 95;           // px/s while a rider holds up or down — about a floor a second
 
 const DOOR_W = 30;
 const DOOR_H = 46;
-const DOOR_X = [60, 95, 215, 265, 395, 430];
+const DOOR_X = [68, 105, 215, 265, 395, 430];
 
 const EXIT_W = 56;
 const exitZone = { x: WALL_R - EXIT_W, w: EXIT_W, floor: FLOOR_COUNT - 1 };
@@ -92,6 +92,12 @@ function floorY(i) {
     return FLOOR_TOP + i * FLOOR_H;
 }
 
+// The floor a car at y is closest to — where it settles when let go.
+function nearestFloor(y) {
+    const i = Math.round((y - FLOOR_TOP) / FLOOR_H);
+    return Math.max(0, Math.min(FLOOR_COUNT - 1, i));
+}
+
 // Which floor a y sits exactly on, or -1 for a car between two floors.
 function floorAt(y) {
     for (let i = 0; i < FLOOR_COUNT; i++) {
@@ -136,9 +142,11 @@ function buildDoors(n) {
     return list;
 }
 
+// The player drops in at the left edge of the roof floor, clear of the
+// nearest door so a level never opens by handing out a free document.
 function makePlayer(invuln = 0) {
     return {
-        x: WALL_L + 24,
+        x: WALL_L + 8,
         y: floorY(0),
         floor: 0,
         dir: 1,
@@ -347,8 +355,18 @@ function walk(dx) {
 function rideCar(dt, k) {
     const car = elevators[player.inCar];
 
-    if (k.up) car.y = Math.max(floorY(0), car.y - ELEVATOR_SPEED * dt);
-    else if (k.down) car.y = Math.min(floorY(FLOOR_COUNT - 1), car.y + ELEVATOR_SPEED * dt);
+    const travel = ELEVATOR_SPEED * dt;
+    if (k.up) {
+        car.y = Math.max(floorY(0), car.y - travel);
+    } else if (k.down) {
+        car.y = Math.min(floorY(FLOOR_COUNT - 1), car.y + travel);
+    } else {
+        // Let go of the controls and the car settles on the nearest floor, so
+        // lining up with a landing is a matter of timing, not pixel accuracy.
+        const target = floorY(nearestFloor(car.y));
+        const gap = target - car.y;
+        car.y = Math.abs(gap) <= travel ? target : car.y + Math.sign(gap) * travel;
+    }
 
     player.x = car.x;
     player.y = car.y;

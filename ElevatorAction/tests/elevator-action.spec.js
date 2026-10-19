@@ -180,12 +180,44 @@ test.describe('Elevator Action', () => {
                 level = 4;
                 lives = 1;
                 startGame();
+                autoRun = false;
             });
             expect(await page.evaluate(() => ({ score, level, lives }))).toEqual({
                 score: 0,
                 level: 1,
                 lives: 3,
             });
+        });
+
+        test('the player does not start on top of a document', async ({ page }) => {
+            await startFrozen(page);
+            const touching = await page.evaluate(() =>
+                doors.some(
+                    (d) =>
+                        d.type === 'document' &&
+                        d.floor === player.floor &&
+                        Math.abs(d.x - player.x) <= DOOR_W / 2 + PLAYER_W / 2
+                )
+            );
+            expect(touching).toBe(false);
+        });
+
+        test('no level hands out a document at the drop-in point', async ({ page }) => {
+            const freebies = await page.evaluate(() => {
+                const out = [];
+                for (let n = 1; n <= LEVEL_COUNT; n++) {
+                    buildLevel(n);
+                    if (docsRemaining() !== doors.filter((d) => d.type === 'document').length) {
+                        out.push(n);
+                    }
+                    for (const d of doors) {
+                        if (d.type !== 'document' || d.floor !== player.floor) continue;
+                        if (Math.abs(d.x - player.x) <= DOOR_W / 2 + PLAYER_W / 2) out.push(n);
+                    }
+                }
+                return out;
+            });
+            expect(freebies).toEqual([]);
         });
 
         test('the player starts on the top floor at the left', async ({ page }) => {
@@ -609,6 +641,50 @@ test.describe('Elevator Action', () => {
             await holdKeys(page, ['ArrowDown']);
             await stepSeconds(page, 6);
             expect((await playerState(page)).floor).toBe(await page.evaluate(() => FLOOR_COUNT - 1));
+        });
+
+        test('letting go settles the car on the nearest floor', async ({ page }) => {
+            await page.evaluate(() => {
+                elevators[0].y = floorY(2) + 20;
+                player.inCar = 0;
+                player.y = elevators[0].y;
+                player.x = elevators[0].x;
+                player.floor = -1;
+            });
+            await releaseKeys(page);
+            await stepSeconds(page, 2);
+            expect(await page.evaluate(() => elevators[0].y)).toBe(
+                await page.evaluate(() => floorY(2))
+            );
+            expect((await playerState(page)).floor).toBe(2);
+        });
+
+        test('a settling car picks the floor it is closest to', async ({ page }) => {
+            await page.evaluate(() => {
+                elevators[0].y = floorY(3) - 20;
+                player.inCar = 0;
+                player.y = elevators[0].y;
+                player.x = elevators[0].x;
+            });
+            await releaseKeys(page);
+            await stepSeconds(page, 2);
+            expect(await page.evaluate(() => elevators[0].y)).toBe(
+                await page.evaluate(() => floorY(3))
+            );
+        });
+
+        test('a settled car stays put', async ({ page }) => {
+            await page.evaluate(() => {
+                elevators[0].y = floorY(1);
+                player.inCar = 0;
+                player.y = elevators[0].y;
+                player.x = elevators[0].x;
+            });
+            await releaseKeys(page);
+            await stepSeconds(page, 2);
+            expect(await page.evaluate(() => elevators[0].y)).toBe(
+                await page.evaluate(() => floorY(1))
+            );
         });
 
         test('walking out of a car level with a floor leaves the car', async ({ page }) => {
