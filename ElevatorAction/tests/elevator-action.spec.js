@@ -478,6 +478,31 @@ test.describe('Elevator Action', () => {
             expect(await page.evaluate(() => lives)).toBe(3);
         });
 
+        test('a car parked in the lobby can still be boarded', async ({ page }) => {
+            // The lobby slab closes the shafts off, so it is the one floor where
+            // a floor surface and a car roof sit at the same height. The car has
+            // to win, or a spy who reaches the lobby early can never ride again.
+            const lobby = await page.evaluate(() => FLOOR_COUNT - 1);
+            await placeCar(page, 0, lobby);
+            await placePlayer(page, await page.evaluate(() => elevators[0].x + CAR_W / 2), lobby);
+            await step(page, 10);
+            expect((await readPlayer(page)).onCar).toBe(0);
+        });
+
+        test('a spy who reached the lobby early can call a car and ride back up', async ({
+            page,
+        }) => {
+            await placeCar(page, 0, 2);
+            await placeCar(page, 1, 4);
+            await placePlayer(page, await page.evaluate(() => elevators[0].x + CAR_W / 2), 9);
+            await page.keyboard.down('ArrowUp');
+            await step(page, 2000);
+            await page.keyboard.up('ArrowUp');
+            const p = await readPlayer(page);
+            expect(p.onCar).not.toBeNull();
+            expect(p.y).toBeLessThan(await page.evaluate(() => FLOOR_Y[FLOOR_COUNT - 1]));
+        });
+
         test('walking into a level car steps onto it instead of falling', async ({ page }) => {
             await placeCar(page, 0, 4);
             await placePlayer(page, await page.evaluate(() => elevators[0].x + CAR_W / 2), 4);
@@ -532,6 +557,40 @@ test.describe('Elevator Action', () => {
             const y = await page.evaluate(() => elevators[0].y);
             expect(await page.evaluate((v) => FLOOR_Y.includes(v), y)).toBe(true);
             expect(await page.evaluate(() => elevators[0].moving)).toBe(false);
+        });
+
+        test('a car held on its way pauses at each floor it reaches', async ({ page }) => {
+            await page.keyboard.down('ArrowUp');
+            // Run until it first arrives at floor 3, then look at the next instant.
+            await page.evaluate(() => {
+                for (let i = 0; i < 2000; i++) {
+                    physicsStep(DT);
+                    if (elevators[0].floor === 3 && !elevators[0].moving) break;
+                }
+            });
+            expect(await page.evaluate(() => elevators[0].floor)).toBe(3);
+            await step(page, 12);
+            const car = await page.evaluate(() => ({ y: elevators[0].y, floor: elevators[0].floor }));
+            expect(car.floor).toBe(3);
+            expect(car.y).toBe(await page.evaluate(() => FLOOR_Y[3]));
+            await page.keyboard.up('ArrowUp');
+        });
+
+        test('the pause is long enough to step off a car being driven', async ({ page }) => {
+            await page.keyboard.down('ArrowUp');
+            await page.evaluate(() => {
+                for (let i = 0; i < 2000; i++) {
+                    physicsStep(DT);
+                    if (elevators[0].floor === 3 && !elevators[0].moving) break;
+                }
+            });
+            await page.keyboard.up('ArrowUp');
+            await page.keyboard.down('ArrowRight');
+            await step(page, 90);
+            await page.keyboard.up('ArrowRight');
+            const p = await readPlayer(page);
+            expect(p.onCar).toBeNull();
+            expect(p.y).toBe(await page.evaluate(() => FLOOR_Y[3]));
         });
 
         test('holding the drive key keeps the car travelling floor after floor', async ({ page }) => {
@@ -985,6 +1044,24 @@ test.describe('Elevator Action', () => {
             expect(await page.evaluate(() => lives)).toBe(3);
         });
 
+        test('a knock from an agent shoves the spy clear of them', async ({ page }) => {
+            await page.evaluate(() => {
+                agents.push({ x: player.x + 6, y: player.y, floor: 3, dir: -1, cooldown: 99 });
+            });
+            await step(page, 2);
+            const gap = await page.evaluate(() => Math.abs(player.x - agents[0].x));
+            expect(gap).toBeGreaterThan(await page.evaluate(() => (AGENT_W + PLAYER_W) / 2));
+            expect(await page.evaluate(() => lives)).toBe(2);
+        });
+
+        test('the shove does not cost a second life on its own', async ({ page }) => {
+            await page.evaluate(() => {
+                agents.push({ x: player.x + 6, y: player.y, floor: 3, dir: -1, cooldown: 99 });
+            });
+            await step(page, 60);
+            expect(await page.evaluate(() => lives)).toBe(2);
+        });
+
         test('walking into an agent costs a life', async ({ page }) => {
             await page.evaluate(() => {
                 agents.push({ x: player.x + 6, y: player.y, floor: 3, dir: -1, cooldown: 99 });
@@ -1131,7 +1208,7 @@ test.describe('Elevator Action', () => {
             expect((await readPlayer(page)).y).toBe(await page.evaluate(() => FLOOR_Y[0]));
         });
 
-        test('the next level keeps the score and the lives', async ({ page }) => {
+        test('the next level keeps the score and hands back a life', async ({ page }) => {
             await collectAllDocs(page);
             await page.evaluate(() => (lives = 2));
             await placePlayer(page, await page.evaluate(() => EXIT.x + EXIT.w / 2), 9);
@@ -1139,7 +1216,17 @@ test.describe('Elevator Action', () => {
             const earned = await page.evaluate(() => score);
             await page.keyboard.press('Space');
             expect(await page.evaluate(() => score)).toBe(earned);
-            expect(await page.evaluate(() => lives)).toBe(2);
+            expect(await page.evaluate(() => lives)).toBe(3);
+            await expect(page.locator('#lives')).toHaveText('3');
+        });
+
+        test('the life handed back is capped', async ({ page }) => {
+            await collectAllDocs(page);
+            await page.evaluate(() => (lives = LIVES_MAX));
+            await placePlayer(page, await page.evaluate(() => EXIT.x + EXIT.w / 2), 9);
+            await step(page, 10);
+            await page.keyboard.press('Space');
+            expect(await page.evaluate(() => lives)).toBe(await page.evaluate(() => LIVES_MAX));
         });
 
         test('later levels send out agents faster', async ({ page }) => {

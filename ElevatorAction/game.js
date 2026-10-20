@@ -48,6 +48,8 @@ const AGENT_H = 30;
 const GRAVITY = 900;                 // px/s^2 down a shaft
 const MOVE_SPEED = 120;              // px/s walking
 const CAR_SPEED = 90;                // px/s of elevator travel
+const CAR_DWELL = 0.3;               // seconds a car waits at a floor before a
+                                     // held key sends it on, so you can step off
 const BULLET_SPEED = 320;            // px/s, horizontal only
 const SHOOT_DELAY = 0.22;            // seconds between the spy's shots
 const AGENT_FIRE_DELAY = 1.8;        // seconds between an agent's shots
@@ -56,10 +58,12 @@ const AGENT_SPEED_BASE = 52;
 const AGENT_SPEED_STEP = 9;          // added per level
 const WALL_PAD = 20;                 // how close an agent gets to a wall before turning
 const INVULN_TIME = 2.2;             // seconds of blinking after a hit
+const KNOCKBACK = 28;                // px the spy is shoved clear of an agent
 
 // --- run rules -------------------------------------------------------------
 
 const LIVES_START = 3;
+const LIVES_MAX = 5;                 // clearing a building hands one back, up to this
 const LEVEL_COUNT = 3;
 const DOC_COUNT = 5;                 // red doors hidden in the building
 const DOC_POINTS = 500;
@@ -217,6 +221,7 @@ function buildLevel(n) {
             floor,
             target: floor,
             moving: false,
+            dwell: 0,
         };
     });
 
@@ -252,6 +257,7 @@ function nextLevel() {
         return;
     }
     level += 1;
+    lives = Math.min(lives + 1, LIVES_MAX);
     buildLevel(level);
     state = 'running';
     hideOverlay();
@@ -359,8 +365,12 @@ function movePlayer(dt) {
     }
     player.x = clamp(player.x, PLAYER_W / 2, W - PLAYER_W / 2);
 
-    // Holding a drive key keeps a parked car moving on, floor after floor — or,
-    // standing on a floor, keeps the call in until a car is on its way.
+    // A held drive key keeps a car going floor by floor — or, standing on a
+    // floor, keeps the call in until a car is on its way. A car that has just
+    // arrived is left alone for CAR_DWELL first: without that pause it departs
+    // the same frame it arrives and there is no instant in which to step off.
+    const car = player.onCar === null ? null : elevators[player.onCar];
+    if (car && car.dwell > 0) return;
     const up = keys['ArrowUp'] || keys['KeyW'];
     const down = keys['ArrowDown'] || keys['KeyS'];
     if (up && !down) driveElevator(-1);
@@ -369,6 +379,7 @@ function movePlayer(dt) {
 
 function moveElevators(dt) {
     elevators.forEach((car) => {
+        if (car.dwell > 0) car.dwell = Math.max(0, car.dwell - dt);
         if (!car.moving) return;
         const ty = FLOOR_Y[car.target];
         const dir = Math.sign(ty - car.y);
@@ -377,6 +388,7 @@ function moveElevators(dt) {
             car.y = ty;
             car.floor = car.target;
             car.moving = false;
+            car.dwell = CAR_DWELL;
         }
     });
 }
@@ -388,7 +400,13 @@ function supportBetween(x, from, to) {
     let best = null;
     const consider = (y, car) => {
         if (y < from - 1e-6 || y > to + 1e-6) return;
-        if (!best || y < best.y) best = { y, car };
+        // A car wins a tie against a floor at the same height. That tie only
+        // happens in the lobby, where the slab closes the shafts off — and if
+        // the slab won it, a car parked in the lobby could never be boarded and
+        // a spy who got there early would be stranded.
+        if (!best || y < best.y - 1e-6 || (Math.abs(y - best.y) < 1e-6 && car !== null)) {
+            best = { y, car };
+        }
     };
 
     const shaft = inShaft(x);
@@ -501,9 +519,16 @@ function moveAgents(dt) {
         }
 
         // Same rule as shooting: an agent can only reach a spy standing on the
-        // floor they are standing on, never one riding past in a shaft.
+        // floor they are standing on, never one riding past in a shaft. A shove
+        // comes with the hit — without it the agent is still on top of the spy
+        // when the blink ends, and takes the next life for free.
         if (a.floor === standing && Math.abs(a.x - player.x) < (AGENT_W + PLAYER_W) / 2) {
+            const landed = state === 'running' && player.invuln === 0;
             damagePlayer();
+            if (landed) {
+                const away = Math.sign(player.x - a.x) || -a.dir;
+                player.x = clamp(player.x + away * KNOCKBACK, PLAYER_W / 2, W - PLAYER_W / 2);
+            }
         }
     });
 }
