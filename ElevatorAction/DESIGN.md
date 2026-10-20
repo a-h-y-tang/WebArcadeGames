@@ -49,9 +49,9 @@ not underfoot, and a spy walking off a parked car would drop through it.
 | `GRAVITY` | 900 px/s² | pull down an open shaft |
 | `BULLET_SPEED` | 320 px/s | shots, horizontal only |
 | `SHOOT_DELAY` | 0.22 s | the spy's rate of fire |
-| `AGENT_FIRE_DELAY` | 1.4 s | an agent's rate of fire |
-| `AGENT_RANGE` | 260 px | how far down a floor an agent will shoot |
-| `INVULN_TIME` | 1.8 s | blinking grace period after a hit |
+| `AGENT_FIRE_DELAY` | 1.8 s | an agent's rate of fire |
+| `AGENT_RANGE` | 210 px | how far down a floor an agent will shoot |
+| `INVULN_TIME` | 2.2 s | blinking grace period after a hit |
 | `LIVES_START` | 3 | lives per run |
 | `LEVEL_COUNT` | 3 | buildings in a full run |
 | `DOC_COUNT` | 5 | documents per building |
@@ -60,8 +60,15 @@ not underfoot, and a spy walking off a parked car would drop through it.
 | `ESCAPE_BONUS` / `LIFE_BONUS` | 1000 / 250 | escape bonus, and per life left |
 
 Each later building raises the pressure rather than the geometry:
-`spawnDelay()` shortens (`3.2 s / (1 + 0.4·(level−1))`), `maxAgents()` rises
-(`2 + level`) and `agentSpeed()` climbs by 9 px/s per level.
+`spawnDelay()` shortens (`3.8 s / (1 + 0.4·(level−1))`), `maxAgents()` rises
+(`1 + level`) and `agentSpeed()` climbs by 9 px/s per level.
+
+An agent can only reach a spy standing on the same floor as them — by shot or
+by touch. A spy in transit, riding a car between floors or falling, is out of
+reach. (Parking a car level with a floor counts as standing on it, so the
+elevator is cover while it moves, not a safe room.) That makes the elevator worth riding
+rather than a slow lift between two shooting galleries, and it gives the player
+a way to break off a fight that walking alone cannot.
 
 ## How the code works
 
@@ -78,7 +85,9 @@ assertion about motion exact instead of timing-dependent.
 2. `movePlayer` — horizontal walking, wall clamp, and the held-key re-drive that
    keeps a parked car moving on floor after floor;
 3. `moveElevators` — a car travels toward `FLOOR_Y[target]` and **always stops
-   level with a floor**, which is what lets the spy walk off onto the slab;
+   level with a floor**, which is what lets the spy walk off onto the slab.
+   Pressing the opposite direction in transit retargets the car to the floor it
+   left, so an overshoot or an agent waiting below can be backed out of;
 4. `resolvePlayerVertical` — riding or falling (below);
 5. `moveAgents` — chase, wall turns, shooting, contact damage;
 6. `moveBullets` — travel, agent hits, spy hits;
@@ -145,8 +154,9 @@ simpler reading:
   the door" key. One fewer control, and it reads clearly on screen.
 - **Support is tested at the spy's centre.** A spy whose middle is over a shaft
   is over the shaft. Per-corner support would let the player stand half on air.
-- **Agents stay on their floor** — they do not ride elevators or fall — but they
-  do walk across shaft openings. Giving them the shafts as well made them either
+- **Agents stay on their floor** — they do not ride elevators or fall, and they
+  cannot touch or shoot a spy who is not on their floor — but they do walk
+  across shaft openings. Giving them the shafts as well made them either
   harmless (stuck in one floor segment) or unfair; this is the middle course.
 - **No escalators, no shooting out the lights, no crouching.** The original's
   extra verbs are left out; walking, riding and shooting carry the game.

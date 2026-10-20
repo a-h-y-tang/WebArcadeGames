@@ -585,6 +585,24 @@ test.describe('Elevator Action', () => {
             expect(await page.evaluate(() => elevators[1].floor)).toBe(before);
         });
 
+        test('pressing the other way turns a car round in transit', async ({ page }) => {
+            await page.keyboard.press('ArrowDown');
+            await step(page, 20);
+            expect(await page.evaluate(() => elevators[0].target)).toBe(5);
+            await page.keyboard.press('ArrowUp');
+            expect(await page.evaluate(() => elevators[0].target)).toBe(4);
+            await step(page, 600);
+            expect(await page.evaluate(() => elevators[0].floor)).toBe(4);
+            expect((await readPlayer(page)).y).toBe(await page.evaluate(() => FLOOR_Y[4]));
+        });
+
+        test('pressing the same way again does not disturb a car in transit', async ({ page }) => {
+            await page.keyboard.press('ArrowDown');
+            await step(page, 20);
+            await page.keyboard.press('ArrowDown');
+            expect(await page.evaluate(() => elevators[0].target)).toBe(5);
+        });
+
         test('a car the spy is riding is never called away by the other floor', async ({ page }) => {
             await page.keyboard.press('ArrowDown');
             await step(page, 10);
@@ -875,7 +893,7 @@ test.describe('Elevator Action', () => {
 
         test('an agent on the spy’s floor walks towards the spy', async ({ page }) => {
             await page.evaluate(() => {
-                agents.push({ x: 380, y: FLOOR_Y[3], floor: 3, dir: 1, cooldown: 99, hit: 0 });
+                agents.push({ x: 380, y: FLOOR_Y[3], floor: 3, dir: 1, cooldown: 99 });
             });
             await step(page, 30);
             const x = await page.evaluate(() => agents[0].x);
@@ -885,7 +903,7 @@ test.describe('Elevator Action', () => {
 
         test('an agent turns round at a wall', async ({ page }) => {
             await page.evaluate(() => {
-                agents.push({ x: 24, y: FLOOR_Y[6], floor: 6, dir: -1, cooldown: 99, hit: 0 });
+                agents.push({ x: 24, y: FLOOR_Y[6], floor: 6, dir: -1, cooldown: 99 });
             });
             await step(page, 60);
             expect(await page.evaluate(() => agents[0].dir)).toBe(1);
@@ -893,7 +911,7 @@ test.describe('Elevator Action', () => {
 
         test('an agent facing the spy on the same floor shoots', async ({ page }) => {
             await page.evaluate(() => {
-                agents.push({ x: 320, y: FLOOR_Y[3], floor: 3, dir: -1, cooldown: 0, hit: 0 });
+                agents.push({ x: 320, y: FLOOR_Y[3], floor: 3, dir: -1, cooldown: 0 });
             });
             await step(page, 2);
             const shots = await page.evaluate(() => bullets.filter((b) => b.from === 'agent').length);
@@ -902,7 +920,7 @@ test.describe('Elevator Action', () => {
 
         test('an agent on another floor does not shoot', async ({ page }) => {
             await page.evaluate(() => {
-                agents.push({ x: 320, y: FLOOR_Y[7], floor: 7, dir: -1, cooldown: 0, hit: 0 });
+                agents.push({ x: 320, y: FLOOR_Y[7], floor: 7, dir: -1, cooldown: 0 });
             });
             await step(page, 120);
             const shots = await page.evaluate(() => bullets.filter((b) => b.from === 'agent').length);
@@ -911,7 +929,7 @@ test.describe('Elevator Action', () => {
 
         test('a shot from the spy drops an agent and scores', async ({ page }) => {
             await page.evaluate(() => {
-                agents.push({ x: 300, y: FLOOR_Y[3], floor: 3, dir: -1, cooldown: 99, hit: 0 });
+                agents.push({ x: 300, y: FLOOR_Y[3], floor: 3, dir: -1, cooldown: 99 });
                 player.dir = 1;
             });
             await page.keyboard.press('Space');
@@ -922,7 +940,7 @@ test.describe('Elevator Action', () => {
 
         test('a shot passes agents on other floors by', async ({ page }) => {
             await page.evaluate(() => {
-                agents.push({ x: 300, y: FLOOR_Y[5], floor: 5, dir: -1, cooldown: 99, hit: 0 });
+                agents.push({ x: 300, y: FLOOR_Y[5], floor: 5, dir: -1, cooldown: 99 });
                 player.dir = 1;
             });
             await page.keyboard.press('Space');
@@ -969,9 +987,69 @@ test.describe('Elevator Action', () => {
 
         test('walking into an agent costs a life', async ({ page }) => {
             await page.evaluate(() => {
-                agents.push({ x: player.x + 6, y: player.y, floor: 3, dir: -1, cooldown: 99, hit: 0 });
+                agents.push({ x: player.x + 6, y: player.y, floor: 3, dir: -1, cooldown: 99 });
             });
             await step(page, 2);
+            expect(await page.evaluate(() => lives)).toBe(2);
+        });
+
+        test('an agent does not shoot a spy riding between floors', async ({ page }) => {
+            await page.evaluate(() => {
+                const car = elevators[0];
+                car.floor = 3;
+                car.target = 4;
+                car.y = FLOOR_Y[3] + 24;
+                car.moving = true;
+                player.x = car.x + CAR_W / 2;
+                player.y = car.y;
+                player.onCar = 0;
+                agents.push({ x: 300, y: FLOOR_Y[3], floor: 3, dir: -1, cooldown: 0 });
+            });
+            await step(page, 20);
+            expect(await page.evaluate(() => bullets.length)).toBe(0);
+        });
+
+        test('an agent cannot touch a spy riding past their floor', async ({ page }) => {
+            await page.evaluate(() => {
+                const car = elevators[0];
+                car.floor = 3;
+                car.target = 4;
+                car.y = FLOOR_Y[3] + 24;
+                car.moving = true;
+                player.x = car.x + CAR_W / 2;
+                player.y = car.y;
+                player.onCar = 0;
+                agents.push({
+                    x: car.x + CAR_W / 2,
+                    y: FLOOR_Y[3],
+                    floor: 3,
+                    dir: 1,
+                    cooldown: 99,
+                });
+            });
+            await step(page, 20);
+            expect(await page.evaluate(() => lives)).toBe(3);
+        });
+
+        test('an agent can still touch a spy parked at their floor', async ({ page }) => {
+            await page.evaluate(() => {
+                const car = elevators[0];
+                car.floor = 3;
+                car.target = 3;
+                car.y = FLOOR_Y[3];
+                car.moving = false;
+                player.x = car.x + CAR_W / 2;
+                player.y = car.y;
+                player.onCar = 0;
+                agents.push({
+                    x: car.x + CAR_W / 2,
+                    y: FLOOR_Y[3],
+                    floor: 3,
+                    dir: 1,
+                    cooldown: 99,
+                });
+            });
+            await step(page, 4);
             expect(await page.evaluate(() => lives)).toBe(2);
         });
 
@@ -1200,7 +1278,7 @@ test.describe('Elevator Action', () => {
 
         test('a paused game does not simulate', async ({ page }) => {
             await page.evaluate(() => {
-                agents.push({ x: 380, y: FLOOR_Y[3], floor: 3, dir: -1, cooldown: 99, hit: 0 });
+                agents.push({ x: 380, y: FLOOR_Y[3], floor: 3, dir: -1, cooldown: 99 });
             });
             await page.keyboard.press('KeyP');
             await step(page, 60);

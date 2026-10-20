@@ -50,12 +50,12 @@ const MOVE_SPEED = 120;              // px/s walking
 const CAR_SPEED = 90;                // px/s of elevator travel
 const BULLET_SPEED = 320;            // px/s, horizontal only
 const SHOOT_DELAY = 0.22;            // seconds between the spy's shots
-const AGENT_FIRE_DELAY = 1.4;        // seconds between an agent's shots
-const AGENT_RANGE = 260;             // how far down a floor an agent will shoot
+const AGENT_FIRE_DELAY = 1.8;        // seconds between an agent's shots
+const AGENT_RANGE = 210;             // how far down a floor an agent will shoot
 const AGENT_SPEED_BASE = 52;
 const AGENT_SPEED_STEP = 9;          // added per level
 const WALL_PAD = 20;                 // how close an agent gets to a wall before turning
-const INVULN_TIME = 1.8;             // seconds of blinking after a hit
+const INVULN_TIME = 2.2;             // seconds of blinking after a hit
 
 // --- run rules -------------------------------------------------------------
 
@@ -66,10 +66,10 @@ const DOC_POINTS = 500;
 const AGENT_POINTS = 150;
 const ESCAPE_BONUS = 1000;
 const LIFE_BONUS = 250;              // per life still in hand when you escape
-const SPAWN_FIRST = 2.4;             // seconds before the first agent appears
-const SPAWN_DELAY_BASE = 3.2;
+const SPAWN_FIRST = 3;               // seconds before the first agent appears
+const SPAWN_DELAY_BASE = 3.8;
 const SPAWN_RANGE = 2;               // agents only come out this near the spy
-const MAX_AGENTS_BASE = 2;
+const MAX_AGENTS_BASE = 1;
 
 const BEST_KEY = 'elevatoraction-best';
 
@@ -82,7 +82,7 @@ let lives = LIVES_START;
 let best = loadBest();
 let doors = [];                      // { x, floor, slot, type, open, collected }
 let elevators = [];                  // { shaft, x, y, w, h, floor, target, moving }
-let agents = [];                     // { x, y, floor, dir, cooldown, hit }
+let agents = [];                     // { x, y, floor, dir, cooldown }
 let bullets = [];                    // { x, y, vx, from }
 let flashes = [];                    // cosmetic hit sparks
 let spawnTimer = SPAWN_FIRST;
@@ -313,7 +313,16 @@ function driveElevator(dir) {
         return;
     }
     const car = elevators[player.onCar];
-    if (!car || car.moving) return;
+    if (!car) return;
+
+    // Already in transit: the only input that lands is the opposite direction,
+    // which turns the car round and takes it back to the floor it left.
+    if (car.moving) {
+        const travelling = Math.sign(FLOOR_Y[car.target] - FLOOR_Y[car.floor]);
+        if (travelling !== 0 && dir === -travelling) car.target = car.floor;
+        return;
+    }
+
     const target = clamp(car.floor + dir, 0, FLOOR_COUNT - 1);
     if (target === car.floor) return;
     car.target = target;
@@ -354,10 +363,8 @@ function movePlayer(dt) {
     // standing on a floor, keeps the call in until a car is on its way.
     const up = keys['ArrowUp'] || keys['KeyW'];
     const down = keys['ArrowDown'] || keys['KeyS'];
-    if (up || down) {
-        const car = player.onCar === null ? null : elevators[player.onCar];
-        if (!car || !car.moving) driveElevator(up ? -1 : 1);
-    }
+    if (up && !down) driveElevator(-1);
+    else if (down && !up) driveElevator(1);
 }
 
 function moveElevators(dt) {
@@ -459,15 +466,16 @@ function trySpawn() {
         y: FLOOR_Y[door.floor],
         floor: door.floor,
         dir: player.x < door.x ? -1 : 1,
-        cooldown: AGENT_FIRE_DELAY * 0.8,
-        hit: 0,
+        cooldown: AGENT_FIRE_DELAY,
     });
 }
 
 function moveAgents(dt) {
     const pf = floorIndexFor(player.y);
+    // Agents shoot along the floor they stand on, so a spy in transit between
+    // floors is out of the line of fire: the elevator is worth riding.
+    const standing = onFloorIndex();
     agents.forEach((a) => {
-        if (a.hit > 0) a.hit = Math.max(0, a.hit - dt);
         if (a.cooldown > 0) a.cooldown = Math.max(0, a.cooldown - dt);
 
         if (a.floor === pf) a.dir = player.x < a.x ? -1 : 1;
@@ -481,7 +489,7 @@ function moveAgents(dt) {
         }
         a.y = FLOOR_Y[a.floor];
 
-        const lined = a.floor === pf && Math.abs(player.x - a.x) < AGENT_RANGE;
+        const lined = a.floor === standing && Math.abs(player.x - a.x) < AGENT_RANGE;
         if (lined && a.cooldown === 0 && Math.sign(player.x - a.x) === a.dir) {
             bullets.push({
                 x: a.x + a.dir * 12,
@@ -492,10 +500,9 @@ function moveAgents(dt) {
             a.cooldown = AGENT_FIRE_DELAY;
         }
 
-        if (
-            Math.abs(a.x - player.x) < (AGENT_W + PLAYER_W) / 2 &&
-            Math.abs(a.y - player.y) < PLAYER_H
-        ) {
+        // Same rule as shooting: an agent can only reach a spy standing on the
+        // floor they are standing on, never one riding past in a shaft.
+        if (a.floor === standing && Math.abs(a.x - player.x) < (AGENT_W + PLAYER_W) / 2) {
             damagePlayer();
         }
     });

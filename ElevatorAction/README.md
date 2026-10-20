@@ -26,6 +26,9 @@ Open `index.html` in any browser — there is no build step and no server needed
   always stops level with a floor, so you can walk straight off it.
 - Standing on a floor, up or down works the **call button** instead and brings
   the nearer car to you — so a drop down an empty shaft is never a dead end.
+  Pressing the other way while a car is moving turns it round.
+- Agents can only reach you on their own floor. Ride past one and you are out
+  of its reach; stop level with its floor and you are not.
 - A shaft with no car in it is a hole. Falling down one is safe — you land on
   the next car roof or in the lobby — and is often the fastest way down.
 - The lobby **EXIT** stays shut until the last document is in hand. Once it
