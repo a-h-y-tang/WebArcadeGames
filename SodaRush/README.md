@@ -21,6 +21,9 @@ That is the whole juggle: full mugs going out, empty mugs coming back, and you
 can only be on one counter at a time. An empty waits at the tap for most of a
 second before it drops, which is just enough time to notice it and get there.
 
+The `Cleared` counter in the HUD is the round's progress: how many customers
+have left the counter, whether they left happy or walked off with your life.
+
 Three things cost you a life:
 
 - a customer reaches the tap
