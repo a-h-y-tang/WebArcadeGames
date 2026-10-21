@@ -268,6 +268,9 @@ function loseLife(reason) {
 
 function gameOver() {
     state = 'over';
+    // step() stops here, so anything on a timer would hang behind the overlay
+    notice = 0;
+    hitFlash = 0;
     if (score > best) {
         best = score;
         try {

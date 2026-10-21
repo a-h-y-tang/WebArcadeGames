@@ -701,6 +701,16 @@ test.describe('Soda Rush', () => {
             await expect(page.locator('#overlay-title')).toContainText(/over/i);
         });
 
+        test('game over clears the banners instead of freezing them on screen', async ({ page }) => {
+            await page.evaluate(() => {
+                lives = 1;
+                pour();
+                for (let i = 0; i < 600 && state === 'playing'; i++) step(1 / 60);
+            });
+            expect(await page.evaluate(() => state)).toBe('over');
+            expect(await page.evaluate(() => [notice, hitFlash])).toEqual([0, 0]);
+        });
+
         test('game over freezes the simulation', async ({ page }) => {
             await page.evaluate(() => {
                 lives = 1;
