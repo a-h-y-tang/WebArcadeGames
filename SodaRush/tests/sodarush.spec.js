@@ -1,8 +1,10 @@
 const { test, expect } = require('@playwright/test');
+const fs = require('fs');
 const path = require('path');
 const { pathToFileURL } = require('url');
 
 const GAME_URL = pathToFileURL(path.resolve(__dirname, '../index.html')).href;
+const REPO_ROOT = path.resolve(__dirname, '../..');
 
 // Advance the simulation deterministically: `frames` calls to step(dt).
 const advance = (page, frames, dt = 1 / 60) =>
@@ -1021,6 +1023,48 @@ test.describe('Soda Rush', () => {
                 return seen.size;
             });
             expect(blank).toBeGreaterThan(3);
+        });
+    });
+
+    // -----------------------------------------------------------------------
+    // Game browser integration
+    // -----------------------------------------------------------------------
+    test.describe('game browser integration', () => {
+        const catalogue = () =>
+            JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'game-browser/src/assets/games.json'), 'utf8'));
+
+        test('games.json lists Soda Rush', () => {
+            const entry = catalogue().find((g) => g.id === 'soda-rush');
+            expect(entry).toBeTruthy();
+            expect(entry.name).toBe('Soda Rush');
+            expect(entry.dir).toBe('SodaRush');
+            expect(entry.path).toBe('games/SodaRush/index.html');
+            expect(entry.thumbnail).toBe('games/SodaRush/screenshot.png');
+            expect(entry.description.length).toBeGreaterThan(10);
+        });
+
+        test('the entry sits in alphabetical order among its neighbours', () => {
+            const games = catalogue();
+            const i = games.findIndex((g) => g.id === 'soda-rush');
+            expect(i).toBeGreaterThan(0);
+            expect(games[i - 1].name.localeCompare(games[i].name)).toBeLessThanOrEqual(0);
+            expect(games[i].name.localeCompare(games[i + 1].name)).toBeLessThanOrEqual(0);
+        });
+
+        test('the file the browser links to is really there', () => {
+            const entry = catalogue().find((g) => g.id === 'soda-rush');
+            expect(fs.existsSync(path.join(REPO_ROOT, entry.dir, 'index.html'))).toBe(true);
+            expect(fs.existsSync(path.join(REPO_ROOT, 'SodaRush/screenshot.png'))).toBe(true);
+        });
+
+        test('the root README lists the game', () => {
+            const readme = fs.readFileSync(path.join(REPO_ROOT, 'README.md'), 'utf8');
+            expect(readme).toMatch(/\|\s*Soda Rush\s*\|\s*\[SodaRush\/\]\(SodaRush\/\)\s*\|\s*(Complete|In Progress)\s*\|/);
+        });
+
+        test('the game ships its own README and DESIGN docs', () => {
+            expect(fs.existsSync(path.join(REPO_ROOT, 'SodaRush/README.md'))).toBe(true);
+            expect(fs.existsSync(path.join(REPO_ROOT, 'SodaRush/DESIGN.md'))).toBe(true);
         });
     });
 
