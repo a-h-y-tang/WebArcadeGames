@@ -43,10 +43,10 @@ call to `step()` off so the tests own time completely.
 
 | Entity | Fields | Notes |
 |---|---|---|
-| `bartender` | `lane`, `pourCooldown`, `pourAnim` | always at `TAP_X`; only `lane` changes |
-| customer | `lane`, `x`, `state`, `timer`, `tint` | `state` is `walking`, `drinking` or `leaving` |
-| mug | `lane`, `x`, `full`, `resting`, `timer` | `full` mugs travel right, empties travel left |
-| shard | `x`, `y`, `vx`, `vy`, `life`, `tint` | glass particles, cosmetic only |
+| `bartender` | `lane`, `pourCooldown`, `pourAnim`, `catchAnim` | always at `TAP_X`; only `lane` changes |
+| customer | `lane`, `x`, `state`, `timer`, `tint`, `bob` | `state` is `walking`, `drinking` or `leaving` |
+| mug | `lane`, `x`, `full`, `resting`, `timer` | `full` mugs travel right, empties travel left; `timer` is the grace left once resting |
+| shard | `x`, `y`, `vx`, `vy`, `spin`, `vs`, `life`, `size` | glass particles, cosmetic only |
 
 ### Customer life cycle
 
