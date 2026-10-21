@@ -89,9 +89,12 @@ simple greedy strategy.
 2. Advance `levelTime` and spawn every queued customer whose `time` has passed.
 3. Move customers (walk / drink / leave), collecting removals and at most one
    life-loss reason.
-4. Move mugs: full mugs rightwards with a collision test against the leftmost
-   `walking` customer in the lane; empties leftwards, parking at the tap.
-5. Collect every resting empty in the bartender's lane.
+4. Collect every resting empty in the bartender's lane — *before* the grace
+   windows are ticked, so a mug whose last moment and the bartender's arrival
+   fall on the same frame is caught rather than lost.
+5. Move mugs: full mugs rightwards with a collision test against the leftmost
+   `walking` customer in the lane; empties leftwards, parking at the tap, and
+   resting ones counting down their grace.
 6. Apply removals, then apply one life loss if the frame produced any.
 7. If the round is over (`spawnIndex` has consumed the queue and no customers or
    mugs are left) advance the level.

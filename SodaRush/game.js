@@ -328,8 +328,20 @@ function step(dt) {
         }
     }
 
+    // --- collect the empties waiting on this counter ------------------------
+    // Before the grace windows are ticked, so a mug whose last moment and the
+    // bartender's arrival land on the same frame is caught rather than lost.
+    for (const m of mugs) {
+        if (m.full || !m.resting || m.lane !== bartender.lane) continue;
+        deadMugs.add(m);
+        combo = Math.min(COMBO_MAX, combo + 1);
+        score += SCORE_EMPTY * combo;
+        bartender.catchAnim = CATCH_ANIM;
+    }
+
     // --- mugs --------------------------------------------------------------
     for (const m of mugs) {
+        if (deadMugs.has(m)) continue;
         if (m.full) {
             m.x += MUG_SPEED * dt;
             // The mug comes from the tap, so the customer nearest it is the one
@@ -364,15 +376,6 @@ function step(dt) {
                 loss = loss || 'dropped';
             }
         }
-    }
-
-    // --- collect the empties waiting on this counter ------------------------
-    for (const m of mugs) {
-        if (m.full || !m.resting || m.lane !== bartender.lane || deadMugs.has(m)) continue;
-        deadMugs.add(m);
-        combo = Math.min(COMBO_MAX, combo + 1);
-        score += SCORE_EMPTY * combo;
-        bartender.catchAnim = CATCH_ANIM;
     }
 
     for (let i = customers.length - 1; i >= 0; i--) {

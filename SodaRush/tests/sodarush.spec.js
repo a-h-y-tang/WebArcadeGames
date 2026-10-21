@@ -549,6 +549,19 @@ test.describe('Soda Rush', () => {
             expect(await page.evaluate(() => [mugs.length, lives])).toEqual([1, 3]);
         });
 
+        test('a mug on its last frame is caught, not lost, if you arrive for it', async ({ page }) => {
+            const out = await page.evaluate(() => {
+                setLane(0);
+                const m = spawnEmpty(1, TAP_X);
+                m.resting = true;
+                m.timer = 1 / 120;      // expires inside the next frame
+                setLane(1);
+                step(1 / 60);
+                return { mugs: mugs.length, lives, combo };
+            });
+            expect(out).toEqual({ mugs: 0, lives: 3, combo: 1 });
+        });
+
         test('two empties on different counters can both be saved', async ({ page }) => {
             await page.evaluate(() => {
                 setLane(0);
