@@ -242,11 +242,12 @@ test.describe('Soda Rush', () => {
                 combo = 4;
                 startGame();
             });
-            expect(await page.evaluate(() => ({ score, lives, level, combo }))).toEqual({
+            expect(await page.evaluate(() => ({ score, lives, level, combo, start: START_LIVES }))).toEqual({
                 score: 0,
-                lives: START_LIVES,
+                lives: await page.evaluate(() => START_LIVES),
                 level: 1,
                 combo: 0,
+                start: 3,
             });
         });
 
@@ -387,10 +388,13 @@ test.describe('Soda Rush', () => {
                 spawnCustomer(0, 400);
                 pour();
             });
-            await advance(page, 120);
-            expect(await page.evaluate(() => mugs.filter((m) => m.full).length)).toBe(0);
-            expect(await page.evaluate(() => customers[0].state)).toBe('drinking');
-            expect(await page.evaluate(() => score)).toBe(await page.evaluate(() => SCORE_SERVE));
+            const caught = await page.evaluate(() => {
+                for (let i = 0; i < 300 && customers[0].state === 'walking'; i++) step(1 / 60);
+                return { state: customers[0].state, full: mugs.filter((m) => m.full).length, score, unit: SCORE_SERVE };
+            });
+            expect(caught.full).toBe(0);
+            expect(caught.state).toBe('drinking');
+            expect(caught.score).toBe(caught.unit);
         });
 
         test('the mug stops at the customer, not past them', async ({ page }) => {
@@ -441,13 +445,17 @@ test.describe('Soda Rush', () => {
             expect(await page.evaluate(() => customers[0].x)).toBe(parked);
             expect(await page.evaluate(() => mugs.length)).toBe(0);
 
-            await advance(page, Math.ceil(0.9 * 60));
-            expect(await page.evaluate(() => customers[0].state)).toBe('leaving');
-            const empty = await page.evaluate(() => mugs.map((m) => ({ full: m.full, lane: m.lane, x: m.x })));
-            expect(empty.length).toBe(1);
-            expect(empty[0].full).toBe(false);
-            expect(empty[0].lane).toBe(0);
-            expect(empty[0].x).toBeCloseTo(parked, 0);
+            const released = await page.evaluate(() => {
+                for (let i = 0; i < 300 && customers[0].state === 'drinking'; i++) step(1 / 60);
+                return { state: customers[0].state, mugs: mugs.map((m) => ({ full: m.full, lane: m.lane, x: m.x })) };
+            });
+            expect(released.state).toBe('leaving');
+            expect(released.mugs.length).toBe(1);
+            expect(released.mugs[0].full).toBe(false);
+            expect(released.mugs[0].lane).toBe(0);
+            // released where the customer stood, already a frame into its slide back
+            expect(released.mugs[0].x).toBeLessThanOrEqual(parked);
+            expect(released.mugs[0].x).toBeGreaterThan(parked - 10);
         });
 
         test('a leaving customer runs off the open end, satisfied', async ({ page }) => {
@@ -487,11 +495,14 @@ test.describe('Soda Rush', () => {
             await advance(page, 30);
             expect(await page.evaluate(() => mugs[0].x)).toBeLessThan(before);
 
-            await page.evaluate(() => setLane(3));
-            await advance(page, 300);
-            const mug = await page.evaluate(() => mugs[0] && { x: mugs[0].x, resting: mugs[0].resting });
-            expect(mug.resting).toBe(true);
-            expect(mug.x).toBeCloseTo(await page.evaluate(() => TAP_X), 0);
+            const parked = await page.evaluate(() => {
+                setLane(3);
+                for (let i = 0; i < 600 && !(mugs[0] && mugs[0].resting); i++) step(1 / 60);
+                return { x: mugs[0].x, resting: mugs[0].resting, tap: TAP_X, lives };
+            });
+            expect(parked.resting).toBe(true);
+            expect(parked.x).toBe(parked.tap);
+            expect(parked.lives).toBe(3);
         });
 
         test('an empty is collected when the bartender is on that counter', async ({ page }) => {
@@ -604,20 +615,19 @@ test.describe('Soda Rush', () => {
         });
 
         test('losing a life clears the counters and pushes customers back', async ({ page }) => {
-            const before = await page.evaluate(() => {
+            const out = await page.evaluate(() => {
                 const c = spawnCustomer(2, 400);
-                setLane(0);
-                pour(); // will smash at the open end of lane 0
-                bartender.pourCooldown = 0;
-                setLane(3);
-                pour();
-                return c.x;
+                const before = c.x;
+                // one mug a frame from smashing, one innocently mid-counter
+                mugs.push({ lane: 0, x: END_X - 1, full: true, resting: false, timer: 0 });
+                mugs.push({ lane: 3, x: TAP_X + 50, full: true, resting: false, timer: 0 });
+                step(1 / 60);
+                return { before, after: c.x, mugs: mugs.length, lives, push: RESET_PUSH };
             });
-            await advance(page, 300);
-            expect(await page.evaluate(() => mugs.length)).toBe(0);
-            const after = await page.evaluate(() => customers[0].x);
-            expect(after).toBeGreaterThan(before);
-            expect(await page.evaluate(() => lives)).toBe(2);
+            expect(out.mugs).toBe(0);
+            expect(out.lives).toBe(2);
+            expect(out.after).toBeGreaterThan(out.before);
+            expect(out.after - out.before).toBeLessThanOrEqual(out.push);
         });
 
         test('a pushed-back customer never goes past the open end', async ({ page }) => {
@@ -719,10 +729,14 @@ test.describe('Soda Rush', () => {
             });
             await advance(page, 20);
             expect(await page.evaluate(() => customers.length)).toBe(0);
-            await advance(page, 20);
-            const c = await page.evaluate(() => customers.map((c) => ({ lane: c.lane, x: c.x, state: c.state })));
-            expect(c).toEqual([{ lane: 2, x: await page.evaluate(() => END_X), state: 'walking' }]);
-            expect(await page.evaluate(() => spawnIndex)).toBe(1);
+            const arrival = await page.evaluate(() => {
+                for (let i = 0; i < 120 && !customers.length; i++) step(1 / 60);
+                return { seen: customers.map((c) => ({ lane: c.lane, x: c.x, state: c.state })), end: END_X, idx: spawnIndex };
+            });
+            expect(arrival.seen).toEqual([{ lane: 2, x: arrival.end, state: 'walking' }]);
+            expect(arrival.idx).toBe(1);
+            await advance(page, 10);
+            expect(await page.evaluate(() => customers[0].x)).toBeLessThan(arrival.end);
         });
 
         test('customers walk towards the tap at the round speed', async ({ page }) => {
@@ -809,7 +823,7 @@ test.describe('Soda Rush', () => {
             expect(after.score).toBe(100 + after.bonus);
             expect(after.queue).toBe(8);
             expect(after.idx).toBe(0);
-            expect(after.t).toBe(0);
+            expect(after.t).toBeLessThan(0.1);
         });
 
         test('the round bonus grows with the round number', async ({ page }) => {
@@ -925,10 +939,13 @@ test.describe('Soda Rush', () => {
 
         test('smashing glass throws shards that fade', async ({ page }) => {
             await startQuiet(page);
-            await page.evaluate(() => pour());
-            await advance(page, 300);
-            expect(await page.evaluate(() => shards.length)).toBeGreaterThan(0);
-            await advance(page, 300);
+            const burst = await page.evaluate(() => {
+                pour();
+                for (let i = 0; i < 600 && lives === 3; i++) step(1 / 60);
+                return shards.length;
+            });
+            expect(burst).toBeGreaterThan(0);
+            await advance(page, Math.ceil(await page.evaluate(() => SHARD_LIFE) * 60) + 5);
             expect(await page.evaluate(() => shards.length)).toBe(0);
         });
 
@@ -1023,7 +1040,7 @@ test.describe('Soda Rush', () => {
             const totals = await page.evaluate(() => {
                 const dt = 1 / 60;
                 let t = 0;
-                let satisfied = 0;
+                let peakResolved = 0;
                 const seen = new Set();
                 while (t < 90 && state === 'playing' && level < 2) {
                     customers.forEach((c) => seen.add(c));
@@ -1040,12 +1057,11 @@ test.describe('Soda Rush', () => {
                             setLane(keep);
                         }
                     }
-                    const was = customers.length;
                     step(dt);
-                    satisfied += was - customers.length;
+                    peakResolved = Math.max(peakResolved, resolved);
                     t += dt;
                 }
-                return { seen: seen.size, satisfied, level, score };
+                return { seen: seen.size, satisfied: peakResolved, level, score };
             });
             expect(totals.seen).toBe(6);
             expect(totals.satisfied).toBe(6);

@@ -1026,6 +1026,15 @@
     "thumbnail": ""
   },
   {
+    "id": "soda-rush",
+    "name": "Soda Rush",
+    "description": "Serve drinks down four counters and catch the empties coming back",
+    "category": "Action",
+    "dir": "SodaRush",
+    "path": "games/SodaRush/index.html",
+    "thumbnail": "games/SodaRush/screenshot.png"
+  },
+  {
     "id": "sokoban",
     "name": "Sokoban",
     "description": "Puzzle game - push boxes to their destinations",

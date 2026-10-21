@@ -125,8 +125,9 @@ number and `buildQueue(n)` turns that into a spawn schedule:
 `buildQueue(n)` is seeded from the level number through a small LCG, so a round
 is reproducible: reloading the page and reaching level 3 always deals the same
 schedule. Each entry is `{ lane, time }`; the jitter on the gap is
-`0.8 + 0.4 * rng()` and a lane is re-rolled once if it repeats the previous
-entry, which stops three-in-a-row pile-ups on one counter.
+`0.8 + 0.4 * rng()`, and a lane is nudged off if it would be the *third*
+arrival in a row on the same counter. Two in a row is a nice squeeze, three is
+a pile-up you cannot answer with one tap.
 
 ## Scoring
 
