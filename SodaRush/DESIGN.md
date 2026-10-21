@@ -103,8 +103,11 @@ a mug smashes while a customer reaches the tap.
 
 ### Losing a life
 
-`loseLife(reason)` drops `lives`, resets the combo, throws a burst of shards, and
-then *resets the counters*: every mug in play is removed and the surviving
+`loseLife(reason)` drops `lives`, resets the combo, throws a burst of shards,
+names the mistake on screen for `NOTICE_TIME` seconds (the three reasons —
+`grabbed`, `spilled`, `dropped` — map to a banner, because a player who cannot
+tell *which* of the three just happened cannot correct it), and then *resets the
+counters*: every mug in play is removed and the surviving
 walking customers are pushed `RESET_PUSH` pixels back towards the open end. That
 keeps the pressure on (the customers are still coming) without the unfair
 cascade where a customer standing at the tap costs the rest of your lives in the

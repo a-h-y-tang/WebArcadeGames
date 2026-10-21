@@ -652,6 +652,44 @@ test.describe('Soda Rush', () => {
             expect(await page.evaluate(() => lives)).toBe(2);
         });
 
+        test('the banner names which mistake cost the life', async ({ page }) => {
+            const seen = await page.evaluate(() => {
+                const run = (setup) => {
+                    mugs.length = 0;
+                    customers.length = 0;
+                    notice = 0;
+                    lives = 9;
+                    setup();
+                    for (let i = 0; i < 600 && !notice; i++) step(1 / 60);
+                    return noticeText;
+                };
+                setLane(0);
+                return {
+                    spilled: run(() => mugs.push({ lane: 1, x: END_X - 1, full: true, resting: false, timer: 0 })),
+                    grabbed: run(() => spawnCustomer(2, TAP_X + 1)),
+                    dropped: run(() => {
+                        const m = spawnEmpty(3, TAP_X);
+                        m.resting = true;
+                        m.timer = 0.05;
+                    }),
+                };
+            });
+            expect(seen.spilled).toMatch(/end/i);
+            expect(seen.grabbed).toMatch(/customer/i);
+            expect(seen.dropped).toMatch(/smash/i);
+            expect(new Set(Object.values(seen)).size).toBe(3);
+        });
+
+        test('the banner fades on its own', async ({ page }) => {
+            await page.evaluate(() => {
+                pour();
+                for (let i = 0; i < 600 && lives === 3; i++) step(1 / 60);
+            });
+            expect(await page.evaluate(() => notice)).toBeGreaterThan(0);
+            await advance(page, Math.ceil((await page.evaluate(() => NOTICE_TIME)) * 60) + 5);
+            expect(await page.evaluate(() => notice)).toBe(0);
+        });
+
         test('the last life ends the game', async ({ page }) => {
             await page.evaluate(() => {
                 lives = 1;

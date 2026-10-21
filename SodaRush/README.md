@@ -78,7 +78,7 @@ written before the implementation:
 npx playwright test SodaRush/tests/
 ```
 
-Among its 86 specs are end-to-end ones that play the opening rounds to
+Among its 88 specs are end-to-end ones that play the opening rounds to
 completion with the real rules and a deliberately simple greedy strategy, so
 the game can never regress into being unwinnable — or into being winnable while
 standing still.

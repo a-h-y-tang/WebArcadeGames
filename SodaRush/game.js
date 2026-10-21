@@ -41,6 +41,7 @@ const POUR_COOLDOWN = 0.22;
 const POUR_ANIM = 0.18;
 const CATCH_ANIM = 0.2;
 const RESET_PUSH = 70;      // how far customers are pushed back when a life is lost
+const NOTICE_TIME = 1.3;
 const SHARD_LIFE = 0.9;
 const FLASH_TIME = 1.4;
 const START_LIVES = 3;
@@ -82,6 +83,8 @@ let spawnIndex = 0;
 let autoStep = true;
 let flash = 0;
 let flashText = '';
+let notice = 0;             // the "here is what just went wrong" banner
+let noticeText = '';
 let hitFlash = 0;
 let shirtSeq = 0;
 
@@ -216,6 +219,7 @@ function startGame() {
     combo = 0;
     shards.length = 0;
     hitFlash = 0;
+    notice = 0;
     bartender.lane = 0;
     bartender.pourCooldown = 0;
     bartender.pourAnim = 0;
@@ -238,10 +242,18 @@ function togglePause() {
     }
 }
 
+const LOSS_NOTICE = {
+    grabbed: 'A CUSTOMER REACHED THE TAP',
+    spilled: 'MUG OFF THE END',
+    dropped: 'EMPTY GLASS SMASHED',
+};
+
 function loseLife(reason) {
     lives--;
     combo = 0;
     hitFlash = 0.5;
+    notice = NOTICE_TIME;
+    noticeText = LOSS_NOTICE[reason] || 'LIFE LOST';
     // Clear the counters and shove the queue back, so one disaster cannot
     // cascade into the rest of your lives over the following frames.
     mugs.length = 0;
@@ -250,7 +262,7 @@ function loseLife(reason) {
     }
     if (lives <= 0) {
         lives = 0;
-        gameOver(reason);
+        gameOver();
     }
 }
 
@@ -279,6 +291,7 @@ function step(dt) {
     bartender.pourAnim = Math.max(0, bartender.pourAnim - dt);
     bartender.catchAnim = Math.max(0, bartender.catchAnim - dt);
     flash = Math.max(0, flash - dt);
+    notice = Math.max(0, notice - dt);
     hitFlash = Math.max(0, hitFlash - dt);
     levelTime += dt;
 
@@ -842,14 +855,29 @@ function drawShard(s) {
 
 function drawCombo() {
     if (combo < 2) return;
+    // down on the floor, clear of the top counter's customers
+    const y = CANVAS_H - 48;
     ctx.fillStyle = 'rgba(255, 180, 61, 0.16)';
-    roundRect(CANVAS_W - 132, 14, 116, 30, 15);
+    roundRect(CANVAS_W - 146, y, 120, 32, 16);
     ctx.fill();
     ctx.fillStyle = '#ffb43d';
     ctx.font = 'bold 16px "Segoe UI", system-ui, sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(`COMBO x${combo}`, CANVAS_W - 74, 30);
+    ctx.fillText(`COMBO x${combo}`, CANVAS_W - 86, y + 16);
+}
+
+function drawNotice() {
+    if (notice <= 0) return;
+    const a = Math.min(1, notice / 0.4);
+    ctx.fillStyle = `rgba(0, 0, 0, ${0.5 * a})`;
+    roundRect(CANVAS_W / 2 - 170, CANVAS_H / 2 - 24, 340, 44, 22);
+    ctx.fill();
+    ctx.fillStyle = `rgba(255, 128, 96, ${a})`;
+    ctx.font = 'bold 20px "Segoe UI", system-ui, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(noticeText, CANVAS_W / 2, CANVAS_H / 2 - 1);
 }
 
 function drawFlash() {
@@ -871,6 +899,7 @@ function draw() {
     for (const m of mugs) drawMug(m);
     for (const s of shards) drawShard(s);
     drawCombo();
+    drawNotice();
     drawFlash();
 
     if (hitFlash > 0) {
