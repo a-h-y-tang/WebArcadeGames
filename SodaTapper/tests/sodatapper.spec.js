@@ -561,6 +561,32 @@ test.describe('Soda Tapper', () => {
             expect(later[1]).toBeGreaterThan(first[1]);
         });
 
+        test('early levels keep the bar sparser than later ones', async ({ page }) => {
+            const early = await page.evaluate(() => {
+                startLevel(1);
+                return maxOnscreen();
+            });
+            const late = await page.evaluate(() => {
+                startLevel(9);
+                return maxOnscreen();
+            });
+            expect(early).toBeLessThan(late);
+            expect(late).toBeLessThanOrEqual(await page.evaluate(() => MAX_ONSCREEN));
+        });
+
+        test('a pinned seed replays the same lane sequence', async ({ page }) => {
+            const lanes = () =>
+                page.evaluate(() => {
+                    rngSeed = 12345;
+                    return Array.from({ length: 12 }, () => Math.floor(rand() * LANES));
+                });
+            const first = await lanes();
+            expect(await lanes()).toEqual(first);
+            expect(new Set(first).size).toBeGreaterThan(1);   // and it is not one lane forever
+            expect(Math.min(...first)).toBeGreaterThanOrEqual(0);
+            expect(Math.max(...first)).toBeLessThan(4);
+        });
+
         test('clearing a level does not cost a life', async ({ page }) => {
             await page.evaluate(() => {
                 waveSize = 1;

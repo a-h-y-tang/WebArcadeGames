@@ -39,7 +39,7 @@ const DRINK_TIME = 0.8;
 const PUSH_BACK = 72;
 const DRINKS_NEEDED = 2;
 const POUR_COOLDOWN = 0.2;
-const MAX_ONSCREEN = 5;
+const MAX_ONSCREEN = 8;             // hard ceiling; maxOnscreen() ramps up to it
 const RESPAWN_PAUSE = 1.2;
 const LEVEL_PAUSE = 1.8;
 
@@ -84,8 +84,10 @@ const elBest = document.getElementById('best');
 // Level tuning
 // ---------------------------------------------------------------------------
 
-// A deterministic generator keeps a run reproducible, which matters far more
-// for a game that is tested frame by frame than true randomness does.
+// A small LCG rather than Math.random: a run is fully determined by `rngSeed`,
+// so a spec (or a bug report) can pin the seed and replay the exact same
+// sequence of customers frame for frame. startGame() seeds it from the clock
+// so two shifts are never quite alike.
 function rand() {
     rngSeed = (rngSeed * 1664525 + 1013904223) % 4294967296;
     return rngSeed / 4294967296;
@@ -96,11 +98,17 @@ function waveSizeFor(lvl) {
 }
 
 function spawnInterval() {
-    return Math.max(0.9, 2.6 - level * 0.15);
+    return Math.max(0.7, 2.4 - level * 0.16);
 }
 
 function customerSpeed() {
-    return 26 + level * 6;
+    return 28 + level * 7;
+}
+
+// How crowded the bar is allowed to get. Early levels stay sparse enough to
+// learn the catch rhythm; by level 7 every counter can be busy at once.
+function maxOnscreen() {
+    return Math.min(MAX_ONSCREEN, 3 + Math.floor(level * 0.6));
 }
 
 // ---------------------------------------------------------------------------
@@ -262,7 +270,7 @@ function stepSpawning(dt) {
     spawnTimer -= dt;
     if (spawnTimer > 0) return;
     spawnTimer = spawnInterval();
-    if (customers.length >= MAX_ONSCREEN) return;
+    if (customers.length >= maxOnscreen()) return;
     spawnCustomer(Math.floor(rand() * LANES));
 }
 
@@ -332,7 +340,7 @@ function startGame() {
     score = 0;
     lives = 3;
     lastLoss = null;
-    rngSeed = 1;
+    rngSeed = (Date.now() >>> 0) || 1;
     startLevel(1);
 }
 

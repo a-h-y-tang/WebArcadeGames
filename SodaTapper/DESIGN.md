@@ -52,10 +52,24 @@ counter and shatters.
 and leaves; walking off the left end of the counter scores `SCORE_CUSTOMER` and
 counts towards the wave.
 
-**Waves.** Level *n* has `4 + 2n` customers. They spawn on random lanes on a
-timer that tightens each level, with at most `MAX_ONSCREEN` on the bar at once.
-Serving the whole wave clears the level, pays a `200 * level` bonus and starts
-the next one faster.
+**Waves.** Level *n* has `4 + 2n` customers. They arrive on random lanes on a
+timer that tightens each level. Serving the whole wave clears the level, pays a
+`200 * level` bonus and starts the next one faster.
+
+Three dials carry the difficulty, all read from the level number so there is
+one place to tune:
+
+| Dial | Level 1 | Level 10 |
+|---|---|---|
+| `spawnInterval()` — seconds between arrivals | 2.24s | 0.80s |
+| `customerSpeed()` — pixels per second | 35 | 98 |
+| `maxOnscreen()` — customers allowed on the bar | 3 | 8 (the `MAX_ONSCREEN` ceiling) |
+
+These were set by play-testing headlessly: a scripted player that catches the
+most urgent empty and otherwise pours at the customer nearest the station
+coasts through the early levels, drops its first life around level 6 and is
+finished by level 7 — roughly four minutes. A human, who cannot switch counters
+in a single frame, peaks several levels earlier.
 
 **Losing a life.** Three ways, each recorded in `lastLoss` so the cause can be
 shown and asserted on:
@@ -92,6 +106,11 @@ by hand. Drawing is a pure function of state and never mutates it.
 State lives in a handful of module-level bindings — `state`, `player`, `mugs`,
 `customers`, `score`, `lives`, `level`, `served`, `waveSize`, `spawned` — rather
 than one object, which keeps the test assertions short.
+
+**Randomness.** Lanes come from a small LCG rather than `Math.random`, so a run
+is completely determined by `rngSeed`: a spec, or a bug report, can pin the seed
+and replay the same customers frame for frame. `startGame()` seeds it from the
+clock, so ordinary play still varies.
 
 ## Assumptions
 
