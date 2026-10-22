@@ -67,9 +67,10 @@ one place to tune:
 
 These were set by play-testing headlessly: a scripted player that catches the
 most urgent empty and otherwise pours at the customer nearest the station
-coasts through the early levels, drops its first life around level 6 and is
-finished by level 7 — roughly four minutes. A human, who cannot switch counters
-in a single frame, peaks several levels earlier.
+coasts through the early levels, drops its first life around level 6 or 7 and
+is finished somewhere in level 7 to 9 depending on the seed — four to six
+minutes. A human, who cannot switch counters in a single frame, peaks several
+levels earlier.
 
 **Losing a life.** Three ways, each recorded in `lastLoss` so the cause can be
 shown and asserted on:

@@ -491,6 +491,22 @@ test.describe('Soda Tapper', () => {
             await advanceUntil(page, "state === 'playing'");
         });
 
+        test('the respawn overlay offers no restart button', async ({ page }) => {
+            await page.evaluate(() => pour());
+            await advanceUntil(page, 'lives < 3');
+            await expect(page.locator('#btn-start')).toBeHidden();
+            await advanceUntil(page, "state === 'playing'");
+        });
+
+        test('the game over overlay does offer the button again', async ({ page }) => {
+            await page.evaluate(() => {
+                lives = 1;
+                pour();
+            });
+            await advanceUntil(page, "state === 'over'");
+            await expect(page.locator('#btn-start')).toBeVisible();
+        });
+
         test('the overlay names what went wrong', async ({ page }) => {
             await page.evaluate(() => pour());
             await advanceUntil(page, 'lives < 3');

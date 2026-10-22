@@ -280,7 +280,7 @@ function checkLevelClear() {
     state = 'levelclear';
     holdTimer = LEVEL_PAUSE;
     updateHud();
-    showOverlay(`LEVEL ${level} CLEARED`, `Score ${score}`, 'Next shift starting…');
+    showOverlay(`LEVEL ${level} CLEARED`, `Score ${score}`, 'Next shift starting…', false);
 }
 
 // ---------------------------------------------------------------------------
@@ -311,7 +311,7 @@ function loseLife(reason) {
     }
     state = 'respawn';
     holdTimer = RESPAWN_PAUSE;
-    showOverlay(title, `${lives} ${lives === 1 ? 'life' : 'lives'} left`, sub);
+    showOverlay(title, `${lives} ${lives === 1 ? 'life' : 'lives'} left`, sub, false);
 }
 
 function resumePlay() {
@@ -380,10 +380,13 @@ function updateHud() {
     elBest.textContent = String(best);
 }
 
-function showOverlay(title, scoreLine, sub) {
+function showOverlay(title, scoreLine, sub, withButton = true) {
     overlayTitle.textContent = title;
     overlayScore.textContent = scoreLine || '';
     overlaySub.textContent = sub || '';
+    // The respawn and level-clear overlays clear themselves in a moment, so
+    // they show no button: a stray click there would restart the whole run.
+    btnStart.hidden = !withButton;
     overlay.classList.add('visible');
 }
 
@@ -434,9 +437,14 @@ function drawBackWall() {
 function drawCounter(lane) {
     const top = laneTop(lane);
     const y = laneCentre(lane);
+    const active = lane === player.lane && state !== 'idle';
 
     ctx.fillStyle = lane % 2 ? '#120e1b' : '#150f20';
     ctx.fillRect(0, top, CANVAS_W, LANE_H);
+    if (active) {
+        ctx.fillStyle = 'rgba(76, 201, 240, 0.07)';
+        ctx.fillRect(0, top, CANVAS_W, LANE_H);
+    }
 
     // The counter top itself.
     ctx.fillStyle = '#6b4a2a';
@@ -450,7 +458,7 @@ function drawCounter(lane) {
     ctx.fillRect(BAR_RIGHT, top + 6, CANVAS_W - BAR_RIGHT, LANE_H - 12);
 
     // Catch line, so the player can see where an empty has to be met.
-    ctx.strokeStyle = 'rgba(255, 159, 28, 0.25)';
+    ctx.strokeStyle = active ? 'rgba(76, 201, 240, 0.55)' : 'rgba(255, 159, 28, 0.22)';
     ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.moveTo(CATCH_X, top + 8);
