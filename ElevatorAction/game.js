@@ -415,7 +415,9 @@ function updateAgents(dt) {
         const from = a.x;
         const want = from + a.dir * AGENT_SPEED * dt;
         a.x = clampWalk(want, from, a.floor);
-        if (a.x !== want) a.dir *= -1;      // ran into a wall or an empty shaft
+        // a patrolling agent turns around at a wall or an empty shaft; one that
+        // is chasing keeps facing its target across the gap instead
+        if (a.x !== want && !sameFloor) a.dir *= -1;
 
         if (sameFloor && a.cooldown === 0 && Math.abs(player.x - a.x) <= AGENT_RANGE) {
             const facing = (player.x - a.x) * a.dir >= 0;

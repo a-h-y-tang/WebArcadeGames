@@ -35,6 +35,10 @@ with the floor you are on. If the car is six floors down, that side of the
 building is out of reach until you fetch it — the two shafts are the only way
 around the building, so plan where you leave a car.
 
+The getaway car sits past the **right-hand shaft**, so the car you ride into
+the garage decides whether you can walk to it. Arrive in the left-hand elevator
+and you will have to go back up and fetch the other one.
+
 **Ducking saves your life.** Agents fire at chest height, so a bullet sails
 straight over a ducked player. Your own shot from a duck still hits an agent,
 so ducking only costs you movement: you cannot walk while down. Standing still
