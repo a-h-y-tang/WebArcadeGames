@@ -297,6 +297,15 @@
     "thumbnail": "games/DroidArena/screenshot.png"
   },
   {
+    "id": "elevator-action",
+    "name": "Elevator Action",
+    "description": "Ride the elevators, empty the red doors, and shoot your way to the getaway car",
+    "category": "Action",
+    "dir": "ElevatorAction",
+    "path": "games/ElevatorAction/index.html",
+    "thumbnail": "games/ElevatorAction/screenshot.png"
+  },
+  {
     "id": "farkle",
     "name": "Farkle",
     "description": "Dice-rolling game - score combinations wisely",
