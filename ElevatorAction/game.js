@@ -36,6 +36,7 @@ const BULLET_SPEED = 320;
 const SHAFT_W = 56;
 const CAR_W = 44;
 const BOARD_HALF = 14;               // how centred you must be to board a car
+const CALL_DX = 36;                  // how close to a shaft the call button works
 const SNAP = 3;                      // "level with the floor" tolerance
 const DOOR_W = 28;
 const STAIR_W = 20;
@@ -69,6 +70,7 @@ const RIGHT_KEYS = ['ArrowRight', 'KeyD'];
 const UP_KEYS = ['ArrowUp', 'KeyW'];
 const DOWN_KEYS = ['ArrowDown', 'KeyS'];
 const SHOOT_KEYS = ['Space'];
+const CALL_KEYS = ['KeyE', 'Enter'];
 
 // --- state -----------------------------------------------------------------
 
@@ -331,20 +333,22 @@ function walkFloor(dt, left, right, up, down) {
 
     if (left !== right) player.dir = left ? -1 : 1;
 
+    // The call key summons a car in the shaft beside you. It is deliberately
+    // not Up or Down: a stairwell slot can sit well inside the call range, and
+    // sharing the key would leave only a few pixels where calling is possible.
+    if (held(CALL_KEYS)) {
+        const sh = shaftBeside(player.x);
+        if (sh) callCar(sh, feet, dt);
+    }
+
     // Down means: take the stairs if you are standing on them, else crouch.
-    if (down && !up) {
-        const s = stairAt(player.x, feet, 'top');
+    if (down !== up) {
+        const s = stairAt(player.x, feet, down ? 'top' : 'bottom');
         if (s) {
-            enterStairs(s, 1);
+            enterStairs(s, down ? 1 : -1);
             return;
         }
-        player.crouch = true;
-    } else if (up && !down) {
-        const s = stairAt(player.x, feet, 'bottom');
-        if (s) {
-            enterStairs(s, -1);
-            return;
-        }
+        if (down) player.crouch = true;
     }
 
     if (player.crouch || left === right) return;
@@ -373,6 +377,44 @@ function walkFloor(dt, left, right, up, down) {
             return;
         }
     }
+}
+
+// The shaft whose doorway the player is standing next to, if any.
+function shaftBeside(x) {
+    for (const sh of shafts) {
+        const l = sh.x - sh.w / 2;
+        const r = sh.x + sh.w / 2;
+        if (x >= l - CALL_DX && x <= r + CALL_DX) return sh;
+    }
+    return null;
+}
+
+// Summon the nearest car in a shaft to this floor. Returns false when there is
+// nothing to move: no car in that shaft, or one already level with the floor.
+function callCar(shaft, feet, dt) {
+    let idx = -1;
+    let bestGap = Infinity;
+    for (let i = 0; i < cars.length; i++) {
+        if (cars[i].x !== shaft.x) continue;
+        const gap = Math.abs(cars[i].y - feet);
+        if (gap < bestGap) {
+            bestGap = gap;
+            idx = i;
+        }
+    }
+    if (idx < 0) return false;
+
+    const c = cars[idx];
+    if (Math.abs(c.y - feet) <= SNAP) {
+        c.y = feet;
+        return false;
+    }
+
+    const dir = c.y < feet ? 1 : -1;
+    c.y += dir * CAR_SPEED * dt;
+    if ((dir > 0 && c.y > feet) || (dir < 0 && c.y < feet)) c.y = feet;
+    c.y = clamp(c.y, floorY(0), floorY(FLOORS - 1));
+    return true;
 }
 
 // The index of a car in this shaft whose roof is level with `feet`, else -1.
@@ -719,6 +761,24 @@ function drawShafts() {
         ctx.moveTo(sh.x, 0);
         ctx.lineTo(sh.x, BUILDING_H);
         ctx.stroke();
+    }
+
+    // Call plates beside each doorway, lit when the player is close enough to
+    // use them.
+    const beside = player.mode === 'floor' ? shaftBeside(player.x) : null;
+    for (const sh of shafts) {
+        const lit = beside === sh;
+        for (let f = 0; f < FLOORS; f++) {
+            const feet = floorY(f);
+            const onThisFloor = lit && Math.abs(player.y - feet) <= SNAP;
+            for (const side of [-1, 1]) {
+                const px = sh.x + side * (sh.w / 2 + 7);
+                ctx.fillStyle = onThisFloor ? '#38bdf8' : '#2b3a5c';
+                ctx.fillRect(px - 3, feet - 26, 6, 9);
+                ctx.fillStyle = onThisFloor ? '#e0f2fe' : '#16203a';
+                ctx.fillRect(px - 2, feet - 24, 4, 2);
+            }
+        }
     }
 
     for (const c of cars) {

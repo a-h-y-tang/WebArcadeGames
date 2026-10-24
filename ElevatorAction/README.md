@@ -12,7 +12,8 @@ install.
 1. You start on the top floor (floor 9). The building scrolls as you move.
 2. Walk into a **red door** to grab the document behind it. There are five, one
    per floor, and the HUD counts them down.
-3. Work your way down by **elevator** or **stairwell**.
+3. Work your way down by **elevator** or **stairwell**. The shafts split each
+   floor into three, so sometimes you have to call a car over just to cross.
 4. **Agents** step out of the plain grey doors. Shoot them, or crouch so their
    shots pass overhead — a standing hit costs a life, and so does walking into
    one.
@@ -27,6 +28,7 @@ install.
 | &uarr; &darr; or W S | Ride the elevator you are standing on, climb a stairwell |
 | &darr; or S | Crouch (when you are not standing on a stairwell) |
 | Space | Shoot |
+| E or Enter | Call a car to your floor (stand by a shaft doorway) |
 | P | Pause |
 | Space / Start | Begin, or start again after a game over |
 
@@ -36,7 +38,9 @@ stairwell, crouch.
 ## Elevators and stairwells
 
 * An elevator car only moves while you are riding it, so a car you leave
-  behind stays where you parked it.
+  behind stays where you parked it. Stand beside a shaft and press **E** to
+  call the nearest car to your floor — the plates beside the doorway light up
+  when you are close enough.
 * A shaft with no car in front of you is a wall — you cannot fall down it.
 * A car that is level with a floor doubles as a bridge, so you can walk
   straight across the shaft as well as ride.

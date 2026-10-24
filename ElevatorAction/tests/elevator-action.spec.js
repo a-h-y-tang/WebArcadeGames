@@ -501,6 +501,116 @@ test.describe('Elevator Action', () => {
             );
         });
 
+        test('holding the call key beside a shaft calls the car toward your floor', async ({ page }) => {
+            await page.evaluate(() => {
+                cars[0].y = floorY(6);
+                player.floor = 4;
+                player.y = floorY(4);
+                player.x = shafts[0].x - shafts[0].w / 2 - 4;
+                player.mode = 'floor';
+            });
+            await hold(page, 'KeyE');
+            await step(page, 120);
+            const { carY, lo, hi } = await page.evaluate(() => ({
+                carY: cars[0].y,
+                lo: floorY(4),
+                hi: floorY(6),
+            }));
+            expect(carY).toBeLessThan(hi);
+            expect(carY).toBeGreaterThan(lo);
+        });
+
+        test('a called car stops level with the floor and can be boarded', async ({ page }) => {
+            await page.evaluate(() => {
+                cars[0].y = floorY(6);
+                player.floor = 4;
+                player.y = floorY(4);
+                player.x = shafts[0].x - shafts[0].w / 2 - 4;
+                player.mode = 'floor';
+            });
+            await hold(page, 'KeyE');
+            await step(page, 600);
+            expect(await page.evaluate(() => cars[0].y)).toBe(await page.evaluate(() => floorY(4)));
+            expect(await page.evaluate(() => player.mode)).toBe('floor');
+
+            await hold(page, 'KeyE', false);
+            await hold(page, 'ArrowRight');
+            await step(page, 40);
+            expect(await page.evaluate(() => player.mode)).toBe('elevator');
+        });
+
+        test('calling never drags a car past the player floor', async ({ page }) => {
+            await page.evaluate(() => {
+                cars[0].y = floorY(2);
+                player.floor = 5;
+                player.y = floorY(5);
+                player.x = shafts[0].x + shafts[0].w / 2 + 32;
+                player.mode = 'floor';
+            });
+            await hold(page, 'KeyE');
+            await step(page, 900);
+            expect(await page.evaluate(() => cars[0].y)).toBe(await page.evaluate(() => floorY(5)));
+        });
+
+        test('the call key works from a stairwell too, without climbing it', async ({ page }) => {
+            await page.evaluate(() => {
+                // A stairwell slot sits close enough to a shaft that Up or Down
+                // there would mean "climb"; the call key is unambiguous.
+                const s = stairs.find(
+                    (st) =>
+                        st.upper === 3 &&
+                        shafts.some((sh) => Math.abs(st.x - sh.x) <= sh.w / 2 + CALL_DX)
+                );
+                cars[0].y = floorY(8);
+                cars[1].y = floorY(8);
+                player.floor = 3;
+                player.y = floorY(3);
+                player.x = s.x;
+                player.mode = 'floor';
+            });
+            await hold(page, 'KeyE');
+            await step(page, 20);
+            expect(await page.evaluate(() => player.mode)).toBe('floor');
+            const moved = await page.evaluate(() =>
+                cars.some((c) => Math.abs(c.y - floorY(8)) > 0.5)
+            );
+            expect(moved).toBe(true);
+        });
+
+        test('Up or Down beside a shaft still means stairs and crouching', async ({ page }) => {
+            await page.evaluate(() => {
+                cars[0].y = floorY(8);
+                player.floor = 4;
+                player.y = floorY(4);
+                player.x = shafts[0].x - shafts[0].w / 2 - 4;
+                player.mode = 'floor';
+            });
+            await hold(page, 'ArrowDown');
+            await step(page, 20);
+            expect(await page.evaluate(() => cars[0].y)).toBe(await page.evaluate(() => floorY(8)));
+            const pose = await page.evaluate(() => player.mode);
+            // Either a stairwell is underfoot, or the player simply crouches —
+            // never a lift call.
+            expect(['floor', 'ladder']).toContain(pose);
+        });
+
+        test('the call key does nothing away from a shaft', async ({ page }) => {
+            await page.evaluate(() => {
+                cars[0].y = floorY(8);
+                cars[1].y = floorY(8);
+                player.floor = 4;
+                player.y = floorY(4);
+                player.x = 320;
+                player.mode = 'floor';
+            });
+            await hold(page, 'KeyE');
+            await step(page, 60);
+            const moved = await page.evaluate(() =>
+                cars.some((c) => Math.abs(c.y - floorY(8)) > 0.001)
+            );
+            expect(moved).toBe(false);
+        });
+
         test('a player cannot walk out of a car between floors', async ({ page }) => {
             await page.evaluate(() => {
                 cars[0].y = floorY(6) - FLOOR_H / 2;

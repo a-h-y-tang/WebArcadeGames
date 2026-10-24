@@ -58,7 +58,17 @@ car.
 car at `CAR_SPEED` and the player rides along. Cars clamp to the top and
 bottom feet levels of the building. Walking off the side of a car is only
 allowed when the car is level with a floor; otherwise the player is clamped to
-the car's width.
+the car's width. A car that *is* level with a floor doubles as a bridge, so
+walking straight on and off the far side crosses the shaft.
+
+**Calling a car.** Standing within `CALL_DX` of a shaft doorway and holding the
+call key (E, or Enter) drives the nearest car in that shaft toward your floor,
+stopping level with it. The call plates beside each doorway light up when you
+are close enough to use them. The key is deliberately *not* Up or Down: a
+stairwell slot can sit entirely inside a doorway's call range, and sharing the
+key left only a few pixels of floor where a car could be called at all — found
+by a scripted bot playthrough that soft-locked on floor 8 for exactly that
+reason.
 
 **Stairwells.** Pressing Down while standing at a stairwell's top, or Up while
 standing at its bottom, puts the player in `'ladder'` mode; they then climb at
@@ -99,11 +109,13 @@ without the full set does nothing.
 | &uarr; &darr; / W S | Ride elevator, climb stairs |
 | &darr; / S | Crouch (on a floor, away from stairs) |
 | Space | Shoot |
+| E / Enter | Call a car to your floor (standing by a shaft) |
 | P | Pause |
 | Space / Start button | Start, or restart after a game over |
 
 Key priority when Down is pressed: ride an elevator, else enter a stairwell,
-else crouch.
+else crouch. Calling runs on its own key, so it never competes with any of
+those.
 
 ## Code shape
 
@@ -145,6 +157,8 @@ room, resolved toward the simpler reading:
    collected documents are kept. Losing progress on a 10-floor descent felt
    punishing out of proportion.
 8. **Agents do not crouch**, so every player bullet that lines up connects.
+   They also ignore shaft openings when they walk, where the player does not:
+   agents patrol the full width of their floor.
 9. **One building, repeatable.** Finishing the building wins the run outright
    rather than generating a harder second building; `level` exists in the code
    and seeds layout generation, but a single escape ends the game.
