@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elevator Action</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="game">
+        <header class="hud">
+            <h1>ELEVATOR ACTION</h1>
+            <div class="stats">
+                <div class="stat"><span class="label">Score</span><span id="score">0</span></div>
+                <div class="stat"><span class="label">Docs</span><span id="docs">0/5</span></div>
+                <div class="stat"><span class="label">Lives</span><span id="lives">3</span></div>
+                <div class="stat"><span class="label">Floor</span><span id="floor">9</span></div>
+                <div class="stat"><span class="label">Best</span><span id="best">0</span></div>
+            </div>
+        </header>
+
+        <div class="board-wrap">
+            <canvas id="canvas" width="640" height="480"></canvas>
+            <div id="overlay" class="overlay visible">
+                <h2 id="overlay-title">ELEVATOR ACTION</h2>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Press Space or click Start to play</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+
+        <div class="help">
+            <p><kbd>&larr;</kbd> <kbd>&rarr;</kbd> / <kbd>A</kbd> <kbd>D</kbd> walk &nbsp; <kbd>Space</kbd> shoot</p>
+            <p><kbd>&uarr;</kbd> <kbd>&darr;</kbd> ride the elevator, take the stairs &nbsp; <kbd>E</kbd> call a car</p>
+            <p><kbd>&darr;</kbd> crouch to duck under enemy fire &nbsp; <kbd>P</kbd> pause</p>
+            <p>Raid all 5 red doors, then reach the getaway car in the basement.</p>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>
