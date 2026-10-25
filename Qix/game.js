@@ -95,7 +95,8 @@ const keys = Object.create(null);
 const dirStack = [];                 // direction key codes, most recent last
 
 // A seeded generator so a level plays out the same way twice.
-let rngState = 20251024;
+const RNG_SEED = 20251024;
+let rngState = RNG_SEED;
 function rand() {
     rngState = (rngState * 1664525 + 1013904223) >>> 0;
     return rngState / 4294967296;
@@ -669,6 +670,7 @@ function resetLevel() {
 }
 
 function startGame() {
+    rngState = RNG_SEED;             // a fresh game plays out the same way twice
     score = 0;
     lives = START_LIVES;
     level = 1;

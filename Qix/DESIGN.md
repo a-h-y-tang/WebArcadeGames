@@ -63,6 +63,13 @@ That single rule gives all the behaviour you want for free: the side the Qix is
 on is always spared, a line that fails to separate anything claims nothing, and
 cutting the Qix into a smaller and smaller pen is the natural way to play.
 
+Sparing is deliberately generous: if the creature's two ends somehow land in
+different regions, both are spared and the claim is worth nothing. Reaching
+that state in play means the line went through the Qix, which is a death — but
+the generous rule is what guarantees both of its ends stay on open ground, and
+that invariant is the only thing keeping the creature from freezing solid
+inside claimed territory.
+
 Each claimed cell is worth `10` points, doubled if the line was drawn slowly.
 
 ### Speeds
