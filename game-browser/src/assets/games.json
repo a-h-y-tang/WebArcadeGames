@@ -828,6 +828,15 @@
     "thumbnail": ""
   },
   {
+    "id": "qix",
+    "name": "Qix",
+    "description": "Fence off the field while the Qix and the Sparx hunt you",
+    "category": "Action",
+    "dir": "Qix",
+    "path": "games/Qix/index.html",
+    "thumbnail": "games/Qix/screenshot.png"
+  },
+  {
     "id": "rally-chase",
     "name": "Rally Chase",
     "description": "Drive a scrolling maze for flags and shake pursuers with smoke",
