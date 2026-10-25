@@ -716,6 +716,28 @@ test.describe('Qix', () => {
             expect(await page.evaluate(() => lives)).toBe(2);
         });
 
+        test('a stranded Sparx reappears away from the marker', async ({ page }) => {
+            // Claiming can leave a Sparx with no legal edge under its feet. It
+            // has to come back somewhere, and that somewhere must not be on
+            // top of the marker.
+            await openOnly(page, 40, 50, 40, 50);
+            await place(page, 51, 51);
+            await page.evaluate(() => {
+                sparx.length = 1;
+                sparx[0] = makeSparx(5, 5, 1, 0);
+            });
+            expect(await page.evaluate(() => hasBorderEdge(sparx[0].px, sparx[0].py))).toBe(false);
+            await step(page, 1);
+            const s = await page.evaluate(() => ({
+                free: hasBorderEdge(sparx[0].px, sparx[0].py),
+                gap: Math.hypot(sparx[0].px - player.px, sparx[0].py - player.py),
+                lives,
+            }));
+            expect(s.free).toBe(true);
+            expect(s.gap).toBeGreaterThan(3);
+            expect(s.lives).toBe(3);
+        });
+
         test('a Sparx far away is harmless', async ({ page }) => {
             await place(page, 30, 1);
             await page.evaluate(() => {

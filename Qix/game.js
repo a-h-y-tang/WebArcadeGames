@@ -261,17 +261,16 @@ function playerPos() {
     return { x: l.x * CELL, y: l.y * CELL };
 }
 
-// The boundary point furthest from every Sparx, used on respawn and whenever a
-// claim fills in the ground the marker was standing on.
-function findSafePoint() {
+// The walkable boundary point furthest from everything in `avoid`, which is
+// how both the marker and a stranded Sparx find somewhere fair to reappear.
+function farthestBoundaryPoint(avoid) {
     let bestPoint = { px: 1, py: 1 };
     let bestScore = -1;
     for (let py = 0; py <= GRID_H; py++) {
         for (let px = 0; px <= GRID_W; px++) {
             if (!hasBorderEdge(px, py)) continue;
-            let near = Infinity;
-            for (const s of sparx) near = Math.min(near, Math.hypot(s.px - px, s.py - py));
-            if (near === Infinity) near = GRID_W + GRID_H;
+            let near = GRID_W + GRID_H;
+            for (const a of avoid) near = Math.min(near, Math.hypot(a.x - px, a.y - py));
             if (near > bestScore) {
                 bestScore = near;
                 bestPoint = { px, py };
@@ -279,6 +278,12 @@ function findSafePoint() {
         }
     }
     return bestPoint;
+}
+
+// Where the marker reappears after a death, and where it is nudged to when a
+// claim fills in the ground it was standing on.
+function findSafePoint() {
+    return farthestBoundaryPoint(sparx.map(sparxLattice));
 }
 
 function ensurePlayerFree() {
@@ -522,7 +527,7 @@ function steerSparx(s) {
     let choices = open.filter(([dx, dy]) => !(dx === -s.dirx && dy === -s.diry));
     if (!choices.length) choices = open;
     if (!choices.length) {
-        const p = findSafePoint();
+        const p = farthestBoundaryPoint([playerLattice()]);
         s.px = p.px;
         s.py = p.py;
         s.t = 0;
