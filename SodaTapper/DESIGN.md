@@ -26,7 +26,7 @@ and every mug you pour is a second errand coming back the other way.
 |---|---|---|
 | `W` × `H` | 760 × 600 | canvas size in CSS pixels |
 | `LANES` | 4 | counters, indexed 0 (top) to 3 (bottom) |
-| `LANE_TOP` / `LANE_GAP` | 105 / 120 | `laneY(i) = LANE_TOP + i * LANE_GAP` |
+| `LANE_TOP` / `LANE_GAP` | 124 / 120 | `laneY(i) = LANE_TOP + i * LANE_GAP` |
 | `BAR_LEFT` | 70 | door end: customers enter here, full mugs shatter here |
 | `TAP_X` | 650 | tap line: full mugs start here, empty mugs are caught here |
 | `GRAB_X` | 620 | a customer reaching this grabs you |

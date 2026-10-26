@@ -15,7 +15,7 @@ const H = canvas.height;             // 600
 const DT = 1 / 120;                  // fixed simulation timestep, seconds
 
 const LANES = 4;
-const LANE_TOP = 105;                // y of the first counter
+const LANE_TOP = 124;                // y of the first counter, clear of the wave meter
 const LANE_GAP = 120;                // spacing between counters
 
 const BAR_LEFT = 70;                 // door end: customers enter, full mugs die
@@ -503,6 +503,42 @@ function drawBooth(i) {
     ctx.font = 'bold 10px "Segoe UI", system-ui, sans-serif';
     ctx.textAlign = 'center';
     ctx.fillText('IN', 42, y - 42);
+
+    // lamps hanging over the counter
+    for (const lx of [250, 470]) {
+        const cone = ctx.createLinearGradient(0, y - 56, 0, y + TOP_Y);
+        cone.addColorStop(0, active ? 'rgba(255, 214, 150, 0.2)' : 'rgba(255, 214, 150, 0.09)');
+        cone.addColorStop(1, 'rgba(255, 214, 150, 0)');
+        ctx.fillStyle = cone;
+        ctx.beginPath();
+        ctx.moveTo(lx - 10, y - 56);
+        ctx.lineTo(lx + 10, y - 56);
+        ctx.lineTo(lx + 46, y + TOP_Y);
+        ctx.lineTo(lx - 46, y + TOP_Y);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(lx, y - 66);
+        ctx.lineTo(lx, y - 62);
+        ctx.stroke();
+
+        ctx.fillStyle = active ? '#5a4326' : '#3a2e1c';
+        ctx.beginPath();
+        ctx.moveTo(lx - 11, y - 56);
+        ctx.lineTo(lx + 11, y - 56);
+        ctx.lineTo(lx + 6, y - 62);
+        ctx.lineTo(lx - 6, y - 62);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = active ? 'rgba(255, 214, 150, 0.9)' : 'rgba(255, 214, 150, 0.45)';
+        ctx.beginPath();
+        ctx.ellipse(lx, y - 55, 8, 2.5, 0, 0, Math.PI * 2);
+        ctx.fill();
+    }
 }
 
 function drawCounter(i) {
