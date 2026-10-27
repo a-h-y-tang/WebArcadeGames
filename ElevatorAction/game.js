@@ -288,6 +288,10 @@ function killPlayer() {
 function respawn() {
     enemies = [];
     bullets = [];
+    elevators.forEach((car) => {
+        car.y = floorY(0);
+        car.vy = 0;
+    });
     resetSpy();
     spawnTimer = SPAWN_GRACE;
     state = 'running';
@@ -345,6 +349,7 @@ function physicsStep(dt) {
     updatePlayer(dt);
     updateEnemies(dt);
     updateBullets(dt);
+    if (state !== 'running') return; // the spy was shot by one of those bullets
     updateSparks(dt);
     collectDocuments();
     checkExit();

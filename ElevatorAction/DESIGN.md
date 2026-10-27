@@ -26,7 +26,7 @@ scrolling, so every floor, both shafts and the garage are visible at once.
 | Ducking | Down on a *floor* ducks (height 30 → 16). Bullets fly 20px above the floor, so a ducked spy is missed and a standing one is hit. |
 | Shooting | Space fires in the facing direction, up to 3 player bullets alive at once. An agent hit is worth 200. |
 | Escape | Overlap the getaway car on floor 6 with every document collected → level clear, +1000 and +100 per level. |
-| Death | Any bullet hit costs a life. After a short pause the spy respawns on the roof; collected documents are kept, agents and bullets are cleared. |
+| Death | Any bullet hit costs a life. After a short pause the spy respawns on the roof; collected documents are kept, agents and bullets are cleared, and both cars return to the roof so a car stopped mid-shaft cannot strand the spy. |
 
 Later levels raise the agent cap (`3 + level`, capped at 6), their speed and
 their rate of fire, and ask for one more document (`3 + level`, capped at 6).

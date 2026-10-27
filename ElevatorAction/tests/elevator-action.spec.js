@@ -704,6 +704,33 @@ test.describe('Elevator Action', () => {
             expect(await page.evaluate(() => bullets.length)).toBe(0);
         });
 
+        test('a death brings both cars back to the roof', async ({ page }) => {
+            await start(page);
+            await page.evaluate(() => {
+                elevators[1].y = floorY(5);
+                boardElevator(0, floorY(3) + 31); // stopped mid-shaft
+                killPlayer();
+            });
+            await step(page, 150);
+            const ys = await page.evaluate(() => elevators.map((e) => e.y));
+            const roof = await page.evaluate(() => floorY(0));
+            expect(ys).toEqual([roof, roof]);
+        });
+
+        test('the spy can always board a car again after a death', async ({ page }) => {
+            await start(page);
+            await page.evaluate(() => { boardElevator(0, floorY(2) + 37); killPlayer(); });
+            await step(page, 150);
+            const boarded = await page.evaluate(() => {
+                keys.ArrowLeft = true;
+                let guard = 0;
+                while (player.support.type !== 'elevator' && guard++ < 2000) physicsStep(1 / 120);
+                keys.ArrowLeft = false;
+                return player.support.type;
+            });
+            expect(boarded).toBe('elevator');
+        });
+
         test('collected documents survive a death', async ({ page }) => {
             await start(page);
             await page.evaluate(() => { doors.find((d) => d.red).taken = true; });
