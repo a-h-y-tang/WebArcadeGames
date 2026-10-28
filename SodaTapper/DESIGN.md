@@ -46,17 +46,26 @@ a lane *index*, never a y coordinate, so a lane can never be half-occupied.
 |---|---|---|
 | `MUG_SPEED` | 185 px/s | a full mug sliding toward the door |
 | `EMPTY_SPEED` | 150 px/s | an empty mug sliding back to the taps |
-| `PUSH_SPEED` | 110 px/s | a drinking patron being pushed back |
-| `PUSH_TIME` | 0.75 s | how long one mug keeps a patron drinking |
+| `PUSH_SPEED` | 125 px/s | a drinking patron being pushed back |
+| `PUSH_TIME` | 0.85 s | how long one mug keeps a patron drinking |
 | `POUR_COOLDOWN` | 0.25 s | minimum gap between two pours |
 | `PATRON_SPEED_BASE/STEP/MAX` | 26 / 5 / 70 px/s | patron walking speed by wave |
 | `SPAWN_BASE/STEP/MIN/JITTER` | 2.6 / 0.18 / 0.9 / 0.6 s | gap between arrivals |
 | `QUOTA_BASE/STEP/MAX` | 5 / 2 / 15 | patrons per wave |
 | `MAX_PER_LANE` | 3 | patrons allowed in one lane at once |
 
-One mug therefore buys `PUSH_SPEED × PUSH_TIME ≈ 82 px` of ground, while the full
-length of a counter is `GRAB_X − BAR_LEFT = 486 px`: a patron spotted late needs
-several mugs, which is what makes ignoring a lane expensive.
+One mug therefore buys `PUSH_SPEED × PUSH_TIME ≈ 106 px` of ground, while the
+full length of a counter is `GRAB_X − BAR_LEFT = 486 px`: a patron spotted late
+needs several mugs, which is what makes ignoring a lane expensive.
+
+Those two numbers are what the whole difficulty curve balances on. A mug has to
+travel to the patron before it pushes, so the patron walks forward for the trip
+as well as for the rest of the cycle; one mug per lane therefore nets a few tens
+of pixels of progress on the early waves and roughly nothing by wave six, which
+is the point at which a player has to stop spreading mugs evenly and commit to
+finishing one lane at a time. A single lane fed continuously can never be lost:
+pouring every `POUR_COOLDOWN` keeps a patron permanently drinking, and
+`PUSH_SPEED` is comfortably above `PATRON_SPEED_MAX`.
 
 ### The state machine
 
@@ -149,8 +158,10 @@ onto `patrons`/`mugs`, then call `physicsStep(1/120)` a known number of times.
 Groups cover the idle page and HUD, starting, lane movement, pouring and the tap
 cooldown, full-mug travel and smashes, deliveries and top-ups, serving, catching
 and dropping empties, patrons reaching the taps, lives and game over, pausing,
-spawning (including determinism under a fixed seed), waves and difficulty curves,
-the HUD, rendering, a soak run, and the repo/game-browser integration.
+spawning (including determinism under a fixed seed), waves and difficulty curves
+(including the balance rule above — a lane fed continuously drives its patron out
+of the door even at `PATRON_SPEED_MAX`), the HUD, rendering, a soak run, and the
+repo/game-browser integration.
 
 ## Assumptions
 

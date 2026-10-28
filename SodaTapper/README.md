@@ -49,9 +49,12 @@ in the wrong lane costs exactly as much as a patron you ignored.
 
 ## Tips
 
-- One mug is rarely enough. A single mug buys about three quarters of a second
-  of drinking, so a patron who is already halfway down the bar needs two or
-  three to make it back out of the door.
+- One mug is rarely enough. A single mug buys a little under a second of
+  drinking, so a patron already halfway down the bar needs several to make it
+  back out of the door.
+- Finish a lane rather than spreading mugs evenly. A lane you keep pouring into
+  can never be lost — the push is faster than any patron walks — but a mug
+  every so often into four lanes at once barely holds the line by wave six.
 - Pour, then move. A mug takes about two and a half seconds to cross the bar,
   which is plenty of time to go collect an empty from another lane.
 - Watch the lane a patron is leaving: the empty they send back arrives while you

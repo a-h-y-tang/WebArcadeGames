@@ -978,6 +978,32 @@ test.describe('Soda Tapper', () => {
             expect(gaps[1]).toBeLessThan(gaps[0]);
         });
 
+        test('the push is faster than any patron can walk', async ({ page }) => {
+            const [push, walk] = await read(page, () => [PUSH_SPEED, PATRON_SPEED_MAX]);
+            expect(push).toBeGreaterThan(walk);
+        });
+
+        // The balance rule the difficulty curve rests on: spreading mugs evenly
+        // stops working in the late waves, but a lane you commit to is never lost.
+        test('a lane fed continuously drives a patron out of the door', async ({ page }) => {
+            await emptyBar(page);
+            await page.evaluate(() => {
+                wave = 20;              // patrons at PATRON_SPEED_MAX
+                server.lane = 2;
+            });
+            await addPatron(page, { lane: 2, x: 400 });
+            const served = await page.evaluate(() => {
+                for (let i = 0; i < 2400; i++) {   // twenty simulated seconds
+                    pour();
+                    physicsStep(1 / 120);
+                    if (!patrons.length) return true;
+                }
+                return false;
+            });
+            expect(served).toBe(true);
+            expect(await read(page, () => servedThisWave)).toBe(1);
+        });
+
         test('the arrival gap never drops below the floor', async ({ page }) => {
             const gap = await read(page, () => {
                 wave = 50;

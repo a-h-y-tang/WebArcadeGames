@@ -38,8 +38,8 @@ const HIT_DIST = 20;                 // mug-to-patron gap that counts as served
 
 const MUG_SPEED = 185;               // px/s, a full mug sliding left
 const EMPTY_SPEED = 150;             // px/s, an empty mug sliding back right
-const PUSH_SPEED = 110;              // px/s, a drinking patron being pushed back
-const PUSH_TIME = 0.75;              // seconds one mug keeps a patron drinking
+const PUSH_SPEED = 125;              // px/s, a drinking patron being pushed back
+const PUSH_TIME = 0.85;              // seconds one mug keeps a patron drinking
 const POUR_COOLDOWN = 0.25;          // seconds the tap needs between mugs
 
 const PATRON_SPEED_BASE = 26;        // px/s on wave 1
