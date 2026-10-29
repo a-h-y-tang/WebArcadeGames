@@ -1026,6 +1026,15 @@
     "thumbnail": ""
   },
   {
+    "id": "soda-slinger",
+    "name": "Soda Slinger",
+    "description": "Slide sodas down four bar counters and catch every empty that comes back",
+    "category": "Action",
+    "dir": "SodaSlinger",
+    "path": "games/SodaSlinger/index.html",
+    "thumbnail": "games/SodaSlinger/screenshot.png"
+  },
+  {
     "id": "sokoban",
     "name": "Sokoban",
     "description": "Puzzle game - push boxes to their destinations",
