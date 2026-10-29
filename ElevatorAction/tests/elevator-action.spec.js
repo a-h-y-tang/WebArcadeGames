@@ -280,35 +280,44 @@ test.describe('Elevator Action', () => {
             expect(s.player.x).toBeGreaterThanOrEqual(40 + 11);
         });
 
-        test('a shaft with no car at this floor is a solid wall', async ({ page }) => {
+        test('an empty shaft is walked across, not into', async ({ page }) => {
             await page.evaluate(() => {
                 elevators[0].y = floorY(3);
             });
             await place(page, 0, 150);
             await hold(page, ['ArrowRight']);
-            await step(page, 240); // two seconds, far enough to cross the shaft
+            await step(page, 120); // one second, 150px: past the whole shaft
             const s = await snapshot(page);
             expect(s.player.inShaft).toBe(-1);
-            expect(s.player.x).toBeGreaterThan(180);
-            expect(s.player.x).toBeLessThan(195);
+            expect(s.player.x).toBeGreaterThan(266);
         });
 
-        test('a shaft that does not reach this floor is a solid wall', async ({ page }) => {
-            // Shaft C only serves the lower floors, so on floor 0 it is wall.
-            await place(page, 0, 560);
+        test('a corridor can be walked from wall to wall', async ({ page }) => {
+            await place(page, 2, 51);
             await hold(page, ['ArrowRight']);
-            await step(page, 240);
+            await step(page, 700); // long enough to cross every shaft
             const s = await snapshot(page);
             expect(s.player.inShaft).toBe(-1);
-            expect(s.player.x).toBeLessThan(670);
+            expect(s.player.x).toBe(860 - 11);
         });
 
-        test('walking into an aligned car boards the elevator', async ({ page }) => {
-            await place(page, 0, 183);
+        test('walking over a level car does not board it', async ({ page }) => {
+            await place(page, 0, 150);
             await hold(page, ['ArrowRight']);
-            await step(page, 40);
+            await step(page, 60); // stops inside shaft A, whose car is level
             const s = await snapshot(page);
-            expect(s.player.inShaft).toBe(0);
+            expect(s.player.x).toBeGreaterThan(194);
+            expect(s.player.x).toBeLessThan(266);
+            expect(s.player.inShaft).toBe(-1);
+        });
+
+        test('every document sits on a floor some shaft serves', async ({ page }) => {
+            const ok = await page.evaluate(() =>
+                doors
+                    .filter((d) => d.type === 'red')
+                    .every((d) => SHAFTS.some((s) => d.floor >= s.top && d.floor <= s.bottom))
+            );
+            expect(ok).toBe(true);
         });
     });
 
@@ -319,6 +328,42 @@ test.describe('Elevator Action', () => {
         test.beforeEach(async ({ page }) => {
             await startFrozen(page);
             await clearField(page);
+        });
+
+        test('pressing down on a level car boards it and drives it down', async ({ page }) => {
+            await place(page, 0, 230); // shaft A's car is parked at floor 0
+            await hold(page, ['ArrowDown']);
+            await step(page, 2);
+            const s = await snapshot(page);
+            expect(s.player.inShaft).toBe(0);
+            expect(s.player.crouching).toBe(false);
+            expect(s.elevators[0].y).toBeGreaterThan(90);
+            expect(s.player.y).toBe(s.elevators[0].y);
+        });
+
+        test('pressing up on a level car drives it up', async ({ page }) => {
+            await page.evaluate(() => {
+                elevators[0].y = floorY(4);
+            });
+            await place(page, 4, 230);
+            await hold(page, ['ArrowUp']);
+            await step(page, 2);
+            const s = await snapshot(page);
+            expect(s.player.inShaft).toBe(0);
+            expect(s.elevators[0].y).toBeLessThan(450);
+        });
+
+        test('a car that is not level cannot be boarded from the floor', async ({ page }) => {
+            await page.evaluate(() => {
+                elevators[0].y = floorY(3);
+            });
+            await place(page, 0, 230);
+            await hold(page, ['ArrowDown']);
+            await step(page, 60);
+            const s = await snapshot(page);
+            expect(s.player.inShaft).toBe(-1);
+            expect(s.player.crouching).toBe(true);
+            expect(s.elevators[0].y).toBe(await page.evaluate(() => floorY(3)));
         });
 
         test('holding down drives the car down and the agent rides it', async ({ page }) => {
@@ -845,8 +890,13 @@ test.describe('Elevator Action', () => {
         test('the view is pinned to the bottom of the building down low', async ({ page }) => {
             await place(page, 9, 300);
             await step(page, 1);
-            const expected = await page.evaluate(() => FLOORS * FLOOR_H - H);
-            expect((await snapshot(page)).camY).toBe(expected);
+            const camY = (await snapshot(page)).camY;
+            expect(camY).toBe(await page.evaluate(() => BUILDING_H - H));
+            // The street the agent is standing on has to be on screen.
+            const groundOnScreen = await page.evaluate(
+                () => floorY(FLOORS - 1) + SLAB_H - cam.y <= H
+            );
+            expect(groundOnScreen).toBe(true);
         });
 
         test('the view follows the agent in between', async ({ page }) => {
@@ -854,7 +904,7 @@ test.describe('Elevator Action', () => {
             await step(page, 1);
             const camY = (await snapshot(page)).camY;
             expect(camY).toBeGreaterThan(0);
-            expect(camY).toBeLessThan(await page.evaluate(() => FLOORS * FLOOR_H - H));
+            expect(camY).toBeLessThan(await page.evaluate(() => BUILDING_H - H));
         });
     });
 

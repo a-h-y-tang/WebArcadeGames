@@ -33,6 +33,8 @@ const SHAFT_W = 72;
 const ELEV_SPEED = 72;               // px/s while a direction key is held
 const ALIGN_TOL = 12;                // how close to a floor line still counts as level
 
+const SLAB_H = 6;                    // thickness of a floor slab
+
 const DOOR_XS = [120, 340, 560, 780];
 const DOOR_W = 46;
 const DOOR_H = 58;
@@ -142,7 +144,10 @@ function floorY(i) {
     return (i + 1) * FLOOR_H;
 }
 
-const BUILDING_H = FLOORS * FLOOR_H;
+// The slab under the bottom floor is part of the building's drawn height, so
+// the camera scrolls those last few pixels and the street is visible when the
+// agent is standing on it.
+const BUILDING_H = FLOORS * FLOOR_H + SLAB_H;
 
 function clamp(v, lo, hi) {
     return v < lo ? lo : v > hi ? hi : v;
@@ -159,26 +164,18 @@ function shaftServes(shaft, floor) {
     return floor >= shaft.top && floor <= shaft.bottom;
 }
 
-// A shaft is open to the agent on `floor` only when its car is parked level
-// with that floor — otherwise the doorway is a plain wall.
-function shaftOpenFor(index, floor) {
-    const shaft = SHAFTS[index];
-    if (!shaftServes(shaft, floor)) return false;
-    return Math.abs(elevators[index].y - floorY(floor)) <= ALIGN_TOL;
-}
-
-// Stop `x` (a body centre of half-width `half`) from crossing into any shaft
-// that is closed to it, approaching from `fromX`.
-function blockShafts(fromX, x, half, isOpen) {
+// Corridors run the full width of the building and shafts never block them, so
+// every door on a floor is always reachable on foot. The shaft index whose car
+// is parked level with the floor the agent is standing on, or -1: that is the
+// car the agent is standing on and can ride away.
+function carUnderPlayer() {
+    if (player.floor < 0) return -1;
     for (let i = 0; i < SHAFTS.length; i++) {
-        if (isOpen(i)) continue;
-        const left = SHAFTS[i].x - SHAFT_W / 2;
-        const right = SHAFTS[i].x + SHAFT_W / 2;
-        if (x + half > left && x - half < right) {
-            x = fromX <= SHAFTS[i].x ? left - half : right + half;
-        }
+        if (!shaftServes(SHAFTS[i], player.floor)) continue;
+        if (Math.abs(player.x - SHAFTS[i].x) > SHAFT_W / 2) continue;
+        if (Math.abs(elevators[i].y - floorY(player.floor)) <= ALIGN_TOL) return i;
     }
-    return x;
+    return -1;
 }
 
 function playerHeight() {
@@ -351,32 +348,31 @@ function rideElevator(dt, moveX) {
 }
 
 function walkFloor(dt, moveX) {
+    // Up or down while standing on a level car takes it. Down therefore rides
+    // rather than crouches in that one spot, which is the trade for not having
+    // to line yourself up with a doorway to board.
+    const car = carUnderPlayer();
+    if (car >= 0 && (held(...UP) || held(...DOWN))) {
+        player.inShaft = car;
+        player.y = elevators[car].y;
+        player.crouching = false;
+        rideElevator(dt, moveX);
+        return;
+    }
+
     player.crouching = held(...DOWN);
-    const from = player.x;
 
     if (!player.crouching && moveX) {
         player.x += moveX * PLAYER_SPEED * dt;
         player.facing = moveX;
     }
 
-    clampToCorridor(from);
-
-    // Stepping into a shaft whose car is level with this floor boards it.
-    for (let i = 0; i < SHAFTS.length; i++) {
-        if (!shaftOpenFor(i, player.floor)) continue;
-        if (Math.abs(player.x - SHAFTS[i].x) <= SHAFT_W / 2) {
-            player.inShaft = i;
-            player.y = elevators[i].y;
-            player.crouching = false;
-            return;
-        }
-    }
+    clampToCorridor();
 }
 
-function clampToCorridor(from = player.x) {
+function clampToCorridor() {
     const half = PLAYER_W / 2;
     player.x = clamp(player.x, BUILDING_LEFT + half, BUILDING_RIGHT - half);
-    player.x = blockShafts(from, player.x, half, (i) => shaftOpenFor(i, player.floor));
 }
 
 function firePlayer() {
@@ -425,12 +421,10 @@ function updateEnemies(dt) {
         const chasing = e.floor === player.floor;
         if (chasing) e.dir = player.x < e.x ? -1 : 1;
 
-        const from = e.x;
-        let x = e.x + e.dir * speed * dt;
-        x = clamp(x, BUILDING_LEFT + half, BUILDING_RIGHT - half);
-        // Enemy agents never ride the cars, so every shaft is a wall to them.
-        x = blockShafts(from, x, half, () => false);
-        if (x === e.x && !chasing) e.dir *= -1;  // bounced off a wall while patrolling
+        // Enemy agents never ride the cars, but the corridor is theirs end to
+        // end, so there is nowhere on a floor they cannot follow you.
+        const x = clamp(e.x + e.dir * speed * dt, BUILDING_LEFT + half, BUILDING_RIGHT - half);
+        if (x === e.x && !chasing) e.dir *= -1;  // bounced off a corridor wall
         e.x = x;
 
         e.shootCd -= dt;
@@ -595,6 +589,8 @@ function draw() {
 
     drawBuilding();
     drawShafts();
+    drawSlabs();
+    drawCars();
     drawDoors();
     drawExit();
     drawEnemies();
@@ -613,11 +609,19 @@ function drawBuilding() {
 
     for (let f = 0; f < FLOORS; f++) {
         const y = floorY(f);
-        ctx.fillStyle = COLORS.slab;
-        ctx.fillRect(BUILDING_LEFT, y, BUILDING_RIGHT - BUILDING_LEFT, 6);
         // A faint band of windows behind each corridor.
         ctx.fillStyle = 'rgba(78, 168, 245, 0.06)';
         ctx.fillRect(BUILDING_LEFT + 8, y - FLOOR_H + 14, BUILDING_RIGHT - BUILDING_LEFT - 16, 20);
+    }
+}
+
+// Floor slabs run the full width, over the shafts: the corridor is continuous
+// and an empty shaft is something you walk across, not into.
+function drawSlabs() {
+    for (let f = 0; f < FLOORS; f++) {
+        const y = floorY(f);
+        ctx.fillStyle = COLORS.slab;
+        ctx.fillRect(BUILDING_LEFT, y, BUILDING_RIGHT - BUILDING_LEFT, SLAB_H);
         ctx.fillStyle = '#5d6c80';
         ctx.font = '11px monospace';
         ctx.textAlign = 'left';
@@ -628,7 +632,7 @@ function drawBuilding() {
 function drawShafts() {
     for (let i = 0; i < SHAFTS.length; i++) {
         const s = SHAFTS[i];
-        const top = floorY(s.top) - FLOOR_H + 6;
+        const top = floorY(s.top) - FLOOR_H + SLAB_H;
         const h = floorY(s.bottom) - top;
         ctx.fillStyle = COLORS.shaft;
         ctx.fillRect(s.x - SHAFT_W / 2, top, SHAFT_W, h);
@@ -638,7 +642,12 @@ function drawShafts() {
         ctx.moveTo(s.x, top);
         ctx.lineTo(s.x, top + h);
         ctx.stroke();
+    }
+}
 
+function drawCars() {
+    for (let i = 0; i < SHAFTS.length; i++) {
+        const s = SHAFTS[i];
         const car = elevators[i];
         if (!car) continue;
         ctx.fillStyle = COLORS.car;

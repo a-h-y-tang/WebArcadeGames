@@ -32,6 +32,7 @@ score is remembered between sessions.
 | `SHAFT_W` | 72 | width of an elevator shaft |
 | `ELEV_SPEED` | 72 px/s | car speed while a direction key is held |
 | `ALIGN_TOL` | 12 px | how close to a floor line still counts as "level" |
+| `SLAB_H` | 6 | thickness of a floor slab |
 | `DOOR_W` × `DOOR_H` | 46 × 58 | a door |
 | `PLAYER_SPEED` | 150 px/s | walking speed |
 | `STAND_H` / `CROUCH_H` | 38 / 22 | the agent's height standing and crouched |
@@ -54,15 +55,21 @@ out a clean opening route: shaft A from floor 0 to 3, where shaft B's car is
 already waiting; shaft B to floor 6, where shaft C's car is waiting; shaft C to
 the street.
 
-A shaft doorway is **solid wall** unless that shaft's car is parked level with
-the floor you are standing on (within `ALIGN_TOL`). That one rule does a lot of
-work: there is no way to walk into an empty shaft, so there is no falling and no
-mid-air state to simulate, and it is also what makes the cars worth thinking
-about — a car you left five floors up is a wall until you go back for it.
+Corridors run the full width of the building and shafts never interrupt them: an
+empty shaft is something you walk across, not into. Boarding is a deliberate
+press of **up or down while standing on a car that is parked level with your own
+floor** (within `ALIGN_TOL`). Nothing ever falls, and no door is ever walled off
+from the elevator that serves its floor.
+
+That last point is not decoration. The first cut of this game made a shaft a
+solid wall unless its car was level with you, which read well and removed falling
+for free — but it also cut every floor into up to four segments, and a walk of
+the reachable segments showed that the documents on floors 2 and 7 could not be
+got at from the shaft that served them. The wall rule had to go.
 
 Because a car only ever moves while the agent is riding it, the agent always has
-the car they just stepped out of parked at their own floor. The building
-therefore cannot soft-lock.
+the car they just stepped out of parked at their own floor, so the descent can
+always be retraced.
 
 ### Doors
 
@@ -87,9 +94,9 @@ the elevator into one.
 
 ### Walking and riding
 
-On a floor, left/right walks and sets the facing direction, clamped to the
-corridor walls and to any closed shaft doorway. Walking into an *open* shaft
-boards the car.
+On a floor, left/right walks and sets the facing direction, clamped only by the
+two corridor walls. Standing on a car that is level with your floor, up or down
+boards it and starts it moving the same frame.
 
 On a car, up/down drives it between the limits of its own shaft and the agent
 rides along. Releasing both keys parks the car on the nearest floor line if it is
@@ -97,6 +104,10 @@ already within `ALIGN_TOL` of one — so you brake as you come up on a floor, an
 the car settles exactly level. While the car is level, left/right walks out onto
 that floor; while it is between floors, left/right only shuffles the agent inside
 the car. A green lamp on the car lights whenever it is level and safe to leave.
+
+`ALIGN_TOL` is 12px against a car speed of 72px/s, so the window in which a floor
+counts as level lasts a third of a second — tight enough to be a skill, loose
+enough not to be a lottery.
 
 ### Shooting and crouching
 
@@ -116,7 +127,8 @@ still shoot at you.
 Agents spawn from blue doors within three floors of you, at most a few seconds
 apart, up to a per-level cap. On your floor they walk at you and shoot; elsewhere
 they patrol their own corridor, turning at the walls. They never ride the cars,
-so every shaft is a wall to them.
+so an agent stays on the floor it came out on — but the corridor is theirs end to
+end, so there is nowhere on that floor you can outwalk them.
 
 | Level | Enemy cap | Enemy speed | Spawn interval |
 |---|---|---|---|
@@ -143,7 +155,7 @@ documents already collected stay collected.
 | `←` `→` / `A` `D` | walk, or step out of a level car |
 | `↑` `↓` / `W` `S` | drive the car you are standing in |
 | `↑` / `W` at a red door | take the document |
-| `↓` / `S` on a floor | crouch |
+| `↓` / `S` on a floor | crouch (rides the car instead when you are standing on one) |
 | `Space` | shoot, or start / dismiss an overlay |
 | `P` | pause and unpause |
 
@@ -177,15 +189,16 @@ reading and recorded here.
 - **No stairs or escalators.** The arcade original has escalators alongside the
   elevators. Here the elevators are the only way between floors, which makes the
   overlapping-shafts relay the whole of the navigation puzzle.
-- **No falling.** A shaft doorway with no car behind it is a wall rather than an
-  open hole. That removes falling, mid-air state and death-by-shaft entirely.
+- **No falling.** An empty shaft is walked across rather than fallen into, which
+  removes falling, mid-air state and death-by-shaft entirely. The alternative —
+  walling off empty shafts — was tried first and made two of the six documents
+  unreachable, which is what settled it.
 - **Cars only move while ridden.** Unattended cars stay where they were left
   instead of being driven around by the building. It keeps the simulation
   deterministic and guarantees the agent can always reach the car they just left.
 - **Enemies ignore the elevators.** Enemy agents stay on the floor they spawned
-  on and treat every shaft as a wall, so a floor is divided into segments they
-  cannot leave. Their bullets still cross shafts, which is what keeps a corridor
-  dangerous.
+  on. Within it they roam the whole corridor, so an agent on your floor is always
+  a problem you have to solve rather than one you can walk away from.
 - **The exit is locked, not penalised.** The original lets you leave early at a
   cost; here the exit simply does not open until all six documents are in hand.
 - **Crushing is not modelled.** The original kills enemies caught under a
