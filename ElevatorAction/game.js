@@ -485,14 +485,25 @@ function updateBullets(dt) {
 
 function checkContacts() {
     const ph = playerHeight();
-    const touched = enemies.some((e) =>
+    const touched = enemies.find((e) =>
         overlaps(player.x, player.y - ph / 2, PLAYER_W, ph, e.x, e.y - ENEMY_H / 2, ENEMY_W, ENEMY_H)
     );
-    if (touched) {
-        killPlayer();
-        return true;
+    if (!touched) return false;
+
+    // An agent caught in a shaft by a car under power is crushed. You cannot
+    // dodge inside a car, so a moving car would otherwise be an undodgeable
+    // death every time it passed a floor someone happened to be standing on. A
+    // car sitting still crushes nothing, so parking in one is no shelter.
+    if (player.inShaft >= 0 && (held(...UP) || held(...DOWN))) {
+        enemies = enemies.filter((e) => e !== touched);
+        flashes.push({ x: touched.x, y: touched.y - ENEMY_H / 2, life: 0.18 });
+        score += ENEMY_POINTS;
+        hudDirty = true;
+        return false;
     }
-    return false;
+
+    killPlayer();
+    return true;
 }
 
 function killPlayer() {

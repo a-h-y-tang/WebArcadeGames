@@ -67,7 +67,7 @@ crouching — step off the car first if you need to duck.)
 | Event | Points |
 |---|---|
 | Document taken | 500 |
-| Enemy agent shot | 300 |
+| Enemy agent shot or crushed | 300 |
 | Level cleared | 1000 |
 
 Each level raises the number of agents in the building, how fast they walk and
@@ -81,8 +81,9 @@ how quickly they replace themselves. Clear all three to win the run.
   whole floor from inside the shaft.
 - The strip down the right-hand edge marks the floors that still hold a
   document, and where in the building you are.
-- Riding past a floor is free; the agents on it cannot touch you inside a moving
-  car. Only stop where you actually need something.
+- Riding past a floor is better than free: an agent standing in the shaft gets
+  crushed by the moving car and pays out like any other. A car you have stopped
+  crushes nothing, though, so do not treat a parked one as cover.
 - Enemy agents never ride, so a floor you have already stripped of agents stays
   clear for a while — but they roam the whole corridor, so there is nowhere on a
   floor to simply wait one out.

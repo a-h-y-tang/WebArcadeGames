@@ -37,9 +37,9 @@ score is remembered between sessions.
 | `PLAYER_SPEED` | 150 px/s | walking speed |
 | `STAND_H` / `CROUCH_H` | 38 / 22 | the agent's height standing and crouched |
 
-The building is 900px tall and the canvas 600px, so the view scrolls: `cam.y`
-keeps the agent 60% of the way down the viewport and clamps at the roof and the
-street. `floorY(i) = (i + 1) * FLOOR_H` is the walking surface of floor `i`,
+The building is 906px tall (ten storeys plus the street slab under the bottom
+one) and the canvas 600px, so the view scrolls: `cam.y` keeps the agent 60% of
+the way down the viewport and clamps at the roof and the street. `floorY(i) = (i + 1) * FLOOR_H` is the walking surface of floor `i`,
 which leaves a storey's worth of room above floor 0 to draw its ceiling.
 
 ### The shafts
@@ -144,7 +144,8 @@ end, so there is nowhere on that floor you can outwalk them.
 | Enemy agent shot | 300 |
 | Level cleared | 1000 |
 
-Touching an enemy, or being shot by one, costs a life. The agent restarts on the
+Touching an enemy on foot, or being shot by one, costs a life; an agent caught in
+a shaft by a car you are driving is crushed instead, and pays the usual 300. The agent restarts on the
 roof with the field cleared and every car back at the top of its shaft; the
 documents already collected stay collected.
 
@@ -201,9 +202,12 @@ reading and recorded here.
   a problem you have to solve rather than one you can walk away from.
 - **The exit is locked, not penalised.** The original lets you leave early at a
   cost; here the exit simply does not open until all six documents are in hand.
-- **Crushing is not modelled.** The original kills enemies caught under a
-  descending car. Cars here pass harmlessly, and shooting is the only way to deal
-  with an agent.
+- **Crushing works, falling does not.** An agent caught in a shaft by a car
+  under power is crushed, as in the original. That is as much a fairness fix as
+  a feature: you cannot crouch or sidestep inside a car, so the alternative was
+  an undodgeable death every time a car passed a floor an agent happened to be
+  standing on. A car sitting still crushes nothing, so parking in one is a place
+  to be shot at, not a place to farm.
 - **Three levels.** The run is finite and ends in a win rather than looping for
   score, matching how the other games in this repo are structured. Levels differ
   only in enemy count, speed and spawn rate — the building itself is fixed, so a

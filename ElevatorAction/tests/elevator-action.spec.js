@@ -608,6 +608,33 @@ test.describe('Elevator Action', () => {
             expect(s.state).toBe('running');
         });
 
+        test('a car crushes an agent caught in the shaft', async ({ page }) => {
+            const carY = await page.evaluate(() => floorY(2));
+            await board(page, 0, carY);
+            await page.evaluate(() => {
+                enemies.push({ x: 230, y: floorY(2), floor: 2, dir: 1, shootCd: 1e6 });
+            });
+            await hold(page, ['ArrowDown']);
+            await step(page, 2);
+            const s = await snapshot(page);
+            expect(s.enemies).toHaveLength(0);
+            expect(s.lives).toBe(3);
+            expect(s.score).toBe(300);
+        });
+
+        test('a car standing still is no shelter', async ({ page }) => {
+            const carY = await page.evaluate(() => floorY(2));
+            await board(page, 0, carY);
+            await page.evaluate(() => {
+                enemies.push({ x: 230, y: floorY(2), floor: 2, dir: 1, shootCd: 1e6 });
+            });
+            await releaseAll(page);
+            await step(page, 2);
+            const s = await snapshot(page);
+            expect(s.lives).toBe(2);
+            expect(s.score).toBe(0);
+        });
+
         test('enemies spawn from blue doors over time', async ({ page }) => {
             await place(page, 4, 400);
             await page.evaluate(() => {
