@@ -30,16 +30,27 @@ Horizontally:
 
 | Landmark | x | Meaning |
 |---|---|---|
-| `PLAYER_X` | 44 | where the slinger is drawn |
+| `PLAYER_X` | 44 | the column the slinger works in |
 | `TAP_X` | 84 | mugs are poured here; empties are caught here |
 | `LOSS_X` | 100 | an advancing customer this far left grabs the slinger |
 | `BAR_RIGHT` | 686 | customers walk in here; filled mugs smash past it |
 
 ## Mechanics
 
+**Walking.** `player.lane` is the counter the slinger is *heading for* and
+`player.y` is where they actually are; `movePlayer` closes the gap at
+`PLAYER_SPEED` (380 px/s), so crossing one counter takes about 0.3 s. Anything
+that needs the slinger to be *there* — pouring, catching an empty — goes
+through `atLane(lane)`, which allows `REACH` (24 px) of slack either side of
+the counter line. Changing counters mid-stride just changes the target. This is
+what stops the game from being solvable by reflex alone: the slinger cannot be
+at two counters at once, so a filled counter and a returning empty genuinely
+compete for them.
+
 **Pouring.** `pour()` adds a filled mug at `TAP_X` on the player's counter,
 moving right at `MUG_SPEED` (300 px/s). A `POUR_COOLDOWN` of 0.18 s stops a
-held key from emitting a wall of mugs.
+held key from emitting a wall of mugs, and a pour attempted mid-stride is
+simply ignored.
 
 **Serving.** A filled mug serves the frontmost *advancing* customer on its
 counter once the gap closes to `CATCH_GAP` (16 px). The customer switches to
@@ -50,14 +61,15 @@ moment releases an empty mug at its own position moving left at `EMPTY_SPEED`
 `SERVE_POINTS` (50).
 
 **Empties.** An empty that reaches `TAP_X` is caught for `EMPTY_POINTS` (10) if
-`player.lane` matches its counter, and otherwise smashes and costs a life.
+`atLane()` says the slinger is standing at its counter, and otherwise smashes
+and costs a life — arriving a moment too late is a miss.
 
 **Losing a life.** `loseLife(lane)` clears that counter completely (customers,
 filled mugs, empties) so the player is not punished twice for the same pile-up,
 records a short cosmetic spill marker, and ends the game at zero lives.
 
 **Levels.** Level `n` asks for `5 + 3n` customers (`quota`) and walks them at
-`20 + 6n` px/s. Spawn gaps are `max(1.1, 3.25 - 0.25n)` seconds jittered by
+`20 + 8n` px/s. Spawn gaps are `max(0.9, 3.1 - 0.3n)` seconds jittered by
 ±0.4 s from a seeded PRNG, so a level always plays out the same way. At most
 `MAX_PER_LANE` (3) advancing customers share a counter.
 
@@ -84,14 +96,14 @@ quota; the missing drinks were paid for in lives.
 
 `game.js` is a classic script with its interesting state at the top level —
 `state`, `score`, `lives`, `level`, `served`, `quota`, `customers`, `mugs`,
-`empties`, `player` — because the Playwright suite drives the game through
+`empties`, `player` (`{ lane, y }`) — because the Playwright suite drives the game through
 exactly those names. The simulation runs on a fixed `DT = 1/120` s timestep
 inside `physicsStep(dt)`; the animation loop only calls it while
 `autoRun && state === 'running'`, so a test can set `autoRun = false` and step
 the world by hand. Rendering lives in `draw()` and never changes state.
 
-Pass order inside `physicsStep`: advance timers and the spawner, move
-customers, move filled mugs and resolve serves, move empties and resolve
+Pass order inside `physicsStep`: advance timers, walk the slinger, run the
+spawner, move customers, move filled mugs and resolve serves, move empties and resolve
 catches, then check the level-clear condition.
 
 ## Assumptions
@@ -105,8 +117,9 @@ each case and is recorded here.
    elsewhere. The work is therefore developed and pushed on the designated
    branch, and the game name is carried by the folder, docs and catalogue entry
    instead.
-2. **Catching empties** is positional rather than an extra button: standing at
-   the counter is enough. One less thing to explain, one less key to press.
+2. **Catching empties** is positional rather than an extra button: being at the
+   counter when the empty arrives is enough. One less thing to explain, one
+   less key to press.
 3. **No tip bonuses, no runaway "dancer" distraction** from the arcade original
    — scoring is just serves, empties and the level-clear bonus.
 4. **Customers never walk back on their own**; only a served drink pushes one

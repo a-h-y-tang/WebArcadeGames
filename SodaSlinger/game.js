@@ -34,6 +34,8 @@ const LEAVE_SPEED = 170;             // px/s, walking out
 const CATCH_GAP = 16;                // mug/customer contact distance
 const CUST_GAP = 34;                 // customers queue rather than overlap
 
+const PLAYER_SPEED = 380;            // px/s the slinger walks between counters
+const REACH = 24;                    // how close to a counter line counts as being there
 const POUR_COOLDOWN = 0.18;          // seconds between pours, shared by all counters
 const FIRST_SPAWN = 0.6;             // grace period at the start of a level
 const MAX_PER_LANE = 3;              // advancing customers allowed on one counter
@@ -77,7 +79,9 @@ let spawnTimer = FIRST_SPAWN;        // seconds until the next customer walks in
 let autoRun = true;                  // the animation loop only simulates while true
 let rng = mulberry32(1337);
 
-const player = { lane: 0 };
+// `lane` is the counter the slinger is heading for; `y` is where they actually
+// are. Pouring and catching need them to have arrived.
+const player = { lane: 0, y: laneY(0) };
 
 // --- level shape -----------------------------------------------------------
 
@@ -86,7 +90,7 @@ function quotaFor(n) {
 }
 
 function speedFor(n) {
-    return 20 + 6 * n;
+    return 20 + 8 * n;
 }
 
 function customerSpeed() {
@@ -96,7 +100,7 @@ function customerSpeed() {
 // Average gap between arrivals, jittered from the seeded PRNG so a level always
 // plays out the same way.
 function spawnGap() {
-    return Math.max(1.1, 3.25 - 0.25 * level) + (rng() - 0.5) * 0.8;
+    return Math.max(0.9, 3.1 - 0.3 * level) + (rng() - 0.5) * 0.8;
 }
 
 function laneY(i) {
@@ -137,6 +141,7 @@ function startGame() {
     lives = START_LIVES;
     level = 1;
     player.lane = 0;
+    player.y = laneY(0);
     beginLevel();
 }
 
@@ -150,6 +155,7 @@ function beginLevel() {
     spills.length = 0;
     pourTimer = 0;
     spawnTimer = FIRST_SPAWN;
+    player.y = laneY(player.lane);
     rng = mulberry32(1337 + level * 101);
     state = 'running';
     updateHud();
@@ -193,9 +199,22 @@ function moveLane(delta) {
     player.lane = Math.min(LANES - 1, Math.max(0, player.lane + delta));
 }
 
+// Is the slinger standing at this counter, rather than still on their way?
+function atLane(lane) {
+    return Math.abs(player.y - laneY(lane)) <= REACH;
+}
+
+function movePlayer(dt) {
+    const target = laneY(player.lane);
+    const gap = target - player.y;
+    const stride = PLAYER_SPEED * dt;
+    player.y = Math.abs(gap) <= stride ? target : player.y + Math.sign(gap) * stride;
+}
+
 function pour() {
     if (state !== 'running') return;
     if (pourTimer > 0) return;
+    if (!atLane(player.lane)) return;   // no pouring mid-stride
     mugs.push({ lane: player.lane, x: TAP_X });
     pourTimer = POUR_COOLDOWN;
 }
@@ -246,6 +265,7 @@ function physicsStep(dt) {
         if (spills[i].life <= 0) spills.splice(i, 1);
     }
 
+    movePlayer(dt);
     runSpawner(dt);
     if (state !== 'running') return;
     moveCustomers(dt);
@@ -360,7 +380,7 @@ function moveEmpties(dt) {
         if (empties[i].x > TAP_X) continue;
         const e = empties[i];
         empties.splice(i, 1);
-        if (player.lane === e.lane) {
+        if (atLane(e.lane)) {
             score += EMPTY_POINTS;
             updateHud();
         } else {
@@ -526,7 +546,7 @@ function drawTap(lane) {
 }
 
 function drawPlayer() {
-    const y = laneY(player.lane);
+    const y = player.y;
 
     ctx.fillStyle = COLORS.player;
     roundRect(PLAYER_X - 12, y - 6, 24, 30, 7);
@@ -616,6 +636,18 @@ function draw() {
     ctx.moveTo(TAP_X - 40, 0);
     ctx.lineTo(TAP_X - 40, H);
     ctx.stroke();
+
+    // the strip the slinger runs up and down
+    ctx.fillStyle = '#1d2a49';
+    ctx.fillRect(PLAYER_X - 20, 24, 40, H - 48);
+    ctx.setLineDash([6, 8]);
+    ctx.strokeStyle = 'rgba(56, 189, 248, 0.25)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(PLAYER_X, 30);
+    ctx.lineTo(PLAYER_X, H - 30);
+    ctx.stroke();
+    ctx.setLineDash([]);
 
     for (let lane = 0; lane < LANES; lane++) {
         drawCounter(lane);

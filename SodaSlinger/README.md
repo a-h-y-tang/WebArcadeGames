@@ -9,10 +9,15 @@ catch every empty they shove back at you.
 ## How to play
 
 Customers walk in from the far (right) end of each counter and shuffle toward
-the taps on the left, where you stand. Move between the four counters and pour:
+the taps on the left, where you work. Move between the four counters and pour:
 the mug slides right and the frontmost customer on that counter catches it,
 drinks, gets pushed back, then leaves — and shoves the empty mug back down the
 counter at you. Be standing at that counter when the empty arrives.
+
+You walk between the counters rather than teleporting, so a change of counter
+costs about a third of a second — long enough that a busy counter and a
+returning empty really do compete for you. Pouring while still on your way does
+nothing; arrive first.
 
 ### Controls
 

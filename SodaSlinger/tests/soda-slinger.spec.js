@@ -51,6 +51,14 @@ async function addEmpty(page, m) {
     }, m);
 }
 
+// Put the slinger at a counter outright, skipping the walk over.
+async function standAt(page, lane) {
+    await page.evaluate((n) => {
+        player.lane = n;
+        player.y = laneY(n);
+    }, lane);
+}
+
 // Advance the frozen simulation by `steps` fixed timesteps.
 async function step(page, steps = 1) {
     await page.evaluate((n) => {
@@ -227,6 +235,36 @@ test.describe('Soda Slinger', () => {
             expect(await page.evaluate(() => player.lane)).toBe(3);
         });
 
+        test('the slinger has to walk over, arriving a moment later', async ({ page }) => {
+            await page.keyboard.press('ArrowDown');
+            await step(page, 6);
+            expect(await page.evaluate(() => atLane(1))).toBe(false);
+            await stepSeconds(page, 0.4);
+            expect(await page.evaluate(() => atLane(1))).toBe(true);
+            expect(await page.evaluate(() => player.y)).toBe(await page.evaluate(() => laneY(1)));
+        });
+
+        test('the walk never overshoots the counter line', async ({ page }) => {
+            await page.keyboard.press('ArrowDown');
+            const ys = await page.evaluate(() => {
+                const seen = [];
+                for (let i = 0; i < 80; i++) {
+                    physicsStep(1 / 120);
+                    seen.push(player.y);
+                }
+                return seen;
+            });
+            expect(Math.max(...ys)).toBe(await page.evaluate(() => laneY(1)));
+        });
+
+        test('a counter change mid-walk redirects the slinger', async ({ page }) => {
+            await page.keyboard.press('ArrowDown');
+            await step(page, 4);
+            await page.keyboard.press('ArrowUp');
+            await stepSeconds(page, 0.4);
+            expect(await page.evaluate(() => player.y)).toBe(await page.evaluate(() => laneY(0)));
+        });
+
         test('counters do not change while the game is idle', async ({ page }) => {
             await page.reload();
             await page.keyboard.press('ArrowDown');
@@ -244,10 +282,8 @@ test.describe('Soda Slinger', () => {
         });
 
         test('pour puts a filled mug at the taps on the current counter', async ({ page }) => {
-            await page.evaluate(() => {
-                player.lane = 2;
-                pour();
-            });
+            await standAt(page, 2);
+            await page.evaluate(() => pour());
             const mug = await page.evaluate(() => mugs[0]);
             expect(mug.lane).toBe(2);
             expect(mug.x).toBe(await page.evaluate(() => TAP_X));
@@ -279,11 +315,9 @@ test.describe('Soda Slinger', () => {
         });
 
         test('the cooldown is shared across counters', async ({ page }) => {
-            await page.evaluate(() => {
-                pour();
-                player.lane = 3;
-                pour();
-            });
+            await page.evaluate(() => pour());
+            await standAt(page, 3);
+            await page.evaluate(() => pour());
             expect(await page.evaluate(() => mugs.length)).toBe(1);
         });
 
@@ -294,6 +328,16 @@ test.describe('Soda Slinger', () => {
             const after = await page.evaluate(() => mugs[0].x);
             expect(after).toBeGreaterThan(before);
             expect(after - before).toBeCloseTo(150, 0);
+        });
+
+        test('pouring is ignored while the slinger is still crossing', async ({ page }) => {
+            await page.keyboard.press('ArrowDown');
+            await step(page, 6);
+            await page.evaluate(() => pour());
+            expect(await page.evaluate(() => mugs.length)).toBe(0);
+            await stepSeconds(page, 0.4);
+            await page.evaluate(() => pour());
+            expect(await page.evaluate(() => mugs.length)).toBe(1);
         });
 
         test('pouring does nothing when the game is not running', async ({ page }) => {
@@ -400,9 +444,7 @@ test.describe('Soda Slinger', () => {
         });
 
         test('an empty caught at the taps scores 10 points', async ({ page }) => {
-            await page.evaluate(() => {
-                player.lane = 1;
-            });
+            await standAt(page, 1);
             await addEmpty(page, { lane: 1, x: 140 });
             await stepSeconds(page, 0.5);
             expect(await page.evaluate(() => empties.length)).toBe(0);
@@ -410,10 +452,16 @@ test.describe('Soda Slinger', () => {
             expect(await page.evaluate(() => lives)).toBe(3);
         });
 
+        test('an empty that arrives before the slinger does still smashes', async ({ page }) => {
+            await standAt(page, 0);
+            await addEmpty(page, { lane: 3, x: 110 });
+            await page.evaluate(() => moveLane(3));      // clamped to the bottom counter
+            await stepSeconds(page, 0.2);
+            expect(await page.evaluate(() => lives)).toBe(2);
+        });
+
         test('an empty that comes back to an unattended counter smashes', async ({ page }) => {
-            await page.evaluate(() => {
-                player.lane = 0;
-            });
+            await standAt(page, 0);
             await addEmpty(page, { lane: 3, x: 140 });
             await stepSeconds(page, 0.5);
             expect(await page.evaluate(() => empties.length)).toBe(0);
