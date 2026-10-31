@@ -493,6 +493,13 @@ function drawCounter(lane) {
     const left = LANE_LEFT - 26;
     const width = LANE_RIGHT - left + 40;
 
+    if (lane === server.lane && state !== 'idle') {
+        ctx.fillStyle = 'rgba(240, 160, 75, 0.1)';
+        ctx.fillRect(left, y - 70, width, 70);
+        ctx.fillStyle = 'rgba(240, 160, 75, 0.55)';
+        ctx.fillRect(left, y - 2, width, 2);
+    }
+
     ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
     ctx.fillRect(left, y + 14, width, 10);
 
@@ -615,9 +622,9 @@ function drawCustomer(c) {
         drawMug(x + 20, y - 34, true);
         const t = Math.max(0, Math.min(1, c.drinkTimer / DRINK_TIME));
         ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
-        ctx.fillRect(x - 14, y - 70, 28, 4);
+        ctx.fillRect(x - 14, y - 68, 28, 4);
         ctx.fillStyle = COLORS.soda;
-        ctx.fillRect(x - 14, y - 70, 28 * (1 - t), 4);
+        ctx.fillRect(x - 14, y - 68, 28 * (1 - t), 4);
     }
 }
 
@@ -685,11 +692,21 @@ function drawLives() {
     }
 }
 
+function drawWave() {
+    if (state === 'idle') return;
+    const left = spawnQueue.length + customers.length;
+    ctx.fillStyle = 'rgba(246, 236, 221, 0.5)';
+    ctx.font = 'bold 11px "Segoe UI", system-ui, sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText(`WAVE ${level}  -  ${left} LEFT`, LANE_RIGHT + 4, 20);
+    ctx.textAlign = 'left';
+}
+
 function drawIdleHint() {
     ctx.fillStyle = 'rgba(246, 236, 221, 0.4)';
     ctx.font = '13px "Segoe UI", system-ui, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('Slide mugs left · catch the empties coming back', W / 2, H - 16);
+    ctx.fillText('Slide mugs left, catch the empties coming back', W / 2, H - 16);
     ctx.textAlign = 'left';
 }
 
@@ -705,6 +722,7 @@ function render() {
     drawServer();
     drawShards();
     drawLives();
+    drawWave();
     if (state === 'idle') drawIdleHint();
 }
 

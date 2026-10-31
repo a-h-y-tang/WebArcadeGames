@@ -84,6 +84,13 @@ The best score is kept in `localStorage` under `sodatapper-best`.
 | Click a counter | Move to that counter and pour |
 | <kbd>P</kbd> | Pause / resume |
 
+### Readability
+
+Two cues keep a fast counter legible: the counter the server is standing at is
+washed with a faint amber highlight, and a `WAVE n - k LEFT` line across the top
+counts the customers still queued plus those already on the counters, so you
+know how close the level is to ending.
+
 ## Code layout
 
 - `index.html` — HUD, canvas, overlay, help text.
