@@ -43,6 +43,7 @@ const AGENT_W = 18;
 const AGENT_H = 34;
 const AGENT_EMERGE = 0.5;       // agents stand in the doorway before patrolling
 const AGENT_RANGE = 340;        // how far an agent will take a shot
+const SAFE_SPAWN_GAP = 150;     // no agent appears closer than this on the spy's floor
 const CHEST = 22;               // bullets fly this far above the floor
 const DUCK_CHEST = 10;
 
@@ -244,8 +245,8 @@ function buildLevel(n) {
     startX = Math.round((shaftX[0] + SHAFT_W + shaftX[1]) / 2);
 
     cars = [
-        { shaft: 0, x: shaftCenter(0), y: floorY(0) },
-        { shaft: 1, x: shaftCenter(1), y: floorY(FLOORS - 1) },
+        { shaft: 0, x: shaftCenter(0), y: floorY(0), call: null },
+        { shaft: 1, x: shaftCenter(1), y: floorY(FLOORS - 1), call: null },
     ];
 }
 
@@ -365,8 +366,18 @@ function boardableShaft() {
     return null;
 }
 
+// The shaft the spy is standing in, whether or not its car is here yet.
+function standingShaft() {
+    if (player.riding !== null || player.floor === null) return null;
+    for (let s = 0; s < cars.length; s++) {
+        if (inShaft(s, player.x)) return s;
+    }
+    return null;
+}
+
 function board(s) {
     player.riding = s;
+    cars[s].call = null;
     player.x = shaftCenter(s);
     player.duck = false;
 }
@@ -419,10 +430,14 @@ function trySpawnAgent(dt) {
     // the pressure is always between the spy and the ground.
     const base = player.floor === null ? floorAt(player.y) : player.floor;
     const from = base === null ? 0 : base;
-    const choices = doors.filter((d) => d.kind !== 'red' && d.floor >= from);
-    const pool = choices.length ? choices : doors;
-    if (!pool.length) return;
-    const door = pool[Math.floor(rng() * pool.length)];
+    const reachable = doors.filter((d) => d.floor >= from);
+    const choices = reachable.filter((d) => d.kind !== 'red');
+    // Never let one step out of a door right next to the spy.
+    const fair = (choices.length ? choices : reachable).filter(
+        (d) => d.floor !== player.floor || Math.abs(d.x - player.x) >= SAFE_SPAWN_GAP
+    );
+    if (!fair.length) return;
+    const door = fair[Math.floor(rng() * fair.length)];
     spawnAgent(door.floor, door.x);
 }
 
@@ -458,6 +473,16 @@ function updatePlayer(dt, edge) {
         board(s);
         return;
     }
+    if (s === null && (edge.up || edge.down)) {
+        // Standing in a shaft with the car somewhere else: call it. Without
+        // this the spy can be stranded for good — respawning on the top floor
+        // with both cars parked below would otherwise be unrecoverable.
+        const waiting = standingShaft();
+        if (waiting !== null) {
+            cars[waiting].call = floorY(player.floor);
+            return;
+        }
+    }
     if (edge.up) tryOpenDoor();
 
     player.duck = keys.down && s === null;
@@ -477,6 +502,27 @@ function updatePlayer(dt, edge) {
 }
 
 // A car that comes down on an agent standing in the shaft flattens it.
+// Cars nobody is riding travel to the floor they were called to.
+function updateCars(dt) {
+    for (let i = 0; i < cars.length; i++) {
+        const car = cars[i];
+        if (player.riding === i) {
+            car.call = null;
+            continue;
+        }
+        if (car.call === null) continue;
+        const target = clamp(car.call, floorY(0), floorY(FLOORS - 1));
+        const dy = target - car.y;
+        const travel = CAR_SPEED * dt;
+        if (Math.abs(dy) <= travel) {
+            car.y = target;
+            car.call = null;
+        } else {
+            car.y += sign(dy) * travel;
+        }
+    }
+}
+
 function crushAgents() {
     for (const car of cars) {
         for (let i = agents.length - 1; i >= 0; i--) {
@@ -589,6 +635,7 @@ function step(dt) {
 
     if (edge.fire) fire();
     updatePlayer(dt, edge);
+    updateCars(dt);
     crushAgents();
     updateAgents(dt);
     updateBullets(dt);
@@ -649,40 +696,49 @@ function drawFloors() {
     ctx.fillRect(WALL_R + 4, TOP_Y - FLOOR_H + 6, 10, floorY(FLOORS - 1) - TOP_Y + FLOOR_H + 14);
 }
 
-function drawShafts() {
+// The shaft walls, drawn behind the floor slabs so each floor still reads as a
+// continuous walking surface across the opening.
+function drawShaftChannels() {
     for (let s = 0; s < shaftX.length; s++) {
         const x = shaftX[s];
-        const top = TOP_Y - FLOOR_H + 10;
+        const top = shaftTop();
         const bottom = floorY(FLOORS - 1);
-        ctx.fillStyle = '#0a0f18';
+        ctx.fillStyle = '#080d15';
         ctx.fillRect(x, top, SHAFT_W, bottom - top);
         ctx.strokeStyle = '#243149';
         ctx.lineWidth = 1;
         ctx.strokeRect(x + 0.5, top + 0.5, SHAFT_W - 1, bottom - top - 1);
 
         // Guide rails.
-        ctx.fillStyle = '#1b2638';
+        ctx.fillStyle = '#18222f';
         ctx.fillRect(x + 4, top, 3, bottom - top);
         ctx.fillRect(x + SHAFT_W - 7, top, 3, bottom - top);
+    }
+}
 
-        const car = cars[s];
-        if (!car) continue;
+function shaftTop() {
+    return Math.max(10, TOP_Y - FLOOR_H + 10);
+}
 
+function drawCars() {
+    for (const car of cars) {
+        const top = shaftTop();
         // Cable.
         ctx.strokeStyle = '#3b4a66';
+        ctx.lineWidth = 1;
         ctx.beginPath();
         ctx.moveTo(car.x, top);
         ctx.lineTo(car.x, car.y - CAR_H);
         ctx.stroke();
 
-        // Car.
+        // Car, plus a soft glow when it is on its way to a call.
         const cw = SHAFT_W - 10;
-        ctx.fillStyle = '#3a4c6b';
+        ctx.fillStyle = 'rgba(88,226,255,0.16)';
+        ctx.fillRect(car.x - cw / 2, car.y - CAR_H - 18, cw, 18);
+        ctx.fillStyle = car.call !== null ? '#4a6490' : '#3a4c6b';
         ctx.fillRect(car.x - cw / 2, car.y - CAR_H, cw, CAR_H);
         ctx.fillStyle = '#58e2ff';
         ctx.fillRect(car.x - cw / 2, car.y - 3, cw, 3);
-        ctx.fillStyle = 'rgba(88,226,255,0.18)';
-        ctx.fillRect(car.x - cw / 2, car.y - CAR_H - 20, cw, 20);
     }
 }
 
@@ -789,10 +845,11 @@ function drawBullets() {
 
 function draw() {
     drawBackdrop();
+    drawShaftChannels();
     drawFloors();
     drawExit();
     drawDoors();
-    drawShafts();
+    drawCars();
     for (const a of agents) drawAgent(a);
     drawSpy(player.x, player.y, player.dir, player.duck);
     drawBullets();

@@ -19,8 +19,8 @@ Open `index.html` in any browser. No build step, no server.
 | Key | Action |
 |---|---|
 | `←` `→` | run along the floor, or step off a car onto a floor |
-| `↑` | board a level car, ride it up, or open the door you are standing on |
-| `↓` | board a level car, ride it down, or duck |
+| `↑` | board or call a car, ride it up, or open the door you are standing on |
+| `↓` | board or call a car, ride it down, or duck |
 | `Space` / `Z` | fire |
 | `P` | pause |
 | `Space` | start a new game from the title or game-over screen |
@@ -34,9 +34,12 @@ Open `index.html` in any browser. No build step, no server.
   many are left. Blue doors are empty — and they are where security comes from.
 - **Elevators.** Walk into a shaft. If that shaft's car is level with your
   floor, `↑` or `↓` puts you inside it; after that `↑`/`↓` drive the car and
-  `←`/`→` step you off, but only when the car is level with a floor. A car that
-  comes down on an agent standing in the shaft flattens it (`+150`).
-- **Agents.** They pause in the doorway as they emerge, then close in along
+  `←`/`→` step you off, but only when the car is level with a floor. If the car
+  is somewhere else, the same press **calls** it — it comes to you on its own,
+  and you are standing in the open while it does. A car that comes down on an
+  agent standing in the shaft flattens it (`+150`).
+- **Agents.** They never appear right next to you, pause in the doorway as
+  they emerge, then close in along
   whatever floor they are on and fire at chest height (`+100` to shoot one
   first). They never ride the elevators, so riding away from a floor is always
   an escape.

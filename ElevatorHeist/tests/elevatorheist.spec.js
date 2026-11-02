@@ -2,7 +2,10 @@ const { test, expect } = require('@playwright/test');
 const path = require('path');
 const { pathToFileURL } = require('url');
 
+const fs = require('fs');
+
 const GAME_URL = pathToFileURL(path.resolve(__dirname, '../index.html')).href;
+const REPO_ROOT = path.resolve(__dirname, '../..');
 
 // Advance the simulation deterministically: `frames` calls to step(dt).
 const advance = (page, frames, dt = 1 / 60) =>
@@ -306,6 +309,10 @@ test.describe('Elevator Heist', () => {
             });
             await press(page, 'up', 10);
             expect(await page.evaluate(() => player.riding)).toBe(null);
+            // ...but the press does call the car toward the floor.
+            expect(await page.evaluate(() => cars[0].y)).toBeGreaterThan(
+                await page.evaluate(() => floorY(2) - FLOOR_H / 2)
+            );
         });
 
         test('riding up lifts the car and the spy together', async ({ page }) => {
@@ -366,6 +373,47 @@ test.describe('Elevator Heist', () => {
                 player.y = cars[0].y;
             });
             await press(page, 'right', 10);
+            expect(await page.evaluate(() => player.riding)).toBe(0);
+        });
+
+        test('a car that is away is called to the floor you are standing on', async ({ page }) => {
+            await page.evaluate(() => {
+                cars[0].y = floorY(FLOORS - 1);
+            });
+            await press(page, 'up');
+            const moved = await page.evaluate(() => cars[0].y);
+            expect(moved).toBeLessThan(await page.evaluate(() => floorY(FLOORS - 1)));
+            // It arrives, stops exactly level, and can then be boarded.
+            await advance(page, 600);
+            const arrived = await page.evaluate(() => ({ car: cars[0].y, want: floorY(2) }));
+            expect(arrived.car).toBeCloseTo(arrived.want, 5);
+            await press(page, 'up');
+            expect(await page.evaluate(() => player.riding)).toBe(0);
+        });
+
+        test('a called car does not overshoot its floor', async ({ page }) => {
+            await page.evaluate(() => {
+                cars[0].y = floorY(0);
+            });
+            await press(page, 'down');
+            await advance(page, 900);
+            const after = await page.evaluate(() => ({ car: cars[0].y, want: floorY(2) }));
+            expect(after.car).toBeCloseTo(after.want, 5);
+        });
+
+        test('calling a car does not strand the spy after losing a life', async ({ page }) => {
+            // Both cars parked at the bottom, spy respawned at the top.
+            await page.evaluate(() => {
+                cars.forEach((c) => {
+                    c.y = floorY(FLOORS - 1);
+                });
+                loseLife();
+                player.x = shaftCenter(0);
+            });
+            expect(await page.evaluate(() => player.floor)).toBe(0);
+            await press(page, 'down');
+            await advance(page, 900);
+            await press(page, 'down');
             expect(await page.evaluate(() => player.riding)).toBe(0);
         });
 
@@ -574,6 +622,23 @@ test.describe('Elevator Heist', () => {
             expect(after.n).toBeLessThanOrEqual(after.cap);
         });
 
+        test('security never materialises right on top of the spy', async ({ page }) => {
+            const worst = await page.evaluate(() => {
+                let closest = Infinity;
+                for (let i = 0; i < 400; i++) {
+                    agents.length = 0;
+                    spawnCd = 0;
+                    trySpawnAgent(1 / 60);
+                    for (const a of agents) {
+                        if (a.floor !== player.floor) continue;
+                        closest = Math.min(closest, Math.abs(a.x - player.x));
+                    }
+                }
+                return { closest, limit: SAFE_SPAWN_GAP };
+            });
+            expect(worst.closest).toBeGreaterThanOrEqual(worst.limit);
+        });
+
         test('a life lost clears the floor of agents and bullets', async ({ page }) => {
             await page.evaluate(() => {
                 spawnAgent(2, player.x + 60);
@@ -767,6 +832,51 @@ test.describe('Elevator Heist', () => {
                 return lit;
             });
             expect(painted).toBeGreaterThan(1000);
+        });
+    });
+    // -----------------------------------------------------------------------
+    // Integration with the repo's game browser
+    // -----------------------------------------------------------------------
+    test.describe('catalogue', () => {
+        const catalogue = () =>
+            JSON.parse(
+                fs.readFileSync(path.join(REPO_ROOT, 'game-browser/src/assets/games.json'), 'utf8')
+            );
+
+        test('games.json lists Elevator Heist', () => {
+            const entry = catalogue().find((g) => g.id === 'elevator-heist');
+            expect(entry).toBeTruthy();
+            expect(entry.name).toBe('Elevator Heist');
+            expect(entry.dir).toBe('ElevatorHeist');
+            expect(entry.path).toBe('games/ElevatorHeist/index.html');
+            expect(entry.thumbnail).toBe('games/ElevatorHeist/screenshot.png');
+            expect(entry.category).toBe('Action');
+            expect(entry.description.length).toBeGreaterThan(10);
+        });
+
+        test('the games.json entry stays alphabetically sorted by name', () => {
+            const games = catalogue();
+            const i = games.findIndex((g) => g.id === 'elevator-heist');
+            expect(i).toBeGreaterThan(0);
+            expect(games[i - 1].name.localeCompare(games[i].name)).toBeLessThanOrEqual(0);
+            expect(games[i].name.localeCompare(games[i + 1].name)).toBeLessThanOrEqual(0);
+        });
+
+        test('the thumbnail the browser points at exists', () => {
+            expect(fs.existsSync(path.join(REPO_ROOT, 'ElevatorHeist/screenshot.png'))).toBe(true);
+        });
+
+        test('the root README lists the game with a status', () => {
+            const readme = fs.readFileSync(path.join(REPO_ROOT, 'README.md'), 'utf8');
+            const row = readme.split('\n').find((l) => l.includes('[ElevatorHeist/]'));
+            expect(row).toBeTruthy();
+            expect(row).toMatch(/\| (In Progress|Complete) \|/);
+        });
+
+        test('the game folder ships a README and a design doc', () => {
+            ['README.md', 'DESIGN.md'].forEach((f) => {
+                expect(fs.existsSync(path.join(REPO_ROOT, 'ElevatorHeist', f))).toBe(true);
+            });
         });
     });
 });

@@ -49,6 +49,11 @@ The building is a fixed pixel layout rather than a tile grid:
 
 - Pressing `Up`/`Down` while standing on a floor inside a shaft whose car is
   level with that floor **boards** the car.
+- Pressing `Up`/`Down` inside a shaft whose car is *elsewhere* **calls** it: the
+  car travels to that floor on its own at `CAR_SPEED` and stops level with it.
+  Without a call the spy can be stranded for good — respawning on the top floor
+  with both cars parked below would otherwise be unrecoverable — and waiting in
+  the open for a car to arrive is a real cost, so the call is also a decision.
 - While riding, `Up`/`Down` drive the car; the car stops at the top and bottom
   of the shaft. The spy's y follows the car's y continuously, so a ride is not
   snapped to floors.
@@ -61,7 +66,11 @@ The building is a fixed pixel layout rather than a tile grid:
 ### Agents
 
 - Spawn from blue doors on floors at or below the spy's floor, up to
-  `maxAgents` for the level, on a timer that shortens as levels advance.
+  `maxAgents` for the level, on a timer that shortens as levels advance. A door
+  within `SAFE_SPAWN_GAP` (150 px) of the spy on the spy's own floor is never
+  used, so security cannot materialise on top of you.
+- Stand still in the doorway for `AGENT_EMERGE` (0.5 s) before they start
+  walking, which is the window to shoot one or ride away.
 - Walk toward the spy's current x while on the same floor, otherwise patrol
   their own floor. Agents never use the elevators (deliberately simple — it
   keeps them a floor-local threat you can escape by riding away).
@@ -99,8 +108,8 @@ At zero lives the game ends and the best score is written to
 | Key | Action |
 |---|---|
 | `←` `→` | run / step off a car |
-| `↑` | board or raise a car, open the door you are standing on |
-| `↓` | board or lower a car, duck when on a floor |
+| `↑` | board, call or raise a car; open the door you are standing on |
+| `↓` | board, call or lower a car; duck when on a floor |
 | `Space` / `Z` | fire |
 | `P` | pause |
 | `Space` (idle / game over) | start a new game |
@@ -139,7 +148,9 @@ Decisions taken without asking, erring toward the simpler reading:
    the alternative; a seeded generator gives unlimited levels and still gives
    tests a fixed, assertable building.
 8. **No sound.** Consistent with the other games in this repo.
-9. **Branch naming.** The task asked for a branch named after the game, while
+9. **Touching an agent is harmless.** Only bullets and elevator cars kill, so
+   the threat model stays readable: watch the muzzles, not the bodies.
+10. **Branch naming.** The task asked for a branch named after the game, while
    this session's standing instructions pin pushes to
    `claude/compassionate-ramanujan-6jcnlk`. Local development is on
    `elevator-heist`; it is pushed to the designated remote branch so both hold.
