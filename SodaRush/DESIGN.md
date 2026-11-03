@@ -120,9 +120,11 @@ Two conventions keep them stable:
 
 - Specs that are not about spawning start the game and then set
   `spawnEnabled = false`, placing entities explicitly.
-- The real `requestAnimationFrame` loop keeps running during a test, so any
-  measurement of distance-per-second is taken inside a single `page.evaluate`
-  call, where no background frame can interleave.
+- The real `requestAnimationFrame` loop keeps running during a test, so
+  anything the loop could disturb between two round trips — a
+  distance-per-second measurement, or a snapshot taken during the 0.9 s death
+  pause or the 1.2 s wave break — is set up, stepped and read inside a single
+  `page.evaluate` call, where no background frame can interleave.
 
 ## Assumptions
 

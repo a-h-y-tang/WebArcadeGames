@@ -442,7 +442,7 @@ test.describe('Soda Rush', () => {
             await startQuiet(page);
             await page.evaluate(() => {
                 server.lane = 0;
-                customers.push({ lane: 2, x: 400, state: 'walking', timer: 0, drinks: 0 });
+                customers.push({ lane: 2, x: 200, state: 'walking', timer: 0, drinks: 0 });
                 serve();
             });
             await advance(page, 240);
@@ -573,26 +573,25 @@ test.describe('Soda Rush', () => {
 
         test('the next wave starts after the break, with the counter cleared', async ({ page }) => {
             await startQuiet(page);
-            await page.evaluate(() => {
+            const snap = await page.evaluate(() => {
                 served = quotaFor(level);
                 clearWave();
                 customers.push({ lane: 0, x: 300, state: 'walking', timer: 0, drinks: 0 });
-            });
-            await page.evaluate(() => {
                 for (let i = 0; i < 90; i++) step(WAVE_PAUSE / 30);
+                return [state, level, served, customers.length, mugs.length];
             });
-            const snap = await page.evaluate(() => [state, level, served, customers.length, mugs.length]);
             expect(snap).toEqual(['running', 2, 0, 0, 0]);
         });
 
         test('the wave overlay names the next wave', async ({ page }) => {
             await startQuiet(page);
-            await page.evaluate(() => {
+            const snap = await page.evaluate(() => {
                 served = quotaFor(level);
                 clearWave();
+                return { visible: overlay.classList.contains('visible'), title: overlayTitle.textContent };
             });
-            await expect(page.locator('#overlay')).toHaveClass(/visible/);
-            await expect(page.locator('#overlay-title')).toContainText(/wave/i);
+            expect(snap.visible).toBe(true);
+            expect(snap.title).toMatch(/wave/i);
         });
 
         test('customers left in the HUD counts down as they are served', async ({ page }) => {
@@ -710,13 +709,13 @@ test.describe('Soda Rush', () => {
     test.describe('lives and game over', () => {
         test('losing a life pauses play briefly and clears the counter', async ({ page }) => {
             await startQuiet(page);
-            await page.evaluate(() => {
+            const snap = await page.evaluate(() => {
                 customers.push({ lane: 0, x: 300, state: 'walking', timer: 0, drinks: 0 });
                 mugs.push({ lane: 1, x: 200 });
                 sodas.push({ lane: 2, x: 400 });
                 loseLife();
+                return [state, lives, customers.length, mugs.length, sodas.length];
             });
-            const snap = await page.evaluate(() => [state, lives, customers.length, mugs.length, sodas.length]);
             expect(snap).toEqual(['dying', 2, 0, 0, 0]);
         });
 
