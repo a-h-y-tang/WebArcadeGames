@@ -18,7 +18,7 @@ floor.
 - **Catch the empties.** Stand at a counter and the glass sliding down it is
   caught automatically. Miss one and it smashes — another life.
 - **Do not waste glasses.** A soda that runs the whole counter without reaching
-  anybody spills and costs you 25 points.
+  anybody spills and costs you 25 points — annoying, but never fatal.
 - **Clear the wave.** Satisfy the wave's quota of customers for a bonus. Each
   wave brings customers in faster and makes them walk quicker.
 

@@ -55,9 +55,9 @@ const CATCH_X = 566;            // an empty reaching here is caught, if manned
 // --- Customers -----------------------------------------------------------
 const CUSTOMER_W = 34;
 const CUSTOMER_H = 52;
-const CUSTOMER_BASE_SPEED = 26; // px/s on wave 1
-const CUSTOMER_SPEED_STEP = 5;
-const CUSTOMER_SPEED_CAP = 62;
+const CUSTOMER_BASE_SPEED = 36; // px/s on wave 1
+const CUSTOMER_SPEED_STEP = 6;
+const CUSTOMER_SPEED_CAP = 78;
 const SPAWN_X = LANE_LEFT + CUSTOMER_W / 2;
 const GRAB_X = 556;             // a customer reaching here grabs the server
 const KNOCKBACK = 96;           // px a served customer is pushed back
@@ -67,8 +67,8 @@ const DRINK_TIME = 0.55;        // s a customer stands still drinking
 const QUOTA_BASE = 6;
 const QUOTA_STEP = 2;
 const QUOTA_CAP = 18;
-const SPAWN_BASE = 2.4, SPAWN_STEP = 0.15, SPAWN_MIN = 1.0;
-const FIRST_SPAWN = 1.0;
+const SPAWN_BASE = 2.1, SPAWN_STEP = 0.13, SPAWN_MIN = 0.9;
+const FIRST_SPAWN = 0.8;
 const WAVE_PAUSE = 1.2;         // s of calm between waves
 const DEATH_PAUSE = 0.9;        // s of calm after losing a life
 
@@ -95,6 +95,9 @@ let server = { lane: 0, cooldown: 0 };
 const customers = [];
 const sodas = [];
 const mugs = [];
+const popups = [];      // purely cosmetic floating score text
+
+const POPUP_LIFE = 0.9; // s
 
 let spawnEnabled = true;
 let spawnTimer = FIRST_SPAWN;
@@ -160,6 +163,11 @@ function clearCounter() {
     customers.length = 0;
     sodas.length = 0;
     mugs.length = 0;
+    popups.length = 0;
+}
+
+function popup(x, lane, text, colour) {
+    popups.push({ x, y: laneY(lane) - 30, text, colour, life: POPUP_LIFE });
 }
 
 function startGame() {
@@ -290,6 +298,12 @@ function step(dt) {
     moveMugs(dt);
     if (state !== 'running') return;
 
+    for (let i = popups.length - 1; i >= 0; i--) {
+        popups[i].life -= dt;
+        popups[i].y -= 26 * dt;
+        if (popups[i].life <= 0) popups.splice(i, 1);
+    }
+
     spawnTick(dt);
     updateHud();
 }
@@ -302,6 +316,7 @@ function moveSodas(dt) {
             sodas.splice(i, 1);
             spills += 1;
             score = Math.max(0, score - SPILL_PENALTY);
+            popup(LANE_LEFT + 14, s.lane, `-${SPILL_PENALTY}`, '#ef7b5b');
         }
     }
 }
@@ -336,6 +351,7 @@ function satisfy(customer) {
     score += SCORE_SATISFY;
     served += 1;
     mugs.push({ lane: customer.lane, x: LANE_LEFT + MUG_W / 2 });
+    popup(LANE_LEFT + 30, customer.lane, `+${SCORE_SATISFY}`, '#ffd27a');
     updateHud();
     if (served >= quotaFor(level)) clearWave();
 }
@@ -369,6 +385,7 @@ function moveMugs(dt) {
             mugs.splice(i, 1);
             caught += 1;
             score += SCORE_MUG;
+            popup(CATCH_X - 24, m.lane, `+${SCORE_MUG}`, '#9fe6b4');
             continue;
         }
         if (m.x - MUG_W / 2 > LANE_RIGHT) {
@@ -448,6 +465,7 @@ function draw() {
     for (const s of sodas) drawSoda(s);
     for (const c of customers) drawCustomer(c);
     drawServer();
+    drawPopups();
 }
 
 function drawRoom() {
@@ -657,6 +675,20 @@ function drawMug(m) {
     ctx.beginPath();
     ctx.arc(m.x + MUG_W / 2 + 2, top + MUG_H / 2, 5, -Math.PI / 2, Math.PI / 2);
     ctx.stroke();
+}
+
+function drawPopups() {
+    ctx.font = 'bold 15px "Segoe UI", system-ui, sans-serif';
+    ctx.textAlign = 'center';
+    for (const p of popups) {
+        ctx.globalAlpha = Math.max(0, Math.min(1, p.life / (POPUP_LIFE * 0.6)));
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
+        ctx.fillText(p.text, p.x + 1, p.y + 1);
+        ctx.fillStyle = p.colour;
+        ctx.fillText(p.text, p.x, p.y);
+    }
+    ctx.globalAlpha = 1;
+    ctx.textAlign = 'start';
 }
 
 function drawServer() {

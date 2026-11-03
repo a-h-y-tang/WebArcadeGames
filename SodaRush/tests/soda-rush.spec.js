@@ -777,6 +777,46 @@ test.describe('Soda Rush', () => {
     });
 
     // -----------------------------------------------------------------------
+    // Score popups (cosmetic, but they should never outlive a round)
+    // -----------------------------------------------------------------------
+    test.describe('score popups', () => {
+        test('serving a customer out of the door raises a popup', async ({ page }) => {
+            await startQuiet(page);
+            const snap = await page.evaluate(() => {
+                const cx = LANE_LEFT + 20;
+                customers.push({ lane: 2, x: cx, state: 'walking', timer: 0, drinks: 0 });
+                sodas.push({ lane: 2, x: cx + CUSTOMER_W / 2 + SODA_W / 2 + 2 });
+                step(1 / 60);
+                return { count: popups.length, text: popups[0] && popups[0].text };
+            });
+            expect(snap).toEqual({ count: 1, text: `+${await page.evaluate(() => SCORE_SATISFY)}` });
+        });
+
+        test('a popup drifts up and expires', async ({ page }) => {
+            await startQuiet(page);
+            const snap = await page.evaluate(() => {
+                popup(200, 0, '+100', '#fff');
+                const y0 = popups[0].y;
+                for (let i = 0; i < 10; i++) step(1 / 60);
+                const rose = popups[0].y < y0;
+                for (let i = 0; i < 120; i++) step(1 / 60);
+                return { rose, left: popups.length };
+            });
+            expect(snap).toEqual({ rose: true, left: 0 });
+        });
+
+        test('popups are cleared when a life is lost', async ({ page }) => {
+            await startQuiet(page);
+            const left = await page.evaluate(() => {
+                popup(200, 0, '+100', '#fff');
+                loseLife();
+                return popups.length;
+            });
+            expect(left).toBe(0);
+        });
+    });
+
+    // -----------------------------------------------------------------------
     // Rendering
     // -----------------------------------------------------------------------
     test.describe('rendering', () => {

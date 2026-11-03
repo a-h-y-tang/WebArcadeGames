@@ -26,7 +26,7 @@ collisions are a one-dimensional problem per lane.
 ### Customers
 
 - Arrive at the doorway end and walk right at `customerSpeedFor(level)`
-  px/s (26 on wave 1, +5 per wave, capped at 62).
+  px/s (36 on wave 1, +6 per wave, capped at 78).
 - A customer that reaches `GRAB_X` (just short of the fountain) grabs the
   server: **one life lost**.
 - A lane only accepts a new arrival when its left end is clear, so customers
@@ -64,7 +64,7 @@ collisions are a one-dimensional problem per lane.
 - Clearing awards `WAVE_BONUS * level` (250 × wave), then a `WAVE_PAUSE` break
   of 1.2 s with the counters cleared before the next wave starts.
 - Each wave speeds customers up and shortens the spawn interval
-  (`spawnIntervalFor`: 2.4 s, −0.15 s per wave, floor 1.0 s, with ±20% jitter).
+  (`spawnIntervalFor`: 2.1 s, −0.13 s per wave, floor 0.9 s, with ±20% jitter).
 
 ### Lives
 
@@ -108,13 +108,13 @@ can read and drive.
 
 ## Testing
 
-`tests/soda-rush.spec.js` — 71 Playwright specs, written before the
+`tests/soda-rush.spec.js` — 74 Playwright specs, written before the
 implementation. They cover the idle screen and HUD, starting and restarting,
 lane movement, serve cooldown and per-lane limits, soda travel and spills,
 customer walking, knockback and drinking, front-of-queue targeting,
 satisfaction and the empty glass it sends back, catching and smashing empties,
 wave quotas and bonuses, deterministic spawning, pausing, lives, game over,
-best-score persistence and rendering.
+best-score persistence, score popups and rendering.
 
 Two conventions keep them stable:
 
@@ -150,5 +150,9 @@ Decisions made without being asked, taking the simpler reading each time:
 7. **Mug speed is constant.** Customers get faster each wave but returning
    empties do not; the rising pressure comes from arrival rate and walking
    speed, which is easier to read as a player.
-8. **Best score only.** One `localStorage` key (`soda-rush-best`); no profile,
+8. **Pacing was tuned against a scripted bot.** A simple "serve the most
+   urgent counter" bot plays five seeded games; the speeds and spawn
+   intervals above are the ones that put it out around wave 5–7 after three
+   to four minutes, with a do-nothing player surviving about 45 seconds.
+9. **Best score only.** One `localStorage` key (`soda-rush-best`); no profile,
    no per-wave history.
