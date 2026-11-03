@@ -232,14 +232,18 @@ test.describe('Soda Rush', () => {
             expect(after).toBeLessThan(before);
         });
 
+        // Measured inside one evaluate: the real requestAnimationFrame loop is
+        // still running, so a before/after pair split across two round trips
+        // would pick up the frames it ran in between.
         test('a soda moves at SODA_SPEED pixels per second', async ({ page }) => {
             await startQuiet(page);
-            await page.evaluate(() => serve());
-            const before = await page.evaluate(() => sodas[0].x);
-            await advance(page, 60);
-            const after = await page.evaluate(() => sodas[0].x);
-            const expected = await page.evaluate(() => SODA_SPEED);
-            expect(before - after).toBeCloseTo(expected, 0);
+            const moved = await page.evaluate(() => {
+                serve();
+                const before = sodas[0].x;
+                for (let i = 0; i < 60; i++) step(1 / 60);
+                return before - sodas[0].x;
+            });
+            expect(moved).toBeCloseTo(await page.evaluate(() => SODA_SPEED), 0);
         });
 
         test('the serve cooldown stops two sodas leaving on the same frame', async ({ page }) => {
@@ -338,12 +342,14 @@ test.describe('Soda Rush', () => {
     test.describe('customers', () => {
         test('a customer walks towards the server', async ({ page }) => {
             await startQuiet(page);
-            await page.evaluate(() => spawnCustomer(0));
-            const before = await page.evaluate(() => customers[0].x);
-            await advance(page, 60);
-            const after = await page.evaluate(() => customers[0].x);
-            expect(after).toBeGreaterThan(before);
-            expect(after - before).toBeCloseTo(await page.evaluate(() => customerSpeedFor(level)), 0);
+            const moved = await page.evaluate(() => {
+                spawnCustomer(0);
+                const before = customers[0].x;
+                for (let i = 0; i < 60; i++) step(1 / 60);
+                return customers[0].x - before;
+            });
+            expect(moved).toBeGreaterThan(0);
+            expect(moved).toBeCloseTo(await page.evaluate(() => customerSpeedFor(1)), 0);
         });
 
         test('a customer spawns at the far end of its lane', async ({ page }) => {
@@ -389,17 +395,17 @@ test.describe('Soda Rush', () => {
     test.describe('soda hits', () => {
         test('a soda knocks a customer back and makes it drink', async ({ page }) => {
             await startQuiet(page);
-            await page.evaluate(() => {
+            const snap = await page.evaluate(() => {
                 customers.push({ lane: 0, x: 400, state: 'walking', timer: 0, drinks: 0 });
+                sodas.push({ lane: 0, x: 400 + CUSTOMER_W / 2 + SODA_W / 2 + 2 });
+                step(1 / 60);
+                return {
+                    x: customers[0].x,
+                    state: customers[0].state,
+                    drinks: customers[0].drinks,
+                    sodas: sodas.length,
+                };
             });
-            await sodaTouching(page, 0, 400);
-            await advance(page, 1);
-            const snap = await page.evaluate(() => ({
-                x: customers[0].x,
-                state: customers[0].state,
-                drinks: customers[0].drinks,
-                sodas: sodas.length,
-            }));
             expect(snap.x).toBeCloseTo(400 - (await page.evaluate(() => KNOCKBACK)), 5);
             expect(snap.state).toBe('drinking');
             expect(snap.drinks).toBe(1);
@@ -494,10 +500,13 @@ test.describe('Soda Rush', () => {
     test.describe('empty mugs', () => {
         test('a mug slides back towards the server', async ({ page }) => {
             await startQuiet(page);
-            await page.evaluate(() => mugs.push({ lane: 0, x: 200 }));
-            await advance(page, 60);
-            const x = await page.evaluate(() => mugs[0].x);
-            expect(x - 200).toBeCloseTo(await page.evaluate(() => MUG_SPEED), 0);
+            const moved = await page.evaluate(() => {
+                // Lane 1 so the server, parked on lane 0, cannot catch it.
+                mugs.push({ lane: 1, x: 200 });
+                for (let i = 0; i < 60; i++) step(1 / 60);
+                return mugs[0].x - 200;
+            });
+            expect(moved).toBeCloseTo(await page.evaluate(() => MUG_SPEED), 0);
         });
 
         test('the server catches a mug in its own lane and scores', async ({ page }) => {
