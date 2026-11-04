@@ -1,8 +1,10 @@
 const { test, expect } = require('@playwright/test');
+const fs = require('fs');
 const path = require('path');
 const { pathToFileURL } = require('url');
 
 const GAME_URL = pathToFileURL(path.resolve(__dirname, '../index.html')).href;
+const REPO_ROOT = path.resolve(__dirname, '../..');
 
 // Advance the simulation deterministically: `frames` calls to step(dt).
 const advance = (page, frames, dt = 1 / 60) =>
@@ -975,6 +977,48 @@ test.describe('Soda Tapper', () => {
             expect(out.level).toBeGreaterThanOrEqual(2);
             expect(out.score).toBeGreaterThan(1000);
             expect(out.livesAtShift2).toBe(3);
+        });
+    });
+
+    // -----------------------------------------------------------------------
+    // Game browser integration
+    // -----------------------------------------------------------------------
+    test.describe('game browser integration', () => {
+        const loadGames = () =>
+            JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'game-browser/src/assets/games.json'), 'utf8'));
+
+        test('games.json lists Soda Tapper', () => {
+            const entry = loadGames().find((g) => g.id === 'soda-tapper');
+            expect(entry).toBeTruthy();
+            expect(entry.name).toBe('Soda Tapper');
+            expect(entry.dir).toBe('SodaTapper');
+            expect(entry.path).toBe('games/SodaTapper/index.html');
+            expect(entry.thumbnail).toBe('games/SodaTapper/screenshot.png');
+            expect(entry.description.length).toBeGreaterThan(10);
+        });
+
+        test('the games.json entry stays alphabetically sorted by name', () => {
+            const games = loadGames();
+            const i = games.findIndex((g) => g.id === 'soda-tapper');
+            expect(i).toBeGreaterThan(0);
+            expect(games[i - 1].name.localeCompare(games[i].name)).toBeLessThanOrEqual(0);
+            if (i + 1 < games.length) {
+                expect(games[i].name.localeCompare(games[i + 1].name)).toBeLessThanOrEqual(0);
+            }
+        });
+
+        test('the thumbnail the browser points at exists', () => {
+            expect(fs.existsSync(path.join(REPO_ROOT, 'SodaTapper/screenshot.png'))).toBe(true);
+        });
+
+        test('the root README lists the game', () => {
+            const readme = fs.readFileSync(path.join(REPO_ROOT, 'README.md'), 'utf8');
+            expect(readme).toContain('| Soda Tapper | [SodaTapper/](SodaTapper/) |');
+        });
+
+        test('the game ships its own README and design notes', () => {
+            expect(fs.existsSync(path.join(REPO_ROOT, 'SodaTapper/README.md'))).toBe(true);
+            expect(fs.existsSync(path.join(REPO_ROOT, 'SodaTapper/DESIGN.md'))).toBe(true);
         });
     });
 });

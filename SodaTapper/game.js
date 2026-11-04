@@ -95,6 +95,7 @@ let pourCooldown = 0;
 let autoStep = true;               // tests switch this off to own the clock
 let hudDirty = false;
 let flash = [];                    // { lane, t } — red wash after a mistake
+let banner = null;                 // { text, t } — brief mid-board announcement
 
 // --- Seeded RNG ----------------------------------------------------------
 // A tiny LCG, so a test can pin the sequence of spawn lanes and tip drops.
@@ -134,6 +135,8 @@ function startGame() {
     jerk.lane = 0;
     state = 'playing';
     autoStep = true;
+    flash.length = 0;
+    banner = null;
     startLevel();
     hideOverlay();
     updateHud();
@@ -143,7 +146,6 @@ function startLevel() {
     patrons.length = 0;
     mugs.length = 0;
     tips.length = 0;
-    flash.length = 0;
     spawned = 0;
     pourCooldown = 0;
     // The first arrival of a shift comes in early, so a shift never opens with
@@ -312,6 +314,10 @@ function stepFlash(dt) {
         flash[i].t -= dt;
         if (flash[i].t <= 0) flash.splice(i, 1);
     }
+    if (banner) {
+        banner.t -= dt;
+        if (banner.t <= 0) banner = null;
+    }
 }
 
 function applyLosses(losses) {
@@ -386,6 +392,7 @@ function checkShiftComplete() {
     addScore(LEVEL_BONUS * level);
     level += 1;
     markHud();
+    banner = { text: `SHIFT ${level}`, t: 1.6 };
     startLevel();
 }
 
@@ -433,8 +440,10 @@ function draw() {
     mugs.forEach(drawMug);
     patrons.forEach(drawPatron);
     drawJerk();
+    drawPourMeter();
     drawFlashes();
     if (state === 'playing') drawCoverHint();
+    drawBanner();
 }
 
 function drawRoom() {
@@ -455,6 +464,15 @@ function drawRoom() {
     ctx.fillRect(BAR_RIGHT + 6, 0, CANVAS_W - BAR_RIGHT - 6, CANVAS_H);
     ctx.fillStyle = 'rgba(255, 159, 28, 0.08)';
     ctx.fillRect(BAR_RIGHT + 6, 0, 4, CANVAS_H);
+
+    // Floorboards below the lowest counter.
+    const floorY = LANE_Y[LANES - 1] + 44;
+    ctx.fillStyle = '#150d20';
+    ctx.fillRect(0, floorY, CANVAS_W, CANVAS_H - floorY);
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.04)';
+    for (let x = 0; x < CANVAS_W; x += 48) ctx.fillRect(x, floorY, 2, CANVAS_H - floorY);
+    ctx.fillStyle = 'rgba(255, 159, 28, 0.10)';
+    ctx.fillRect(0, floorY, CANVAS_W, 2);
 
     ctx.fillStyle = 'rgba(255, 159, 28, 0.55)';
     ctx.font = 'bold 11px "Segoe UI", system-ui, sans-serif';
@@ -506,26 +524,48 @@ function drawCounter(lane) {
 function drawPatron(p) {
     const y = LANE_Y[p.lane];
     const foot = y + 12;
-    // Lean forwards while walking in, backwards while being shoved out.
-    const lean = p.push > 0 ? -2 : 2;
+    const shoved = p.push > 0;
+    // Lean backwards while being shoved out, forwards while walking in.
+    const lean = shoved ? -2 : 2;
+    const bodyTop = foot - PATRON_H;
 
-    ctx.fillStyle = p.push > 0 ? '#6fd3ff' : '#ff6f91';
-    ctx.fillRect(p.x - PATRON_W / 2, foot - PATRON_H, PATRON_W, PATRON_H);
+    // Legs, planted in a stride so the crowd does not read as a row of blocks.
+    ctx.fillStyle = '#2b1b3f';
+    ctx.fillRect(p.x - 9, foot - 9, 6, 9);
+    ctx.fillRect(p.x + 3, foot - 9, 6, 9);
 
-    // Head.
+    // Body.
+    ctx.fillStyle = shoved ? '#6fd3ff' : '#ff6f91';
+    ctx.fillRect(p.x - PATRON_W / 2, bodyTop, PATRON_W, PATRON_H - 8);
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.18)';
+    ctx.fillRect(p.x - PATRON_W / 2, bodyTop, 5, PATRON_H - 8);
+
+    // Arm, reaching towards the taps for the next soda.
+    ctx.fillStyle = '#ffe0c2';
+    const armX = shoved ? p.x + PATRON_W / 2 : p.x - PATRON_W / 2 - 12;
+    ctx.fillRect(armX, bodyTop + 9, 12, 5);
+
+    // Head and hat.
     ctx.fillStyle = '#ffe0c2';
     ctx.beginPath();
-    ctx.arc(p.x + lean, foot - PATRON_H - 8, 9, 0, Math.PI * 2);
+    ctx.arc(p.x + lean, bodyTop - 8, 9, 0, Math.PI * 2);
     ctx.fill();
-
-    // Hat brim, so patrons read as a crowd rather than blocks.
     ctx.fillStyle = '#2b1b3f';
-    ctx.fillRect(p.x + lean - 11, foot - PATRON_H - 14, 22, 4);
+    ctx.fillRect(p.x + lean - 11, bodyTop - 14, 22, 4);
+    ctx.fillRect(p.x + lean - 7, bodyTop - 20, 14, 7);
+
+    // A mug in hand once they have been served at least once.
+    if (p.drinks > 0 && !shoved) {
+        ctx.fillStyle = '#c9721f';
+        ctx.fillRect(armX - 6, bodyTop + 4, 8, 11);
+        ctx.fillStyle = '#fff4dd';
+        ctx.fillRect(armX - 6, bodyTop + 4, 8, 3);
+    }
 
     // One pip per soda already drunk.
     ctx.fillStyle = '#ffd27a';
     for (let i = 0; i < Math.min(p.drinks, 5); i++) {
-        ctx.fillRect(p.x - PATRON_W / 2 + 3 + i * 5, foot - PATRON_H + 4, 3, 3);
+        ctx.fillRect(p.x - PATRON_W / 2 + 3 + i * 5, bodyTop + 4, 3, 3);
     }
 }
 
@@ -584,6 +624,37 @@ function drawJerk() {
     // Arm reaching for the tap of the covered counter.
     ctx.fillStyle = '#ffe0c2';
     ctx.fillRect(x + 9, foot - 30, 18, 5);
+}
+
+// A short bar under the jerk that drains as the tap recharges, so the only
+// invisible rule in the game — the pour cooldown — is readable.
+function drawPourMeter() {
+    const y = LANE_Y[jerk.lane];
+    const x = BAR_LEFT - 56;
+    const w = 34;
+    const ready = pourCooldown <= 0;
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.14)';
+    ctx.fillRect(x - w / 2, y + 32, w, 5);
+    ctx.fillStyle = ready ? '#8ef08a' : '#ff9f1c';
+    const filled = ready ? w : w * (1 - pourCooldown / POUR_COOLDOWN);
+    ctx.fillRect(x - w / 2, y + 32, filled, 5);
+}
+
+function drawBanner() {
+    if (!banner) return;
+    const alpha = Math.min(1, banner.t / 0.6);
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = 'rgba(9, 6, 18, 0.72)';
+    ctx.fillRect(CANVAS_W / 2 - 110, CANVAS_H / 2 - 28, 220, 56);
+    ctx.fillStyle = '#ff9f1c';
+    ctx.font = 'bold 30px "Segoe UI", system-ui, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(banner.text, CANVAS_W / 2, CANVAS_H / 2);
+    ctx.restore();
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'alphabetic';
 }
 
 function drawFlashes() {
