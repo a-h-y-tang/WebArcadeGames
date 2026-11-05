@@ -38,12 +38,17 @@ how many are **Out** of the hatch, the **Time** left and your **Best** run.
 
 Everything else is physics: a drop of more than sixteen cells kills an ordinary
 critter, water kills instantly, and dirt and bricks can be dug while steel
-cannot.
+cannot. A digger or basher that drops into open air lands as a walker, and a
+blocker assigned in mid-air falls before it takes root.
+
+Spend carefully: a basher told to chew thin air reverts to a walker and that
+charge is gone.
 
 ## The caves
 
-1. **The Long Walk** — no abilities needed at all. A straight walk from hatch to
-   exit, so you can watch how the crowd behaves before you have to manage it.
+1. **The Long Walk** — no abilities needed at all. The critters tumble down a
+   staircase of ledges from the hatch to the exit, so you can watch how the
+   crowd behaves before you have to manage it.
 2. **Mind the Gap** — a chasm of water between the hatch and the exit. A builder
    gets a staircase over it; blockers keep the rest of the crowd from marching
    in while you work.
@@ -59,7 +64,7 @@ cannot.
 | `style.css` | Presentation only |
 | `game.js` | Grid, levels, critter state machine, renderer, input |
 | `DESIGN.md` | How the simulation works, and the assumptions behind it |
-| `tests/burrow-brigade.spec.js` | Playwright suite — 100 tests |
+| `tests/burrow-brigade.spec.js` | Playwright suite — 106 tests |
 
 Open `index.html` in any browser; there is no build step.
 
@@ -75,3 +80,7 @@ The simulation is a fixed-step integer state machine with no floating point in
 it, so the tests freeze the render loop, paint the exact cave they care about,
 drop in a single critter and call `simStep()` by hand — every assertion about
 falling, digging, bashing, building and drowning is exact rather than timed.
+
+Three of the tests play a whole cave through with the ability assignments
+scripted, so all three levels are provably winnable and stay that way if the
+terrain is ever edited.

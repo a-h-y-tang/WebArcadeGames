@@ -41,19 +41,25 @@ var BEST_KEY = 'burrowbrigade-best';
 
 var LEVELS = [
     {
+        // A staircase of ledges from the hatch down to the exit. Every drop is
+        // inside the splat limit, so this cave can be cleared without spending
+        // a single ability — it is there to show how the crowd behaves.
         name: 'The Long Walk',
         total: 10,
         required: 8,
         seconds: 60,
-        hatch: { x: 8, y: 40 },
-        exit: { x: 66, y: 46, w: 2, h: 2 },
+        hatch: { x: 6, y: 10 },
+        exit: { x: 66, y: 42, w: 2, h: 2 },
         inventory: { blocker: 2, digger: 2, basher: 2, builder: 2, floater: 2 },
         rects: [
-            { x: 0, y: 48, w: 80, h: 12, cell: DIRT },
-            { x: 30, y: 47, w: 16, h: 1, cell: DIRT },
             { x: 0, y: 0, w: 80, h: 4, cell: DIRT },
-            { x: 18, y: 4, w: 3, h: 3, cell: DIRT },
-            { x: 52, y: 4, w: 3, h: 2, cell: DIRT },
+            { x: 16, y: 4, w: 3, h: 4, cell: DIRT },
+            { x: 40, y: 4, w: 2, h: 6, cell: DIRT },
+            { x: 62, y: 4, w: 3, h: 3, cell: DIRT },
+            { x: 0, y: 18, w: 27, h: 4, cell: DIRT },
+            { x: 20, y: 30, w: 33, h: 4, cell: DIRT },
+            { x: 0, y: 44, w: 80, h: 12, cell: DIRT },
+            { x: 58, y: 43, w: 5, h: 1, cell: DIRT },
             { x: 0, y: 56, w: 80, h: 4, cell: STEEL },
         ],
     },
@@ -62,10 +68,11 @@ var LEVELS = [
         total: 12,
         required: 6,
         seconds: 80,
-        hatch: { x: 6, y: 32 },
+        hatch: { x: 6, y: 12 },
         exit: { x: 70, y: 38, w: 2, h: 2 },
-        inventory: { blocker: 3, digger: 1, basher: 1, builder: 3, floater: 2 },
+        inventory: { blocker: 3, digger: 1, basher: 2, builder: 3, floater: 2 },
         rects: [
+            { x: 0, y: 26, w: 19, h: 4, cell: DIRT },
             { x: 0, y: 40, w: 24, h: 20, cell: DIRT },
             { x: 32, y: 40, w: 48, h: 20, cell: DIRT },
             { x: 24, y: 52, w: 8, h: 8, cell: WATER },
@@ -73,8 +80,9 @@ var LEVELS = [
             { x: 24, y: 58, w: 8, h: 2, cell: STEEL },
             { x: 0, y: 56, w: 24, h: 4, cell: STEEL },
             { x: 32, y: 56, w: 48, h: 4, cell: STEEL },
-            { x: 40, y: 36, w: 2, h: 4, cell: STEEL },
+            { x: 40, y: 34, w: 2, h: 6, cell: DIRT },
             { x: 56, y: 38, w: 6, h: 2, cell: DIRT },
+            { x: 32, y: 37, w: 2, h: 3, cell: DIRT },
         ],
     },
     {
@@ -88,6 +96,8 @@ var LEVELS = [
         rects: [
             { x: 0, y: 44, w: 80, h: 16, cell: DIRT },
             { x: 0, y: 30, w: 80, h: 4, cell: DIRT },
+            { x: 26, y: 4, w: 3, h: 5, cell: DIRT },
+            { x: 58, y: 4, w: 2, h: 7, cell: DIRT },
             { x: 20, y: 30, w: 22, h: 4, cell: STEEL },
             { x: 0, y: 0, w: 80, h: 4, cell: DIRT },
             { x: 30, y: 44, w: 12, h: 4, cell: WATER },
@@ -120,6 +130,8 @@ var exitRect = { x: 0, y: 0, w: 0, h: 0 };
 var score = 0;
 var best = 0;
 var ticks = 0; // whole-run tick counter, used only for animation
+var bannerUntil = 0; // draw the cave's name until this tick
+var hoverCritter = null; // the critter under the pointer, for the aim ring
 var autoRun = true; // the render loop drives simStep() when true
 var autoResolve = true; // simStep() ends the level when true
 
@@ -180,6 +192,48 @@ function loadLevel(n) {
     lost = 0;
     spawned = 0;
     spawnTimer = 0;
+    bannerUntil = ticks + 3 * TICKS_PER_SEC;
+    hoverCritter = null;
+    if (typeof document !== 'undefined') buildBackdrop(n);
+}
+
+// The cave walls behind the terrain. Deterministic speckle baked once per
+// level into an offscreen canvas, so the empty air still reads as rock.
+function buildBackdrop(seed) {
+    backdrop = document.createElement('canvas');
+    backdrop.width = COLS * CELL;
+    backdrop.height = ROWS * CELL;
+    const b = backdrop.getContext('2d');
+    const grad = b.createLinearGradient(0, 0, 0, backdrop.height);
+    grad.addColorStop(0, '#141b33');
+    grad.addColorStop(0.6, '#0e1427');
+    grad.addColorStop(1, '#090d1c');
+    b.fillStyle = grad;
+    b.fillRect(0, 0, backdrop.width, backdrop.height);
+
+    let r = seed * 9301 + 49297;
+    const rand = () => {
+        r = (r * 9301 + 49297) % 233280;
+        return r / 233280;
+    };
+    // soft rock blooms
+    for (let i = 0; i < 26; i++) {
+        const x = rand() * backdrop.width;
+        const y = rand() * backdrop.height;
+        const rad = 30 + rand() * 90;
+        const g = b.createRadialGradient(x, y, 0, x, y, rad);
+        g.addColorStop(0, 'rgba(90,110,170,0.10)');
+        g.addColorStop(1, 'rgba(90,110,170,0)');
+        b.fillStyle = g;
+        b.fillRect(x - rad, y - rad, rad * 2, rad * 2);
+    }
+    // mineral speckle
+    for (let i = 0; i < 900; i++) {
+        const x = Math.floor(rand() * backdrop.width);
+        const y = Math.floor(rand() * backdrop.height);
+        b.fillStyle = rand() > 0.8 ? 'rgba(150,180,255,0.10)' : 'rgba(255,255,255,0.045)';
+        b.fillRect(x, y, 1, 1);
+    }
 }
 
 function startGame() {
@@ -250,6 +304,7 @@ function spawnCritter(x, y, dir) {
 function kill(c) {
     if (!c.alive) return;
     c.alive = false;
+    c.deadTick = ticks;
     lost++;
 }
 
@@ -316,8 +371,6 @@ function stepCritter(c) {
     if (!c.alive || c.saved) return;
     c.age++;
 
-    if (c.ability === 'blocker') return; // scenery with a heartbeat
-
     // --- falling -----------------------------------------------------------
     if (!isSolid(c.x, c.y + 1)) {
         const speed = c.ability === 'floater' ? FLOAT_SPEED : FALL_SPEED;
@@ -337,6 +390,10 @@ function stepCritter(c) {
                 kill(c);
                 return;
             }
+            // A digger or basher that drops into open air has finished the job
+            // it was given; it goes back to walking rather than boring on
+            // through whatever it lands on.
+            if (c.ability === 'digger' || c.ability === 'basher') c.ability = 'walker';
             c.fallDist = 0;
         }
         checkExit(c);
@@ -344,6 +401,10 @@ function stepCritter(c) {
     }
 
     c.fallDist = 0;
+
+    // A blocker only stops walking — gravity still has its say, so one
+    // assigned in mid-air drops to the ground before it takes root.
+    if (c.ability === 'blocker') return; // scenery with a heartbeat
 
     // --- working -----------------------------------------------------------
     if (c.ability === 'digger') {
@@ -470,6 +531,7 @@ function simStep() {
 
 var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext('2d');
+var backdrop = null;
 
 var elOverlay = document.getElementById('overlay');
 var elTitle = document.getElementById('overlay-title');
@@ -532,33 +594,61 @@ function drawExit() {
     const h = exitRect.h * CELL;
     if (w <= 0 || h <= 0) return;
     const glow = 0.5 + 0.5 * Math.sin(ticks * 0.15);
-    ctx.fillStyle = `rgba(120, 255, 170, ${0.35 + 0.35 * glow})`;
-    ctx.fillRect(px - 2, py - 4, w + 4, h + 4);
+    const g = ctx.createRadialGradient(px + w / 2, py + h / 2, 2, px + w / 2, py + h / 2, 26);
+    g.addColorStop(0, `rgba(120,255,180,${0.45 + 0.25 * glow})`);
+    g.addColorStop(1, 'rgba(120,255,180,0)');
+    ctx.fillStyle = g;
+    ctx.fillRect(px - 26, py - 26, w + 52, h + 52);
     ctx.fillStyle = '#0d2a18';
-    ctx.fillRect(px, py, w, h);
+    ctx.fillRect(px - 2, py - 6, w + 4, h + 6);
     ctx.strokeStyle = '#7fffbf';
     ctx.lineWidth = 2;
-    ctx.strokeRect(px + 1, py + 1, w - 2, h - 2);
+    ctx.strokeRect(px - 1, py - 5, w + 2, h + 4);
+    ctx.fillStyle = `rgba(160,255,200,${0.5 + 0.4 * glow})`;
+    ctx.fillRect(px, py - 2, w, 2);
 }
 
 function drawHatch() {
     const px = hatch.x * CELL;
     const py = hatch.y * CELL;
-    ctx.fillStyle = '#4b5a88';
-    ctx.fillRect(px - 10, py - 12, 28, 6);
-    ctx.fillStyle = '#ffd98a';
-    ctx.fillRect(px - 2, py - 6, 12, 3);
+    // chains up to the ceiling
+    ctx.strokeStyle = 'rgba(160,175,215,0.5)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(px - 6, 0);
+    ctx.lineTo(px - 6, py - 12);
+    ctx.moveTo(px + 14, 0);
+    ctx.lineTo(px + 14, py - 12);
+    ctx.stroke();
+    // the hopper itself
+    ctx.fillStyle = '#39456c';
+    ctx.fillRect(px - 11, py - 14, 30, 10);
+    ctx.fillStyle = '#4e5d90';
+    ctx.fillRect(px - 11, py - 14, 30, 3);
+    ctx.fillStyle = '#10162a';
+    ctx.fillRect(px - 5, py - 6, 18, 4);
+    const open = spawned < totalCritters && state === 'running';
+    ctx.fillStyle = open ? '#ffd98a' : '#6b7596';
+    ctx.fillRect(px - 5, py - 5, 18, 2);
 }
 
 function drawCritter(c) {
     const px = c.x * CELL;
     const py = (c.y - 1) * CELL;
     if (!c.alive) {
-        ctx.fillStyle = 'rgba(255,90,110,0.45)';
+        const age = ticks - (c.deadTick || 0);
+        if (age > 40) return;
+        ctx.fillStyle = `rgba(255,90,110,${0.45 * (1 - age / 40)})`;
         ctx.fillRect(px, py + CELL, CELL, CELL - 2);
         return;
     }
     if (c.saved) return;
+
+    if (c === hoverCritter && state === 'running') {
+        ctx.strokeStyle = 'rgba(255,217,138,0.9)';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(px - 2.5, py - 0.5, CELL + 5, CELL * 2 + 3);
+    }
 
     ctx.fillStyle = ABILITY_COLOR[c.ability] || ABILITY_COLOR.walker;
     ctx.fillRect(px + 1, py + 2, CELL - 2, CELL * 2 - 3);
@@ -600,19 +690,36 @@ function updateHud() {
 function draw() {
     ctx.fillStyle = '#0b0f1c';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // cave glow behind the terrain
-    const grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
-    grad.addColorStop(0, 'rgba(60,80,150,0.25)');
-    grad.addColorStop(1, 'rgba(10,14,30,0.1)');
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    if (backdrop) ctx.drawImage(backdrop, 0, 0);
 
     drawTerrain();
     drawExit();
     drawHatch();
     for (const c of critters) drawCritter(c);
+    drawBanner();
     updateHud();
+}
+
+function drawBanner() {
+    if (ticks >= bannerUntil || state === 'idle') return;
+    const spec = LEVELS[Math.min(level, LEVELS.length) - 1];
+    const fade = Math.min(1, (bannerUntil - ticks) / 12);
+    ctx.save();
+    ctx.globalAlpha = fade;
+    ctx.fillStyle = 'rgba(8,12,24,0.75)';
+    ctx.fillRect(0, 150, canvas.width, 64);
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#ffd98a';
+    ctx.font = 'bold 22px "Segoe UI", sans-serif';
+    ctx.fillText(`CAVE ${level} — ${spec.name.toUpperCase()}`, canvas.width / 2, 182);
+    ctx.fillStyle = '#c3cdf0';
+    ctx.font = '13px "Segoe UI", sans-serif';
+    ctx.fillText(
+        `Save ${requiredCritters} of ${spec.total} critters`,
+        canvas.width / 2,
+        202
+    );
+    ctx.restore();
 }
 
 // ---------------------------------------------------------------------------
@@ -688,12 +795,28 @@ document.querySelectorAll('.ability').forEach((btn) => {
     btn.addEventListener('click', () => selectAbility(btn.dataset.ability));
 });
 
+function cellFromEvent(e) {
+    const r = canvas.getBoundingClientRect();
+    return {
+        x: Math.floor(((e.clientX - r.left) * (canvas.width / r.width)) / CELL),
+        y: Math.floor(((e.clientY - r.top) * (canvas.height / r.height)) / CELL),
+    };
+}
+
+canvas.addEventListener('mousemove', (e) => {
+    const p = cellFromEvent(e);
+    hoverCritter = critterAt(p.x, p.y);
+    canvas.style.cursor = hoverCritter ? 'pointer' : 'crosshair';
+});
+
+canvas.addEventListener('mouseleave', () => {
+    hoverCritter = null;
+});
+
 canvas.addEventListener('click', (e) => {
     if (state !== 'running') return;
-    const r = canvas.getBoundingClientRect();
-    const cx = Math.floor(((e.clientX - r.left) * (canvas.width / r.width)) / CELL);
-    const cy = Math.floor(((e.clientY - r.top) * (canvas.height / r.height)) / CELL);
-    const c = critterAt(cx, cy);
+    const p = cellFromEvent(e);
+    const c = critterAt(p.x, p.y);
     if (c) assignAbility(c, selectedAbility);
     draw();
 });

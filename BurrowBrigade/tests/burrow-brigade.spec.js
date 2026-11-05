@@ -491,6 +491,21 @@ test.describe('Burrow Brigade', () => {
             expect(c.y).toBe(30);
         });
 
+        test('a blocker assigned in mid-air falls to the ground first', async ({ page }) => {
+            const i = await place(page, { x: 10, y: 20, ability: 'blocker' });
+            await step(page, 10);
+            const c = await critter(page, i);
+            expect(c.y).toBe(30);
+            expect(c.ability).toBe('blocker');
+        });
+
+        test('a blocker drowns like anyone else', async ({ page }) => {
+            await fill(page, [{ x: 8, y: 29, w: 6, h: 3, cell: 3 }]);
+            const i = await place(page, { x: 10, y: 20, ability: 'blocker' });
+            await step(page, 10);
+            expect((await critter(page, i)).alive).toBe(false);
+        });
+
         test('a walker turns around at a blocker', async ({ page }) => {
             await place(page, { x: 14, y: 30, ability: 'blocker' });
             const i = await place(page, { x: 12, y: 30, dir: 1 });
@@ -590,6 +605,19 @@ test.describe('Burrow Brigade', () => {
             expect((await critter(page, i)).y).toBe(32);
         });
 
+        test('a digger that drops into open air stops digging where it lands', async ({ page }) => {
+            await fill(page, [
+                { x: 0, y: 31, w: 80, h: 1, cell: 1 },
+                { x: 0, y: 40, w: 80, h: 6, cell: 1 },
+            ]);
+            const i = await place(page, { x: 10, y: 30, ability: 'digger' });
+            await step(page, 6);
+            const c = await critter(page, i);
+            expect(c.y).toBe(39);
+            expect(c.ability).toBe('walker');
+            expect(await cell(page, 10, 41)).toBe(1);
+        });
+
         test('a digger that breaks into open air falls', async ({ page }) => {
             await fill(page, [{ x: 0, y: 31, w: 80, h: 1, cell: 1 }]);
             const i = await place(page, { x: 10, y: 30, ability: 'digger' });
@@ -651,6 +679,18 @@ test.describe('Burrow Brigade', () => {
             expect(c.ability).toBe('walker');
             expect(c.x).toBe(11);
             expect(await cell(page, 12, 30)).toBe(2);
+        });
+
+        test('a basher that drops off a ledge goes back to walking', async ({ page }) => {
+            await fill(page, [
+                { x: 0, y: 31, w: 11, h: 1, cell: 1 },
+                { x: 0, y: 36, w: 80, h: 4, cell: 1 },
+            ]);
+            const i = await place(page, { x: 10, y: 30, ability: 'basher', dir: 1 });
+            await step(page, 6);
+            const c = await critter(page, i);
+            expect(c.y).toBe(35);
+            expect(c.ability).toBe('walker');
         });
 
         test('a basher tunnels left too', async ({ page }) => {
@@ -1048,6 +1088,56 @@ test.describe('Burrow Brigade', () => {
             });
             expect(out.saved).toBeGreaterThanOrEqual(out.required);
             expect(out.state).toBe('levelcomplete');
+        });
+
+        test('level two is solved by bridging the chasm and bashing the pillar', async ({ page }) => {
+            const out = await page.evaluate(() => {
+                startGame();
+                autoRun = false;
+                loadLevel(2);
+                for (let i = 0; i < 4000 && state === 'running'; i++) {
+                    // bridge the water with the first critter to reach the brink
+                    for (const c of critters) {
+                        if (!c.alive || c.saved) continue;
+                        if (c.ability === 'walker' && c.dir === 1 && c.x >= 21 && c.x <= 23 && c.y === 39) {
+                            assignAbility(c, 'builder');
+                        }
+                        // chew through the pillar that pens the crowd in
+                        if (c.ability === 'walker' && c.dir === 1 && c.x === 39 && c.y === 39) {
+                            assignAbility(c, 'basher');
+                        }
+                    }
+                    simStep();
+                }
+                return { state, saved, required: requiredCritters };
+            });
+            expect(out.saved).toBeGreaterThanOrEqual(out.required);
+            expect(out.state).toBe('levelcomplete');
+        });
+
+        test('level three is solved by digging a shaft and blocking the drop zone', async ({ page }) => {
+            const out = await page.evaluate(() => {
+                startGame();
+                autoRun = false;
+                loadLevel(3);
+                for (let i = 0; i < 4000 && state === 'running'; i++) {
+                    for (const c of critters) {
+                        if (!c.alive || c.saved) continue;
+                        // sink a shaft to the lower chamber, clear of the steel plate
+                        if (c.ability === 'walker' && c.x === 52 && c.y === 29) {
+                            assignAbility(c, 'digger');
+                        }
+                        // stop the crowd wandering left into the pool
+                        if (c.ability === 'walker' && c.dir === -1 && c.y === 43 && c.x >= 46 && c.x <= 48) {
+                            assignAbility(c, 'blocker');
+                        }
+                    }
+                    simStep();
+                }
+                return { state, saved, required: requiredCritters };
+            });
+            expect(out.saved).toBeGreaterThanOrEqual(out.required);
+            expect(out.state).toBe('won');
         });
 
         test('the animation loop runs the simulation on its own', async ({ page }) => {

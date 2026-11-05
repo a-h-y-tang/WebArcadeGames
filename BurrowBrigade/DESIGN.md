@@ -50,11 +50,15 @@ Nothing in the simulation reads the clock or a float delta, so a test can call
 
 Each tick, for every live, unsaved critter:
 
-1. **Blockers** do nothing at all — they are scenery with a heartbeat.
-2. **Falling**: if the cell below is not solid the critter drops — `2` cells per
+1. **Falling**: if the cell below is not solid the critter drops — `2` cells per
    tick normally, `1` for a floater — and accumulates `fallDist`. On landing, a
    fall longer than `SPLAT_DIST = 16` cells kills it, unless it is a floater,
-   which survives any drop.
+   which survives any drop. A digger or basher that drops into open air has
+   finished its job and lands as a walker, rather than boring on through
+   whatever it hits next. Gravity applies to blockers too: one assigned in
+   mid-air falls to the ground before it takes root.
+2. **Blockers**, once landed, do nothing at all — they are scenery with a
+   heartbeat.
 3. **Working** (standing on solid ground), by ability:
    - **digger** — clears the three cells below it (`x-1 … x+1`) and sinks one
      cell. Steel below it cannot be removed, so the digger reverts to a walker.
@@ -132,8 +136,15 @@ time, as instructed.
   falling critter moves two cells a tick and a floater one. "Floats slowly" is
   therefore literally true, and the splat threshold is a plain cell count.
 - **Three levels.** Enough to teach every ability and show difficulty rising,
-  without turning the task into level authoring. Level 3 is the one that needs
-  all five abilities.
+  without turning the task into level authoring. Cave 1 is a tiered descent
+  that can be cleared with no abilities at all, cave 2 needs a builder and a
+  basher, cave 3 needs a digger and a blocker. Each is held to that standard by
+  a test that plays it through: `simStep()` is called in a loop with the
+  ability assignments scripted, and the quota must actually be met.
+- **An ability spent badly is spent.** A basher told to bash thin air reverts to
+  a walker and the charge is gone. That is the genre's bargain, so levels carry
+  a spare of anything a mistimed click can waste rather than becoming
+  unwinnable on one bad click.
 - **No nuke button.** Classic crowd games offer "destroy everyone" as an escape
   hatch from an unsolvable board; `R` to restart the level covers the same need
   with less state to reason about.
