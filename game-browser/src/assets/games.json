@@ -153,6 +153,15 @@
     "thumbnail": "games/BurgerTime/screenshot.png"
   },
   {
+    "id": "burrow-brigade",
+    "name": "Burrow Brigade",
+    "description": "Spend abilities to guide a crowd of brainless critters safely to the exit",
+    "category": "Puzzle",
+    "dir": "BurrowBrigade",
+    "path": "games/BurrowBrigade/index.html",
+    "thumbnail": "games/BurrowBrigade/screenshot.png"
+  },
+  {
     "id": "calcudoku",
     "name": "Calcudoku",
     "description": "Math logic puzzle with grid and operations",

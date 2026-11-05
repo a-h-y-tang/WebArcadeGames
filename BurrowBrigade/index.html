@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Burrow Brigade</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="game">
+        <header class="hud">
+            <h1>BURROW BRIGADE</h1>
+            <div class="stats">
+                <div class="stat"><span class="label">Level</span><span id="level">1</span></div>
+                <div class="stat"><span class="label">Saved</span><span id="saved">0</span></div>
+                <div class="stat"><span class="label">Needed</span><span id="required">0</span></div>
+                <div class="stat"><span class="label">Out</span><span id="out">0</span></div>
+                <div class="stat"><span class="label">Time</span><span id="time">0</span></div>
+                <div class="stat"><span class="label">Best</span><span id="best">0</span></div>
+            </div>
+        </header>
+
+        <div class="board-wrap">
+            <canvas id="canvas" width="640" height="480"></canvas>
+            <div id="overlay" class="overlay visible">
+                <h2 id="overlay-title">BURROW BRIGADE</h2>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Press Space or click Start to play</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+
+        <div class="abilities">
+            <button id="btn-blocker" class="ability selected" data-ability="blocker">
+                <span class="kbd">1</span><span class="name">Blocker</span><span id="count-blocker" class="count">0</span>
+            </button>
+            <button id="btn-digger" class="ability" data-ability="digger">
+                <span class="kbd">2</span><span class="name">Digger</span><span id="count-digger" class="count">0</span>
+            </button>
+            <button id="btn-basher" class="ability" data-ability="basher">
+                <span class="kbd">3</span><span class="name">Basher</span><span id="count-basher" class="count">0</span>
+            </button>
+            <button id="btn-builder" class="ability" data-ability="builder">
+                <span class="kbd">4</span><span class="name">Builder</span><span id="count-builder" class="count">0</span>
+            </button>
+            <button id="btn-floater" class="ability" data-ability="floater">
+                <span class="kbd">5</span><span class="name">Floater</span><span id="count-floater" class="count">0</span>
+            </button>
+        </div>
+
+        <div class="help">
+            <p>Pick an ability with <kbd>1</kbd>&ndash;<kbd>5</kbd> or the buttons, then <strong>click a critter</strong> to spend it.</p>
+            <p><kbd>P</kbd> pause &middot; <kbd>R</kbd> restart level &middot; <kbd>Space</kbd> start / continue</p>
+            <p>Critters never think for themselves &mdash; dig, bash, build and block a path to the exit.</p>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>
