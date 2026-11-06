@@ -81,15 +81,6 @@
     "thumbnail": "games/Berzerk/screenshot.png"
   },
   {
-    "id": "blackjack",
-    "name": "Blackjack",
-    "description": "Classic card game - beat the dealer to 21",
-    "category": "Card Game",
-    "dir": "Blackjack",
-    "path": "games/Blackjack/index.html",
-    "thumbnail": ""
-  },
-  {
     "id": "blob-drop",
     "name": "Blob Drop",
     "description": "Drop colorful blobs to clear the board",
