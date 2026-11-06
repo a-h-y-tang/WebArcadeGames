@@ -64,9 +64,10 @@ the lane index is the whole of an entity's vertical position.
    the taps grabs the bartender: the patron leaves and it costs a life.
 7. **The queue.** Patrons in a lane are stepped front first and clamped to
    `PATRON_GAP` behind the one ahead, so a fast patron queues up behind a slow
-   one instead of walking through them. The same gap limits a shove: if the
-   patron behind is too close, the crowd absorbs it and the drinker stays put
-   (they still drink the mug and still score).
+   one instead of walking through them. A shove cascades down that queue:
+   anybody standing within `PATRON_GAP` of the drinker is bundled along with
+   them, and anyone the shove puts at or past `EXIT_X` leaves satisfied — so one
+   well-timed mug can clear a whole crowded lane.
 8. **Level clear.** When a level has no patrons left to send, no patrons on the
    bar and no mugs in flight, the level is cleared and pays
    `CLEAR_BONUS_PER_LIFE × lives`. Clearing level `LEVEL_COUNT` wins the run.
@@ -92,6 +93,13 @@ LCG, which keeps a run reproducible and lets the test suite pin the seed.
 A spawn is held back (without spending one from the level's allowance) while the
 chosen lane still has a patron within 60 px of the door, so patrons never appear
 on top of each other.
+
+## Feedback
+
+Every lost life sets `lastMishap` and bumps a counter in `mishaps`, and the
+canvas shows a short banner naming what went wrong (`MUG SMASHED ON THE DOOR!`,
+`EMPTY DROPPED AT THE TAPS!`, `A PATRON REACHED THE TAPS!`) so a lost life is
+never a mystery. Splashes mark where it happened.
 
 ## Code structure
 
@@ -140,10 +148,12 @@ time. Noted here rather than guessed at silently.
   onto this one; the level-clear bonus pays for surviving instead.
 - **Catching is automatic when you are in the lane.** There is no separate catch
   button — standing in the right lane when the empty arrives is the skill.
-- **Queues absorb shoves.** A shove into the patron behind is swallowed rather
-  than pushing the whole queue along. One rule instead of a chain reaction, and
-  it gives a crowded lane its own character: the front of a queue is the hardest
-  patron on the bar to clear.
+- **A shove bundles the queue out together.** A patron pushed out of the door by
+  somebody else's drink still counts as served and still pays `SERVE_POINTS`.
+  The first draft had the crowd absorb the shove instead, which deadlocked: the
+  front of a queue could never be pushed anywhere, so a busy lane could not be
+  cleared at all. Cascading the shove fixes that and turns a crowded lane into
+  an opportunity rather than a dead end.
 - **A life is lost, not a lane.** Every mishap costs exactly one life and play
   continues immediately, with no reset of the bar and no invulnerability window.
 - **The branch name.** The brief asks for a branch named after the game

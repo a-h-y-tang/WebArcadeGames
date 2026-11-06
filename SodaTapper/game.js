@@ -64,6 +64,10 @@ let autoRun = true;                  // the animation loop only simulates while 
 
 const bartender = { lane: 0, pourCooldown: 0, bob: 0 };
 
+// What went wrong last, for the banner on the canvas, and a tally for the run.
+let lastMishap = null;
+let mishaps = {};
+
 // --- helpers ---------------------------------------------------------------
 
 function laneY(i) {
@@ -166,7 +170,7 @@ function nextLevel() {
 function togglePause() {
     if (state === 'running') {
         state = 'paused';
-        showOverlay('PAUSED', '', 'Press P or Space to carry on');
+        showOverlay('PAUSED', '', 'Press P or Space to carry on', 'Resume');
     } else if (state === 'paused') {
         state = 'running';
         hideOverlay();
@@ -219,12 +223,14 @@ function pour() {
     return true;
 }
 
-function loseLife() {
+function loseLife(reason) {
+    lastMishap = { reason: reason || 'mishap', life: 1.6 };
+    mishaps[reason] = (mishaps[reason] || 0) + 1;
     lives = Math.max(0, lives - 1);
     if (lives === 0) {
         state = 'gameover';
         saveBest();
-        showOverlay('GAME OVER', `Score ${score}`, 'Press Space to pull another shift');
+        showOverlay('GAME OVER', `Score ${score}`, 'Press Space to pull another shift', 'Play Again');
     }
     updateHud();
 }
@@ -278,8 +284,22 @@ function stepPatrons(dt) {
         if (i >= 0) patrons.splice(i, 1);
         splashes.push({ x: p.x, y: laneY(p.lane), life: 0.6, kind: 'grab' });
         streak = 0;
-        loseLife();
+        loseLife('grab');
     });
+}
+
+// A shove travels down the queue: the drinker moves back, and anybody standing
+// too close behind them is bundled along with it.
+function shoveQueue(patron, distance) {
+    const queue = patrons.filter((p) => p.lane === patron.lane).sort((a, b) => a.x - b.x);
+    const from = queue.indexOf(patron);
+    patron.x += distance;
+    let prev = patron;
+    for (let i = from + 1; i < queue.length; i++) {
+        const p = queue[i];
+        if (p.x < prev.x + PATRON_GAP) p.x = prev.x + PATRON_GAP;
+        prev = p;
+    }
 }
 
 // A patron drinks the mug that reached them: points, a shove toward the door,
@@ -287,24 +307,20 @@ function stepPatrons(dt) {
 function serve(patron, mug, returned) {
     patron.drinks += 1;
     score += DRINK_POINTS;
-
-    // The crowd behind absorbs whatever is left of the shove.
-    const behind = patrons
-        .filter((p) => p !== patron && p.lane === patron.lane && p.x > patron.x)
-        .sort((a, b) => a.x - b.x)[0];
-    let target = patron.x + PATRON_PUSH;
-    if (behind) target = Math.min(target, behind.x - PATRON_GAP);
-    patron.x = Math.max(patron.x, target);
+    shoveQueue(patron, PATRON_PUSH);
 
     returned.push({ lane: mug.lane, x: mug.x, dir: -1 });
     foam.push({ x: mug.x, y: laneY(mug.lane) - 10, vx: 20, vy: -40, life: 0.3 });
 
-    if (patron.x >= EXIT_X) {
-        const i = patrons.indexOf(patron);
-        if (i >= 0) patrons.splice(i, 1);
-        served += 1;
-        score += SERVE_POINTS;
-    }
+    // Anyone the shove put at or past the door is out of the bar.
+    patrons
+        .filter((p) => p.lane === mug.lane && p.x >= EXIT_X)
+        .forEach((p) => {
+            const i = patrons.indexOf(p);
+            if (i >= 0) patrons.splice(i, 1);
+            served += 1;
+            score += SERVE_POINTS;
+        });
 }
 
 function stepMugs(dt) {
@@ -325,7 +341,7 @@ function stepMugs(dt) {
             if (mug.x >= EXIT_X) {
                 splashes.push({ x: EXIT_X, y: laneY(mug.lane), life: 0.6, kind: 'smash' });
                 streak = 0;
-                loseLife();
+                loseLife('smash');
                 continue;
             }
         } else if (mug.x <= TAP_X) {
@@ -335,7 +351,7 @@ function stepMugs(dt) {
             } else {
                 splashes.push({ x: TAP_X, y: laneY(mug.lane), life: 0.6, kind: 'smash' });
                 streak = 0;
-                loseLife();
+                loseLife('drop');
             }
             continue;
         }
@@ -347,7 +363,17 @@ function stepMugs(dt) {
     keep.concat(returned).forEach((m) => mugs.push(m));
 }
 
+const MISHAP_TEXT = {
+    smash: 'MUG SMASHED ON THE DOOR!',
+    drop: 'EMPTY DROPPED AT THE TAPS!',
+    grab: 'A PATRON REACHED THE TAPS!',
+};
+
 function stepCosmetics(dt) {
+    if (lastMishap) {
+        lastMishap.life -= dt;
+        if (lastMishap.life <= 0) lastMishap = null;
+    }
     splashes = splashes.filter((s) => (s.life -= dt) > 0);
     foam = foam.filter((f) => {
         f.life -= dt;
@@ -366,10 +392,15 @@ function checkLevelClear() {
     if (level >= LEVEL_COUNT) {
         state = 'won';
         saveBest();
-        showOverlay('YOU WIN!', `Score ${score}`, 'Last call — press Space to run it again');
+        showOverlay(
+            'YOU WIN!',
+            `Score ${score}`,
+            'Last call — press Space to run it again',
+            'Play Again'
+        );
     } else {
         state = 'levelclear';
-        showOverlay('LEVEL CLEAR', `Score ${score}`, 'Press Space for the next level');
+        showOverlay('LEVEL CLEAR', `Score ${score}`, 'Press Space for the next level', 'Next Level');
     }
     updateHud();
 }
@@ -398,10 +429,11 @@ function updateHud() {
     document.getElementById('best').textContent = String(Math.max(best, 0));
 }
 
-function showOverlay(title, scoreText, sub) {
+function showOverlay(title, scoreText, sub, button) {
     document.getElementById('overlay-title').textContent = title;
     document.getElementById('overlay-score').textContent = scoreText;
     document.getElementById('overlay-sub').textContent = sub;
+    document.getElementById('btn-start').textContent = button || 'Start Game';
     document.getElementById('overlay').classList.add('visible');
 }
 
@@ -685,6 +717,24 @@ function drawFoam() {
     });
 }
 
+// A short banner naming whatever just went wrong, so a lost life is never a
+// mystery.
+function drawMishapBanner() {
+    if (!lastMishap) return;
+    const k = Math.min(1, lastMishap.life / 0.5);
+    const text = MISHAP_TEXT[lastMishap.reason] || 'MISHAP!';
+    ctx.font = 'bold 18px "Trebuchet MS", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    const w = ctx.measureText(text).width + 32;
+    ctx.fillStyle = `rgba(127, 29, 29, ${0.75 * k})`;
+    ctx.fillRect(W / 2 - w / 2, H - 44, w, 30);
+    ctx.strokeStyle = `rgba(248, 113, 113, ${0.9 * k})`;
+    ctx.strokeRect(W / 2 - w / 2, H - 44, w, 30);
+    ctx.fillStyle = `rgba(254, 226, 226, ${k})`;
+    ctx.fillText(text, W / 2, H - 28);
+}
+
 function drawLives() {
     for (let i = 0; i < Math.min(lives, 8); i++) {
         const x = 24 + i * 16;
@@ -710,6 +760,7 @@ function draw() {
     drawFoam();
     drawBartender();
     drawLives();
+    drawMishapBanner();
 }
 
 // --- input -----------------------------------------------------------------

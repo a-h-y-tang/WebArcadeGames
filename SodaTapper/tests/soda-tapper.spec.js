@@ -581,6 +581,44 @@ test.describe('Soda Tapper', () => {
             expect((await snapshot(page)).mugs[0].x).toBe(200);
         });
 
+        test('each kind of mishap is named', async ({ page }) => {
+            await startFrozen(page);
+            const c = await constants(page);
+            await page.evaluate(() => {
+                lives = 99;
+            });
+
+            await setMugs(page, [{ lane: 0, x: c.EXIT_X - 1, dir: 1 }]);
+            await step(page, 2);
+            expect(await page.evaluate(() => lastMishap.reason)).toBe('smash');
+
+            await page.evaluate(() => {
+                bartender.lane = 0;
+            });
+            await setMugs(page, [{ lane: 2, x: c.TAP_X + 1, dir: -1 }]);
+            await step(page, 2);
+            expect(await page.evaluate(() => lastMishap.reason)).toBe('drop');
+
+            await setPatrons(page, [{ lane: 1, x: c.TAP_X + c.PATRON_REACH + 1, speed: 60 }]);
+            await step(page, 20);
+            expect(await page.evaluate(() => lastMishap.reason)).toBe('grab');
+
+            expect(await page.evaluate(() => mishaps)).toEqual({ smash: 1, drop: 1, grab: 1 });
+        });
+
+        test('the mishap banner fades away', async ({ page }) => {
+            await startFrozen(page);
+            const c = await constants(page);
+            await page.evaluate(() => {
+                lives = 99;
+            });
+            await setMugs(page, [{ lane: 0, x: c.EXIT_X - 1, dir: 1 }]);
+            await step(page, 2);
+            expect(await page.evaluate(() => lastMishap !== null)).toBe(true);
+            await step(page, 300);
+            expect(await page.evaluate(() => lastMishap)).toBeNull();
+        });
+
         test('Space restarts after a game over', async ({ page }) => {
             await startFrozen(page);
             await page.evaluate(() => {
@@ -625,7 +663,7 @@ test.describe('Soda Tapper', () => {
             expect(walker.x).toBeCloseTo(310 - 60, 0);
         });
 
-        test('a crowd behind absorbs the shove from a drink', async ({ page }) => {
+        test('a shove travels down the queue behind the drinker', async ({ page }) => {
             await startFrozen(page);
             const c = await constants(page);
             const front = 300;
@@ -639,8 +677,39 @@ test.describe('Soda Tapper', () => {
             expect(s.patrons).toHaveLength(2);
             expect(s.score).toBe(c.DRINK_POINTS);
             const sorted = s.patrons.slice().sort((a, b) => a.x - b.x);
-            expect(sorted[0].x).toBeCloseTo(front, 0);
-            expect(Math.abs(sorted[1].x - sorted[0].x)).toBeGreaterThanOrEqual(c.PATRON_GAP - 0.01);
+            expect(sorted[0].x).toBeCloseTo(front + c.PATRON_PUSH, 0);
+            expect(sorted[1].x).toBeCloseTo(front + c.PATRON_PUSH + c.PATRON_GAP, 0);
+        });
+
+        test('a patron standing clear of the drinker is left where they are', async ({ page }) => {
+            await startFrozen(page);
+            const c = await constants(page);
+            const front = 240;
+            const back = front + c.PATRON_PUSH + c.PATRON_GAP + 40;
+            await setPatrons(page, [
+                { lane: 0, x: front, speed: 0 },
+                { lane: 0, x: back, speed: 0 },
+            ]);
+            await setMugs(page, [{ lane: 0, x: front - (c.MUG_R + c.PATRON_R) - 1, dir: 1 }]);
+            await step(page, 2);
+            const sorted = (await snapshot(page)).patrons.slice().sort((a, b) => a.x - b.x);
+            expect(sorted[1].x).toBeCloseTo(back, 0);
+        });
+
+        test('a shove can bundle the queue out of the door together', async ({ page }) => {
+            await startFrozen(page);
+            const c = await constants(page);
+            const front = c.EXIT_X - c.PATRON_PUSH + 10;
+            await setPatrons(page, [
+                { lane: 0, x: front, speed: 0 },
+                { lane: 0, x: front + c.PATRON_GAP, speed: 0 },
+            ]);
+            await setMugs(page, [{ lane: 0, x: front - (c.MUG_R + c.PATRON_R) - 1, dir: 1 }]);
+            await step(page, 2);
+            const s = await snapshot(page);
+            expect(s.patrons).toHaveLength(0);
+            expect(s.served).toBe(2);
+            expect(s.score).toBe(c.DRINK_POINTS + 2 * c.SERVE_POINTS);
         });
     });
 
@@ -899,6 +968,53 @@ test.describe('Soda Tapper', () => {
             expect(s.state).toBe('running');
             expect(s.level).toBe(1);
             expect(s.score).toBe(0);
+        });
+    });
+
+    // -----------------------------------------------------------------------
+    // Overlay button
+    // -----------------------------------------------------------------------
+    test.describe('overlay button', () => {
+        test('the button says what it does in each state', async ({ page }) => {
+            const button = page.locator('#btn-start');
+            await expect(button).toHaveText('Start Game');
+
+            await startFrozen(page);
+            await page.keyboard.press('KeyP');
+            await expect(button).toHaveText('Resume');
+            await page.keyboard.press('KeyP');
+
+            await page.evaluate(() => {
+                spawnsLeft = 0;
+            });
+            await step(page, 1);
+            await expect(button).toHaveText('Next Level');
+
+            await page.evaluate(() => {
+                advance();
+                lives = 1;
+                loseLife('smash');
+            });
+            await expect(button).toHaveText('Play Again');
+        });
+
+        test('the button resumes a paused game', async ({ page }) => {
+            await startFrozen(page);
+            await page.keyboard.press('KeyP');
+            await page.locator('#btn-start').click();
+            expect(await page.evaluate(() => state)).toBe('running');
+        });
+
+        test('the button starts the next level', async ({ page }) => {
+            await startFrozen(page);
+            await page.evaluate(() => {
+                spawnsLeft = 0;
+            });
+            await step(page, 1);
+            await page.locator('#btn-start').click();
+            const s = await snapshot(page);
+            expect(s.state).toBe('running');
+            expect(s.level).toBe(2);
         });
     });
 
