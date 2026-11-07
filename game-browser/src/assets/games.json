@@ -81,15 +81,6 @@
     "thumbnail": "games/Berzerk/screenshot.png"
   },
   {
-    "id": "blackjack",
-    "name": "Blackjack",
-    "description": "Classic card game - beat the dealer to 21",
-    "category": "Card Game",
-    "dir": "Blackjack",
-    "path": "games/Blackjack/index.html",
-    "thumbnail": ""
-  },
-  {
     "id": "blob-drop",
     "name": "Blob Drop",
     "description": "Drop colorful blobs to clear the board",
@@ -808,6 +799,15 @@
     "dir": "Pooyan",
     "path": "games/Pooyan/index.html",
     "thumbnail": "games/Pooyan/screenshot.png"
+  },
+  {
+    "id": "prism-path",
+    "name": "Prism Path",
+    "description": "Turn mirrors to route a laser through prisms and filters onto every target",
+    "category": "Puzzle",
+    "dir": "PrismPath",
+    "path": "games/PrismPath/index.html",
+    "thumbnail": "games/PrismPath/screenshot.png"
   },
   {
     "id": "pyramid-solitaire",
