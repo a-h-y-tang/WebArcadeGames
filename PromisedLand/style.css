@@ -3,8 +3,8 @@
     --panel: #111827;
     --ink: #e7ecf6;
     --muted: #7d8aa5;
-    --accent: #22d3ee;
-    --hot: #f472b6;
+    --accent: #fbbf24;
+    --hot: #f97316;
 }
 
 * { box-sizing: border-box; }
@@ -15,7 +15,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: radial-gradient(circle at 50% -20%, #16233f, var(--bg));
+    background: radial-gradient(circle at 50% -20%, #1d3a24, var(--bg));
     color: var(--ink);
     font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
 }
@@ -139,4 +139,10 @@ kbd {
     padding: 1px 6px;
     font-family: inherit;
     color: var(--ink);
+}
+
+.help .verse {
+    flex-basis: 100%;
+    font-style: italic;
+    color: var(--accent);
 }

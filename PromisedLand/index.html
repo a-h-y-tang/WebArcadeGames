@@ -3,26 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zaxxon</title>
+    <title>Promised Land</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <main class="game">
         <header class="hud">
-            <h1>ZAXXON</h1>
+            <h1>PROMISED LAND</h1>
             <div class="stats">
                 <div class="stat"><span class="label">Score</span><span id="score">0</span></div>
                 <div class="stat"><span class="label">Level</span><span id="level">1</span></div>
-                <div class="stat"><span class="label">Ships</span><span id="lives">3</span></div>
-                <div class="stat"><span class="label">Fuel</span><span id="fuel">100</span></div>
+                <div class="stat"><span class="label">Lives</span><span id="lives">3</span></div>
+                <div class="stat"><span class="label">Claimed</span><span id="claimed">0%</span></div>
                 <div class="stat"><span class="label">Best</span><span id="best">0</span></div>
             </div>
         </header>
 
         <div class="board-wrap">
-            <canvas id="canvas" width="480" height="640"></canvas>
+            <canvas id="canvas" width="600" height="600"></canvas>
             <div id="overlay" class="overlay visible">
-                <h2 id="overlay-title">ZAXXON</h2>
+                <h2 id="overlay-title">PROMISED LAND</h2>
                 <p id="overlay-score"></p>
                 <p id="overlay-sub">Press Space or click Start to play</p>
                 <button id="btn-start">Start Game</button>
@@ -30,11 +30,12 @@
         </div>
 
         <div class="help">
-            <p><kbd>&larr;</kbd> <kbd>&rarr;</kbd> / <kbd>A</kbd> <kbd>D</kbd> steer</p>
-            <p><kbd>&uarr;</kbd> <kbd>&darr;</kbd> / <kbd>W</kbd> <kbd>S</kbd> climb &amp; dive</p>
-            <p><kbd>Space</kbd> fire</p>
+            <p><kbd>&larr;</kbd> <kbd>&uarr;</kbd> <kbd>&darr;</kbd> <kbd>&rarr;</kbd> / <kbd>WASD</kbd> move</p>
+            <p>Step off the edge to draw a fence line</p>
+            <p>Hold <kbd>Shift</kbd> to draw slow for double points</p>
             <p><kbd>P</kbd> pause</p>
-            <p>Your altitude is your aim &mdash; fly low to hit the deck, level up to meet a fighter.</p>
+            <p>Claim 75% of the land to clear the level &mdash; mind the whirlwind, the little foxes and the brushfire.</p>
+            <p class="verse">&ldquo;How long will you wait before you begin to take possession of the land?&rdquo; &mdash; Joshua 18:3</p>
         </div>
     </main>
 

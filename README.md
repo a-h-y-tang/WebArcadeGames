@@ -144,9 +144,9 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Skyscraper Spy | [SkyscraperSpy/](SkyscraperSpy/) | Complete |
 | Time Pilot | [TimePilot/](TimePilot/) | Complete |
 | Prism Path | [PrismPath/](PrismPath/) | Complete |
-| Zaxxon | [Zaxxon/](Zaxxon/) | Complete |
+| Chariot of Fire | [ChariotOfFire/](ChariotOfFire/) | Complete |
 | Split Ball | [SplitBall/](SplitBall/) | Complete |
-| Qix | [Qix/](Qix/) | Complete |
+| Promised Land | [PromisedLand/](PromisedLand/) | Complete |
 | Burrow Brigade | [BurrowBrigade/](BurrowBrigade/) | Complete |
 | Laser Maze | [LaserMaze/](LaserMaze/) | Complete |
 

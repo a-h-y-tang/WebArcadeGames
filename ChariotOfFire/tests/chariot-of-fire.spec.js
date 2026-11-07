@@ -73,7 +73,7 @@ function liveCount(page) {
     return page.evaluate((marker) => objects.filter((o) => o.z < marker.z / 2).length, FAR_MARKER);
 }
 
-test.describe('Zaxxon', () => {
+test.describe('Chariot of Fire', () => {
     test.beforeEach(async ({ page }) => {
         await page.goto(GAME_URL);
     });
@@ -82,8 +82,8 @@ test.describe('Zaxxon', () => {
     // Initial / idle state
     // -----------------------------------------------------------------------
     test.describe('initial state', () => {
-        test('page title is Zaxxon', async ({ page }) => {
-            await expect(page).toHaveTitle('Zaxxon');
+        test('page title is Chariot of Fire', async ({ page }) => {
+            await expect(page).toHaveTitle('Chariot of Fire');
         });
 
         test('canvas is 480x640', async ({ page }) => {
@@ -1157,12 +1157,12 @@ test.describe('Zaxxon', () => {
             const games = JSON.parse(
                 fs.readFileSync(path.join(REPO_ROOT, 'game-browser/src/assets/games.json'), 'utf8')
             );
-            const entry = games.find((g) => g.id === 'zaxxon');
+            const entry = games.find((g) => g.id === 'chariot-of-fire');
             expect(entry).toBeTruthy();
-            expect(entry.name).toBe('Zaxxon');
-            expect(entry.dir).toBe('Zaxxon');
-            expect(entry.path).toBe('games/Zaxxon/index.html');
-            expect(entry.thumbnail).toBe('games/Zaxxon/screenshot.png');
+            expect(entry.name).toBe('Chariot of Fire');
+            expect(entry.dir).toBe('ChariotOfFire');
+            expect(entry.path).toBe('games/ChariotOfFire/index.html');
+            expect(entry.thumbnail).toBe('games/ChariotOfFire/screenshot.png');
             expect(entry.description.length).toBeGreaterThan(10);
         });
 
@@ -1170,7 +1170,7 @@ test.describe('Zaxxon', () => {
             const games = JSON.parse(
                 fs.readFileSync(path.join(REPO_ROOT, 'game-browser/src/assets/games.json'), 'utf8')
             );
-            const i = games.findIndex((g) => g.id === 'zaxxon');
+            const i = games.findIndex((g) => g.id === 'chariot-of-fire');
             expect(i).toBeGreaterThan(0);
             expect(games[i - 1].name.localeCompare(games[i].name)).toBeLessThanOrEqual(0);
             if (i + 1 < games.length) {
@@ -1179,17 +1179,17 @@ test.describe('Zaxxon', () => {
         });
 
         test('the thumbnail the browser points at exists', () => {
-            expect(fs.existsSync(path.join(REPO_ROOT, 'Zaxxon/screenshot.png'))).toBe(true);
+            expect(fs.existsSync(path.join(REPO_ROOT, 'ChariotOfFire/screenshot.png'))).toBe(true);
         });
 
         test('the root README lists the game', () => {
             const readme = fs.readFileSync(path.join(REPO_ROOT, 'README.md'), 'utf8');
-            expect(readme).toMatch(/\|\s*Zaxxon\s*\|\s*\[Zaxxon\/\]\(Zaxxon\/\)\s*\|\s*(Complete|In Progress)\s*\|/);
+            expect(readme).toMatch(/\|\s*Chariot of Fire\s*\|\s*\[ChariotOfFire\/\]\(ChariotOfFire\/\)\s*\|\s*(Complete|In Progress)\s*\|/);
         });
 
         test('the game ships its own README and DESIGN docs', () => {
-            expect(fs.existsSync(path.join(REPO_ROOT, 'Zaxxon/README.md'))).toBe(true);
-            expect(fs.existsSync(path.join(REPO_ROOT, 'Zaxxon/DESIGN.md'))).toBe(true);
+            expect(fs.existsSync(path.join(REPO_ROOT, 'ChariotOfFire/README.md'))).toBe(true);
+            expect(fs.existsSync(path.join(REPO_ROOT, 'ChariotOfFire/DESIGN.md'))).toBe(true);
         });
     });
 });

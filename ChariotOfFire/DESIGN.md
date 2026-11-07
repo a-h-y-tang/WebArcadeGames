@@ -1,8 +1,21 @@
-# Zaxxon — Design
+# Chariot of Fire — Design
+
+Chariot of Fire is an original, Bible-themed take on the isometric scrolling
+shooter (2 Kings 6:17). The code keeps the genre's usual internal names, so the
+notes below use them too:
+
+| In the code | On screen |
+|---|---|
+| ship | the chariot of fire |
+| `tank` (fuel tank) | oil jar |
+| `turret` | idol altar that hurls fire |
+| `plane` (fighter) | enemy chariot |
+| `wall` (force wall) | city wall with a gate |
+| `boss` (robot) | the great idol of Dagon (1 Samuel 5) |
 
 ## Game concept
 
-Zaxxon is an isometric scrolling shooter. A fighter flies over an enemy space
+The game is an isometric scrolling shooter. A fighter flies over an enemy space
 fortress that slides past diagonally, and the whole game turns on one extra
 dimension the other scrolling shooters in this repo do not have: **altitude**.
 

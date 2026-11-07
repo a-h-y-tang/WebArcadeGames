@@ -1,5 +1,8 @@
-// Zaxxon — fly an isometric fortress where altitude is both your aim and your
-// armour. A bullet keeps the height it was fired at, so hitting a gun bolted to
+// Chariot of Fire — fly a fiery chariot over an idol-worshippers' stronghold
+// (2 Kings 6:17), where altitude is both your aim and your armour. Internally
+// the objects keep the genre's names: `tank` is an oil jar, `turret` an idol
+// altar that hurls fire, `plane` an enemy chariot, `wall` a city wall with a
+// gate in it, and `boss` the great idol of Dagon (1 Samuel 5). A bullet keeps the height it was fired at, so hitting a gun bolted to
 // the deck means descending into the layer that can kill you.
 //
 // The whole simulation runs on a fixed timestep through physicsStep(), and the
@@ -76,11 +79,11 @@ const FUEL_BONUS = 10;               // per unit of fuel left when a level ends
 const POINTS = { tank: 150, turret: 200, plane: 300, boss: 2000 };
 
 const COLORS = {
-    tank: ['#fbbf24', '#d97706', '#92400e'],
-    turret: ['#cbd5e1', '#94a3b8', '#64748b'],
-    plane: '#f472b6',
-    boss: ['#a78bfa', '#7c3aed', '#4c1d95'],
-    wall: ['#1e3a8a', '#1d4ed8'],
+    tank: ['#fbbf24', '#d97706', '#92400e'],     // oil jar
+    turret: ['#d6c7a8', '#a8916a', '#7a6646'],   // idol altar
+    plane: '#94a3b8',                            // enemy chariot
+    boss: ['#fde68a', '#d4a017', '#8a6d1a'],     // golden idol of Dagon
+    wall: ['#6b4f2e', '#a87b3f'],                // sandstone city wall
 };
 
 const BEST_KEY = 'zaxxon-best';
@@ -346,10 +349,10 @@ function finishLevel() {
     if (level >= LEVEL_COUNT) {
         state = 'won';
         saveBest();
-        showOverlay('YOU WIN!', `Final score ${score}`, 'Press Space to fly it again');
+        showOverlay('YOU WIN!', `Final score ${score}`, 'Press Space to ride again');
     } else {
         state = 'levelclear';
-        showOverlay('LEVEL CLEAR', `Score ${score}`, `Press Space for sector ${level + 1}`);
+        showOverlay('LEVEL CLEAR', `Score ${score}`, `Press Space for city ${level + 1}`);
     }
     updateHud();
 }
@@ -667,9 +670,9 @@ function shadow(x, z, rx, rz) {
 
 function drawSky() {
     const sky = ctx.createLinearGradient(0, 0, 0, H);
-    sky.addColorStop(0, '#0a1430');
-    sky.addColorStop(0.55, '#060a1a');
-    sky.addColorStop(1, '#04070f');
+    sky.addColorStop(0, '#3b1d4a');
+    sky.addColorStop(0.55, '#1f1030');
+    sky.addColorStop(1, '#0d0818');
     ctx.fillStyle = sky;
     ctx.fillRect(0, 0, W, H);
 
@@ -693,13 +696,13 @@ function drawHull() {
     const fl = proj(0, 0, VIEW_DEPTH);
     const drop = (p) => ({ sx: p.sx, sy: p.sy + HULL });
 
-    quad(fl, nl, drop(nl), drop(fl), '#0b1326', 'rgba(56, 189, 248, 0.25)');
-    quad(nl, nr, drop(nr), drop(nl), '#16233f', 'rgba(56, 189, 248, 0.35)');
+    quad(fl, nl, drop(nl), drop(fl), '#2a1f15', 'rgba(251, 191, 36, 0.25)');
+    quad(nl, nr, drop(nr), drop(nl), '#3a2c1e', 'rgba(251, 191, 36, 0.35)');
 
     // rib detail along the flank, so the slab has a scale to read against
     const spacing = 60;
     const phase = distance % spacing;
-    ctx.strokeStyle = 'rgba(56, 189, 248, 0.18)';
+    ctx.strokeStyle = 'rgba(251, 191, 36, 0.18)';
     ctx.lineWidth = 1;
     for (let z = DECK_Z0 - phase; z <= VIEW_DEPTH; z += spacing) {
         const a = proj(0, 0, z);
@@ -717,12 +720,12 @@ function drawDeck() {
     const fl = proj(0, 0, VIEW_DEPTH);
 
     const deck = ctx.createLinearGradient(fl.sx, fl.sy, nr.sx, nr.sy);
-    deck.addColorStop(0, '#13203c');
-    deck.addColorStop(1, '#1c2c4e');
+    deck.addColorStop(0, '#3a2c1e');
+    deck.addColorStop(1, '#4d3b27');
     quad(nl, nr, fr, fl, deck, null);
 
     // lanes running away from the ship
-    ctx.strokeStyle = 'rgba(148, 197, 255, 0.10)';
+    ctx.strokeStyle = 'rgba(253, 230, 138, 0.10)';
     ctx.lineWidth = 1;
     for (let x = 25; x < FIELD_W; x += 25) {
         const a = proj(x, 0, DECK_Z0);
@@ -740,7 +743,7 @@ function drawDeck() {
         const a = proj(0, 0, z);
         const b = proj(FIELD_W, 0, z);
         ctx.globalAlpha = 0.9 - (z / VIEW_DEPTH) * 0.7;
-        ctx.strokeStyle = 'rgba(125, 211, 252, 0.16)';
+        ctx.strokeStyle = 'rgba(253, 186, 116, 0.16)';
         ctx.beginPath();
         ctx.moveTo(a.sx, a.sy);
         ctx.lineTo(b.sx, b.sy);
@@ -752,7 +755,7 @@ function drawDeck() {
     [0, FIELD_W].forEach((x) => {
         const a = proj(x, 0, DECK_Z0);
         const b = proj(x, 0, VIEW_DEPTH);
-        ctx.strokeStyle = 'rgba(56, 189, 248, 0.5)';
+        ctx.strokeStyle = 'rgba(251, 191, 36, 0.5)';
         ctx.lineWidth = 2;
         ctx.beginPath();
         ctx.moveTo(a.sx, a.sy);
@@ -772,7 +775,7 @@ function drawWall(o) {
         grad.addColorStop(1, COLORS.wall[0]);
         ctx.fillStyle = grad;
         ctx.fillRect(tl.sx, tl.sy, br.sx - tl.sx, br.sy - tl.sy);
-        ctx.strokeStyle = 'rgba(147, 197, 253, 0.55)';
+        ctx.strokeStyle = 'rgba(253, 230, 138, 0.55)';
         ctx.lineWidth = 1;
         ctx.strokeRect(tl.sx, tl.sy, br.sx - tl.sx, br.sy - tl.sy);
     };
@@ -785,7 +788,7 @@ function drawWall(o) {
     // energy scan lines across the slabs
     const top = proj(0, MAX_ALT, o.z);
     const bottom = proj(0, 0, o.z);
-    ctx.strokeStyle = 'rgba(147, 197, 253, 0.18)';
+    ctx.strokeStyle = 'rgba(253, 230, 138, 0.18)';
     ctx.lineWidth = 1;
     for (let y = top.sy; y < bottom.sy; y += 7) {
         const inGap = y > proj(0, o.openAlt[1], o.z).sy && y < proj(0, o.openAlt[0], o.z).sy;
@@ -807,7 +810,7 @@ function drawWall(o) {
     // the gap, outlined so it reads as the way through
     const gl = proj(o.openX[0], o.openAlt[1], o.z);
     const gr = proj(o.openX[1], o.openAlt[0], o.z);
-    ctx.strokeStyle = 'rgba(56, 189, 248, 0.85)';
+    ctx.strokeStyle = 'rgba(251, 191, 36, 0.85)';
     ctx.lineWidth = 2;
     ctx.strokeRect(gl.sx, gl.sy, gr.sx - gl.sx, gr.sy - gl.sy);
 }
@@ -865,7 +868,7 @@ function drawBoss(o) {
     box(o.x, o.z, o.half, o.low, o.high, o.depth, COLORS.boss);
 
     // head and eyes
-    box(o.x, o.z, 16, o.high, o.high + 16, 10, ['#c4b5fd', '#8b5cf6', '#6d28d9']);
+    box(o.x, o.z, 16, o.high, o.high + 16, 10, ['#fef3c7', '#e5b93a', '#a17f1f']);
     [-7, 7].forEach((dx) => {
         const p = proj(o.x + dx, o.high + 9, o.z - 10);
         ctx.beginPath();
@@ -874,7 +877,7 @@ function drawBoss(o) {
         ctx.fill();
     });
 
-    // damage read-out above the robot
+    // damage read-out above the idol
     const bar = proj(o.x - 30, o.high + 28, o.z);
     const full = proj(o.x + 30, o.high + 28, o.z);
     ctx.fillStyle = 'rgba(15, 23, 42, 0.8)';
@@ -920,7 +923,7 @@ function drawShip() {
     // the tether between ship and shadow is what makes altitude readable
     const foot = proj(ship.x, 0, 0);
     const p = proj(ship.x, ship.alt, 0);
-    ctx.strokeStyle = 'rgba(56, 189, 248, 0.35)';
+    ctx.strokeStyle = 'rgba(251, 191, 36, 0.35)';
     ctx.lineWidth = 1;
     ctx.setLineDash([3, 4]);
     ctx.beginPath();
@@ -929,7 +932,7 @@ function drawShip() {
     ctx.stroke();
     ctx.setLineDash([]);
 
-    // engine flare
+    // the chariot's flames
     ctx.beginPath();
     ctx.moveTo(p.sx - 4, p.sy + 7);
     ctx.lineTo(p.sx + 4, p.sy + 7);
@@ -938,22 +941,22 @@ function drawShip() {
     ctx.fillStyle = 'rgba(251, 191, 36, 0.85)';
     ctx.fill();
 
-    // hull: a chevron pointing away from the viewer
+    // chariot: a chevron pointing away from the viewer
     ctx.beginPath();
     ctx.moveTo(p.sx, p.sy - 11);
     ctx.lineTo(p.sx + 14, p.sy + 7);
     ctx.lineTo(p.sx, p.sy + 2);
     ctx.lineTo(p.sx - 14, p.sy + 7);
     ctx.closePath();
-    ctx.fillStyle = '#e0f2fe';
+    ctx.fillStyle = '#fdba74';
     ctx.fill();
-    ctx.strokeStyle = '#0ea5e9';
+    ctx.strokeStyle = '#ea580c';
     ctx.lineWidth = 1.5;
     ctx.stroke();
 
     ctx.beginPath();
     ctx.arc(p.sx, p.sy - 3, 3, 0, Math.PI * 2);
-    ctx.fillStyle = '#0369a1';
+    ctx.fillStyle = '#7c2d12';
     ctx.fill();
 }
 
@@ -1021,7 +1024,7 @@ function drawHaze() {
 function drawLadder() {
     ctx.fillStyle = 'rgba(8, 14, 30, 0.72)';
     ctx.fillRect(LADDER_X - 7, LADDER_TOP - 18, 16, LADDER_H + 34);
-    ctx.strokeStyle = 'rgba(56, 189, 248, 0.35)';
+    ctx.strokeStyle = 'rgba(251, 191, 36, 0.35)';
     ctx.lineWidth = 1;
     ctx.strokeRect(LADDER_X - 7, LADDER_TOP - 18, 16, LADDER_H + 34);
 
@@ -1048,7 +1051,7 @@ function drawLadder() {
     ctx.closePath();
     ctx.fillStyle = '#38bdf8';
     ctx.fill();
-    ctx.strokeStyle = 'rgba(56, 189, 248, 0.85)';
+    ctx.strokeStyle = 'rgba(251, 191, 36, 0.85)';
     ctx.beginPath();
     ctx.moveTo(LADDER_X - 4, y);
     ctx.lineTo(LADDER_X + 5, y);
@@ -1061,7 +1064,7 @@ function drawFuelGauge() {
     const h = 90;
     ctx.fillStyle = 'rgba(8, 14, 30, 0.72)';
     ctx.fillRect(x - 4, y - 16, 18, h + 24);
-    ctx.strokeStyle = 'rgba(56, 189, 248, 0.35)';
+    ctx.strokeStyle = 'rgba(251, 191, 36, 0.35)';
     ctx.lineWidth = 1;
     ctx.strokeRect(x - 4, y - 16, 18, h + 24);
 
@@ -1074,7 +1077,7 @@ function drawFuelGauge() {
     ctx.fillStyle = 'rgba(148, 163, 184, 0.75)';
     ctx.font = '8px "Segoe UI", system-ui, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('FUEL', x + 5, y - 21);
+    ctx.fillText('OIL', x + 5, y - 21);
 }
 
 function drawLives() {
