@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shield of Faith</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Shield of Faith</h1>
+        <div id="hud">
+            <span>Score: <strong id="score">0</strong></span>
+            <span>Best: <strong id="best">0</strong></span>
+            <span>Cities: <strong id="cities">6</strong></span>
+            <span>Ammo: <strong id="ammo">25</strong></span>
+            <span>Wave: <strong id="wave">1</strong></span>
+        </div>
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="600" height="500"></canvas>
+            <div id="overlay" class="visible">
+                <p id="overlay-title">Shield of Faith</p>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Press Space to start</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+        <p id="controls-hint">Click to raise a shield of light &nbsp;·&nbsp; P to pause</p>
+        <p class="verse">&ldquo;Take up the shield of faith, with which you can extinguish all the flaming arrows of the evil one.&rdquo; &mdash; Ephesians 6:16</p>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>

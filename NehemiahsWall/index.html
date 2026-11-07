@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nehemiah's Wall</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="game">
+        <header class="hud">
+            <h1>NEHEMIAH'S WALL</h1>
+            <div class="stats">
+                <div class="stat"><span class="label">Score</span><span id="score">0</span></div>
+                <div class="stat"><span class="label">Round</span><span id="round">1</span></div>
+                <div class="stat"><span class="label">Phase</span><span id="phase">Place Catapults</span></div>
+                <div class="stat"><span class="label">Time</span><span id="timer">10</span></div>
+                <div class="stat"><span class="label">Catapults</span><span id="cannons">0</span></div>
+                <div class="stat"><span class="label">Best</span><span id="best">0</span></div>
+            </div>
+        </header>
+
+        <div class="board-wrap">
+            <canvas id="canvas" width="560" height="440"></canvas>
+            <div id="overlay" class="overlay visible">
+                <h2 id="overlay-title">NEHEMIAH'S WALL</h2>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Press Space or click Start to play</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+
+        <div class="help">
+            <p><strong>Place</strong> — set catapults inside your walls</p>
+            <p><strong>Defend</strong> — click to drive off the raiders' boats</p>
+            <p><strong>Rebuild</strong> — close the wall again before the clock runs out</p>
+            <p><kbd>←</kbd> <kbd>↑</kbd> <kbd>↓</kbd> <kbd>→</kbd> move cursor</p>
+            <p><kbd>Space</kbd> act &nbsp; <kbd>R</kbd> / right-click rotate &nbsp; <kbd>P</kbd> pause</p>
+            <p class="verse">&ldquo;Those who carried materials did their work with one hand and held a weapon in the other.&rdquo; &mdash; Nehemiah 4:17</p>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>

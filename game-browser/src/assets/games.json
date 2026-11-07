@@ -36,6 +36,15 @@
     "thumbnail": "games/AirTrafficControl/screenshot.png"
   },
   {
+    "id": "ark-builder",
+    "name": "Ark Builder",
+    "description": "Help Noah stack the ark's decks of gopher wood as high as you can - perfect drops lose no width",
+    "category": "Action",
+    "dir": "ArkBuilder",
+    "path": "games/ArkBuilder/index.html",
+    "thumbnail": "games/ArkBuilder/screenshot.png"
+  },
+  {
     "id": "artillery-duel",
     "name": "Artillery Duel",
     "description": "Strategic turn-based artillery combat game",
@@ -144,15 +153,6 @@
     "thumbnail": "games/BurgerTime/screenshot.png"
   },
   {
-    "id": "burrow-brigade",
-    "name": "Burrow Brigade",
-    "description": "Spend abilities to guide a crowd of brainless critters safely to the exit",
-    "category": "Puzzle",
-    "dir": "BurrowBrigade",
-    "path": "games/BurrowBrigade/index.html",
-    "thumbnail": "games/BurrowBrigade/screenshot.png"
-  },
-  {
     "id": "calcudoku",
     "name": "Calcudoku",
     "description": "Math logic puzzle with grid and operations",
@@ -178,15 +178,6 @@
     "dir": "CavernRaider",
     "path": "games/CavernRaider/index.html",
     "thumbnail": "games/CavernRaider/screenshot.png"
-  },
-  {
-    "id": "centipede",
-    "name": "Centipede",
-    "description": "Classic arcade shooter - defeat the centipede",
-    "category": "Action",
-    "dir": "Centipede",
-    "path": "games/Centipede/index.html",
-    "thumbnail": ""
   },
   {
     "id": "chain-reaction",
@@ -270,15 +261,6 @@
     "thumbnail": "games/DinoRun/screenshot.png"
   },
   {
-    "id": "doodle-jump",
-    "name": "Doodle Jump",
-    "description": "Jump higher and higher, avoid enemies",
-    "category": "Action",
-    "dir": "DoodleJump",
-    "path": "games/DoodleJump/index.html",
-    "thumbnail": "games/DoodleJump/screenshot.png"
-  },
-  {
     "id": "dots-and-boxes",
     "name": "Dots and Boxes",
     "description": "Strategy game - claim more boxes than your opponent",
@@ -322,6 +304,15 @@
     "dir": "FlappyBird",
     "path": "games/FlappyBird/index.html",
     "thumbnail": ""
+  },
+  {
+    "id": "flock-to-the-fold",
+    "name": "Flock to the Fold",
+    "description": "Guide a wandering flock of sheep safely home to the sheepfold by giving individual sheep special jobs",
+    "category": "Puzzle",
+    "dir": "FlockToTheFold",
+    "path": "games/FlockToTheFold/index.html",
+    "thumbnail": "games/FlockToTheFold/screenshot.png"
   },
   {
     "id": "flood-it",
@@ -423,13 +414,13 @@
     "thumbnail": ""
   },
   {
-    "id": "gold-runner",
-    "name": "Gold Runner",
-    "description": "Collect the gold, trap the guards in dug bricks, climb out",
+    "id": "gleaning-fields",
+    "name": "Gleaning Fields",
+    "description": "Help Ruth glean every grain of barley in Boaz's field while the little foxes chase her",
     "category": "Action",
-    "dir": "GoldRunner",
-    "path": "games/GoldRunner/index.html",
-    "thumbnail": "games/GoldRunner/screenshot.png"
+    "dir": "GleaningFields",
+    "path": "games/GleaningFields/index.html",
+    "thumbnail": "games/GleaningFields/screenshot.png"
   },
   {
     "id": "golf-solitaire",
@@ -448,6 +439,15 @@
     "dir": "Gomoku",
     "path": "games/Gomoku/index.html",
     "thumbnail": "games/Gomoku/screenshot.png"
+  },
+  {
+    "id": "gopher-wood",
+    "name": "Gopher Wood",
+    "description": "Help Noah chop cypress wood for the ark - chop fast from left or right and dodge the falling branches",
+    "category": "Action",
+    "dir": "GopherWood",
+    "path": "games/GopherWood/index.html",
+    "thumbnail": "games/GopherWood/screenshot.png"
   },
   {
     "id": "hashi",
@@ -558,22 +558,13 @@
     "thumbnail": ""
   },
   {
-    "id": "lode-runner",
-    "name": "Lode Runner",
-    "description": "Dig holes to trap guards while you steal every bar of gold",
+    "id": "locust-swarm",
+    "name": "Locust Swarm",
+    "description": "A swarm of locusts descends on the harvest - drive them off with puffs of smoke before they land",
     "category": "Action",
-    "dir": "LodeRunner",
-    "path": "games/LodeRunner/index.html",
-    "thumbnail": "games/LodeRunner/screenshot.png"
-  },
-  {
-    "id": "lumberjack",
-    "name": "Lumberjack",
-    "description": "Action game - fell trees and avoid obstacles",
-    "category": "Action",
-    "dir": "Lumberjack",
-    "path": "games/Lumberjack/index.html",
-    "thumbnail": ""
+    "dir": "LocustSwarm",
+    "path": "games/LocustSwarm/index.html",
+    "thumbnail": "games/LocustSwarm/screenshot.png"
   },
   {
     "id": "lunar-lander",
@@ -666,15 +657,6 @@
     "thumbnail": ""
   },
   {
-    "id": "missile-command",
-    "name": "Missile Command",
-    "description": "Defense arcade game - protect cities from missiles",
-    "category": "Action",
-    "dir": "MissileCommand",
-    "path": "games/MissileCommand/index.html",
-    "thumbnail": ""
-  },
-  {
     "id": "moon-patrol",
     "name": "Moon Patrol",
     "description": "Arcade action game - navigate the moon's surface",
@@ -682,6 +664,15 @@
     "dir": "MoonPatrol",
     "path": "games/MoonPatrol/index.html",
     "thumbnail": "games/MoonPatrol/screenshot.png"
+  },
+  {
+    "id": "nehemiahs-wall",
+    "name": "Nehemiah's Wall",
+    "description": "Rebuild the wall around the city's towers while raiders bombard it - work with one hand, guard with the other",
+    "category": "Strategy",
+    "dir": "NehemiahsWall",
+    "path": "games/NehemiahsWall/index.html",
+    "thumbnail": "games/NehemiahsWall/screenshot.png"
   },
   {
     "id": "nine-mens-morris",
@@ -702,13 +693,13 @@
     "thumbnail": ""
   },
   {
-    "id": "pacman",
-    "name": "PacMan",
-    "description": "Classic arcade game - eat pellets and avoid ghosts",
+    "id": "ophir-gold",
+    "name": "Ophir Gold",
+    "description": "Gather gold from the mines of Ophir for Solomon's temple while the rock badgers scamper after you",
     "category": "Action",
-    "dir": "PacMan",
-    "path": "games/PacMan/index.html",
-    "thumbnail": ""
+    "dir": "OphirGold",
+    "path": "games/OphirGold/index.html",
+    "thumbnail": "games/OphirGold/screenshot.png"
   },
   {
     "id": "pang",
@@ -810,15 +801,6 @@
     "thumbnail": ""
   },
   {
-    "id": "pooyan",
-    "name": "Pooyan",
-    "description": "Shoot arrows at balloon-riding wolves before they reach the house",
-    "category": "Action",
-    "dir": "Pooyan",
-    "path": "games/Pooyan/index.html",
-    "thumbnail": "games/Pooyan/screenshot.png"
-  },
-  {
     "id": "prism-path",
     "name": "Prism Path",
     "description": "Turn mirrors to route a laser through prisms and filters onto every target",
@@ -835,15 +817,6 @@
     "dir": "PyramidSolitaire",
     "path": "games/PyramidSolitaire/index.html",
     "thumbnail": "games/PyramidSolitaire/screenshot.png"
-  },
-  {
-    "id": "qbert",
-    "name": "Q*Bert",
-    "description": "Arcade action game - change cube colors while avoiding enemies",
-    "category": "Action",
-    "dir": "Qbert",
-    "path": "games/Qbert/index.html",
-    "thumbnail": ""
   },
   {
     "id": "qix",
@@ -880,15 +853,6 @@
     "dir": "RallyX",
     "path": "games/RallyX/index.html",
     "thumbnail": "games/RallyX/screenshot.png"
-  },
-  {
-    "id": "rampart",
-    "name": "Rampart",
-    "description": "Siege game - shell the fleet, then wall your castle back in",
-    "category": "Strategy",
-    "dir": "Rampart",
-    "path": "games/Rampart/index.html",
-    "thumbnail": "games/Rampart/screenshot.png"
   },
   {
     "id": "reversi",
@@ -970,6 +934,24 @@
     "dir": "SetGame",
     "path": "games/SetGame/index.html",
     "thumbnail": "games/SetGame/screenshot.png"
+  },
+  {
+    "id": "shepherds-sling",
+    "name": "Shepherd's Sling",
+    "description": "Young David guards the sheepfold - sling a stone at each balloon before a wolf reaches the flock",
+    "category": "Action",
+    "dir": "ShepherdsSling",
+    "path": "games/ShepherdsSling/index.html",
+    "thumbnail": "games/ShepherdsSling/screenshot.png"
+  },
+  {
+    "id": "shield-of-faith",
+    "name": "Shield of Faith",
+    "description": "Raise shields of faith to quench the fiery darts before they reach the six villages",
+    "category": "Action",
+    "dir": "ShieldOfFaith",
+    "path": "games/ShieldOfFaith/index.html",
+    "thumbnail": "games/ShieldOfFaith/screenshot.png"
   },
   {
     "id": "simon",
@@ -1080,15 +1062,6 @@
     "thumbnail": ""
   },
   {
-    "id": "space-invaders",
-    "name": "Space Invaders",
-    "description": "Classic arcade shooter - defeat the aliens",
-    "category": "Action",
-    "dir": "SpaceInvaders",
-    "path": "games/SpaceInvaders/index.html",
-    "thumbnail": ""
-  },
-  {
     "id": "split-ball",
     "name": "Split Ball",
     "description": "Grow walls to partition the arena and fence the bouncing balls in",
@@ -1105,6 +1078,15 @@
     "dir": "Stacker",
     "path": "games/Stacker/index.html",
     "thumbnail": ""
+  },
+  {
+    "id": "stained-glass-hop",
+    "name": "Stained Glass Hop",
+    "description": "Hop the little chorister over every pane of a stained-glass pyramid to light it up - mind the rolling stones",
+    "category": "Action",
+    "dir": "StainedGlassHop",
+    "path": "games/StainedGlassHop/index.html",
+    "thumbnail": "games/StainedGlassHop/screenshot.png"
   },
   {
     "id": "sudoku",
@@ -1132,6 +1114,15 @@
     "dir": "Tempest",
     "path": "games/Tempest/index.html",
     "thumbnail": "games/Tempest/screenshot.png"
+  },
+  {
+    "id": "temple-vessels",
+    "name": "Temple Vessels",
+    "description": "Recover the golden temple vessels from Babylon's storehouses and carry them home - dig traps to slow the guards",
+    "category": "Action",
+    "dir": "TempleVessels",
+    "path": "games/TempleVessels/index.html",
+    "thumbnail": "games/TempleVessels/screenshot.png"
   },
   {
     "id": "tetris",
@@ -1167,15 +1158,6 @@
     "category": "Puzzle",
     "dir": "TowerOfHanoi",
     "path": "games/TowerOfHanoi/index.html",
-    "thumbnail": ""
-  },
-  {
-    "id": "tower-stack",
-    "name": "Tower Stack",
-    "description": "Stack blocks as high as possible",
-    "category": "Action",
-    "dir": "TowerStack",
-    "path": "games/TowerStack/index.html",
     "thumbnail": ""
   },
   {
@@ -1224,6 +1206,15 @@
     "thumbnail": "games/Untangle/screenshot.png"
   },
   {
+    "id": "vineyard-keeper",
+    "name": "Vineyard Keeper",
+    "description": "Guard the vineyard - flick pebbles at the caterpillar as it winds down through the grapevines",
+    "category": "Action",
+    "dir": "VineyardKeeper",
+    "path": "games/VineyardKeeper/index.html",
+    "thumbnail": "games/VineyardKeeper/screenshot.png"
+  },
+  {
     "id": "whack-a-mole",
     "name": "Whack-A-Mole",
     "description": "Action game - tap moles as they pop up",
@@ -1267,6 +1258,15 @@
     "dir": "Yahtzee",
     "path": "games/Yahtzee/index.html",
     "thumbnail": ""
+  },
+  {
+    "id": "zacchaeus-climb",
+    "name": "Zacchaeus Climb",
+    "description": "Help short Zacchaeus bounce up the branches of the sycamore tree to see Jesus pass by",
+    "category": "Action",
+    "dir": "ZacchaeusClimb",
+    "path": "games/ZacchaeusClimb/index.html",
+    "thumbnail": "games/ZacchaeusClimb/screenshot.png"
   },
   {
     "id": "zaxxon",

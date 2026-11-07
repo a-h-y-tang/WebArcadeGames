@@ -11,10 +11,10 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Pang | [Pang/](Pang/) | Complete |
 | Mastermind | [Mastermind/](Mastermind/) | Complete |
 | Mini Golf | [MiniGolf/](MiniGolf/) | Complete |
-| Q*bert | [Qbert/](Qbert/) | Complete |
+| Stained Glass Hop | [StainedGlassHop/](StainedGlassHop/) | Complete |
 | Reversi (Othello) | [Reversi/](Reversi/) | Complete |
 | Match-3 | [Match3/](Match3/) | Complete |
-| Space Invaders | [SpaceInvaders/](SpaceInvaders/) | Complete |
+| Locust Swarm | [LocustSwarm/](LocustSwarm/) | Complete |
 | Flappy Bird | [FlappyBird/](FlappyBird/) | Complete |
 | 2048 | [2048/](2048/) | Complete |
 | Tetris | [Tetris/](Tetris/) | Complete |
@@ -26,12 +26,12 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Dino Run | [DinoRun/](DinoRun/) | Complete |
 | Whack-a-Mole | [WhackAMole/](WhackAMole/) | Complete |
 | Bubble Shooter | [BubbleShooter/](BubbleShooter/) | Complete |
-| Pac-Man | [PacMan/](PacMan/) | Complete |
+| Gleaning Fields | [GleaningFields/](GleaningFields/) | Complete |
 | Bomberman | [Bomberman/](Bomberman/) | Complete |
-| Centipede | [Centipede/](Centipede/) | Complete |
+| Vineyard Keeper | [VineyardKeeper/](VineyardKeeper/) | Complete |
 | Tron Light Cycles | [Tron/](Tron/) | Complete |
 | Lunar Lander | [LunarLander/](LunarLander/) | Complete |
-| Missile Command | [MissileCommand/](MissileCommand/) | Complete |
+| Shield of Faith | [ShieldOfFaith/](ShieldOfFaith/) | Complete |
 | Pong | [Pong/](Pong/) | Complete |
 | Minesweeper | [Minesweeper/](Minesweeper/) | Complete |
 | Frogger | [Frogger/](Frogger/) | Complete |
@@ -49,7 +49,7 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Light Cycles | [LightCycles/](LightCycles/) | Complete |
 | Gem Match | [GemMatch/](GemMatch/) | Complete |
 | Sokoban | [Sokoban/](Sokoban/) | Complete |
-| Doodle Jump | [DoodleJump/](DoodleJump/) | Complete |
+| Zacchaeus Climb | [ZacchaeusClimb/](ZacchaeusClimb/) | Complete |
 | Pyramid Solitaire | [PyramidSolitaire/](PyramidSolitaire/) | Complete |
 | Bowling | [Bowling/](Bowling/) | Complete |
 | Flow | [Flow/](Flow/) | Complete |
@@ -58,8 +58,8 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Tempest | [Tempest/](Tempest/) | Complete |
 | Moon Patrol | [MoonPatrol/](MoonPatrol/) | Complete |
 | Set | [SetGame/](SetGame/) | Complete |
-| Lumberjack | [Lumberjack/](Lumberjack/) | Complete |
-| Tower Stack | [TowerStack/](TowerStack/) | Complete |
+| Gopher Wood | [GopherWood/](GopherWood/) | Complete |
+| Ark Builder | [ArkBuilder/](ArkBuilder/) | Complete |
 | Hex | [Hex/](Hex/) | Complete |
 | Pengo | [Pengo/](Pengo/) | Complete |
 | Blob Drop | [BlobDrop/](BlobDrop/) | Complete |
@@ -111,7 +111,7 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Ski Slalom | [SkiSlalom/](SkiSlalom/) | Complete |
 | River Raid | [RiverRaid/](RiverRaid/) | Complete |
 | Slitherlink | [Slitherlink/](Slitherlink/) | Complete |
-| Lode Runner | [LodeRunner/](LodeRunner/) | Complete |
+| Temple Vessels | [TempleVessels/](TempleVessels/) | Complete |
 | Tank Battle | [TankBattle/](TankBattle/) | Complete |
 | Marble Loop | [MarbleLoop/](MarbleLoop/) | Complete |
 | Quoridor | [Quoridor/](Quoridor/) | Complete |
@@ -126,8 +126,8 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Barrel Climb | [BarrelClimb/](BarrelClimb/) | Complete |
 | BurgerTime | [BurgerTime/](BurgerTime/) | Complete |
 | Peg Pop | [PegPop/](PegPop/) | Complete |
-| Rampart | [Rampart/](Rampart/) | Complete |
-| Pooyan | [Pooyan/](Pooyan/) | Complete |
+| Nehemiah's Wall | [NehemiahsWall/](NehemiahsWall/) | Complete |
+| Shepherd's Sling | [ShepherdsSling/](ShepherdsSling/) | Complete |
 | Cavern Raider | [CavernRaider/](CavernRaider/) | Complete |
 | Droid Arena | [DroidArena/](DroidArena/) | Complete |
 | Paratrooper | [Paratrooper/](Paratrooper/) | Complete |
@@ -140,14 +140,14 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Planet Defender | [PlanetDefender/](PlanetDefender/) | Complete |
 | Canyon Raider | [CanyonRaider/](CanyonRaider/) | Complete |
 | Air Traffic Control | [AirTrafficControl/](AirTrafficControl/) | Complete |
-| Gold Runner | [GoldRunner/](GoldRunner/) | Complete |
+| Ophir Gold | [OphirGold/](OphirGold/) | Complete |
 | Skyscraper Spy | [SkyscraperSpy/](SkyscraperSpy/) | Complete |
 | Time Pilot | [TimePilot/](TimePilot/) | Complete |
 | Prism Path | [PrismPath/](PrismPath/) | Complete |
 | Zaxxon | [Zaxxon/](Zaxxon/) | Complete |
 | Split Ball | [SplitBall/](SplitBall/) | Complete |
 | Qix | [Qix/](Qix/) | Complete |
-| Burrow Brigade | [BurrowBrigade/](BurrowBrigade/) | Complete |
+| Flock to the Fold | [FlockToTheFold/](FlockToTheFold/) | Complete |
 | Laser Maze | [LaserMaze/](LaserMaze/) | Complete |
 
 ## Playing
