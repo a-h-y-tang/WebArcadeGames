@@ -13,14 +13,14 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Mini Golf | [MiniGolf/](MiniGolf/) | Complete |
 | Q*bert | [Qbert/](Qbert/) | Complete |
 | Reversi (Othello) | [Reversi/](Reversi/) | Complete |
-| Match-3 | [Match3/](Match3/) | Complete |
+| Fruit of the Spirit | [FruitOfTheSpirit/](FruitOfTheSpirit/) | Complete |
 | Space Invaders | [SpaceInvaders/](SpaceInvaders/) | Complete |
 | Flappy Bird | [FlappyBird/](FlappyBird/) | Complete |
 | 2048 | [2048/](2048/) | Complete |
 | Tetris | [Tetris/](Tetris/) | Complete |
 | Breakout | [Breakout/](Breakout/) | Complete |
 | Connect Four | [ConnectFour/](ConnectFour/) | Complete |
-| Simon | [Simon/](Simon/) | Complete |
+| Praise Echo | [PraiseEcho/](PraiseEcho/) | Complete |
 | Galaga | [Galaga/](Galaga/) | Complete |
 | Lights Out | [LightsOut/](LightsOut/) | Complete |
 | Dino Run | [DinoRun/](DinoRun/) | Complete |
@@ -47,13 +47,13 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Road Rush | [RoadRush/](RoadRush/) | Complete |
 | Boulder Dash | [BoulderDash/](BoulderDash/) | Complete |
 | Light Cycles | [LightCycles/](LightCycles/) | Complete |
-| Gem Match | [GemMatch/](GemMatch/) | Complete |
-| Sokoban | [Sokoban/](Sokoban/) | Complete |
+| Breastplate Gems | [BreastplateGems/](BreastplateGems/) | Complete |
+| Ark Loading | [ArkLoading/](ArkLoading/) | Complete |
 | Doodle Jump | [DoodleJump/](DoodleJump/) | Complete |
 | Pyramid Solitaire | [PyramidSolitaire/](PyramidSolitaire/) | Complete |
 | Bowling | [Bowling/](Bowling/) | Complete |
 | Flow | [Flow/](Flow/) | Complete |
-| Word Blaster | [WordBlaster/](WordBlaster/) | Complete |
+| Words of Life | [WordsOfLife/](WordsOfLife/) | Complete |
 | Untangle | [Untangle/](Untangle/) | Complete |
 | Tempest | [Tempest/](Tempest/) | Complete |
 | Moon Patrol | [MoonPatrol/](MoonPatrol/) | Complete |
@@ -65,12 +65,12 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Blob Drop | [BlobDrop/](BlobDrop/) | Complete |
 | FreeCell | [FreeCell/](FreeCell/) | Complete |
 | 15 Puzzle | [FifteenPuzzle/](FifteenPuzzle/) | Complete |
-| Word Guess | [WordGuess/](WordGuess/) | Complete |
+| Bible Words | [BibleWords/](BibleWords/) | Complete |
 | Klondike Solitaire | [Solitaire/](Solitaire/) | Complete |
 | Rush Hour | [RushHour/](RushHour/) | Complete |
 | SameGame | [SameGame/](SameGame/) | Complete |
 | Yahtzee | [Yahtzee/](Yahtzee/) | Complete |
-| Pipe Dream | [PipeDream/](PipeDream/) | Complete |
+| Living Water | [LivingWater/](LivingWater/) | Complete |
 | Nine Men's Morris | [NineMensMorris/](NineMensMorris/) | Complete |
 | Dig Dug | [DigDug/](DigDug/) | Complete |
 | Tower of Hanoi | [TowerOfHanoi/](TowerOfHanoi/) | Complete |
@@ -83,7 +83,7 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Turbo Racer | [TurboRacer/](TurboRacer/) | Complete |
 | Columns | [Columns/](Columns/) | Complete |
 | Dots and Boxes | [DotsAndBoxes/](DotsAndBoxes/) | Complete |
-| Maze | [Maze/](Maze/) | Complete |
+| Wilderness Wanderings | [WildernessWanderings/](WildernessWanderings/) | Complete |
 | Joust | [Joust/](Joust/) | Complete |
 | Checkers | [Checkers/](Checkers/) | Complete |
 | Flood It | [FloodIt/](FloodIt/) | Complete |
@@ -143,12 +143,12 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Gold Runner | [GoldRunner/](GoldRunner/) | Complete |
 | Skyscraper Spy | [SkyscraperSpy/](SkyscraperSpy/) | Complete |
 | Time Pilot | [TimePilot/](TimePilot/) | Complete |
-| Prism Path | [PrismPath/](PrismPath/) | Complete |
+| Light of the World | [LightOfTheWorld/](LightOfTheWorld/) | Complete |
 | Zaxxon | [Zaxxon/](Zaxxon/) | Complete |
 | Split Ball | [SplitBall/](SplitBall/) | Complete |
 | Qix | [Qix/](Qix/) | Complete |
 | Burrow Brigade | [BurrowBrigade/](BurrowBrigade/) | Complete |
-| Laser Maze | [LaserMaze/](LaserMaze/) | Complete |
+| Lamp unto My Feet | [LampUntoMyFeet/](LampUntoMyFeet/) | Complete |
 
 ## Playing
 

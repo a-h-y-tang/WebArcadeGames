@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bible Words</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Bible Words</h1>
+        <div id="hud">
+            <span>Streak: <strong id="streak">0</strong></span>
+            <span>Best: <strong id="best">0</strong></span>
+        </div>
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="400" height="600"></canvas>
+            <div id="overlay" class="visible">
+                <p id="overlay-title">Bible Words</p>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Press Space to start</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+        <p id="controls-hint">Type a 5-letter word &nbsp;·&nbsp; Enter to guess &nbsp;·&nbsp; 6 tries</p>
+        <p class="verse">&ldquo;I have hidden your word in my heart.&rdquo; &mdash; Psalm 119:11</p>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>

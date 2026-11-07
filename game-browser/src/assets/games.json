@@ -36,6 +36,15 @@
     "thumbnail": "games/AirTrafficControl/screenshot.png"
   },
   {
+    "id": "ark-loading",
+    "name": "Ark Loading",
+    "description": "Help Noah push every crate of food into the ark's storerooms before the rain begins",
+    "category": "Puzzle",
+    "dir": "ArkLoading",
+    "path": "games/ArkLoading/index.html",
+    "thumbnail": "games/ArkLoading/screenshot.png"
+  },
+  {
     "id": "artillery-duel",
     "name": "Artillery Duel",
     "description": "Strategic turn-based artillery combat game",
@@ -81,6 +90,15 @@
     "thumbnail": "games/Berzerk/screenshot.png"
   },
   {
+    "id": "bible-words",
+    "name": "Bible Words",
+    "description": "Guess the hidden five-letter Bible word in six tries - names, places and things from Scripture",
+    "category": "Puzzle",
+    "dir": "BibleWords",
+    "path": "games/BibleWords/index.html",
+    "thumbnail": "games/BibleWords/screenshot.png"
+  },
+  {
     "id": "blob-drop",
     "name": "Blob Drop",
     "description": "Drop colorful blobs to clear the board",
@@ -124,6 +142,15 @@
     "dir": "Breakout",
     "path": "games/Breakout/index.html",
     "thumbnail": ""
+  },
+  {
+    "id": "breastplate-gems",
+    "name": "Breastplate Gems",
+    "description": "Match the precious stones of the high priest's breastplate - ruby, topaz, emerald, sapphire and more",
+    "category": "Puzzle",
+    "dir": "BreastplateGems",
+    "path": "games/BreastplateGems/index.html",
+    "thumbnail": "games/BreastplateGems/screenshot.png"
   },
   {
     "id": "bubble-shooter",
@@ -378,6 +405,15 @@
     "thumbnail": ""
   },
   {
+    "id": "fruit-of-the-spirit",
+    "name": "Fruit of the Spirit",
+    "description": "Swap fruit to line up three or more - love, joy, peace and more ripen on the vine",
+    "category": "Puzzle",
+    "dir": "FruitOfTheSpirit",
+    "path": "games/FruitOfTheSpirit/index.html",
+    "thumbnail": "games/FruitOfTheSpirit/screenshot.png"
+  },
+  {
     "id": "fruit-slice",
     "name": "Fruit Slice",
     "description": "Swipe to slice falling fruit",
@@ -403,15 +439,6 @@
     "dir": "Galaga",
     "path": "games/Galaga/index.html",
     "thumbnail": "games/Galaga/screenshot.png"
-  },
-  {
-    "id": "gem-match",
-    "name": "Gem Match",
-    "description": "Match gemstones to clear levels",
-    "category": "Puzzle",
-    "dir": "GemMatch",
-    "path": "games/GemMatch/index.html",
-    "thumbnail": ""
   },
   {
     "id": "geo-dash",
@@ -522,13 +549,13 @@
     "thumbnail": ""
   },
   {
-    "id": "laser-maze",
-    "name": "Laser Maze",
-    "description": "Rotate mirrors to light every target with one laser beam",
+    "id": "lamp-unto-my-feet",
+    "name": "Lamp unto My Feet",
+    "description": "Turn the mirrors so one lamp's light reaches every oil lamp - and keep it out of the dark pits",
     "category": "Puzzle",
-    "dir": "LaserMaze",
-    "path": "games/LaserMaze/index.html",
-    "thumbnail": "games/LaserMaze/screenshot.png"
+    "dir": "LampUntoMyFeet",
+    "path": "games/LampUntoMyFeet/index.html",
+    "thumbnail": "games/LampUntoMyFeet/screenshot.png"
   },
   {
     "id": "light-cycles",
@@ -538,6 +565,15 @@
     "dir": "LightCycles",
     "path": "games/LightCycles/index.html",
     "thumbnail": "games/LightCycles/screenshot.png"
+  },
+  {
+    "id": "light-of-the-world",
+    "name": "Light of the World",
+    "description": "Turn mirrors to carry the light through prisms and coloured glass until every lampstand glows",
+    "category": "Puzzle",
+    "dir": "LightOfTheWorld",
+    "path": "games/LightOfTheWorld/index.html",
+    "thumbnail": "games/LightOfTheWorld/screenshot.png"
   },
   {
     "id": "light-up",
@@ -556,6 +592,15 @@
     "dir": "LightsOut",
     "path": "games/LightsOut/index.html",
     "thumbnail": ""
+  },
+  {
+    "id": "living-water",
+    "name": "Living Water",
+    "description": "Water gushes from the rock - lay pipe fast to carry it as far as you can before it spills",
+    "category": "Puzzle",
+    "dir": "LivingWater",
+    "path": "games/LivingWater/index.html",
+    "thumbnail": "games/LivingWater/screenshot.png"
   },
   {
     "id": "lode-runner",
@@ -619,24 +664,6 @@
     "dir": "Mastermind",
     "path": "games/Mastermind/index.html",
     "thumbnail": "games/Mastermind/screenshot.png"
-  },
-  {
-    "id": "match3",
-    "name": "Match 3",
-    "description": "Match three or more gems to clear levels",
-    "category": "Puzzle",
-    "dir": "Match3",
-    "path": "games/Match3/index.html",
-    "thumbnail": ""
-  },
-  {
-    "id": "maze",
-    "name": "Maze",
-    "description": "Navigate through procedurally generated mazes",
-    "category": "Puzzle",
-    "dir": "Maze",
-    "path": "games/Maze/index.html",
-    "thumbnail": "games/Maze/screenshot.png"
   },
   {
     "id": "memory-match",
@@ -783,15 +810,6 @@
     "thumbnail": ""
   },
   {
-    "id": "pipe-dream",
-    "name": "Pipe Dream",
-    "description": "Connect pipes before water flows through",
-    "category": "Puzzle",
-    "dir": "PipeDream",
-    "path": "games/PipeDream/index.html",
-    "thumbnail": "games/PipeDream/screenshot.png"
-  },
-  {
     "id": "planet-defender",
     "name": "Planet Defender",
     "description": "Side-scrolling rescue shooter - stop the aliens abducting the humanoids",
@@ -819,13 +837,13 @@
     "thumbnail": "games/Pooyan/screenshot.png"
   },
   {
-    "id": "prism-path",
-    "name": "Prism Path",
-    "description": "Turn mirrors to route a laser through prisms and filters onto every target",
+    "id": "praise-echo",
+    "name": "Praise Echo",
+    "description": "Praise Him with trumpet, strings, drum and bells - echo the growing melody back without a slip",
     "category": "Puzzle",
-    "dir": "PrismPath",
-    "path": "games/PrismPath/index.html",
-    "thumbnail": "games/PrismPath/screenshot.png"
+    "dir": "PraiseEcho",
+    "path": "games/PraiseEcho/index.html",
+    "thumbnail": "games/PraiseEcho/screenshot.png"
   },
   {
     "id": "pyramid-solitaire",
@@ -972,15 +990,6 @@
     "thumbnail": "games/SetGame/screenshot.png"
   },
   {
-    "id": "simon",
-    "name": "Simon",
-    "description": "Memory game - repeat the color sequence",
-    "category": "Puzzle",
-    "dir": "Simon",
-    "path": "games/Simon/index.html",
-    "thumbnail": ""
-  },
-  {
     "id": "skeet-shooter",
     "name": "Skeet Shooter",
     "description": "Shooting game - hit flying targets",
@@ -1059,15 +1068,6 @@
     "category": "Board Game",
     "dir": "SnakesAndLadders",
     "path": "games/SnakesAndLadders/index.html",
-    "thumbnail": ""
-  },
-  {
-    "id": "sokoban",
-    "name": "Sokoban",
-    "description": "Puzzle game - push boxes to their destinations",
-    "category": "Puzzle",
-    "dir": "Sokoban",
-    "path": "games/Sokoban/index.html",
     "thumbnail": ""
   },
   {
@@ -1233,22 +1233,22 @@
     "thumbnail": ""
   },
   {
-    "id": "word-blaster",
-    "name": "Word Blaster",
-    "description": "Typing game - blast words before they reach you",
-    "category": "Action",
-    "dir": "WordBlaster",
-    "path": "games/WordBlaster/index.html",
-    "thumbnail": "games/WordBlaster/screenshot.png"
+    "id": "wilderness-wanderings",
+    "name": "Wilderness Wanderings",
+    "description": "Follow the pillar of fire through the desert canyons to the green edge of the Promised Land",
+    "category": "Puzzle",
+    "dir": "WildernessWanderings",
+    "path": "games/WildernessWanderings/index.html",
+    "thumbnail": "games/WildernessWanderings/screenshot.png"
   },
   {
-    "id": "word-guess",
-    "name": "Word Guess",
-    "description": "Guess the word with limited attempts",
-    "category": "Puzzle",
-    "dir": "WordGuess",
-    "path": "games/WordGuess/index.html",
-    "thumbnail": "games/WordGuess/screenshot.png"
+    "id": "words-of-life",
+    "name": "Words of Life",
+    "description": "Typing game - catch the falling Bible words by typing them before they reach the ground",
+    "category": "Action",
+    "dir": "WordsOfLife",
+    "path": "games/WordsOfLife/index.html",
+    "thumbnail": "games/WordsOfLife/screenshot.png"
   },
   {
     "id": "xonix",
