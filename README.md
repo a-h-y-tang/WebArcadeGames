@@ -147,6 +147,7 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Zaxxon | [Zaxxon/](Zaxxon/) | Complete |
 | Split Ball | [SplitBall/](SplitBall/) | Complete |
 | Qix | [Qix/](Qix/) | Complete |
+| Burrow Brigade | [BurrowBrigade/](BurrowBrigade/) | Complete |
 
 ## Playing
 
