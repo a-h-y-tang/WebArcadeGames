@@ -141,7 +141,7 @@ test.describe('Game Browser', () => {
 
     // Check card has category badge
     const badge = firstCard.locator('span');
-    await expect(badge).toContainText(/Action|Puzzle|Strategy|Board Game|Card Game|Sports/);
+    await expect(badge).toContainText(/Action|Puzzle|Strategy|Board Game|Cards & Dice|Sports/);
 
     // Check Play button exists
     const playButton = firstCard.locator('button:has-text("Play")');
@@ -184,7 +184,7 @@ test.describe('Game Browser', () => {
       'Puzzle',
       'Strategy',
       'Board Game',
-      'Card Game',
+      'Cards & Dice',
       'Sports',
     ];
 
