@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fruit of the Spirit</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Fruit of the Spirit</h1>
+        <div id="hud">
+            <span>Score: <strong id="score">0</strong></span>
+            <span>Best: <strong id="best">0</strong></span>
+            <span>Moves: <strong id="moves">20</strong></span>
+        </div>
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="480" height="480"></canvas>
+            <div id="overlay" class="visible">
+                <p id="overlay-title">Fruit of the Spirit</p>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Press Space or Start to play</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+        <p id="controls-hint">Click a fruit, then an adjacent one to swap &nbsp;·&nbsp; match 3+ &nbsp;·&nbsp; Space to start</p>
+        <p class="verse">&ldquo;The fruit of the Spirit is love, joy, peace, forbearance, kindness, goodness, faithfulness, gentleness and self-control.&rdquo; &mdash; Galatians 5:22-23</p>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lamp unto My Feet</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="game">
+        <header class="hud">
+            <h1>LAMP UNTO MY FEET</h1>
+            <div class="stats">
+                <div class="stat"><span class="label">Level</span><span id="level">1</span></div>
+                <div class="stat"><span class="label">Lamps</span><span id="targets">0 / 1</span></div>
+                <div class="stat"><span class="label">Moves</span><span id="moves">0</span></div>
+                <div class="stat"><span class="label">Par</span><span id="par">1</span></div>
+                <div class="stat"><span class="label">Best</span><span id="best">&mdash;</span></div>
+            </div>
+        </header>
+
+        <div class="subhead">
+            <h2 id="level-name">A Lamp to My Feet</h2>
+            <p id="message"></p>
+        </div>
+
+        <div class="board-wrap">
+            <canvas id="canvas" width="600" height="480"></canvas>
+            <div id="overlay" class="overlay">
+                <h2 id="overlay-title">LEVEL SOLVED</h2>
+                <p id="overlay-sub"></p>
+                <div class="overlay-buttons">
+                    <button id="btn-next">Next Level</button>
+                </div>
+            </div>
+        </div>
+
+        <nav class="levels" id="level-select" aria-label="Level select"></nav>
+
+        <div class="controls">
+            <button id="btn-reset">Reset Level</button>
+        </div>
+
+        <div class="help">
+            <p>Click a mirror or splitter to rotate it</p>
+            <p><kbd>&larr;</kbd> <kbd>&uarr;</kbd> <kbd>&darr;</kbd> <kbd>&rarr;</kbd> move cursor</p>
+            <p><kbd>Space</kbd> rotate</p>
+            <p><kbd>R</kbd> reset &middot; <kbd>N</kbd> next level</p>
+            <p>Light every lamp, keep the light out of the dark pits.</p>
+            <p class="verse">&ldquo;Your word is a lamp for my feet, a light on my path.&rdquo; &mdash; Psalm 119:105</p>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>
