@@ -1,5 +1,5 @@
-// Qix — claim the field by drawing boxes while the Qix, the Sparx and your own
-// burning fuse try to stop you.
+// Promised Land — claim the land by fencing off fields while the whirlwind
+// (`qix`), the little foxes (`sparx`) and a brushfire (`fuse`) try to stop you.
 //
 // Two coordinate systems do all the work: CELLS (60x60, 10px each, one byte of
 // `claimed` apiece) and the LATTICE POINTS between them, which is where the
@@ -51,13 +51,13 @@ const SPARX_STRAIGHT = 0.75;         // chance of ignoring the marker at a junct
 const BEST_KEY = 'qix-best';
 
 const COL = {
-    claimed: '#16305c',
-    claimedEdge: '#2a5fa8',
-    frame: '#3b82f6',
-    stix: '#22d3ee',
+    claimed: '#1f4d2b',              // green pasture
+    claimedEdge: '#4d8f4f',
+    frame: '#a87b3f',                // wooden fence
+    stix: '#fde68a',                 // the new fence line
     marker: '#f8fafc',
-    qix: '#f472b6',
-    sparx: '#fbbf24',
+    qix: '#cbd5e1',                  // the whirlwind
+    sparx: '#f97316',                // the little foxes
     fuse: '#fb7185',
 };
 
@@ -916,7 +916,7 @@ function drawClaimed() {
 
 function drawFlashes() {
     for (const f of claimFlash) {
-        ctx.fillStyle = 'rgba(34, 211, 238, ' + (f.life / 0.45) * 0.35 + ')';
+        ctx.fillStyle = 'rgba(253, 230, 138, ' + (f.life / 0.45) * 0.35 + ')';
         ctx.beginPath();
         for (const i of f.cells) {
             const cx = i % GRID_W;
@@ -947,7 +947,7 @@ function drawQix() {
     for (let i = 0; i < qix.trail.length; i++) {
         const seg = qix.trail[i];
         const k = (i + 1) / qix.trail.length;
-        ctx.strokeStyle = 'rgba(244, 114, 182, ' + (0.08 + k * 0.5) + ')';
+        ctx.strokeStyle = 'rgba(203, 213, 225, ' + (0.08 + k * 0.5) + ')';
         ctx.lineWidth = 1 + k * 2;
         ctx.beginPath();
         ctx.moveTo(seg.x1, seg.y1);
@@ -1032,7 +1032,7 @@ function drawProgress() {
 
 function draw() {
     ctx.clearRect(0, 0, W, H);
-    ctx.fillStyle = '#060a14';
+    ctx.fillStyle = '#2b2116';             // unclaimed wilderness
     ctx.fillRect(0, 0, W, H);
 
     drawClaimed();

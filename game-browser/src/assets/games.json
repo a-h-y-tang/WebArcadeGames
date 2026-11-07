@@ -198,6 +198,15 @@
     "thumbnail": "games/ChainReaction/screenshot.png"
   },
   {
+    "id": "chariot-of-fire",
+    "name": "Chariot of Fire",
+    "description": "Fly a fiery chariot over an idol stronghold - your altitude is both your aim and your armour",
+    "category": "Action",
+    "dir": "ChariotOfFire",
+    "path": "games/ChariotOfFire/index.html",
+    "thumbnail": "games/ChariotOfFire/screenshot.png"
+  },
+  {
     "id": "checkers",
     "name": "Checkers",
     "description": "Classic board game - jump over opponent's pieces",
@@ -828,6 +837,15 @@
     "thumbnail": "games/PrismPath/screenshot.png"
   },
   {
+    "id": "promised-land",
+    "name": "Promised Land",
+    "description": "Fence off the land while the whirlwind and the little foxes hunt you",
+    "category": "Action",
+    "dir": "PromisedLand",
+    "path": "games/PromisedLand/index.html",
+    "thumbnail": "games/PromisedLand/screenshot.png"
+  },
+  {
     "id": "pyramid-solitaire",
     "name": "Pyramid Solitaire",
     "description": "Card solitaire with pyramid layout",
@@ -844,15 +862,6 @@
     "dir": "Qbert",
     "path": "games/Qbert/index.html",
     "thumbnail": ""
-  },
-  {
-    "id": "qix",
-    "name": "Qix",
-    "description": "Fence off the field while the Qix and the Sparx hunt you",
-    "category": "Action",
-    "dir": "Qix",
-    "path": "games/Qix/index.html",
-    "thumbnail": "games/Qix/screenshot.png"
   },
   {
     "id": "quoridor",
@@ -1267,14 +1276,5 @@
     "dir": "Yahtzee",
     "path": "games/Yahtzee/index.html",
     "thumbnail": ""
-  },
-  {
-    "id": "zaxxon",
-    "name": "Zaxxon",
-    "description": "Isometric fortress raid where your altitude is both your aim and your armour",
-    "category": "Action",
-    "dir": "Zaxxon",
-    "path": "games/Zaxxon/index.html",
-    "thumbnail": "games/Zaxxon/screenshot.png"
   }
 ]

@@ -55,7 +55,7 @@ async function openOnly(page, x0, x1, y0, y1) {
 
 const FRAME_CELLS = 236; // the one-cell border of a 60x60 grid
 
-test.describe('Qix', () => {
+test.describe('Promised Land', () => {
     test.beforeEach(async ({ page }) => {
         await page.goto(GAME_URL);
     });
@@ -64,8 +64,8 @@ test.describe('Qix', () => {
     // Initial / idle state
     // -----------------------------------------------------------------------
     test.describe('initial state', () => {
-        test('page title is Qix', async ({ page }) => {
-            await expect(page).toHaveTitle('Qix');
+        test('page title is Promised Land', async ({ page }) => {
+            await expect(page).toHaveTitle('Promised Land');
         });
 
         test('canvas is 600x600', async ({ page }) => {

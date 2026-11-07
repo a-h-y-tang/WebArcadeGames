@@ -3,7 +3,7 @@
     --panel: #111827;
     --ink: #e7ecf6;
     --muted: #7d8aa5;
-    --accent: #38bdf8;
+    --accent: #fb923c;
     --cool: #f59e0b;
 }
 
@@ -15,7 +15,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: radial-gradient(circle at 50% -20%, #1b2540, var(--bg));
+    background: radial-gradient(circle at 50% -20%, #3b1d4a, var(--bg));
     color: var(--ink);
     font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
 }
@@ -140,4 +140,10 @@ kbd {
     padding: 1px 6px;
     font-family: inherit;
     color: var(--ink);
+}
+
+.help .verse {
+    flex-basis: 100%;
+    font-style: italic;
+    color: var(--cool);
 }
