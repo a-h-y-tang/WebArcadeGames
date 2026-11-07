@@ -1,11 +1,3 @@
+# Cloudflare Pages: build with `npm run build`, then deploy the static output.
 name = "game-browser"
-type = "javascript"
-account_id = ""
-workers_dev = true
-
-[env.production]
-vars = { ENVIRONMENT = "production" }
-
-[build]
-command = "npm run build"
-cwd = "./"
+pages_build_output_dir = "dist/game-browser/browser"

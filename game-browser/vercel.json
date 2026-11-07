@@ -1,5 +1,5 @@
 {
   "buildCommand": "npm run build",
-  "outputDirectory": "dist/game-browser",
+  "outputDirectory": "dist/game-browser/browser",
   "framework": "angular"
 }
