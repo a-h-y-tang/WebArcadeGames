@@ -145,6 +145,7 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Time Pilot | [TimePilot/](TimePilot/) | Complete |
 | Prism Path | [PrismPath/](PrismPath/) | Complete |
 | Zaxxon | [Zaxxon/](Zaxxon/) | Complete |
+| Split Ball | [SplitBall/](SplitBall/) | Complete |
 
 ## Playing
 
