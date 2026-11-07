@@ -1098,6 +1098,15 @@
     "thumbnail": "games/Tetris/screenshot.png"
   },
   {
+    "id": "time-pilot",
+    "name": "Time Pilot",
+    "description": "Fly a 360-degree dogfight through five eras and rescue the pilots",
+    "category": "Action",
+    "dir": "TimePilot",
+    "path": "games/TimePilot/index.html",
+    "thumbnail": "games/TimePilot/screenshot.png"
+  },
+  {
     "id": "tower-defense",
     "name": "Tower Defense",
     "description": "Build and upgrade towers to stop ten waves of creeps",
