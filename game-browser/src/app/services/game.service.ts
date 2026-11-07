@@ -7,7 +7,7 @@ const CATEGORY_ORDER = [
   'Puzzle',
   'Strategy',
   'Board Game',
-  'Card Game',
+  'Cards & Dice',
   'Sports',
 ];
 

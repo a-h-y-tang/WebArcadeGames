@@ -6,7 +6,7 @@
     "category": "Puzzle",
     "dir": "2048",
     "path": "games/2048/index.html",
-    "thumbnail": ""
+    "thumbnail": "games/2048/screenshot.png"
   },
   {
     "id": "pool",
@@ -21,7 +21,7 @@
     "id": "air-hockey",
     "name": "Air Hockey",
     "description": "Fast-paced air hockey match against the computer",
-    "category": "Action",
+    "category": "Sports",
     "dir": "AirHockey",
     "path": "games/AirHockey/index.html",
     "thumbnail": "games/AirHockey/screenshot.png"
@@ -69,7 +69,7 @@
     "category": "Action",
     "dir": "Asteroids",
     "path": "games/Asteroids/index.html",
-    "thumbnail": ""
+    "thumbnail": "games/Asteroids/screenshot.png"
   },
   {
     "id": "barrel-climb",
@@ -87,7 +87,7 @@
     "category": "Strategy",
     "dir": "Battleship",
     "path": "games/Battleship/index.html",
-    "thumbnail": ""
+    "thumbnail": "games/Battleship/screenshot.png"
   },
   {
     "id": "berzerk",
@@ -114,7 +114,7 @@
     "category": "Puzzle",
     "dir": "BlobDrop",
     "path": "games/BlobDrop/index.html",
-    "thumbnail": ""
+    "thumbnail": "games/BlobDrop/screenshot.png"
   },
   {
     "id": "bomberman",
@@ -159,7 +159,7 @@
     "category": "Puzzle",
     "dir": "BubbleShooter",
     "path": "games/BubbleShooter/index.html",
-    "thumbnail": ""
+    "thumbnail": "games/BubbleShooter/screenshot.png"
   },
   {
     "id": "burger-time",
@@ -177,7 +177,7 @@
     "category": "Puzzle",
     "dir": "Calcudoku",
     "path": "games/Calcudoku/index.html",
-    "thumbnail": ""
+    "thumbnail": "games/Calcudoku/screenshot.png"
   },
   {
     "id": "canyon-raider",
@@ -222,7 +222,7 @@
     "category": "Board Game",
     "dir": "Checkers",
     "path": "games/Checkers/index.html",
-    "thumbnail": ""
+    "thumbnail": "games/Checkers/screenshot.png"
   },
   {
     "id": "columns",
@@ -240,7 +240,7 @@
     "category": "Board Game",
     "dir": "ConnectFour",
     "path": "games/ConnectFour/index.html",
-    "thumbnail": ""
+    "thumbnail": "games/ConnectFour/screenshot.png"
   },
   {
     "id": "curling",
@@ -258,7 +258,7 @@
     "category": "Sports",
     "dir": "Darts",
     "path": "games/Darts/index.html",
-    "thumbnail": ""
+    "thumbnail": "games/Darts/screenshot.png"
   },
   {
     "id": "defender",
@@ -294,7 +294,7 @@
     "category": "Strategy",
     "dir": "DotsAndBoxes",
     "path": "games/DotsAndBoxes/index.html",
-    "thumbnail": ""
+    "thumbnail": "games/DotsAndBoxes/screenshot.png"
   },
   {
     "id": "droid-arena",
@@ -309,7 +309,7 @@
     "id": "farkle",
     "name": "Farkle",
     "description": "Dice-rolling game - score combinations wisely",
-    "category": "Card Game",
+    "category": "Cards & Dice",
     "dir": "Farkle",
     "path": "games/Farkle/index.html",
     "thumbnail": "games/Farkle/screenshot.png"
@@ -339,7 +339,7 @@
     "category": "Puzzle",
     "dir": "FloodIt",
     "path": "games/FloodIt/index.html",
-    "thumbnail": ""
+    "thumbnail": "games/FloodIt/screenshot.png"
   },
   {
     "id": "flow",
@@ -348,22 +348,22 @@
     "category": "Puzzle",
     "dir": "Flow",
     "path": "games/Flow/index.html",
-    "thumbnail": ""
+    "thumbnail": "games/Flow/screenshot.png"
   },
   {
     "id": "fox-and-hounds",
     "name": "Fox and Hounds",
     "description": "Abstract strategy game - chase or escape",
-    "category": "Strategy",
+    "category": "Board Game",
     "dir": "FoxAndHounds",
     "path": "games/FoxAndHounds/index.html",
-    "thumbnail": ""
+    "thumbnail": "games/FoxAndHounds/screenshot.png"
   },
   {
     "id": "freecell",
     "name": "FreeCell",
     "description": "Card solitaire game with strategic depth",
-    "category": "Card Game",
+    "category": "Cards & Dice",
     "dir": "FreeCell",
     "path": "games/FreeCell/index.html",
     "thumbnail": "games/FreeCell/screenshot.png"
@@ -375,7 +375,7 @@
     "category": "Action",
     "dir": "Frostbite",
     "path": "games/Frostbite/index.html",
-    "thumbnail": ""
+    "thumbnail": "games/Frostbite/screenshot.png"
   },
   {
     "id": "fruit-of-the-spirit",
@@ -393,7 +393,7 @@
     "category": "Action",
     "dir": "FruitSlice",
     "path": "games/FruitSlice/index.html",
-    "thumbnail": ""
+    "thumbnail": "games/FruitSlice/screenshot.png"
   },
   {
     "id": "futoshiki",
@@ -402,7 +402,7 @@
     "category": "Puzzle",
     "dir": "Futoshiki",
     "path": "games/Futoshiki/index.html",
-    "thumbnail": ""
+    "thumbnail": "games/Futoshiki/screenshot.png"
   },
   {
     "id": "galaga",
@@ -420,7 +420,7 @@
     "category": "Action",
     "dir": "GeoDash",
     "path": "games/GeoDash/index.html",
-    "thumbnail": ""
+    "thumbnail": "games/GeoDash/screenshot.png"
   },
   {
     "id": "gleaning-fields",
@@ -435,10 +435,10 @@
     "id": "golf-solitaire",
     "name": "Golf Solitaire",
     "description": "Card solitaire with golf-themed scoring",
-    "category": "Card Game",
+    "category": "Cards & Dice",
     "dir": "GolfSolitaire",
     "path": "games/GolfSolitaire/index.html",
-    "thumbnail": ""
+    "thumbnail": "games/GolfSolitaire/screenshot.png"
   },
   {
     "id": "gomoku",
@@ -465,7 +465,7 @@
     "category": "Puzzle",
     "dir": "Hashi",
     "path": "games/Hashi/index.html",
-    "thumbnail": ""
+    "thumbnail": "games/Hashi/screenshot.png"
   },
   {
     "id": "hex",
@@ -474,7 +474,7 @@
     "category": "Board Game",
     "dir": "Hex",
     "path": "games/Hex/index.html",
-    "thumbnail": ""
+    "thumbnail": "games/Hex/screenshot.png"
   },
   {
     "id": "hitori",
@@ -483,16 +483,16 @@
     "category": "Puzzle",
     "dir": "Hitori",
     "path": "games/Hitori/index.html",
-    "thumbnail": ""
+    "thumbnail": "games/Hitori/screenshot.png"
   },
   {
     "id": "hnefatafl",
     "name": "Hnefatafl",
     "description": "Ancient Norse strategy board game",
-    "category": "Strategy",
+    "category": "Board Game",
     "dir": "Hnefatafl",
     "path": "games/Hnefatafl/index.html",
-    "thumbnail": ""
+    "thumbnail": "games/Hnefatafl/preview.png"
   },
   {
     "id": "jacobs-ladder",
@@ -537,7 +537,7 @@
     "category": "Puzzle",
     "dir": "Klotski",
     "path": "games/Klotski/index.html",
-    "thumbnail": ""
+    "thumbnail": "games/Klotski/screenshot.png"
   },
   {
     "id": "lamp-unto-my-feet",
@@ -582,7 +582,7 @@
     "category": "Puzzle",
     "dir": "LightsOut",
     "path": "games/LightsOut/index.html",
-    "thumbnail": ""
+    "thumbnail": "games/LightsOut/screenshot.png"
   },
   {
     "id": "living-water",
@@ -618,16 +618,16 @@
     "category": "Action",
     "dir": "LunarLander",
     "path": "games/LunarLander/index.html",
-    "thumbnail": ""
+    "thumbnail": "games/LunarLander/screenshot.png"
   },
   {
     "id": "mahjong-solitaire",
     "name": "Mahjong Solitaire",
     "description": "Match mahjong tiles to clear the board",
-    "category": "Card Game",
+    "category": "Puzzle",
     "dir": "MahjongSolitaire",
     "path": "games/MahjongSolitaire/index.html",
-    "thumbnail": ""
+    "thumbnail": "games/MahjongSolitaire/screenshot.png"
   },
   {
     "id": "mancala",
@@ -636,7 +636,7 @@
     "category": "Board Game",
     "dir": "Mancala",
     "path": "games/Mancala/index.html",
-    "thumbnail": ""
+    "thumbnail": "games/Mancala/screenshot.png"
   },
   {
     "id": "manna-catch",
@@ -657,6 +657,24 @@
     "thumbnail": "games/MarbleLoop/screenshot.png"
   },
   {
+    "id": "marble-shooter",
+    "name": "Marble Shooter",
+    "description": "Fire marbles into the chain crawling along a spiral track - pop three of a colour before it reaches the pit",
+    "category": "Puzzle",
+    "dir": "MarbleShooter",
+    "path": "games/MarbleShooter/index.html",
+    "thumbnail": "games/MarbleShooter/screenshot.png"
+  },
+  {
+    "id": "marble-spiral",
+    "name": "Marble Spiral",
+    "description": "A train of marbles winds toward the centre - line up three of a colour to pop them and clear the spiral",
+    "category": "Puzzle",
+    "dir": "MarbleSpiral",
+    "path": "games/MarbleSpiral/index.html",
+    "thumbnail": "games/MarbleSpiral/screenshot.png"
+  },
+  {
     "id": "mastermind",
     "name": "Mastermind",
     "description": "Guess the code with logical deduction",
@@ -672,7 +690,7 @@
     "category": "Puzzle",
     "dir": "Minesweeper",
     "path": "games/Minesweeper/index.html",
-    "thumbnail": ""
+    "thumbnail": "games/Minesweeper/screenshot.png"
   },
   {
     "id": "mini-golf",
@@ -681,7 +699,7 @@
     "category": "Sports",
     "dir": "MiniGolf",
     "path": "games/MiniGolf/index.html",
-    "thumbnail": ""
+    "thumbnail": "games/MiniGolf/screenshot.png"
   },
   {
     "id": "moon-patrol",
@@ -735,7 +753,7 @@
     "category": "Puzzle",
     "dir": "Nonogram",
     "path": "games/Nonogram/index.html",
-    "thumbnail": ""
+    "thumbnail": "games/Nonogram/screenshot.png"
   },
   {
     "id": "ophir-gold",
@@ -768,7 +786,7 @@
     "id": "peg-blast",
     "name": "Peg Blast",
     "description": "Aim-and-drop physics game - clear every orange peg",
-    "category": "Action",
+    "category": "Puzzle",
     "dir": "PegBlast",
     "path": "games/PegBlast/index.html",
     "thumbnail": "games/PegBlast/screenshot.png"
@@ -777,7 +795,7 @@
     "id": "peg-pop",
     "name": "Peg Pop",
     "description": "Drop balls into a field of pegs and clear every orange target",
-    "category": "Action",
+    "category": "Puzzle",
     "dir": "PegPop",
     "path": "games/PegPop/index.html",
     "thumbnail": "games/PegPop/screenshot.png"
@@ -789,7 +807,7 @@
     "category": "Puzzle",
     "dir": "PegSolitaire",
     "path": "games/PegSolitaire/index.html",
-    "thumbnail": ""
+    "thumbnail": "games/PegSolitaire/screenshot.png"
   },
   {
     "id": "pengo",
@@ -804,7 +822,7 @@
     "id": "pill-drop",
     "name": "Pill Drop",
     "description": "Match falling pills to eliminate viruses",
-    "category": "Action",
+    "category": "Puzzle",
     "dir": "PillDrop",
     "path": "games/PillDrop/index.html",
     "thumbnail": "games/PillDrop/screenshot.png"
@@ -816,7 +834,7 @@
     "category": "Action",
     "dir": "Pinball",
     "path": "games/Pinball/index.html",
-    "thumbnail": ""
+    "thumbnail": "games/Pinball/screenshot.png"
   },
   {
     "id": "planet-defender",
@@ -834,7 +852,7 @@
     "category": "Sports",
     "dir": "Pong",
     "path": "games/Pong/index.html",
-    "thumbnail": ""
+    "thumbnail": "games/Pong/screenshot.png"
   },
   {
     "id": "praise-echo",
@@ -858,7 +876,7 @@
     "id": "pyramid-solitaire",
     "name": "Pyramid Solitaire",
     "description": "Card solitaire with pyramid layout",
-    "category": "Card Game",
+    "category": "Cards & Dice",
     "dir": "PyramidSolitaire",
     "path": "games/PyramidSolitaire/index.html",
     "thumbnail": "games/PyramidSolitaire/screenshot.png"
@@ -897,7 +915,7 @@
     "category": "Board Game",
     "dir": "Reversi",
     "path": "games/Reversi/index.html",
-    "thumbnail": ""
+    "thumbnail": "games/Reversi/screenshot.png"
   },
   {
     "id": "river-raid",
@@ -924,7 +942,7 @@
     "category": "Action",
     "dir": "RoadRush",
     "path": "games/RoadRush/index.html",
-    "thumbnail": ""
+    "thumbnail": "games/RoadRush/screenshot.png"
   },
   {
     "id": "robot-arena",
@@ -942,7 +960,7 @@
     "category": "Puzzle",
     "dir": "RushHour",
     "path": "games/RushHour/index.html",
-    "thumbnail": ""
+    "thumbnail": "games/RushHour/screenshot.png"
   },
   {
     "id": "same-game",
@@ -966,7 +984,7 @@
     "id": "set-game",
     "name": "Set Game",
     "description": "Card game - find sets of three cards with matching attributes",
-    "category": "Card Game",
+    "category": "Cards & Dice",
     "dir": "SetGame",
     "path": "games/SetGame/index.html",
     "thumbnail": "games/SetGame/screenshot.png"
@@ -1032,7 +1050,7 @@
     "category": "Puzzle",
     "dir": "SlidingPuzzle",
     "path": "games/SlidingPuzzle/index.html",
-    "thumbnail": ""
+    "thumbnail": "games/SlidingPuzzle/screenshot.png"
   },
   {
     "id": "slime-volley",
@@ -1056,10 +1074,10 @@
     "id": "solitaire",
     "name": "Solitaire",
     "description": "Classic card solitaire game",
-    "category": "Card Game",
+    "category": "Cards & Dice",
     "dir": "Solitaire",
     "path": "games/Solitaire/index.html",
-    "thumbnail": ""
+    "thumbnail": "games/Solitaire/screenshot.png"
   },
   {
     "id": "split-ball",
@@ -1077,7 +1095,7 @@
     "category": "Action",
     "dir": "Stacker",
     "path": "games/Stacker/index.html",
-    "thumbnail": ""
+    "thumbnail": "games/Stacker/screenshot.png"
   },
   {
     "id": "stained-glass-hop",
@@ -1095,7 +1113,7 @@
     "category": "Puzzle",
     "dir": "Sudoku",
     "path": "games/Sudoku/index.html",
-    "thumbnail": ""
+    "thumbnail": "games/Sudoku/screenshot.png"
   },
   {
     "id": "tank-battle",
@@ -1158,13 +1176,13 @@
     "category": "Puzzle",
     "dir": "TowerOfHanoi",
     "path": "games/TowerOfHanoi/index.html",
-    "thumbnail": ""
+    "thumbnail": "games/TowerOfHanoi/screenshot.png"
   },
   {
     "id": "tri-peaks",
     "name": "Tri-Peaks",
     "description": "Card solitaire with three-pyramid layout",
-    "category": "Card Game",
+    "category": "Cards & Dice",
     "dir": "TriPeaks",
     "path": "games/TriPeaks/index.html",
     "thumbnail": "games/TriPeaks/screenshot.png"
@@ -1194,7 +1212,7 @@
     "category": "Board Game",
     "dir": "UltimateTicTacToe",
     "path": "games/UltimateTicTacToe/index.html",
-    "thumbnail": ""
+    "thumbnail": "games/UltimateTicTacToe/screenshot.png"
   },
   {
     "id": "untangle",
@@ -1230,7 +1248,7 @@
     "category": "Action",
     "dir": "WhackAMole",
     "path": "games/WhackAMole/index.html",
-    "thumbnail": ""
+    "thumbnail": "games/WhackAMole/screenshot.png"
   },
   {
     "id": "wilderness-wanderings",
@@ -1257,16 +1275,16 @@
     "category": "Action",
     "dir": "Xonix",
     "path": "games/Xonix/index.html",
-    "thumbnail": ""
+    "thumbnail": "games/Xonix/screenshot.png"
   },
   {
     "id": "yahtzee",
     "name": "Yahtzee",
     "description": "Dice game - roll and score combinations",
-    "category": "Card Game",
+    "category": "Cards & Dice",
     "dir": "Yahtzee",
     "path": "games/Yahtzee/index.html",
-    "thumbnail": ""
+    "thumbnail": "games/Yahtzee/screenshot.png"
   },
   {
     "id": "zacchaeus-climb",
