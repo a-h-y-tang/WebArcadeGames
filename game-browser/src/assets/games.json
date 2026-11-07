@@ -828,6 +828,15 @@
     "thumbnail": ""
   },
   {
+    "id": "qix",
+    "name": "Qix",
+    "description": "Fence off the field while the Qix and the Sparx hunt you",
+    "category": "Action",
+    "dir": "Qix",
+    "path": "games/Qix/index.html",
+    "thumbnail": "games/Qix/screenshot.png"
+  },
+  {
     "id": "quoridor",
     "name": "Quoridor",
     "description": "Race your pawn across the board while fencing off the computer",
