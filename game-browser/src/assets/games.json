@@ -81,15 +81,6 @@
     "thumbnail": "games/Berzerk/screenshot.png"
   },
   {
-    "id": "blackjack",
-    "name": "Blackjack",
-    "description": "Classic card game - beat the dealer to 21",
-    "category": "Card Game",
-    "dir": "Blackjack",
-    "path": "games/Blackjack/index.html",
-    "thumbnail": ""
-  },
-  {
     "id": "blob-drop",
     "name": "Blob Drop",
     "description": "Drop colorful blobs to clear the board",
@@ -162,15 +153,6 @@
     "thumbnail": ""
   },
   {
-    "id": "cavern-raider",
-    "name": "Cavern Raider",
-    "description": "Fly a scout ship through a winding cave, bombing fuel tanks and missile bases",
-    "category": "Action",
-    "dir": "CavernRaider",
-    "path": "games/CavernRaider/index.html",
-    "thumbnail": "games/CavernRaider/screenshot.png"
-  },
-  {
     "id": "canyon-raider",
     "name": "Canyon Raider",
     "description": "Fly a river canyon - shoot the traffic, blow the bridges, don't run dry",
@@ -178,6 +160,15 @@
     "dir": "CanyonRaider",
     "path": "games/CanyonRaider/index.html",
     "thumbnail": "games/CanyonRaider/screenshot.png"
+  },
+  {
+    "id": "cavern-raider",
+    "name": "Cavern Raider",
+    "description": "Fly a scout ship through a winding cave, bombing fuel tanks and missile bases",
+    "category": "Action",
+    "dir": "CavernRaider",
+    "path": "games/CavernRaider/index.html",
+    "thumbnail": "games/CavernRaider/screenshot.png"
   },
   {
     "id": "centipede",
@@ -711,15 +702,6 @@
     "thumbnail": "games/Pang/screenshot.png"
   },
   {
-    "id": "peg-pop",
-    "name": "Peg Pop",
-    "description": "Drop balls into a field of pegs and clear every orange target",
-    "category": "Action",
-    "dir": "PegPop",
-    "path": "games/PegPop/index.html",
-    "thumbnail": "games/PegPop/screenshot.png"
-  },
-  {
     "id": "paratrooper",
     "name": "Paratrooper",
     "description": "Defend the tower - shoot down helicopters and their paratroopers",
@@ -736,6 +718,15 @@
     "dir": "PegBlast",
     "path": "games/PegBlast/index.html",
     "thumbnail": "games/PegBlast/screenshot.png"
+  },
+  {
+    "id": "peg-pop",
+    "name": "Peg Pop",
+    "description": "Drop balls into a field of pegs and clear every orange target",
+    "category": "Action",
+    "dir": "PegPop",
+    "path": "games/PegPop/index.html",
+    "thumbnail": "games/PegPop/screenshot.png"
   },
   {
     "id": "peg-solitaire",
@@ -810,6 +801,15 @@
     "thumbnail": "games/Pooyan/screenshot.png"
   },
   {
+    "id": "prism-path",
+    "name": "Prism Path",
+    "description": "Turn mirrors to route a laser through prisms and filters onto every target",
+    "category": "Puzzle",
+    "dir": "PrismPath",
+    "path": "games/PrismPath/index.html",
+    "thumbnail": "games/PrismPath/screenshot.png"
+  },
+  {
     "id": "pyramid-solitaire",
     "name": "Pyramid Solitaire",
     "description": "Card solitaire with pyramid layout",
@@ -828,6 +828,15 @@
     "thumbnail": ""
   },
   {
+    "id": "quoridor",
+    "name": "Quoridor",
+    "description": "Race your pawn across the board while fencing off the computer",
+    "category": "Board Game",
+    "dir": "Quoridor",
+    "path": "games/Quoridor/index.html",
+    "thumbnail": "games/Quoridor/screenshot.png"
+  },
+  {
     "id": "rally-chase",
     "name": "Rally Chase",
     "description": "Drive a scrolling maze for flags and shake pursuers with smoke",
@@ -844,15 +853,6 @@
     "dir": "RallyX",
     "path": "games/RallyX/index.html",
     "thumbnail": "games/RallyX/screenshot.png"
-  },
-  {
-    "id": "quoridor",
-    "name": "Quoridor",
-    "description": "Race your pawn across the board while fencing off the computer",
-    "category": "Board Game",
-    "dir": "Quoridor",
-    "path": "games/Quoridor/index.html",
-    "thumbnail": "games/Quoridor/screenshot.png"
   },
   {
     "id": "rampart",
@@ -963,6 +963,15 @@
     "thumbnail": "games/SkeetShooter/screenshot.png"
   },
   {
+    "id": "ski-slalom",
+    "name": "Ski Slalom",
+    "description": "Downhill ski racing - carve through the gates and dodge the trees",
+    "category": "Sports",
+    "dir": "SkiSlalom",
+    "path": "games/SkiSlalom/index.html",
+    "thumbnail": "games/SkiSlalom/screenshot.png"
+  },
+  {
     "id": "sky-climber",
     "name": "Sky Climber",
     "description": "Scale a skyscraper one hand at a time, dodging shutters and falling pots",
@@ -972,13 +981,13 @@
     "thumbnail": "games/SkyClimber/screenshot.png"
   },
   {
-    "id": "ski-slalom",
-    "name": "Ski Slalom",
-    "description": "Downhill ski racing - carve through the gates and dodge the trees",
-    "category": "Sports",
-    "dir": "SkiSlalom",
-    "path": "games/SkiSlalom/index.html",
-    "thumbnail": "games/SkiSlalom/screenshot.png"
+    "id": "skyscraper-spy",
+    "name": "Skyscraper Spy",
+    "description": "Infiltrate a 16 storey building - take the secret documents, ride the lifts, escape",
+    "category": "Action",
+    "dir": "SkyscraperSpy",
+    "path": "games/SkyscraperSpy/index.html",
+    "thumbnail": "games/SkyscraperSpy/screenshot.png"
   },
   {
     "id": "sliding-puzzle",
@@ -990,15 +999,6 @@
     "thumbnail": ""
   },
   {
-    "id": "slitherlink",
-    "name": "Slitherlink",
-    "description": "Loop logic puzzle - draw one closed loop that fits every clue",
-    "category": "Puzzle",
-    "dir": "Slitherlink",
-    "path": "games/Slitherlink/index.html",
-    "thumbnail": "games/Slitherlink/screenshot.png"
-  },
-  {
     "id": "slime-volley",
     "name": "Slime Volley",
     "description": "Physics volleyball - outjump a slime rival to 7 points",
@@ -1006,6 +1006,15 @@
     "dir": "SlimeVolley",
     "path": "games/SlimeVolley/index.html",
     "thumbnail": "games/SlimeVolley/screenshot.png"
+  },
+  {
+    "id": "slitherlink",
+    "name": "Slitherlink",
+    "description": "Loop logic puzzle - draw one closed loop that fits every clue",
+    "category": "Puzzle",
+    "dir": "Slitherlink",
+    "path": "games/Slitherlink/index.html",
+    "thumbnail": "games/Slitherlink/screenshot.png"
   },
   {
     "id": "snake",
@@ -1096,6 +1105,15 @@
     "dir": "Tetris",
     "path": "games/Tetris/index.html",
     "thumbnail": "games/Tetris/screenshot.png"
+  },
+  {
+    "id": "time-pilot",
+    "name": "Time Pilot",
+    "description": "Fly a 360-degree dogfight through five eras and rescue the pilots",
+    "category": "Action",
+    "dir": "TimePilot",
+    "path": "games/TimePilot/index.html",
+    "thumbnail": "games/TimePilot/screenshot.png"
   },
   {
     "id": "tower-defense",
