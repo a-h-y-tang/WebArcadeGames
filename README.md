@@ -148,6 +148,7 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Split Ball | [SplitBall/](SplitBall/) | Complete |
 | Qix | [Qix/](Qix/) | Complete |
 | Burrow Brigade | [BurrowBrigade/](BurrowBrigade/) | Complete |
+| Laser Maze | [LaserMaze/](LaserMaze/) | Complete |
 
 ## Playing
 
