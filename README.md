@@ -6,7 +6,7 @@ For each new game, put it in a new folder. Each game should have its own README.
 
 | Game | Folder | Status |
 |---|---|---|
-| Snake | [Snake/](Snake/) | Complete |
+| Lost Sheep | [LostSheep/](LostSheep/) | Complete |
 | Nonogram | [Nonogram/](Nonogram/) | Complete |
 | Pang | [Pang/](Pang/) | Complete |
 | Mastermind | [Mastermind/](Mastermind/) | Complete |
@@ -15,10 +15,10 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Reversi (Othello) | [Reversi/](Reversi/) | Complete |
 | Match-3 | [Match3/](Match3/) | Complete |
 | Space Invaders | [SpaceInvaders/](SpaceInvaders/) | Complete |
-| Flappy Bird | [FlappyBird/](FlappyBird/) | Complete |
+| Noah's Dove | [NoahsDove/](NoahsDove/) | Complete |
 | 2048 | [2048/](2048/) | Complete |
-| Tetris | [Tetris/](Tetris/) | Complete |
-| Breakout | [Breakout/](Breakout/) | Complete |
+| Temple Stones | [TempleStones/](TempleStones/) | Complete |
+| Walls of Jericho | [WallsOfJericho/](WallsOfJericho/) | Complete |
 | Connect Four | [ConnectFour/](ConnectFour/) | Complete |
 | Simon | [Simon/](Simon/) | Complete |
 | Galaga | [Galaga/](Galaga/) | Complete |
@@ -34,7 +34,7 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Missile Command | [MissileCommand/](MissileCommand/) | Complete |
 | Pong | [Pong/](Pong/) | Complete |
 | Minesweeper | [Minesweeper/](Minesweeper/) | Complete |
-| Frogger | [Frogger/](Frogger/) | Complete |
+| Jordan Crossing | [JordanCrossing/](JordanCrossing/) | Complete |
 | Asteroids | [Asteroids/](Asteroids/) | Complete |
 | Air Hockey | [AirHockey/](AirHockey/) | Complete |
 | Battleship | [Battleship/](Battleship/) | Complete |
@@ -42,7 +42,7 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Skeet Shooter | [SkeetShooter/](SkeetShooter/) | Complete |
 | Fruit Slice | [FruitSlice/](FruitSlice/) | Complete |
 | Artillery Duel | [ArtilleryDuel/](ArtilleryDuel/) | Complete |
-| Memory Match | [MemoryMatch/](MemoryMatch/) | Complete |
+| Noah's Ark Pairs | [NoahsArkPairs/](NoahsArkPairs/) | Complete |
 | Stacker | [Stacker/](Stacker/) | Complete |
 | Road Rush | [RoadRush/](RoadRush/) | Complete |
 | Boulder Dash | [BoulderDash/](BoulderDash/) | Complete |
@@ -99,7 +99,7 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Futoshiki | [Futoshiki/](Futoshiki/) | Complete |
 | Darts (501) | [Darts/](Darts/) | Complete |
 | Light Up (Akari) | [LightUp/](LightUp/) | Complete |
-| Snakes and Ladders | [SnakesAndLadders/](SnakesAndLadders/) | Complete |
+| Jacob's Ladder | [JacobsLadder/](JacobsLadder/) | Complete |
 | Hnefatafl | [Hnefatafl/](Hnefatafl/) | Complete |
 | Klotski | [Klotski/](Klotski/) | Complete |
 | Farkle | [Farkle/](Farkle/) | Complete |
@@ -107,7 +107,7 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Mahjong Solitaire | [MahjongSolitaire/](MahjongSolitaire/) | Complete |
 | TriPeaks Solitaire | [TriPeaks/](TriPeaks/) | Complete |
 | Kakuro | [Kakuro/](Kakuro/) | Complete |
-| Kaboom! | [Kaboom/](Kaboom/) | Complete |
+| Manna Catch | [MannaCatch/](MannaCatch/) | Complete |
 | Ski Slalom | [SkiSlalom/](SkiSlalom/) | Complete |
 | River Raid | [RiverRaid/](RiverRaid/) | Complete |
 | Slitherlink | [Slitherlink/](Slitherlink/) | Complete |

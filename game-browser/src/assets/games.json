@@ -117,15 +117,6 @@
     "thumbnail": "games/Bowling/screenshot.png"
   },
   {
-    "id": "breakout",
-    "name": "Breakout",
-    "description": "Paddle-based arcade game - break all the bricks",
-    "category": "Action",
-    "dir": "Breakout",
-    "path": "games/Breakout/index.html",
-    "thumbnail": ""
-  },
-  {
     "id": "bubble-shooter",
     "name": "Bubble Shooter",
     "description": "Aim and pop bubbles before they overflow",
@@ -324,15 +315,6 @@
     "thumbnail": "games/FifteenPuzzle/screenshot.png"
   },
   {
-    "id": "flappy-bird",
-    "name": "Flappy Bird",
-    "description": "Navigate a bird through pipes with careful taps",
-    "category": "Action",
-    "dir": "FlappyBird",
-    "path": "games/FlappyBird/index.html",
-    "thumbnail": ""
-  },
-  {
     "id": "flood-it",
     "name": "Flood It",
     "description": "Flood the board with one color to win",
@@ -367,15 +349,6 @@
     "dir": "FreeCell",
     "path": "games/FreeCell/index.html",
     "thumbnail": "games/FreeCell/screenshot.png"
-  },
-  {
-    "id": "frogger",
-    "name": "Frogger",
-    "description": "Guide a frog across traffic and water",
-    "category": "Action",
-    "dir": "Frogger",
-    "path": "games/Frogger/index.html",
-    "thumbnail": ""
   },
   {
     "id": "frostbite",
@@ -495,6 +468,24 @@
     "thumbnail": ""
   },
   {
+    "id": "jacobs-ladder",
+    "name": "Jacob's Ladder",
+    "description": "Climb the golden ladders of Jacob's dream and slip past the serpents in a race to square 100",
+    "category": "Board Game",
+    "dir": "JacobsLadder",
+    "path": "games/JacobsLadder/index.html",
+    "thumbnail": "games/JacobsLadder/screenshot.png"
+  },
+  {
+    "id": "jordan-crossing",
+    "name": "Jordan Crossing",
+    "description": "Guide a little lamb across the caravan road and the River Jordan to the safety of the sheepfold",
+    "category": "Action",
+    "dir": "JordanCrossing",
+    "path": "games/JordanCrossing/index.html",
+    "thumbnail": "games/JordanCrossing/screenshot.png"
+  },
+  {
     "id": "joust",
     "name": "Joust",
     "description": "Arcade action game - defeat flying enemies",
@@ -502,15 +493,6 @@
     "dir": "Joust",
     "path": "games/Joust/index.html",
     "thumbnail": "games/Joust/screenshot.png"
-  },
-  {
-    "id": "kaboom",
-    "name": "Kaboom",
-    "description": "Catch falling bombs before they explode",
-    "category": "Action",
-    "dir": "Kaboom",
-    "path": "games/Kaboom/index.html",
-    "thumbnail": "games/Kaboom/screenshot.png"
   },
   {
     "id": "kakuro",
@@ -576,6 +558,15 @@
     "thumbnail": "games/LodeRunner/screenshot.png"
   },
   {
+    "id": "lost-sheep",
+    "name": "Lost Sheep",
+    "description": "Lead the shepherd's flock and gather every lost lamb - the flock grows with each one",
+    "category": "Action",
+    "dir": "LostSheep",
+    "path": "games/LostSheep/index.html",
+    "thumbnail": "games/LostSheep/screenshot.png"
+  },
+  {
     "id": "lumberjack",
     "name": "Lumberjack",
     "description": "Action game - fell trees and avoid obstacles",
@@ -612,6 +603,15 @@
     "thumbnail": ""
   },
   {
+    "id": "manna-catch",
+    "name": "Manna Catch",
+    "description": "Bread from heaven! Slide your baskets to gather every flake of manna before it touches the ground",
+    "category": "Action",
+    "dir": "MannaCatch",
+    "path": "games/MannaCatch/index.html",
+    "thumbnail": "games/MannaCatch/screenshot.png"
+  },
+  {
     "id": "marble-loop",
     "name": "Marble Loop",
     "description": "Spiral marble shooter - burst three of a colour before the chain reaches the pit",
@@ -646,15 +646,6 @@
     "dir": "Maze",
     "path": "games/Maze/index.html",
     "thumbnail": "games/Maze/screenshot.png"
-  },
-  {
-    "id": "memory-match",
-    "name": "Memory Match",
-    "description": "Classic memory game - match pairs of cards",
-    "category": "Puzzle",
-    "dir": "MemoryMatch",
-    "path": "games/MemoryMatch/index.html",
-    "thumbnail": "games/MemoryMatch/screenshot.png"
   },
   {
     "id": "minesweeper",
@@ -700,6 +691,24 @@
     "dir": "NineMensMorris",
     "path": "games/NineMensMorris/index.html",
     "thumbnail": "games/NineMensMorris/screenshot.png"
+  },
+  {
+    "id": "noahs-ark-pairs",
+    "name": "Noah's Ark Pairs",
+    "description": "The animals came two by two - find every matching pair and lead them into the ark",
+    "category": "Puzzle",
+    "dir": "NoahsArkPairs",
+    "path": "games/NoahsArkPairs/index.html",
+    "thumbnail": "games/NoahsArkPairs/screenshot.png"
+  },
+  {
+    "id": "noahs-dove",
+    "name": "Noah's Dove",
+    "description": "Fly Noah's dove between the mountain peaks over the flood waters, searching for dry land",
+    "category": "Action",
+    "dir": "NoahsDove",
+    "path": "games/NoahsDove/index.html",
+    "thumbnail": "games/NoahsDove/screenshot.png"
   },
   {
     "id": "nonogram",
@@ -1053,24 +1062,6 @@
     "thumbnail": "games/Slitherlink/screenshot.png"
   },
   {
-    "id": "snake",
-    "name": "Snake",
-    "description": "Classic snake game - eat food and grow longer",
-    "category": "Action",
-    "dir": "Snake",
-    "path": "games/Snake/index.html",
-    "thumbnail": ""
-  },
-  {
-    "id": "snakes-and-ladders",
-    "name": "Snakes and Ladders",
-    "description": "Classic board game - race to the end",
-    "category": "Board Game",
-    "dir": "SnakesAndLadders",
-    "path": "games/SnakesAndLadders/index.html",
-    "thumbnail": ""
-  },
-  {
     "id": "sokoban",
     "name": "Sokoban",
     "description": "Puzzle game - push boxes to their destinations",
@@ -1143,13 +1134,13 @@
     "thumbnail": "games/Tempest/screenshot.png"
   },
   {
-    "id": "tetris",
-    "name": "Tetris",
-    "description": "Classic falling block puzzle game",
+    "id": "temple-stones",
+    "name": "Temple Stones",
+    "description": "Fit the hewn stones of Solomon's temple together - complete a course to clear it",
     "category": "Puzzle",
-    "dir": "Tetris",
-    "path": "games/Tetris/index.html",
-    "thumbnail": "games/Tetris/screenshot.png"
+    "dir": "TempleStones",
+    "path": "games/TempleStones/index.html",
+    "thumbnail": "games/TempleStones/screenshot.png"
   },
   {
     "id": "time-pilot",
@@ -1231,6 +1222,15 @@
     "dir": "Untangle",
     "path": "games/Untangle/index.html",
     "thumbnail": "games/Untangle/screenshot.png"
+  },
+  {
+    "id": "walls-of-jericho",
+    "name": "Walls of Jericho",
+    "description": "Sound the trumpet blast against the walls of Jericho until every stone comes tumbling down",
+    "category": "Action",
+    "dir": "WallsOfJericho",
+    "path": "games/WallsOfJericho/index.html",
+    "thumbnail": "games/WallsOfJericho/screenshot.png"
   },
   {
     "id": "whack-a-mole",

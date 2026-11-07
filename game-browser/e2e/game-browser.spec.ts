@@ -44,14 +44,14 @@ test.describe('Game Browser', () => {
     let gameCards = page.locator('app-game-card');
     await expect(gameCards).toHaveCount(GAME_COUNT);
 
-    // Search for "Tetris"
+    // Search for "Temple Stones"
     const searchInput = page.locator('input[placeholder="Search games..."]');
-    await searchInput.fill('Tetris');
+    await searchInput.fill('Temple Stones');
 
-    // Should show only Tetris
+    // Should show only Temple Stones
     gameCards = page.locator('app-game-card');
     await expect(gameCards).toHaveCount(1);
-    await expect(gameCards.first().locator('h3')).toContainText('Tetris');
+    await expect(gameCards.first().locator('h3')).toContainText('Temple Stones');
   });
 
   test('should filter by category', async ({ page }) => {
@@ -81,18 +81,18 @@ test.describe('Game Browser', () => {
 
     // Search within puzzles
     const searchInput = page.locator('input[placeholder="Search games..."]');
-    await searchInput.fill('Tetris');
+    await searchInput.fill('Temple Stones');
 
-    // Should show only Tetris (which is a Puzzle)
+    // Should show only Temple Stones (which is a Puzzle)
     const gameCards = page.locator('app-game-card');
     await expect(gameCards).toHaveCount(1);
-    await expect(gameCards.first().locator('h3')).toContainText('Tetris');
+    await expect(gameCards.first().locator('h3')).toContainText('Temple Stones');
   });
 
   test('should clear search with clear button', async ({ page }) => {
     // Search for a game
     const searchInput = page.locator('input[placeholder="Search games..."]');
-    await searchInput.fill('Tetris');
+    await searchInput.fill('Temple Stones');
 
     // Clear button should appear
     const clearButton = page.locator('button:has-text("Clear")');
