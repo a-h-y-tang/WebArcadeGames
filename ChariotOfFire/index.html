@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chariot of Fire</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="game">
+        <header class="hud">
+            <h1>CHARIOT OF FIRE</h1>
+            <div class="stats">
+                <div class="stat"><span class="label">Score</span><span id="score">0</span></div>
+                <div class="stat"><span class="label">Level</span><span id="level">1</span></div>
+                <div class="stat"><span class="label">Ships</span><span id="lives">3</span></div>
+                <div class="stat"><span class="label">Oil</span><span id="fuel">100</span></div>
+                <div class="stat"><span class="label">Best</span><span id="best">0</span></div>
+            </div>
+        </header>
+
+        <div class="board-wrap">
+            <canvas id="canvas" width="480" height="640"></canvas>
+            <div id="overlay" class="overlay visible">
+                <h2 id="overlay-title">CHARIOT OF FIRE</h2>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Press Space or click Start to play</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+
+        <div class="help">
+            <p><kbd>&larr;</kbd> <kbd>&rarr;</kbd> / <kbd>A</kbd> <kbd>D</kbd> steer</p>
+            <p><kbd>&uarr;</kbd> <kbd>&darr;</kbd> / <kbd>W</kbd> <kbd>S</kbd> climb &amp; dive</p>
+            <p><kbd>Space</kbd> fire</p>
+            <p><kbd>P</kbd> pause</p>
+            <p>Your altitude is your aim &mdash; fly low to topple the idol altars, level up to meet an enemy chariot.</p>
+            <p class="verse">&ldquo;The hills were full of horses and chariots of fire.&rdquo; &mdash; 2 Kings 6:17</p>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>

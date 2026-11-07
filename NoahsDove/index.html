@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Noah's Dove</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Noah's Dove</h1>
+        <div id="hud">
+            <span>Score: <strong id="score">0</strong></span>
+            <span>Best: <strong id="best">0</strong></span>
+        </div>
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="400" height="600"></canvas>
+            <div id="overlay" class="visible">
+                <p id="overlay-title">Noah's Dove</p>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Press Space to flap and start</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+        <p id="controls-hint">Space / ↑ / W / click to flap &nbsp;·&nbsp; P to pause</p>
+        <p class="verse">&ldquo;When the dove returned to him, there in its beak was a freshly plucked olive leaf!&rdquo; &mdash; Genesis 8:11</p>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
