@@ -1,13 +1,13 @@
-# Elevator Action
+# Skyscraper Spy
 
-A top-to-bottom infiltration of a sixteen storey building, in the spirit of
-Taito's *Elevator Action*. Take the secret documents from behind every red door,
+A top-to-bottom infiltration of a sixteen storey building, inspired by
+classic lift-riding arcade games. Take the secret documents from behind every red door,
 ride the lifts down to the basement, and walk out of the getaway exit before the
 building's agents gun you down.
 
 Open `index.html` in any browser — no build step, no server.
 
-![Elevator Action](screenshot.png)
+![Skyscraper Spy](screenshot.png)
 
 ## How to play
 
@@ -73,7 +73,7 @@ assumptions behind them.
 ## Tests
 
 ```powershell
-npx playwright test ElevatorAction/tests/
+npx playwright test SkyscraperSpy/tests/
 ```
 
 117 Playwright specs cover the building layout, walking and crouching, calling

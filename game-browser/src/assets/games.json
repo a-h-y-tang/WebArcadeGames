@@ -288,15 +288,6 @@
     "thumbnail": "games/DroidArena/screenshot.png"
   },
   {
-    "id": "elevator-action",
-    "name": "Elevator Action",
-    "description": "Infiltrate a 16 storey building - take the secret documents, ride the lifts, escape",
-    "category": "Action",
-    "dir": "ElevatorAction",
-    "path": "games/ElevatorAction/index.html",
-    "thumbnail": "games/ElevatorAction/screenshot.png"
-  },
-  {
     "id": "farkle",
     "name": "Farkle",
     "description": "Dice-rolling game - score combinations wisely",
@@ -988,6 +979,15 @@
     "dir": "SkyClimber",
     "path": "games/SkyClimber/index.html",
     "thumbnail": "games/SkyClimber/screenshot.png"
+  },
+  {
+    "id": "skyscraper-spy",
+    "name": "Skyscraper Spy",
+    "description": "Infiltrate a 16 storey building - take the secret documents, ride the lifts, escape",
+    "category": "Action",
+    "dir": "SkyscraperSpy",
+    "path": "games/SkyscraperSpy/index.html",
+    "thumbnail": "games/SkyscraperSpy/screenshot.png"
   },
   {
     "id": "sliding-puzzle",

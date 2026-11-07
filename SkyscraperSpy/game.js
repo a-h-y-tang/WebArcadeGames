@@ -1,5 +1,5 @@
 // ---------------------------------------------------------------------------
-// Elevator Action — a top-to-bottom infiltration of a sixteen storey building.
+// Skyscraper Spy — a top-to-bottom infiltration of a sixteen storey building.
 //
 // You drop onto the roof, take the secret documents from behind every red door,
 // ride the lifts down to the basement and walk out of the getaway exit. The
@@ -272,7 +272,7 @@ function gameOver() {
     if (score > best) {
         best = score;
         try {
-            localStorage.setItem('elevatoraction-best', String(best));
+            localStorage.setItem('skyscraperspy-best', String(best));
         } catch (err) {
             /* private browsing — the run still counts, it just is not remembered */
         }
@@ -885,9 +885,9 @@ function frame(now) {
 // Init
 // ---------------------------------------------------------------------------
 
-best = parseInt(localStorage.getItem('elevatoraction-best') || '0', 10) || 0;
+best = parseInt(localStorage.getItem('skyscraperspy-best') || '0', 10) || 0;
 loadLevel(1);
 state = 'idle';
 updateHud();
-showOverlay('ELEVATOR ACTION', '', 'Press Space or click Start to play');
+showOverlay('SKYSCRAPER SPY', '', 'Press Space or click Start to play');
 requestAnimationFrame(frame);

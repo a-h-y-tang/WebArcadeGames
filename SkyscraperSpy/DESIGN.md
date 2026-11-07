@@ -1,9 +1,9 @@
-# Elevator Action — Design
+# Skyscraper Spy — Design
 
 ## Concept
 
-A top-to-bottom infiltration game on a single HTML5 canvas, in the spirit of
-Taito's *Elevator Action*. You are a spy who drops onto the roof of a sixteen
+A top-to-bottom infiltration game on a single HTML5 canvas, inspired by classic
+lift-riding arcade games. You are a spy who drops onto the roof of a sixteen
 storey building. Somewhere inside, behind the red doors, are the secret
 documents. Collect every one of them, ride the elevators down to the basement
 and walk out of the getaway exit before the building's agents gun you down.
@@ -107,7 +107,7 @@ of lives ends the game.
 | Escape through the basement exit | 1000 |
 
 Three levels add agents, speed and documents. Clearing the third wins the game.
-The best score is kept in `localStorage` under `elevatoraction-best`.
+The best score is kept in `localStorage` under `skyscraperspy-best`.
 
 ## Controls
 
@@ -144,10 +144,8 @@ deck.
 
 Decisions made without a human to ask, kept to the simpler reading each time:
 
-1. **Branch name.** The task asked for a branch named after the game
-   (`elevator-action`), but this session is required to develop and push on its
-   designated branch `claude/compassionate-ramanujan-7dzrq7`. The hard branch
-   requirement wins; the game name lives in the folder name instead.
+1. **Branch name.** The game was developed on the session's designated branch
+   `claude/compassionate-ramanujan-7dzrq7`; the game name lives in the folder.
 2. **Floors are continuous.** The original leaves open hoistways you can fall
    into. Here the slab runs unbroken across a shaft, so walking is never blocked
    and nobody falls. This is what makes agents crushable (they wander across

@@ -45,7 +45,7 @@ const place = (page, floor, x) =>
         player.onElevator = -1;
     }, [floor, x]);
 
-test.describe('Elevator Action', () => {
+test.describe('Skyscraper Spy', () => {
     test.beforeEach(async ({ page }) => {
         await page.goto(GAME_URL);
     });
@@ -54,8 +54,8 @@ test.describe('Elevator Action', () => {
     // Initial / idle state
     // -----------------------------------------------------------------------
     test.describe('initial state', () => {
-        test('page title is Elevator Action', async ({ page }) => {
-            await expect(page).toHaveTitle('Elevator Action');
+        test('page title is Skyscraper Spy', async ({ page }) => {
+            await expect(page).toHaveTitle('Skyscraper Spy');
         });
 
         test('start overlay is visible', async ({ page }) => {
@@ -93,7 +93,7 @@ test.describe('Elevator Action', () => {
         });
 
         test('best score loads from localStorage', async ({ page }) => {
-            await page.evaluate(() => window.localStorage.setItem('elevatoraction-best', '7400'));
+            await page.evaluate(() => window.localStorage.setItem('skyscraperspy-best', '7400'));
             await page.reload();
             await expect(page.locator('#best')).toHaveText('7400');
         });
@@ -1235,11 +1235,11 @@ test.describe('Elevator Action', () => {
                 bullets.push({ x: 320, y: floorY(6) - SHOT_H, vx: -BULLET_SPEED, from: 'enemy' });
             });
             await advance(page, 10);
-            expect(await page.evaluate(() => window.localStorage.getItem('elevatoraction-best'))).toBe('4321');
+            expect(await page.evaluate(() => window.localStorage.getItem('skyscraperspy-best'))).toBe('4321');
         });
 
         test('a lower score does not overwrite the best', async ({ page }) => {
-            await page.evaluate(() => window.localStorage.setItem('elevatoraction-best', '9000'));
+            await page.evaluate(() => window.localStorage.setItem('skyscraperspy-best', '9000'));
             await page.reload();
             await startQuiet(page);
             await page.evaluate(() => {
@@ -1252,7 +1252,7 @@ test.describe('Elevator Action', () => {
                 bullets.push({ x: 320, y: floorY(6) - SHOT_H, vx: -BULLET_SPEED, from: 'enemy' });
             });
             await advance(page, 10);
-            expect(await page.evaluate(() => window.localStorage.getItem('elevatoraction-best'))).toBe('9000');
+            expect(await page.evaluate(() => window.localStorage.getItem('skyscraperspy-best'))).toBe('9000');
         });
 
         test('the overlay reports the final score', async ({ page }) => {
@@ -1294,26 +1294,26 @@ test.describe('Elevator Action', () => {
         const games = () =>
             JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'game-browser/src/assets/games.json'), 'utf8'));
 
-        test('games.json lists Elevator Action', () => {
-            const entry = games().find((g) => g.id === 'elevator-action');
+        test('games.json lists Skyscraper Spy', () => {
+            const entry = games().find((g) => g.id === 'skyscraper-spy');
             expect(entry).toBeTruthy();
-            expect(entry.name).toBe('Elevator Action');
-            expect(entry.dir).toBe('ElevatorAction');
-            expect(entry.path).toBe('games/ElevatorAction/index.html');
-            expect(entry.thumbnail).toBe('games/ElevatorAction/screenshot.png');
+            expect(entry.name).toBe('Skyscraper Spy');
+            expect(entry.dir).toBe('SkyscraperSpy');
+            expect(entry.path).toBe('games/SkyscraperSpy/index.html');
+            expect(entry.thumbnail).toBe('games/SkyscraperSpy/screenshot.png');
             expect(entry.description.length).toBeGreaterThan(10);
         });
 
         test('the game is filed under a category the browser already knows', () => {
             const all = games();
-            const entry = all.find((g) => g.id === 'elevator-action');
-            const known = new Set(all.filter((g) => g.id !== 'elevator-action').map((g) => g.category));
+            const entry = all.find((g) => g.id === 'skyscraper-spy');
+            const known = new Set(all.filter((g) => g.id !== 'skyscraper-spy').map((g) => g.category));
             expect(known.has(entry.category)).toBe(true);
         });
 
         test('the games.json entry stays alphabetically sorted by name', () => {
             const all = games();
-            const i = all.findIndex((g) => g.id === 'elevator-action');
+            const i = all.findIndex((g) => g.id === 'skyscraper-spy');
             expect(i).toBeGreaterThan(0);
             expect(all[i - 1].name.localeCompare(all[i].name)).toBeLessThanOrEqual(0);
             if (i + 1 < all.length) {
@@ -1322,19 +1322,19 @@ test.describe('Elevator Action', () => {
         });
 
         test('the thumbnail the browser points at exists', () => {
-            expect(fs.existsSync(path.join(REPO_ROOT, 'ElevatorAction/screenshot.png'))).toBe(true);
+            expect(fs.existsSync(path.join(REPO_ROOT, 'SkyscraperSpy/screenshot.png'))).toBe(true);
         });
 
         test('the root README lists the game', () => {
             const readme = fs.readFileSync(path.join(REPO_ROOT, 'README.md'), 'utf8');
             expect(readme).toMatch(
-                /\|\s*Elevator Action\s*\|\s*\[ElevatorAction\/\]\(ElevatorAction\/\)\s*\|\s*(Complete|In Progress)\s*\|/,
+                /\|\s*Skyscraper Spy\s*\|\s*\[SkyscraperSpy\/\]\(SkyscraperSpy\/\)\s*\|\s*(Complete|In Progress)\s*\|/,
             );
         });
 
         test('the game ships its own README and DESIGN docs', () => {
-            expect(fs.existsSync(path.join(REPO_ROOT, 'ElevatorAction/README.md'))).toBe(true);
-            expect(fs.existsSync(path.join(REPO_ROOT, 'ElevatorAction/DESIGN.md'))).toBe(true);
+            expect(fs.existsSync(path.join(REPO_ROOT, 'SkyscraperSpy/README.md'))).toBe(true);
+            expect(fs.existsSync(path.join(REPO_ROOT, 'SkyscraperSpy/DESIGN.md'))).toBe(true);
         });
     });
 
