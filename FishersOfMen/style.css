@@ -98,6 +98,7 @@ canvas {
     width: 100%;
     height: auto;
     image-rendering: auto;
+    touch-action: none;   /* steering by drag must not scroll the page */
 }
 
 .overlay {

@@ -778,6 +778,7 @@ function togglePause() {
 document.addEventListener('keydown', function (e) {
     if (e.code === 'ArrowLeft' || e.code === 'ArrowRight' || e.code === 'KeyA' || e.code === 'KeyD') {
         keys[e.code] = true;
+        pointerX = null;   // the keyboard has the helm until the pointer moves again
         e.preventDefault();
         return;
     }
@@ -793,6 +794,10 @@ document.addEventListener('keydown', function (e) {
 
 document.addEventListener('keyup', function (e) {
     keys[e.code] = false;
+});
+
+window.addEventListener('blur', function () {
+    keys = {};
 });
 
 function canvasX(e) {

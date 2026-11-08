@@ -101,7 +101,9 @@ and advance the world one `simStep()` at a time.
   `simStep()` reads both: a held arrow key moves at full speed and takes priority,
   otherwise `chase()` eases the boat or the net toward the pointer at that same
   speed without overshooting. Keyboard and touch therefore share one code path and
-  one set of clamps.
+  one set of clamps. Pressing an arrow key clears `pointerX`, so a cursor left
+  parked over the water cannot drag the boat back the moment the key is released,
+  and losing window focus clears the key map rather than leaving a key stuck down.
 - **Rendering.** `draw()` paints sky, shore, water with a moving foam line and sun
   shafts, the sea bed, snags, fish (each with a wagging tail), the rope, the net with
   its catch inside, and the boat with its sail and fisherman. Drawing never mutates
@@ -114,7 +116,7 @@ and advance the world one `simStep()` at a time.
 | `index.html` | HUD, canvas, overlay and help text |
 | `style.css` | lakeside palette and responsive layout |
 | `game.js` | constants, level table, simulation, rendering, input |
-| `tests/fishers-of-men.spec.js` | 57 Playwright tests |
+| `tests/fishers-of-men.spec.js` | 58 Playwright tests |
 
 ## Assumptions
 

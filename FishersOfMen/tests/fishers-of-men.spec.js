@@ -350,6 +350,19 @@ test.describe('pointer control', () => {
         expect(s.boat.x).toBeGreaterThanOrEqual(0);
     });
 
+    test('the boat does not snap back to a parked cursor after a key press', async ({ page }) => {
+        await sandbox(page);
+        await page.evaluate(() => { boat.x = 300; });
+        const p = await pointAt(page, 620, 40);
+        await page.mouse.move(p.x, p.y);     // cursor left sitting over the water
+        await page.keyboard.down('ArrowLeft');
+        await step(page, 20);
+        await page.keyboard.up('ArrowLeft');
+        const taken = (await snapshot(page)).boat.x;
+        await step(page, 60);                // keyboard keeps the helm until the pointer moves again
+        expect((await snapshot(page)).boat.x).toBe(taken);
+    });
+
     test('the keyboard still wins when both are used', async ({ page }) => {
         await sandbox(page);
         await page.evaluate(() => { boat.x = 300; });
