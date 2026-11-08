@@ -26,6 +26,7 @@ var HAUL_MIN = 48;           // px/s - however full the net, it still comes home
 var TEAR_CD = 0.7;           // seconds of grace after a snag tears the net
 var ESCAPE_GRACE = 1.5;      // seconds an escaped fish cannot be re-caught
 var BONUS_PER_EXTRA = 10;    // points per fish beyond the first in one haul
+var RESTOCK_DELAY = 4;       // seconds before a landed fish's replacement swims in
 
 var BEST_KEY = 'fishersofmen-best';
 
@@ -115,6 +116,7 @@ var boat = { x: (W - 110) / 2, y: 30, w: 110, h: 34 };
 var net = { x: 0, y: WATER_TOP, w: 56, h: 44, mode: 'stowed', fish: [], tearCd: 0 };
 var fish = [];
 var snags = [];
+var restockQueue = [];   // kinds due to swim back in, with their countdowns
 var keys = {};
 var pointerX = null;   // canvas-space x the player is pointing at, or null
 
@@ -218,6 +220,7 @@ function loadLevel(n) {
     net.y = WATER_TOP;
     net.fish = [];
     net.tearCd = 0;
+    restockQueue = [];
     srand(0x5ea + level * 7919);
     stockSea();
     document.getElementById('level-name').textContent = cfg.name;
@@ -319,6 +322,7 @@ function hitSnag() {
     );
     escaped.immune = ESCAPE_GRACE;
     fish.push(escaped);
+    cancelRestock(lost.kind);
     document.getElementById('message').textContent = 'The net tore - a fish got away!';
 }
 
@@ -376,6 +380,7 @@ function simStep() {
 
     moveFish();
     moveSnags();
+    restockSea();
 
     if (net.mode !== 'stowed') {
         catchFish();
@@ -423,7 +428,44 @@ function catchFish() {
         if (fish[i].immune > 0) continue;
         if (overlaps(net, fish[i])) {
             net.fish.push(makeCatch(fish[i].kind));
+            restockQueue.push({ kind: fish[i].kind, t: RESTOCK_DELAY });
             fish.splice(i, 1);
+        }
+    }
+}
+
+// The shoals keep moving through: a fish taken out of the sea is replaced a few
+// seconds later by one swimming in from the edge of its own band, so no level can
+// be fished dry and left unfinishable.
+function restockSea() {
+    for (var i = restockQueue.length - 1; i >= 0; i--) {
+        restockQueue[i].t -= DT;
+        if (restockQueue[i].t > 0) continue;
+        spawnLaneFish(restockQueue[i].kind);
+        restockQueue.splice(i, 1);
+    }
+}
+
+function spawnLaneFish(kind) {
+    var lanes = LEVELS[level - 1].lanes;
+    var lane = null;
+    for (var i = 0; i < lanes.length; i++) if (lanes[i].kind === kind) lane = lanes[i];
+    if (!lane) return;
+    var k = FISH_KINDS[kind];
+    var dir = rand() < 0.5 ? 1 : -1;
+    var y = clamp(lane.top + rand() * Math.max(1, lane.bottom - lane.top - k.h),
+        WATER_TOP + 2, SEA_FLOOR - k.h);
+    var speed = Math.round(lane.speed * (0.75 + rand() * 0.5));
+    fish.push(makeFish(kind, dir > 0 ? -k.w : W, y, dir, speed));
+}
+
+// A fish that tears its way out is already back in the sea, so it cancels one
+// pending replacement of its kind rather than doubling the shoal.
+function cancelRestock(kind) {
+    for (var i = 0; i < restockQueue.length; i++) {
+        if (restockQueue[i].kind === kind) {
+            restockQueue.splice(i, 1);
+            return;
         }
     }
 }

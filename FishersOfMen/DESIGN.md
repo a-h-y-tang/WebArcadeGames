@@ -28,8 +28,11 @@ is sky, far shore and boat; everything between the waterline and the sea floor a
 | Bream | 25 | middle | mid-sized |
 | Tilapia | 50 | deep | the big one, slowest to carry |
 
-Fish swim straight across their band and are recycled at the far edge, so a shoal
-never thins out. Each level also drifts a number of **snags** &mdash; waterlogged
+Fish swim straight across their band and are recycled at the far edge. A fish taken
+out of the sea is replaced four seconds later by another swimming in from the edge of
+its own band, so the shoals keep moving through and no level can be fished dry and
+left unfinishable. A fish that tears its way back out of the net cancels one pending
+replacement rather than doubling the shoal. Each level also drifts a number of **snags** &mdash; waterlogged
 driftwood tangled with weed &mdash; through the middle depths.
 
 **Casting.** With the net stowed, the boat rows left and right and the net rides with
@@ -116,7 +119,7 @@ and advance the world one `simStep()` at a time.
 | `index.html` | HUD, canvas, overlay and help text |
 | `style.css` | lakeside palette and responsive layout |
 | `game.js` | constants, level table, simulation, rendering, input |
-| `tests/fishers-of-men.spec.js` | 58 Playwright tests |
+| `tests/fishers-of-men.spec.js` | 60 Playwright tests |
 
 ## Assumptions
 
@@ -132,8 +135,11 @@ These were decided without being specified, taking the simpler reading each time
    weight, where the catch only counts once it is aboard, is the new mechanic here.
 3. **No lives.** The pressure is the clock alone. A torn net costs fish, not a life,
    which keeps the game gentle enough for younger players.
-4. **Time, not accuracy, is the limit.** Fish are recycled rather than exhausted, so
-   a level can always be finished; the question is whether it can be finished in time.
+4. **Time, not accuracy, is the limit.** Every fish landed is restocked from the edge
+   a few seconds later, so a level can always be finished; the question is whether it
+   can be finished in time. Without that, a level like the last one &mdash; 19 fish in
+   the water for a quota of 18 &mdash; could be rendered unwinnable by a few torn
+   nets.
 5. **Escaped fish swim free.** A fish shaken out of the net is immune for 1.5 s. The
    alternative &mdash; letting it be re-caught instantly &mdash; made snags
    meaningless.

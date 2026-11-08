@@ -704,6 +704,49 @@ test.describe('the sea', () => {
         expect(offscreen).toBe(0);
     });
 
+    test('a fish taken out of the sea is replaced by one swimming in from the edge', async ({ page }) => {
+        await sandbox(page);
+        await putNet(page, { mode: 'down', x: 200, y: 200 });
+        await placeFish(page, { kind: 'sardine', x: 210, y: 210, speed: 0 });
+        await step(page, 1);
+        expect((await snapshot(page)).fish).toBe(0);
+
+        await step(page, Math.ceil(await page.evaluate(() => RESTOCK_DELAY) * 60) + 10);
+        const sea = await page.evaluate(() => fish.map((f) => ({ x: f.x, w: f.w, kind: f.kind, speed: f.speed })));
+        expect(sea.length).toBe(1);
+        expect(sea[0].kind).toBe('sardine');
+        expect(sea[0].speed).toBeGreaterThan(0);
+        // It swims in from off-stage rather than appearing in front of the boat.
+        expect(sea[0].x <= 0 || sea[0].x >= 640 - sea[0].w - 1).toBe(true);
+    });
+
+    test('the shoal keeps coming, so a level cannot be fished dry', async ({ page }) => {
+        await page.evaluate(() => { startGame(); autoRun = false; loadLevel(5); state = 'running'; });
+        const stocked = (await snapshot(page)).fish;
+        expect(stocked).toBeGreaterThan(10);
+
+        // Scoop the entire sea, emptying the net each time so capacity never blocks.
+        const caught = await page.evaluate(() => {
+            let taken = 0;
+            for (let guard = 0; fish.length && guard < 500; guard++) {
+                const f = fish[0];
+                net.mode = 'down';
+                net.x = f.x;
+                net.y = Math.min(f.y, SEA_FLOOR - net.h - 10);
+                net.fish = [];
+                const before = fish.length;
+                simStep();
+                taken += before - fish.length;
+            }
+            return taken;
+        });
+        expect(caught).toBe(stocked);
+        expect((await snapshot(page)).fish).toBe(0);
+
+        await step(page, 600);
+        expect((await snapshot(page)).fish).toBe(stocked);
+    });
+
     test('the same level always lays out the same sea', async ({ page }) => {
         const a = await page.evaluate(() => { startGame(); loadLevel(4); return JSON.stringify(fish); });
         const b = await page.evaluate(() => { loadLevel(4); return JSON.stringify(fish); });

@@ -49,6 +49,9 @@ patient net beats a hurried one &mdash; as long as you get it home.
 tears the net and a fish darts free; the tear mends after a moment, so a single snag
 can never empty a full net at a stroke. An empty net slips past unharmed.
 
+The shoals keep moving through &mdash; every fish you land is replaced a few seconds
+later by another swimming in from the edge &mdash; so you can never fish a level dry.
+
 ## Levels
 
 | # | Morning | Quota | Net | Time |
