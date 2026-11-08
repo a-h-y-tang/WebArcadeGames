@@ -363,6 +363,16 @@ test.describe('pointer control', () => {
         expect((await snapshot(page)).boat.x).toBe(taken);
     });
 
+    test('a tap picks the nets back up when the game is paused', async ({ page }) => {
+        await sandbox(page);
+        await page.keyboard.press('KeyP');
+        expect((await snapshot(page)).state).toBe('paused');
+        const p = await pointAt(page, 320, 260);
+        await page.mouse.click(p.x, p.y);
+        expect((await snapshot(page)).state).toBe('running');
+        expect((await snapshot(page)).net.mode).toBe('stowed');
+    });
+
     test('the keyboard still wins when both are used', async ({ page }) => {
         await sandbox(page);
         await page.evaluate(() => { boat.x = 300; });

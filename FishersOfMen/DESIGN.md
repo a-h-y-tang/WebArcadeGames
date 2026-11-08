@@ -75,7 +75,7 @@ within reach of any player; the skill shows in the score, not in whether you fin
 | `Space` | cast the net; press again to haul it in |
 | `P` | pause / resume |
 | `R` | restart the level |
-| mouse / touch | drag to row the boat or steer the net; tap the water to cast, tap again to haul |
+| mouse / touch | drag to row the boat or steer the net; tap the water to cast, tap again to haul; tap an overlay to start, sail on or resume |
 
 The Start button casts off from the title screen and advances to the next level, and
 the Restart Level button mirrors `R`.
@@ -119,7 +119,7 @@ and advance the world one `simStep()` at a time.
 | `index.html` | HUD, canvas, overlay and help text |
 | `style.css` | lakeside palette and responsive layout |
 | `game.js` | constants, level table, simulation, rendering, input |
-| `tests/fishers-of-men.spec.js` | 60 Playwright tests |
+| `tests/fishers-of-men.spec.js` | 61 Playwright tests |
 
 ## Assumptions
 

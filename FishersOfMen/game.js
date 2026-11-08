@@ -861,7 +861,9 @@ function canvasX(e) {
 canvas.addEventListener('pointerdown', function (e) {
     pointerX = canvasX(e);
     e.preventDefault();
-    onSpace();
+    // A phone has no P key, so a tap has to be able to pick the nets back up.
+    if (state === 'paused') togglePause();
+    else onSpace();
 });
 
 canvas.addEventListener('pointermove', function (e) {
@@ -870,6 +872,15 @@ canvas.addEventListener('pointermove', function (e) {
 
 canvas.addEventListener('pointerleave', function () {
     pointerX = null;
+});
+
+// The overlay covers the canvas, so taps on it have to carry the same meaning:
+// start, sail on, try again or pick the nets back up.
+document.getElementById('overlay').addEventListener('pointerdown', function (e) {
+    if (e.target.closest('button')) return;   // the button has its own handler
+    e.preventDefault();
+    if (state === 'paused') togglePause();
+    else onSpace();
 });
 
 document.getElementById('btn-start').addEventListener('click', function () {
