@@ -446,12 +446,22 @@ function formatTime(sec) {
     return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
 }
 
+// The HUD is refreshed every frame, so each readout is only written when its
+// text actually changes - no need to touch the DOM 300 times a second.
+var hudShown = {};
+
+function setReadout(id, text) {
+    if (hudShown[id] === text) return;
+    hudShown[id] = text;
+    document.getElementById(id).textContent = text;
+}
+
 function updateHud() {
-    document.getElementById('level').textContent = String(level);
-    document.getElementById('catch').textContent = landed + ' / ' + LEVELS[level - 1].quota;
-    document.getElementById('score').textContent = String(score);
-    document.getElementById('time').textContent = formatTime(timeLeft);
-    document.getElementById('best').textContent = String(best);
+    setReadout('level', String(level));
+    setReadout('catch', landed + ' / ' + LEVELS[level - 1].quota);
+    setReadout('score', String(score));
+    setReadout('time', formatTime(timeLeft));
+    setReadout('best', String(best));
 }
 
 function showOverlay(title, sub, button, verse) {

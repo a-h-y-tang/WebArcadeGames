@@ -19,7 +19,8 @@ Open `index.html` in any browser &mdash; no build step and no server needed.
 4. Press `Space` again to haul early. **Fish only score once the net reaches the
    boat**, and a loaded net rises slowly.
 5. Land the level's quota of fish before the clock runs out to sail on to the next
-   morning's fishing.
+   morning's fishing. The clock does not wait for a net still in the water, so leave
+   time for the last haul.
 
 ### Controls
 
