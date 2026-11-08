@@ -65,7 +65,7 @@ var LEVELS = [
     {
         name: 'Shoals of Galilee',
         note: 'The shoals are quick today - steer carefully.',
-        quota: 16, seconds: 85, capacity: 6, snags: 3,
+        quota: 14, seconds: 90, capacity: 6, snags: 3,
         lanes: [
             { kind: 'sardine', top: 100, bottom: 200, count: 7, speed: 76 },
             { kind: 'bream',   top: 220, bottom: 330, count: 5, speed: 64 },
@@ -75,7 +75,7 @@ var LEVELS = [
     {
         name: 'Mending the Nets',
         note: 'Driftwood everywhere - a torn net loses its catch.',
-        quota: 20, seconds: 85, capacity: 6, snags: 4,
+        quota: 17, seconds: 90, capacity: 7, snags: 4,
         lanes: [
             { kind: 'sardine', top: 100, bottom: 205, count: 7, speed: 84 },
             { kind: 'bream',   top: 220, bottom: 335, count: 6, speed: 72 },
@@ -85,7 +85,7 @@ var LEVELS = [
     {
         name: 'A Hundred and Fifty-Three',
         note: 'One last haul, and the net held and did not break.',
-        quota: 24, seconds: 80, capacity: 7, snags: 5,
+        quota: 18, seconds: 90, capacity: 8, snags: 5,
         lanes: [
             { kind: 'sardine', top: 100, bottom: 210, count: 8, speed: 92 },
             { kind: 'bream',   top: 225, bottom: 340, count: 6, speed: 80 },
@@ -116,6 +116,7 @@ var net = { x: 0, y: WATER_TOP, w: 56, h: 44, mode: 'stowed', fish: [], tearCd: 
 var fish = [];
 var snags = [];
 var keys = {};
+var pointerX = null;   // canvas-space x the player is pointing at, or null
 
 // Deterministic per-level sea layout: the same level always stocks the same fish.
 var rngState = 1;
@@ -163,6 +164,16 @@ function overlaps(a, b) {
 
 function clamp(v, lo, hi) {
     return v < lo ? lo : v > hi ? hi : v;
+}
+
+// Ease a left edge toward the pointer at the given speed, never overshooting.
+// With no pointer (keyboard play, or the cursor off the canvas) nothing moves.
+function chase(from, target, speed) {
+    if (pointerX === null || target === null || isNaN(target)) return from;
+    var delta = target - from;
+    var reach = speed * DT;
+    if (Math.abs(delta) <= reach) return target;
+    return from + (delta > 0 ? reach : -reach);
 }
 
 // ---------------------------------------------------------------------------
@@ -331,11 +342,13 @@ function simStep() {
 
     var left = keys.ArrowLeft || keys.KeyA;
     var right = keys.ArrowRight || keys.KeyD;
+    var keyed = left || right;
 
     if (net.mode === 'stowed') {
         // Row the boat; the stowed net rides along with it.
         if (left) boat.x -= BOAT_SPEED * DT;
         if (right) boat.x += BOAT_SPEED * DT;
+        if (!keyed) boat.x = chase(boat.x, pointerX - boat.w / 2, BOAT_SPEED);
         boat.x = clamp(boat.x, 0, W - boat.w);
         net.x = boat.x + boat.w / 2 - net.w / 2;
         net.y = WATER_TOP;
@@ -343,6 +356,7 @@ function simStep() {
         // Steer the net itself while it is in the water.
         if (left) net.x -= STEER_SPEED * DT;
         if (right) net.x += STEER_SPEED * DT;
+        if (!keyed) net.x = chase(net.x, pointerX - net.w / 2, STEER_SPEED);
         net.x = clamp(net.x, 0, W - net.w);
 
         if (net.mode === 'down') {
@@ -775,6 +789,26 @@ document.addEventListener('keydown', function (e) {
 
 document.addEventListener('keyup', function (e) {
     keys[e.code] = false;
+});
+
+function canvasX(e) {
+    var rect = canvas.getBoundingClientRect();
+    if (!rect.width) return null;
+    return clamp(((e.clientX - rect.left) / rect.width) * W, 0, W);
+}
+
+canvas.addEventListener('pointerdown', function (e) {
+    pointerX = canvasX(e);
+    e.preventDefault();
+    onSpace();
+});
+
+canvas.addEventListener('pointermove', function (e) {
+    pointerX = canvasX(e);
+});
+
+canvas.addEventListener('pointerleave', function () {
+    pointerX = null;
 });
 
 document.getElementById('btn-start').addEventListener('click', onSpace);

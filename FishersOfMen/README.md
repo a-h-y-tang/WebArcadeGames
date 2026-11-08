@@ -10,7 +10,8 @@ Open `index.html` in any browser &mdash; no build step and no server needed.
 
 ## How to play
 
-1. Row the boat along the surface with the arrow keys.
+1. Row the boat along the surface with the arrow keys &mdash; or drag it with the
+   mouse or a finger.
 2. Press `Space` to cast the net. It sinks steadily, and the arrow keys now steer the
    net instead of the boat.
 3. Swim the net through a shoal to scoop fish up. The net holds only so many &mdash;
@@ -28,6 +29,7 @@ Open `index.html` in any browser &mdash; no build step and no server needed.
 | `Space` | cast the net; press again to haul it in |
 | `P` | pause / resume |
 | `R` | restart the level |
+| mouse / touch | drag to row or steer, tap the water to cast and to haul |
 
 ### The catch
 
@@ -52,9 +54,12 @@ can never empty a full net at a stroke. An empty net slips past unharmed.
 |---|---|---|---|---|
 | 1 | Launch Out into the Deep | 8 | 4 | 1:30 |
 | 2 | Cast on the Right Side | 12 | 5 | 1:30 |
-| 3 | Shoals of Galilee | 16 | 6 | 1:25 |
-| 4 | Mending the Nets | 20 | 6 | 1:25 |
-| 5 | A Hundred and Fifty-Three | 24 | 7 | 1:20 |
+| 3 | Shoals of Galilee | 14 | 6 | 1:30 |
+| 4 | Mending the Nets | 17 | 7 | 1:30 |
+| 5 | A Hundred and Fifty-Three | 18 | 8 | 1:30 |
+
+Each level gives you more net to fill but faster fish and more driftwood to thread,
+so the quota stays reachable while a high score does not.
 
 The level names follow the Gospel fishing accounts &mdash; the call by the lakeside
 (Matthew 4:18&ndash;22), the nets that began to break (Luke 5:4&ndash;7) and the

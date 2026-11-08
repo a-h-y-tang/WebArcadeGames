@@ -249,6 +249,71 @@ test.describe('the net', () => {
 });
 
 // ---------------------------------------------------------------------------
+// Pointer and touch control
+// ---------------------------------------------------------------------------
+test.describe('pointer control', () => {
+    // Canvas coordinates -> page coordinates, since the canvas is laid out
+    // responsively and is usually drawn smaller than its backing store.
+    async function pointAt(page, x, y) {
+        const box = await page.locator('#canvas').boundingBox();
+        const sx = box.width / 640;
+        const sy = box.height / 520;
+        return { x: box.x + x * sx, y: box.y + y * sy };
+    }
+
+    test('a tap on the water casts the net and a second tap hauls it in', async ({ page }) => {
+        await sandbox(page);
+        const p = await pointAt(page, 320, 260);
+        await page.mouse.click(p.x, p.y);
+        expect((await snapshot(page)).net.mode).toBe('down');
+        await step(page, 30);
+        await page.mouse.click(p.x, p.y);
+        expect((await snapshot(page)).net.mode).toBe('up');
+    });
+
+    test('dragging rows the boat toward the pointer', async ({ page }) => {
+        await sandbox(page);
+        await page.evaluate(() => { boat.x = 40; });
+        const p = await pointAt(page, 560, 40);
+        await page.mouse.move(p.x, p.y);
+        await step(page, 40);
+        const after = (await snapshot(page)).boat.x;
+        expect(after).toBeGreaterThan(40);
+        expect(after).toBeLessThanOrEqual(640 - 110);
+    });
+
+    test('dragging steers the net once it is in the water', async ({ page }) => {
+        await sandbox(page);
+        await page.evaluate(() => { castNet(); net.x = 500; });
+        const p = await pointAt(page, 80, 300);
+        await page.mouse.move(p.x, p.y);
+        await step(page, 40);
+        expect((await snapshot(page)).net.x).toBeLessThan(500);
+    });
+
+    test('the pointer never drags anything out of bounds', async ({ page }) => {
+        await sandbox(page);
+        const p = await pointAt(page, 639, 500);
+        await page.mouse.move(p.x, p.y);
+        await step(page, 400);
+        const s = await snapshot(page);
+        expect(s.boat.x).toBeLessThanOrEqual(s.world.W - s.boat.w);
+        expect(s.boat.x).toBeGreaterThanOrEqual(0);
+    });
+
+    test('the keyboard still wins when both are used', async ({ page }) => {
+        await sandbox(page);
+        await page.evaluate(() => { boat.x = 300; });
+        const p = await pointAt(page, 620, 40);
+        await page.mouse.move(p.x, p.y);
+        await page.keyboard.down('ArrowLeft');
+        await step(page, 30);
+        await page.keyboard.up('ArrowLeft');
+        expect((await snapshot(page)).boat.x).toBeLessThan(300);
+    });
+});
+
+// ---------------------------------------------------------------------------
 // Catching fish
 // ---------------------------------------------------------------------------
 test.describe('catching fish', () => {
@@ -420,6 +485,8 @@ test.describe('levels and state', () => {
         }
         for (let i = 1; i < levels.length; i++) {
             expect(levels[i].quota).toBeGreaterThanOrEqual(levels[i - 1].quota);
+            expect(levels[i].capacity).toBeGreaterThanOrEqual(levels[i - 1].capacity);
+            expect(levels[i].snags).toBeGreaterThanOrEqual(levels[i - 1].snags);
         }
     });
 

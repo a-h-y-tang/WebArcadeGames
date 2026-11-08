@@ -38,7 +38,7 @@ a rope trailing to the deck. While the net is in the water the boat holds statio
 the arrow keys steer the net itself.
 
 **Catching.** Any fish whose body overlaps the net is scooped up and rides inside it.
-The net holds only the level's capacity (4 at first, 7 by the last level); once it is
+The net holds only the level's capacity (4 at first, 8 by the last level); once it is
 full it turns for home on its own, as it does if it reaches the sea floor.
 
 **Hauling.** `Space` again hauls a sinking net up early. A full net is heavy: haul
@@ -55,9 +55,14 @@ rather than falling straight back into the mesh. An empty net passes a snag unha
 every fish beyond the first in the same haul &mdash; three fish in one haul beat three
 separate trips. The best score is kept in `localStorage`.
 
-**Levels.** Five of them, named for the Gospel accounts: quota and net capacity rise,
-fish get faster, the time limit tightens and more driftwood drifts through. Filling
-the quota clears the level; running the clock out ends the game.
+**Levels.** Five of them, named for the Gospel accounts: quota, net capacity and fish
+speed all rise and more driftwood drifts through, while every level allows 1:30.
+Filling the quota clears the level; running the clock out ends the game.
+
+The quotas were set by running a deliberately careless scripted player &mdash; one
+that chases the nearest fish and ploughs straight through driftwood &mdash; against
+each level. Every level is clearable by that bot with time to spare, so finishing is
+within reach of any player; the skill shows in the score, not in whether you finish.
 
 ## Controls
 
@@ -67,6 +72,7 @@ the quota clears the level; running the clock out ends the game.
 | `Space` | cast the net; press again to haul it in |
 | `P` | pause / resume |
 | `R` | restart the level |
+| mouse / touch | drag to row the boat or steer the net; tap the water to cast, tap again to haul |
 
 The Start button casts off from the title screen and advances to the next level, and
 the Restart Level button mirrors `R`.
@@ -90,6 +96,12 @@ and advance the world one `simStep()` at a time.
   same sea &mdash; replayable for a player, reproducible for a test.
 - **Collision.** Fish, snags and the net are all axis-aligned boxes; `overlaps()` is
   the only collision primitive in the game.
+- **Input.** Keys set flags in a `keys` map; a pointer records a canvas-space
+  `pointerX`, scaled from the element's real box so it works at any layout size.
+  `simStep()` reads both: a held arrow key moves at full speed and takes priority,
+  otherwise `chase()` eases the boat or the net toward the pointer at that same
+  speed without overshooting. Keyboard and touch therefore share one code path and
+  one set of clamps.
 - **Rendering.** `draw()` paints sky, shore, water with a moving foam line and sun
   shafts, the sea bed, snags, fish (each with a wagging tail), the rope, the net with
   its catch inside, and the boat with its sail and fisherman. Drawing never mutates
@@ -102,7 +114,7 @@ and advance the world one `simStep()` at a time.
 | `index.html` | HUD, canvas, overlay and help text |
 | `style.css` | lakeside palette and responsive layout |
 | `game.js` | constants, level table, simulation, rendering, input |
-| `tests/fishers-of-men.spec.js` | 47 Playwright tests |
+| `tests/fishers-of-men.spec.js` | 52 Playwright tests |
 
 ## Assumptions
 
@@ -129,5 +141,10 @@ These were decided without being specified, taking the simpler reading each time
    began, so restarting cannot be used to farm points.
 8. **Category.** Filed under `Action` in the game browser: it is a real-time arcade
    game, not a puzzle.
-9. **Verse placement.** Matthew 4:19 sits on the title overlay and in both READMEs,
+9. **Touch is a first-class control.** Phones have no arrow keys, so a drag rows the
+   boat or steers the net and a tap on the water casts and hauls. The keyboard wins
+   while a key is held, so the two never fight.
+10. **Finishing should be reachable, scoring should not.** Quotas are set so a
+    careless player still clears the level; the net bonus is where skill pays.
+11. **Verse placement.** Matthew 4:19 sits on the title overlay and in both READMEs,
    quoted accurately and without turning the gospel into a prize to be won.
