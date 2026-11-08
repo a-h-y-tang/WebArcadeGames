@@ -288,10 +288,12 @@ function landCatch() {
         saveBest();
         if (level >= LEVELS.length) {
             state = 'won';
-            showOverlay('WELL DONE', 'Every net is full and the boats are heavy with fish. Final score ' + score + '.');
+            showOverlay('WELL DONE', 'Every net is full and the boats are heavy with fish. Final score ' + score + '.',
+                'Play Again', true);
         } else {
             state = 'cleared';
-            showOverlay('NET FULL', 'Level ' + level + ' complete - ' + landed + ' fish landed, score ' + score + '. Press Space to sail on.');
+            showOverlay('NET FULL', 'Level ' + level + ' complete - ' + landed + ' fish landed, score ' + score +
+                '. Press Space to sail on.', 'Next Level', false);
         }
     }
     updateHud();
@@ -335,7 +337,7 @@ function simStep() {
         state = 'gameover';
         saveBest();
         showOverlay("TIME'S UP", 'The light is gone from the water. ' + landed + ' of ' +
-            LEVELS[level - 1].quota + ' fish landed, score ' + score + '.');
+            LEVELS[level - 1].quota + ' fish landed, score ' + score + '.', 'Try Again', false);
         updateHud();
         return;
     }
@@ -452,9 +454,11 @@ function updateHud() {
     document.getElementById('best').textContent = String(best);
 }
 
-function showOverlay(title, sub) {
+function showOverlay(title, sub, button, verse) {
     document.getElementById('overlay-title').textContent = title;
     document.getElementById('overlay-sub').textContent = sub;
+    document.getElementById('btn-start').textContent = button || 'Start';
+    document.querySelector('.verse').classList.toggle('hidden', verse === false);
     document.getElementById('overlay').classList.remove('hidden');
 }
 
@@ -764,7 +768,7 @@ function onSpace() {
 function togglePause() {
     if (state === 'running') {
         state = 'paused';
-        showOverlay('PAUSED', 'Press P to pick up the nets again.');
+        showOverlay('PAUSED', 'Press P to pick up the nets again.', 'Resume', false);
     } else if (state === 'paused') {
         hideOverlay();
         state = 'running';
@@ -811,7 +815,10 @@ canvas.addEventListener('pointerleave', function () {
     pointerX = null;
 });
 
-document.getElementById('btn-start').addEventListener('click', onSpace);
+document.getElementById('btn-start').addEventListener('click', function () {
+    if (state === 'paused') togglePause();
+    else onSpace();
+});
 document.getElementById('btn-restart').addEventListener('click', function () {
     if (state === 'title') startGame();
     else restartLevel();
@@ -844,6 +851,6 @@ function frame(now) {
 
 loadBest();
 loadLevel(1);
-showOverlay('FISHERS OF MEN', 'Press Space to put out from shore');
+showOverlay('FISHERS OF MEN', 'Press Space to put out from shore', 'Start', true);
 draw();
 requestAnimationFrame(frame);

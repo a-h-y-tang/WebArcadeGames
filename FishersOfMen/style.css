@@ -115,6 +115,7 @@ canvas {
 }
 
 .overlay.hidden { display: none; }
+.verse.hidden { display: none; }
 
 .overlay h2 {
     margin: 0;

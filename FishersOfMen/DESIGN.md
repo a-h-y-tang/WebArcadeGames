@@ -114,7 +114,7 @@ and advance the world one `simStep()` at a time.
 | `index.html` | HUD, canvas, overlay and help text |
 | `style.css` | lakeside palette and responsive layout |
 | `game.js` | constants, level table, simulation, rendering, input |
-| `tests/fishers-of-men.spec.js` | 52 Playwright tests |
+| `tests/fishers-of-men.spec.js` | 57 Playwright tests |
 
 ## Assumptions
 

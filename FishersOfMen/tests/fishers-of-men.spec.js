@@ -112,6 +112,55 @@ test.describe('page', () => {
 });
 
 // ---------------------------------------------------------------------------
+// The overlay button
+// ---------------------------------------------------------------------------
+test.describe('the overlay button', () => {
+    test('reads Start on the title screen', async ({ page }) => {
+        await expect(page.locator('#btn-start')).toHaveText('Start');
+    });
+
+    test('offers the next level once one is cleared, and sails on when clicked', async ({ page }) => {
+        await sandbox(page);
+        await page.evaluate(() => {
+            landed = LEVELS[0].quota - 1;
+            net.mode = 'up';
+            net.y = WATER_TOP + 10;
+            net.fish = [makeCatch('sardine')];
+            landCatch();
+        });
+        await expect(page.locator('#btn-start')).toHaveText('Next Level');
+        await page.locator('#btn-start').click();
+        const s = await snapshot(page);
+        expect(s.level).toBe(2);
+        expect(s.state).toBe('running');
+    });
+
+    test('offers another morning after the clock runs out', async ({ page }) => {
+        await sandbox(page);
+        await page.evaluate(() => { timeLeft = 0.01; simStep(); });
+        await expect(page.locator('#btn-start')).toHaveText('Try Again');
+        await page.locator('#btn-start').click();
+        expect((await snapshot(page)).state).toBe('running');
+    });
+
+    test('resumes a paused game when clicked', async ({ page }) => {
+        await sandbox(page);
+        await page.keyboard.press('KeyP');
+        await expect(page.locator('#btn-start')).toHaveText('Resume');
+        await page.locator('#btn-start').click();
+        expect((await snapshot(page)).state).toBe('running');
+        await expect(page.locator('#overlay')).toBeHidden();
+    });
+
+    test('the verse is kept for the title and the finish, not every interruption', async ({ page }) => {
+        await expect(page.locator('.verse')).toBeVisible();
+        await sandbox(page);
+        await page.keyboard.press('KeyP');
+        await expect(page.locator('.verse')).toBeHidden();
+    });
+});
+
+// ---------------------------------------------------------------------------
 // The boat
 // ---------------------------------------------------------------------------
 test.describe('the boat', () => {
