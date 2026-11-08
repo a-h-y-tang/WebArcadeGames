@@ -149,6 +149,7 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Flock to the Fold | [FlockToTheFold/](FlockToTheFold/) | Complete |
 | Promised Land | [PromisedLand/](PromisedLand/) | Complete |
 | Lamp unto My Feet | [LampUntoMyFeet/](LampUntoMyFeet/) | Complete |
+| Fishers of Men | [FishersOfMen/](FishersOfMen/) | In Progress |
 
 ## Playing
 
