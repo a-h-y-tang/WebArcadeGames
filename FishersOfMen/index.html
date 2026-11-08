@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fishers of Men</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="game">
+        <header class="hud">
+            <h1>FISHERS OF MEN</h1>
+            <div class="stats">
+                <div class="stat"><span class="label">Level</span><span id="level">1</span></div>
+                <div class="stat"><span class="label">Catch</span><span id="catch">0 / 8</span></div>
+                <div class="stat"><span class="label">Score</span><span id="score">0</span></div>
+                <div class="stat"><span class="label">Time</span><span id="time">1:30</span></div>
+                <div class="stat"><span class="label">Best</span><span id="best">0</span></div>
+            </div>
+        </header>
+
+        <div class="subhead">
+            <h2 id="level-name">Launch Out into the Deep</h2>
+            <p id="message">Lower the net, gather the shoal, haul it home.</p>
+        </div>
+
+        <div class="sea-wrap">
+            <canvas id="canvas" width="640" height="520"></canvas>
+            <div id="overlay" class="overlay">
+                <h2 id="overlay-title">FISHERS OF MEN</h2>
+                <p id="overlay-sub">Press Space to put out from shore</p>
+                <p class="verse">&ldquo;Follow me, and I will make you fishers of men.&rdquo; &mdash; Matthew 4:19</p>
+                <div class="overlay-buttons">
+                    <button id="btn-start">Start</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button id="btn-restart">Restart Level</button>
+        </div>
+
+        <div class="help">
+            <p><kbd>&larr;</kbd> <kbd>&rarr;</kbd> row the boat &middot; steer the net once it is down</p>
+            <p><kbd>Space</kbd> cast the net &middot; press again to haul it in</p>
+            <p><kbd>P</kbd> pause &middot; <kbd>R</kbd> restart the level</p>
+            <p>A heavy net rises slowly, and driftwood tears a hole &mdash; haul before the catch slips away.</p>
+        </div>
+    </main>
+    <script src="game.js"></script>
+</body>
+</html>

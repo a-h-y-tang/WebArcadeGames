@@ -324,6 +324,15 @@
     "thumbnail": "games/FifteenPuzzle/screenshot.png"
   },
   {
+    "id": "fishers-of-men",
+    "name": "Fishers of Men",
+    "description": "Cast your net into the shoals of Galilee and haul the catch home before the morning is gone",
+    "category": "Action",
+    "dir": "FishersOfMen",
+    "path": "games/FishersOfMen/index.html",
+    "thumbnail": "games/FishersOfMen/screenshot.png"
+  },
+  {
     "id": "flock-to-the-fold",
     "name": "Flock to the Fold",
     "description": "Guide a wandering flock of sheep safely home to the sheepfold by giving individual sheep special jobs",
