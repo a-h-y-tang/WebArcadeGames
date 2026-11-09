@@ -650,7 +650,7 @@ function drawBooth(x, y) {
 // Swept sand: a small ruled-out dot.
 function drawSand(x, y) {
     const s = cellSize;
-    ctx.fillStyle = '#bda173';
+    ctx.fillStyle = COLOURS.sand;
     ctx.beginPath();
     ctx.arc(x + s / 2, y + s / 2, Math.max(2, s * 0.08), 0, Math.PI * 2);
     ctx.fill();
