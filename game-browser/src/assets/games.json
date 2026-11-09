@@ -315,6 +315,15 @@
     "thumbnail": "games/Farkle/screenshot.png"
   },
   {
+    "id": "feast-of-booths",
+    "name": "Feast of Booths",
+    "description": "Pitch a booth of palm branches beside every palm in the camp - the edge counts tell you where",
+    "category": "Puzzle",
+    "dir": "FeastOfBooths",
+    "path": "games/FeastOfBooths/index.html",
+    "thumbnail": "games/FeastOfBooths/screenshot.png"
+  },
+  {
     "id": "fifteen-puzzle",
     "name": "Fifteen Puzzle",
     "description": "Slide numbered tiles into correct order",
