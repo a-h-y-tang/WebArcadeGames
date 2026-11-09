@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feast of Booths</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main id="container">
+        <h1>Feast of Booths</h1>
+        <p id="verse">&ldquo;You shall dwell in booths seven days&rdquo; &mdash; Leviticus 23:42</p>
+
+        <div id="hud">
+            <div class="stat"><span class="label">Camp</span><strong id="level-label">Small camp</strong></div>
+            <div class="stat"><span class="label">Booths left</span><strong id="booths-left">10</strong></div>
+            <div class="stat"><span class="label">Status</span><strong id="status">Pitch a booth beside every palm.</strong></div>
+        </div>
+
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="460" height="460"></canvas>
+            <div id="overlay">
+                <h2 id="overlay-title">Camp complete!</h2>
+                <p id="overlay-sub"></p>
+            </div>
+        </div>
+
+        <div id="levels">
+            <button class="level-btn active" data-level="0">Small camp</button>
+            <button class="level-btn" data-level="1">Middle camp</button>
+            <button class="level-btn" data-level="2">Large camp</button>
+        </div>
+
+        <div id="controls">
+            <button id="btn-reset">Reset</button>
+            <button id="btn-new">New Camp</button>
+            <button id="btn-hint">Hint</button>
+        </div>
+
+        <div id="rules">
+            <p>Israel kept the feast by living in shelters of <strong>palm</strong> branches.
+               Pitch one <strong>booth</strong> beside each palm tree in the camp.</p>
+            <ul>
+                <li>Every palm gets exactly one booth of its own, directly above, below,
+                    left or right of it &mdash; never diagonally.</li>
+                <li>No two booths may touch, not even at a corner.</li>
+                <li>The numbers down the left and across the top count the booths in
+                    that row or column.</li>
+            </ul>
+            <p class="hint">Click an open square to pitch a booth, again to brush it to
+               sand (ruled out), again to clear it. Right-click goes the other way.</p>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>
