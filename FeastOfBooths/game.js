@@ -202,6 +202,98 @@ function isSolved(p, grid) {
 }
 
 // ---------------------------------------------------------------------------
+// Deduction — works a camp the way a player would, so the generator can throw
+// away any camp that cannot be reasoned out and would need a guess.
+//
+// Every rule below is sound: it only ever marks a square the answer agrees
+// with. The rules are, in order of cost:
+//   a. a square that is a palm, or is beside no palm, never holds a booth;
+//   b. a row or column whose clue is already met has no more booths; one whose
+//      remaining squares exactly fill its clue has nothing but booths;
+//   c. nothing stands around a booth;
+//   d. a palm with one square left must use it;
+//   e. (only once the cheap rules are exhausted) if the palms can no longer all
+//      be served without a square, that square must hold a booth; and if a
+//      booth there would strand a palm, it cannot.
+// ---------------------------------------------------------------------------
+const UNSURE = 0;  // deduction has not settled this square
+const MUST = 1;    // deduction says: a booth stands here
+const NEVER = 2;   // deduction says: no booth can stand here
+
+function deduceCamp(p) {
+    const n = p.size;
+    const trees = truthyCells(p.trees);
+    const state = blankGrid(n, UNSURE);
+    const key = (r, c) => r + ',' + c;
+
+    // Rule (a).
+    for (let r = 0; r < n; r++)
+        for (let c = 0; c < n; c++)
+            if (p.trees[r][c] || !neighbours4(r, c, n).some(([rr, cc]) => p.trees[rr][cc]))
+                state[r][c] = NEVER;
+
+    let moved = true;
+    const mark = (r, c, v) => {
+        if (state[r][c] === v) return;
+        state[r][c] = v;
+        moved = true;
+    };
+
+    while (moved) {
+        moved = false;
+
+        // Rule (b): row and column counting, both ways round.
+        for (let i = 0; i < n; i++) {
+            for (const alongRow of [true, false]) {
+                const line = [];
+                for (let j = 0; j < n; j++) line.push(alongRow ? [i, j] : [j, i]);
+                const clue = alongRow ? p.rowClue[i] : p.colClue[i];
+                const placed = line.filter(([r, c]) => state[r][c] === MUST).length;
+                const open = line.filter(([r, c]) => state[r][c] === UNSURE);
+                if (placed === clue) open.forEach(([r, c]) => mark(r, c, NEVER));
+                else if (placed + open.length === clue) open.forEach(([r, c]) => mark(r, c, MUST));
+            }
+        }
+
+        // Rule (c): booths need room.
+        for (let r = 0; r < n; r++)
+            for (let c = 0; c < n; c++)
+                if (state[r][c] === MUST)
+                    for (const [rr, cc] of neighbours8(r, c, n))
+                        if (state[rr][cc] === UNSURE) mark(rr, cc, NEVER);
+
+        // Rule (d): a palm down to one square.
+        for (const [r, c] of trees) {
+            const spots = neighbours4(r, c, n).filter(([rr, cc]) => state[rr][cc] !== NEVER);
+            if (spots.length === 1) mark(spots[0][0], spots[0][1], MUST);
+        }
+
+        if (moved) continue;
+
+        // Rule (e): which squares the palms cannot do without. Stops at the
+        // first square it settles so the cheap rules get another turn.
+        const allowed = [];
+        for (let r = 0; r < n; r++)
+            for (let c = 0; c < n; c++) if (state[r][c] !== NEVER) allowed.push([r, c]);
+
+        for (const [r, c] of allowed) {
+            if (state[r][c] !== UNSURE) continue;
+
+            const without = allowed.filter(([rr, cc]) => rr !== r || cc !== c);
+            if (maxMatching(trees, without) < trees.length) { mark(r, c, MUST); break; }
+
+            const ring = new Set(neighbours8(r, c, n).map(([rr, cc]) => key(rr, cc)));
+            const withBooth = allowed.filter(([rr, cc]) =>
+                (rr === r && cc === c) || !ring.has(key(rr, cc)));
+            if (maxMatching(trees, withBooth) < trees.length) { mark(r, c, NEVER); break; }
+        }
+    }
+
+    const marks = state.map((row) => row.map((v) => (v === MUST ? BOOTH : EMPTY)));
+    return { state, marks, solved: isSolved(p, marks) };
+}
+
+// ---------------------------------------------------------------------------
 // Solver — counts answers, stopping at `limit`, so the generator can insist on
 // camps with exactly one. Walks the grid a row at a time: for each row it picks
 // every allowed set of booth squares of the size the row clue asks for, then
@@ -343,10 +435,12 @@ function generatePuzzle(level, seedValue) {
             solution: scatter.booths,
         };
         if (!fallback) fallback = camp;
-        if (countSolutions(camp.trees, camp.rowClue, camp.colClue, 2) === 1) return camp;
+        // One answer, and one a player can actually reason their way to.
+        if (countSolutions(camp.trees, camp.rowClue, camp.colClue, 2) !== 1) continue;
+        if (deduceCamp(camp).solved) return camp;
     }
-    // Every scatter so far was ambiguous (vanishingly rare): play the first one
-    // rather than leave the player with no camp at all.
+    // No scatter in 500 tries was both unique and deducible (vanishingly rare):
+    // play the first one rather than leave the player with no camp at all.
     return fallback;
 }
 

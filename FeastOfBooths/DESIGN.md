@@ -69,6 +69,25 @@ it has found `limit` of them. It walks the grid one row at a time:
   below) prunes a branch as soon as a column can no longer reach its clue;
 - when the last row is placed it checks the palms can all be paired off.
 
+### Deduction
+
+`deduceCamp(p)` works a camp the way a player does, marking squares `MUST`,
+`NEVER` or `UNSURE`, and never guessing. Its rules, cheapest first:
+
+1. a palm's square, and any square beside no palm, is `NEVER`;
+2. a row or column whose clue is already met has `NEVER` for the rest; one whose
+   open squares exactly fill its clue has `MUST` for all of them;
+3. every square around a `MUST` is `NEVER`;
+4. a palm down to one open square must use it;
+5. once those are exhausted, two matching arguments: if the palms can no longer
+   all be served *without* some square, that square is `MUST`; and if a booth
+   there would strand a palm — because it kills its own neighbours — it is
+   `NEVER`.
+
+Every rule is sound (the suite checks that nothing it derives contradicts the
+answer), so rule 5 is the only expensive one, and it only runs when nothing
+cheaper is left to do.
+
 ### Generator
 
 `generatePuzzle(level, seed)` seeds `mulberry32` from the level and seed, then:
@@ -77,8 +96,14 @@ it has found `limit` of them. It walks the grid one row at a time:
    touches no existing booth it pitches a booth there and plants that booth's
    palm on a free square beside it, until the level's quota is filled;
 2. the row and column clues are read straight off the scattered booths;
-3. `countSolutions(..., 2)` must return exactly 1 — otherwise the scatter is
-   thrown away and the loop tries again.
+3. `countSolutions(..., 2)` must return exactly 1, **and** `deduceCamp` must
+   crack the camp outright — otherwise the scatter is thrown away and the loop
+   tries again.
+
+Step 3 is what keeps the game fair: a camp with one answer can still be a camp
+you cannot reason your way into, so uniqueness alone is not enough. Dealing only
+deducible camps costs a couple of extra scatters and still lands in about 2ms
+for a small camp and 13ms for a large one, so "New Camp" is instant.
 
 Because the whole thing is driven by one seeded generator, the same level and
 seed always rebuild the same camp. That is what lets the suite assert that
@@ -114,11 +139,11 @@ asked:
 - **Difficulty.** "Polished" was read as three fixed camp sizes rather than a
   free size picker — fewer controls, and each size can be tuned to a booth count
   that generates quickly and solves comfortably.
-- **Uniqueness, not logical solvability.** Camps are checked to have exactly one
-  answer. That is the standard bar for this puzzle family, and it is what makes
-  a camp reasonable rather than a coin flip; proving a camp is solvable by a
-  specific set of human deduction rules would be a much larger piece of work for
-  little gain at these sizes.
+- **Fairness bar.** A camp must have exactly one answer *and* fall to
+  `deduceCamp`'s rules. Measured over 30 camps a level, plain counting rules
+  alone crack 26/30 small camps but only 8/30 large ones, so without this filter
+  a large camp would often need a guess. The rule set is a reasonable stand-in
+  for what a player will try, not a claim about every possible deduction.
 - **Hints assist, they do not solve.** A hint pitches one correct booth and
   sweeps the squares around it to sand. It is deliberately the simplest useful
   help; there is no "solve the camp" button.

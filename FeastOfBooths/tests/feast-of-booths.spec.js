@@ -88,6 +88,10 @@ test.describe('Feast of Booths', () => {
             expect(ok).toBe(true);
         });
 
+        test('the camp on screen can be worked out by deduction', async ({ page }) => {
+            expect(await page.evaluate(() => deduceCamp(puzzle).solved)).toBe(true);
+        });
+
         test('the booths-left readout starts at the full count', async ({ page }) => {
             await expect(page.locator('#booths-left')).toHaveText('10');
         });
@@ -382,6 +386,60 @@ test.describe('Feast of Booths', () => {
             }
         });
 
+        test('the clue totals add up to the booth count', async ({ page }) => {
+            const ok = await page.evaluate(() => LEVELS.every((lvl, i) => {
+                const p = generatePuzzle(i, 5);
+                const sum = (xs) => xs.reduce((a, b) => a + b, 0);
+                return sum(p.rowClue) === lvl.booths && sum(p.colClue) === lvl.booths;
+            }));
+            expect(ok).toBe(true);
+        });
+
+        test('the middle and large camps also have exactly one answer', async ({ page }) => {
+            test.setTimeout(30_000);
+            const counts = await page.evaluate(() => {
+                const out = [];
+                for (const level of [1, 2])
+                    for (let seed = 1; seed <= 3; seed++) {
+                        const p = generatePuzzle(level, seed);
+                        out.push(countSolutions(p.trees, p.rowClue, p.colClue, 3));
+                    }
+                return out;
+            });
+            expect(counts).toEqual([1, 1, 1, 1, 1, 1]);
+        });
+
+        test('every camp it ships can be worked out by deduction alone', async ({ page }) => {
+            test.setTimeout(45_000);
+            const results = await page.evaluate(() => {
+                const out = [];
+                for (let level = 0; level < LEVELS.length; level++)
+                    for (let seed = 1; seed <= 3; seed++)
+                        out.push(deduceCamp(generatePuzzle(level, seed)).solved);
+                return out;
+            });
+            expect(results).toEqual(new Array(9).fill(true));
+        });
+
+        test('deduction never contradicts the answer', async ({ page }) => {
+            test.setTimeout(30_000);
+            const wrong = await page.evaluate(() => {
+                let bad = 0;
+                for (let seed = 1; seed <= 4; seed++) {
+                    const p = generatePuzzle(0, seed);
+                    const { state } = deduceCamp(p);
+                    for (let r = 0; r < p.size; r++)
+                        for (let c = 0; c < p.size; c++) {
+                            const isBooth = p.solution[r][c] === BOOTH;
+                            if (state[r][c] === MUST && !isBooth) bad++;
+                            if (state[r][c] === NEVER && isBooth) bad++;
+                        }
+                }
+                return bad;
+            });
+            expect(wrong).toBe(0);
+        });
+
         test('every level generates a solvable camp', async ({ page }) => {
             const ok = await page.evaluate(() => LEVELS.every((_, i) => {
                 const p = generatePuzzle(i, 11);
@@ -468,6 +526,16 @@ test.describe('Feast of Booths', () => {
             expect(await page.evaluate(([r, c]) => marks[r][c] === SAND, spot)).toBe(true);
         });
 
+        test('right-clicking a booth takes it straight back to open ground', async ({ page }) => {
+            const spot = await page.evaluate(() => {
+                for (let r = 0; r < size; r++)
+                    for (let c = 0; c < size; c++) if (!puzzle.trees[r][c]) return [r, c];
+            });
+            await clickCell(page, spot[0], spot[1]);
+            await clickCell(page, spot[0], spot[1], { button: 'right' });
+            expect(await page.evaluate(([r, c]) => marks[r][c] === EMPTY, spot)).toBe(true);
+        });
+
         test('the booths-left readout counts down as booths go up', async ({ page }) => {
             const spot = await page.evaluate(() => {
                 for (let r = 0; r < size; r++)
@@ -545,6 +613,38 @@ test.describe('Feast of Booths', () => {
             });
             expect(ok).toEqual({ placed: 1, wrong: 0 });
             await expect(page.locator('#booths-left')).toHaveText('9');
+        });
+
+        test('a hint sweeps the squares around its booth to sand', async ({ page }) => {
+            await page.locator('#btn-hint').click();
+            const swept = await page.evaluate(() => {
+                let booth = null;
+                for (let r = 0; r < size && !booth; r++)
+                    for (let c = 0; c < size; c++) if (marks[r][c] === BOOTH) { booth = [r, c]; break; }
+                return neighbours8(booth[0], booth[1], size)
+                    .filter(([r, c]) => !puzzle.trees[r][c])
+                    .every(([r, c]) => marks[r][c] === SAND);
+            });
+            expect(swept).toBe(true);
+        });
+
+        test('the board still takes clicks after a hint', async ({ page }) => {
+            await page.locator('#btn-hint').click();
+            const spot = await page.evaluate(() => {
+                for (let r = 0; r < size; r++)
+                    for (let c = 0; c < size; c++)
+                        if (!puzzle.trees[r][c] && marks[r][c] === EMPTY) return [r, c];
+            });
+            await clickCell(page, spot[0], spot[1]);
+            expect(await page.evaluate(([r, c]) => marks[r][c] === BOOTH, spot)).toBe(true);
+        });
+
+        test('switching camps and back gives a camp of the right size', async ({ page }) => {
+            await page.locator('.level-btn[data-level="1"]').click();
+            await page.locator('.level-btn[data-level="0"]').click();
+            expect(await page.evaluate(() => size)).toBe(8);
+            expect(await page.evaluate(() => puzzle.trees.length)).toBe(8);
+            expect(await page.evaluate(() => marks.flat().every((v) => v === EMPTY))).toBe(true);
         });
 
         test('repeated hints never duplicate a booth', async ({ page }) => {

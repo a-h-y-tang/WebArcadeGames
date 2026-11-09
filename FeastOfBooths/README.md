@@ -51,9 +51,10 @@ own.
 | Middle | 10 × 10 | 15 |
 | Large | 12 × 12 | 22 |
 
-Every camp is built by a seeded generator and checked to have exactly one
-answer, so a camp can always be reasoned out — there is never a guess between
-two equally good layouts.
+Every camp is built by a seeded generator, and a camp is only dealt out once it
+has been checked to have exactly one answer **and** to be solvable by deduction
+alone. You will never be left guessing between two equally good layouts, and you
+will never need to guess to make progress.
 
 ## Tests
 
