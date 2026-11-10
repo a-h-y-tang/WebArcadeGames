@@ -49,9 +49,10 @@ matches the stone inside it.
 | Shephelah | 9 × 9 | 8 squares |
 | Beyond Jordan | 11 × 11 | 9 squares |
 
-Every land is generated fresh, and always has **exactly one** lawful division —
-there is a real answer to find, and no guessing is needed to reach it. Finish
-one and the overlay leads you on to the next.
+Every land is generated fresh and always has **exactly one** lawful division.
+Before a land is handed to you it is also checked to be solvable by forced
+moves alone, so there is always a next square you can reason out, and guessing
+is never required. Finish one and the overlay leads you on to the next.
 
 ## Tests
 

@@ -73,16 +73,27 @@ firm assertions about generated puzzles.
    fields, then fewest two-square fields.
 3. **Drop the stones.** `placeStones` puts one stone on a random square of each
    field and names the field after a tribe.
-4. **Insist on one answer.** `countSolutions` counts the lawful divisions, up to
-   a limit. Candidates are tried best-first, with a few different stone
-   placements each, and the first land that can be divided in exactly **one**
-   way is the puzzle. Across all three levels every seed tested produces a
-   uniquely solvable land in a few milliseconds.
+4. **Insist that it can be reasoned out.** Candidates are tried best-first,
+   with a few different stone placements each, and the first land that
+   `isDeducible` can work out by forced moves alone becomes the puzzle — no
+   guessing is ever needed. If none of the ~110 lands examined is that clean,
+   the best land that `countSolutions` finds to have exactly one lawful
+   division is used instead. Across the seeds tested, every Hill country and
+   Shephelah land and all but one Beyond Jordan land in forty is fully
+   deducible, and every single one has a unique answer. The slowest land took
+   21 ms to build.
 
-`countSolutions` is a small backtracking search: for each stone it enumerates
-every rectangle of the right area that holds that stone and no other
-(`rectOptionsFor`), then repeatedly places the stone with the fewest remaining
-choices. That ordering keeps the search tiny — a 11 × 11 land resolves in ~4 ms.
+Two small searches do that work:
+
+- `countSolutions(land, limit)` is a backtracking count. For each stone it
+  enumerates every rectangle of the right area that holds that stone and no
+  other (`rectOptionsFor`), then repeatedly places the stone with the fewest
+  remaining choices. That ordering keeps the search tiny — an 11 × 11 land
+  resolves in ~4 ms.
+- `isDeducible(land)` propagates two rules to fixpoint: a stone with only one
+  field left to it must take that field, and a square only one candidate field
+  can still reach settles that field. If every stone is settled without ever
+  branching, a player can reason the land out end to end.
 
 ## Code tour
 
@@ -102,6 +113,7 @@ reach through `page.evaluate`.
 | `splitRect` / `generatePartition` | cuts a grid into legal fields |
 | `rectOptionsFor(clue, …)` | every field a given stone could own |
 | `countSolutions(puzzle, limit)` | how many lawful divisions a land has |
+| `isDeducible(puzzle)` | whether forced moves alone settle the whole land |
 | `buildPuzzle(…)` | a uniquely solvable land for a seed |
 | `isSolved()` | every square claimed and every field exact |
 
@@ -138,6 +150,9 @@ Made while building this, in the absence of anyone to ask:
   this puzzle is normally played, so a wrong field is kept and drawn in red.
 - **Any lawful division wins**, not only the generated one. Lands are generated
   so that there is exactly one, so in practice the two are the same thing.
+- **Guess-free beats roomy.** When no land that can be reasoned out also has the
+  fewest fields, the generator takes the one that can be reasoned out. Fields
+  average about 4.7 squares either way.
 - **No timer and no score.** The repo's other logic puzzles count what matters
   (fields placed, land claimed, hints used) rather than racing the player, and a
   clock would push the player away from careful deduction.

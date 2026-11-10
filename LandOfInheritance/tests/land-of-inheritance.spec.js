@@ -214,20 +214,60 @@ test.describe('Land of Inheritance', () => {
             for (const level of report) expect(level.unique).toBe(level.seeds);
         });
 
-        test('a land is never chopped into more fields than one per four squares', async ({ page }) => {
-            const bad = await page.evaluate(() => {
-                const failures = [];
-                for (const level of LEVELS) {
-                    for (let seed = 1; seed <= 12; seed++) {
-                        const p = buildPuzzle(level.cols, level.rows, level.maxArea, seed);
-                        if (p.solution.length > (level.cols * level.rows) / 4) {
-                            failures.push(`${level.name}/${seed}/${p.solution.length}`);
-                        }
-                    }
+        test('the land on screen needs no guessing', async ({ page }) => {
+            expect(await page.evaluate(() => isDeducible(puzzle))).toBe(true);
+        });
+
+        test('lands can be worked out by forced moves alone', async ({ page }) => {
+            const report = await page.evaluate(() => LEVELS.map((level) => {
+                const seeds = 10;
+                let deducible = 0;
+                let unique = 0;
+                for (let seed = 1; seed <= seeds; seed++) {
+                    const p = buildPuzzle(level.cols, level.rows, level.maxArea, seed);
+                    if (isDeducible(p)) deducible++;
+                    if (countSolutions(p, 2) === 1) unique++;
                 }
-                return failures;
+                return { name: level.name, deducible, unique, seeds };
+            }));
+            for (const level of report) {
+                expect(level.unique).toBe(level.seeds);              // never ambiguous
+                expect(level.deducible).toBeGreaterThanOrEqual(level.seeds - 1);
+            }
+        });
+
+        test('a land that needs guessing is rejected by the deduction check', async ({ page }) => {
+            // Four stones of 2 in a 2x4 strip can be split two ways, so the
+            // check must not call it deducible.
+            const verdict = await page.evaluate(() => {
+                const ambiguous = {
+                    cols: 2, rows: 2,
+                    clues: [{ r: 0, c: 0, n: 2, tribe: 'Judah' }, { r: 1, c: 1, n: 2, tribe: 'Dan' }],
+                    solution: [],
+                };
+                return { deducible: isDeducible(ambiguous), solutions: countSolutions(ambiguous, 3) };
             });
-            expect(bad).toEqual([]);
+            expect(verdict.solutions).toBe(2);
+            expect(verdict.deducible).toBe(false);
+        });
+
+        test('fields are roomy: four squares each on average, never under three and a half', async ({ page }) => {
+            const report = await page.evaluate(() => LEVELS.map((level) => {
+                const cells = level.cols * level.rows;
+                let fields = 0;
+                let worst = 0;
+                const seeds = 12;
+                for (let seed = 1; seed <= seeds; seed++) {
+                    const p = buildPuzzle(level.cols, level.rows, level.maxArea, seed);
+                    fields += p.solution.length;
+                    worst = Math.max(worst, p.solution.length);
+                }
+                return { name: level.name, average: cells / (fields / seeds), worst: cells / worst };
+            }));
+            for (const level of report) {
+                expect(level.average).toBeGreaterThanOrEqual(4);
+                expect(level.worst).toBeGreaterThan(3.5);
+            }
         });
 
         test('two-square fields stay a minority of the land', async ({ page }) => {

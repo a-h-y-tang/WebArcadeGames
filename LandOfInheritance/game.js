@@ -237,6 +237,63 @@ function countSolutions(candidate, limit) {
     return found;
 }
 
+// Can the land be worked out by forced moves alone, with no guessing? Two
+// rules are applied until nothing more follows: a stone with only one field
+// left to it must take that field, and a square that only one candidate field
+// can reach settles that field too. A land that falls to these is a land a
+// player can reason all the way through.
+function isDeducible(candidate) {
+    const { cols: gridCols, rows: gridRows, clues } = candidate;
+    const all = clues.map((clue) => rectOptionsFor(clue, clues, gridCols, gridRows));
+    const taken = Array.from({ length: gridRows }, () => new Array(gridCols).fill(false));
+    const settled = new Array(clues.length).fill(false);
+
+    const fits = (rect) => {
+        for (let r = rect.r; r < rect.r + rect.h; r++)
+            for (let c = rect.c; c < rect.c + rect.w; c++) if (taken[r][c]) return false;
+        return true;
+    };
+    const claim = (rect, i) => {
+        for (let r = rect.r; r < rect.r + rect.h; r++)
+            for (let c = rect.c; c < rect.c + rect.w; c++) taken[r][c] = true;
+        settled[i] = true;
+    };
+
+    for (let changed = true; changed;) {
+        changed = false;
+        const live = all.map((options, i) => (settled[i] ? [] : options.filter(fits)));
+
+        for (let i = 0; i < live.length; i++) {
+            if (settled[i]) continue;
+            if (!live[i].length) return false;              // the land fell apart
+            if (live[i].length === 1) { claim(live[i][0], i); changed = true; }
+        }
+        if (changed) continue;
+
+        // Which fields could still reach each unclaimed square?
+        const reach = new Map();
+        live.forEach((options, i) => options.forEach((rect) => {
+            for (let r = rect.r; r < rect.r + rect.h; r++)
+                for (let c = rect.c; c < rect.c + rect.w; c++) {
+                    const key = r * gridCols + c;
+                    if (!reach.has(key)) reach.set(key, []);
+                    reach.get(key).push({ i, rect });
+                }
+        }));
+
+        for (let r = 0; r < gridRows && !changed; r++) {
+            for (let c = 0; c < gridCols && !changed; c++) {
+                if (taken[r][c]) continue;
+                const options = reach.get(r * gridCols + c) || [];
+                if (!options.length) return false;          // a square no field can reach
+                if (options.length === 1) { claim(options[0].rect, options[0].i); changed = true; }
+            }
+        }
+    }
+
+    return settled.every(Boolean);
+}
+
 // A partition is usable only when every piece is between MIN_AREA and maxArea;
 // an awkward cut can strand an oversized strip, so retry with a nudged seed.
 function buildPuzzle(gridCols, gridRows, maxArea, seed) {
@@ -259,16 +316,20 @@ function buildPuzzle(gridCols, gridRows, maxArea, seed) {
     candidates.sort((a, b) => (a.score - b.score) || (a.order - b.order));
 
     let best = null;
-    for (const candidate of candidates.slice(0, 36)) {
+    let onlyUnique = null;
+    let examined = 0;
+    for (const candidate of candidates.slice(0, 48)) {
         // Where each stone stands changes what can be deduced, so try a few
         // placements of the stones on the same cut of the land.
-        for (let round = 0; round < 5; round++) {
+        for (let round = 0; round < 6 && examined < 110; round++) {
             const built = placeStones(candidate.pieces, candidate.rand, gridCols, gridRows);
+            examined++;
             if (!best) best = built;
-            if (countSolutions(built, 2) === 1) return built;
+            if (isDeducible(built)) return built;                  // no guessing needed
+            if (!onlyUnique && examined <= 8 && countSolutions(built, 2) === 1) onlyUnique = built;
         }
     }
-    return best;
+    return onlyUnique || best;
 }
 
 // Drops one numbered boundary stone inside each field and names it after a tribe.
@@ -731,7 +792,7 @@ const ARROWS = {
 
 window.addEventListener('keydown', (event) => {
     const key = event.key;
-    const step = ARROWS[key] || ARROWS[key.toLowerCase && key.toLowerCase()];
+    const step = ARROWS[key] || ARROWS[key.toLowerCase()];
     if (step && !event.ctrlKey && !event.metaKey) {
         event.preventDefault();
         keyboardActive = true;

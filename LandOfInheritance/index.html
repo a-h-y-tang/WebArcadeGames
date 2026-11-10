@@ -19,10 +19,11 @@
             <div class="stat"><span class="label">Hints</span><strong id="hints">0</strong></div>
         </div>
 
-        <p id="status">Drag out a field around every boundary stone.</p>
+        <p id="status" role="status" aria-live="polite">Drag out a field around every boundary stone.</p>
 
         <div id="canvas-wrapper">
-            <canvas id="canvas" width="460" height="460"></canvas>
+            <canvas id="canvas" width="460" height="460"
+                    aria-label="The land, with a numbered boundary stone in every tribe's field"></canvas>
             <div id="overlay">
                 <h2 id="overlay-title">The land is divided!</h2>
                 <p id="overlay-sub"></p>
