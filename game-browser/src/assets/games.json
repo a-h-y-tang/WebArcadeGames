@@ -558,6 +558,15 @@
     "thumbnail": "games/LampUntoMyFeet/screenshot.png"
   },
   {
+    "id": "land-of-inheritance",
+    "name": "Land of Inheritance",
+    "description": "Joshua divides Canaan by lot - mark out a field of the right size around every boundary stone until no land is left over",
+    "category": "Puzzle",
+    "dir": "LandOfInheritance",
+    "path": "games/LandOfInheritance/index.html",
+    "thumbnail": "games/LandOfInheritance/screenshot.png"
+  },
+  {
     "id": "light-cycles",
     "name": "Light Cycles",
     "description": "High-speed action game - avoid collisions",

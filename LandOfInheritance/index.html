@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Land of Inheritance</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main id="container">
+        <h1>Land of Inheritance</h1>
+        <p id="verse">&ldquo;There Joshua divided the land to the Israelites according to their
+            allotted portions.&rdquo; &mdash; Joshua 18:10</p>
+
+        <div id="hud">
+            <div class="stat"><span class="label">Land</span><strong id="level-label">Hill country</strong></div>
+            <div class="stat"><span class="label">Allotments</span><strong id="allotments">0 / 0</strong></div>
+            <div class="stat"><span class="label">Land claimed</span><strong id="claimed">0 / 49</strong></div>
+            <div class="stat"><span class="label">Hints</span><strong id="hints">0</strong></div>
+        </div>
+
+        <p id="status">Drag out a field around every boundary stone.</p>
+
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="460" height="460"></canvas>
+            <div id="overlay">
+                <h2 id="overlay-title">The land is divided!</h2>
+                <p id="overlay-sub"></p>
+                <button id="btn-next">On to the next land</button>
+            </div>
+        </div>
+
+        <div id="levels">
+            <button class="level-btn active" data-level="0">Hill country</button>
+            <button class="level-btn" data-level="1">Shephelah</button>
+            <button class="level-btn" data-level="2">Beyond Jordan</button>
+        </div>
+
+        <div id="controls">
+            <button id="btn-reset">Reset</button>
+            <button id="btn-new">New Land</button>
+            <button id="btn-hint">Hint</button>
+        </div>
+
+        <div id="rules">
+            <p>Joshua cast lots at Shiloh and marked out an inheritance for each tribe of Israel.
+               Every <strong>boundary stone</strong> on the map carries a number: the count of
+               squares in that tribe&rsquo;s field.</p>
+            <ul>
+                <li>Mark out one <strong>rectangular field</strong> around each stone.</li>
+                <li>A field must hold <strong>exactly one</strong> stone, and as many squares as
+                    the number on it.</li>
+                <li>Fields may never overlap, and when the land is divided no square is left over.</li>
+            </ul>
+            <p class="hint"><strong>Mouse:</strong> drag from corner to corner to mark a field;
+               click or right-click inside a field to clear it.
+               <strong>Keyboard:</strong> arrow keys move, <strong>Space</strong> sets a corner and
+               <strong>Space</strong> again marks the field, <strong>Esc</strong> cancels,
+               <strong>Backspace</strong> clears. <strong>H</strong> hint, <strong>N</strong> new land,
+               <strong>R</strong> reset.</p>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>
