@@ -294,13 +294,16 @@ function isDeducible(candidate) {
     return settled.every(Boolean);
 }
 
-// A partition is usable only when every piece is between MIN_AREA and maxArea;
-// an awkward cut can strand an oversized strip, so retry with a nudged seed.
+// Builds the land for a seed: pure and deterministic, so the same seed always
+// gives the same puzzle.
 function buildPuzzle(gridCols, gridRows, maxArea, seed) {
-    // Cutting at random strands a lot of two-square slivers, which make a dull
-    // puzzle, so several lands are cut and the roomiest are tried first: fewest
-    // fields, then fewest two-square fields. The first one that can be divided
-    // in exactly one lawful way is the puzzle; failing that, the roomiest.
+    // An awkward cut can strand a piece that is too big, so a land is only a
+    // candidate when every piece is between MIN_AREA and maxArea. Random
+    // cutting also strands a lot of two-square slivers, which make a dull
+    // puzzle, so the roomiest candidates are tried first: fewest fields, then
+    // fewest two-square fields. The first land that can be reasoned out with
+    // forced moves is the puzzle; failing that, one with a single lawful
+    // division; failing even that, the roomiest cut.
     const candidates = [];
     for (let attempt = 0; attempt < 64; attempt++) {
         const rand = makeRng(Math.imul(seed >>> 0 || 1, 7919) + attempt * 104729 + 1);
