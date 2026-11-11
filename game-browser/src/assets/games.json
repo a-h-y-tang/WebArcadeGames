@@ -1089,6 +1089,15 @@
     "thumbnail": "games/Solitaire/screenshot.png"
   },
   {
+    "id": "sparrows-garden",
+    "name": "Sparrow's Garden",
+    "description": "Peck every seed in the walled garden while four cats prowl - sunflowers turn them shy",
+    "category": "Action",
+    "dir": "SparrowsGarden",
+    "path": "games/SparrowsGarden/index.html",
+    "thumbnail": "games/SparrowsGarden/screenshot.png"
+  },
+  {
     "id": "split-ball",
     "name": "Split Ball",
     "description": "Grow walls to partition the arena and fence the bouncing balls in",
