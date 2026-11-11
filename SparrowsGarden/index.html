@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sparrow's Garden</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main id="container">
+        <h1>Sparrow's Garden</h1>
+        <p id="verse">&ldquo;Not one of them will fall to the ground outside your
+            Father&rsquo;s care.&rdquo; &mdash; Matthew 10:29</p>
+
+        <div id="hud">
+            <div class="stat"><span class="label">Score</span><strong id="score">0</strong></div>
+            <div class="stat"><span class="label">Best</span><strong id="best">0</strong></div>
+            <div class="stat"><span class="label">Lives</span><strong id="lives">3</strong></div>
+            <div class="stat"><span class="label">Garden</span><strong id="level">1</strong></div>
+            <div class="stat"><span class="label">Left</span><strong id="seeds">204</strong></div>
+        </div>
+
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="456" height="504"></canvas>
+            <div id="overlay" class="visible">
+                <h2 id="overlay-title">Sparrow's Garden</h2>
+                <p id="overlay-sub">Peck every seed in the garden &mdash; mind the cats.</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+
+        <div id="controls">
+            <button id="btn-pause">Pause</button>
+            <button id="btn-restart">Restart</button>
+        </div>
+
+        <div id="rules">
+            <p>A sparrow hops the gravel paths of a walled kitchen garden,
+               gathering the <strong>seeds</strong> scattered along them. Four
+               garden <strong>cats</strong> prowl the same paths.</p>
+            <ul>
+                <li>Peck every seed (10 each) to clear the garden. A fresh,
+                    faster garden is laid out each time.</li>
+                <li>The four <strong>sunflower</strong> heads (50 each) turn the
+                    cats shy for a few seconds &mdash; reach a shy cat and it
+                    scampers home to the shed for 200, then 400, 800, 1600.</li>
+                <li>A <strong>berry</strong> (100) ripens in the middle of the
+                    garden once sixty seeds have gone.</li>
+                <li>A prowling cat that catches the sparrow startles it home.
+                    Three lives, and the cats get quicker every garden.</li>
+            </ul>
+            <p class="hint">Arrow keys or <strong>W A S D</strong> to hop,
+               <strong>P</strong> to pause. Turn early &mdash; the sparrow takes
+               the turn at the next corner that allows it.</p>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>
