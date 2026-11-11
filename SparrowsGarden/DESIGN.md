@@ -97,8 +97,14 @@ kept in `localStorage` under `sparrows-garden-best`.
 | Input | Action |
 |---|---|
 | Arrow keys / **W A S D** | Hop up, left, down, right |
+| Swipe on the canvas | Hop that way (touch screens) |
 | **P** | Pause / resume |
-| Any direction key, **Space**/**Enter**, or **Start** | Begin play |
+| Any direction key, a swipe, **Space**/**Enter**, or **Start** | Begin play |
+
+A swipe shorter than 18 px counts as a tap and is ignored; longer ones take
+whichever axis moved further. `swipe(dx, dy)` is its own function so the tests
+drive it without synthesising touches, and the touch listeners only translate
+events into a call to it.
 
 ## Code shape
 
@@ -106,7 +112,7 @@ One classic (non-module) script, `game.js`, exactly like the other games here,
 so the Playwright suite can read and poke the globals (`grid`, `player`, `cats`,
 `score`, `lives`, `level`, `state`, `seedsLeft`) and call the seams
 (`startGame()`, `stopLoop()`, `tick(dt)`, `advance()`, `chooseCatDir()`,
-`catTarget()`, `openAt()`). `requestAnimationFrame` only ever calls `tick(dt)`,
+`catTarget()`, `openAt()`, `swipe()`). `requestAnimationFrame` only ever calls `tick(dt)`,
 so tests call `stopLoop()` and then step time themselves.
 
 * `index.html` — HUD, canvas, overlay, rules.

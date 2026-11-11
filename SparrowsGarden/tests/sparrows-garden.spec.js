@@ -187,6 +187,15 @@ test.describe("Sparrow's Garden", () => {
             expect(await page.evaluate(() => state)).toBe('playing');
         });
 
+        test('the overlay button carries on from a pause instead of restarting', async ({ page }) => {
+            await page.locator('#btn-start').click();
+            await page.evaluate(() => { score = 70; togglePause(); });
+            await expect(page.locator('#btn-start')).toHaveText('Resume');
+            await page.locator('#btn-start').click();
+            expect(await page.evaluate(() => ({ state, score }))).toEqual({ state: 'playing', score: 70 });
+            await expect(page.locator('#btn-start')).toHaveText('Start Game');
+        });
+
         test('a paused game does not move', async ({ page }) => {
             const res = await page.evaluate(() => {
                 startGame(); stopLoop();
@@ -226,6 +235,40 @@ test.describe("Sparrow's Garden", () => {
             });
             expect(res.c).toBe(9);
             expect(res.prog).toBeCloseTo(0.5, 2);
+        });
+
+        test('a swipe steers the sparrow', async ({ page }) => {
+            const res = await page.evaluate(() => {
+                startGame(); stopLoop();
+                const took = swipe(-40, 3);
+                const left = { ...player.want };
+                swipe(2, -40);
+                return { took, left, up: player.want };
+            });
+            expect(res.took).toBe(true);
+            expect(res.left).toEqual({ dr: 0, dc: -1 });
+            expect(res.up).toEqual({ dr: -1, dc: 0 });
+        });
+
+        test('a tap is not a swipe', async ({ page }) => {
+            const res = await page.evaluate(() => {
+                startGame(); stopLoop();
+                player.want = { dr: 0, dc: 1 };
+                const took = swipe(3, -2);
+                return { took, want: player.want };
+            });
+            expect(res.took).toBe(false);
+            expect(res.want).toEqual({ dr: 0, dc: 1 });
+        });
+
+        test('a swipe on the idle screen starts the game', async ({ page }) => {
+            const res = await page.evaluate(() => {
+                swipe(0, 40);
+                stopLoop();
+                return { state, want: player.want };
+            });
+            expect(res.state).toBe('playing');
+            expect(res.want).toEqual({ dr: 1, dc: 0 });
         });
 
         test('the sparrow cannot hop into a hedge', async ({ page }) => {

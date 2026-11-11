@@ -21,7 +21,8 @@ Open `index.html` directly in a browser — no build step or server needed.
 |---|---|
 | Arrow keys / **W A S D** | Hop up, left, down, right |
 | **P** or the Pause button | Pause / resume |
-| Any direction key, **Space**, **Enter** or **Start** | Begin play |
+| Swipe across the garden | Hop that way (touch screens) |
+| Any direction key, a swipe, **Space**, **Enter** or **Start** | Begin play |
 | Restart button | Start a new game |
 
 Turn early — the sparrow takes a queued turn at the first corner that allows

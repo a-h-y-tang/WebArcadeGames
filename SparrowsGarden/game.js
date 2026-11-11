@@ -178,6 +178,7 @@ function resetPositions() {
         want: { dr: 0, dc: 0 },
         prog: 0,
     };
+    lastFrame = null;
     const mode = phaseMode();
     for (const cat of cats) {
         cat.r = cat.start.r;
@@ -315,7 +316,12 @@ function advance(m, speed, dt) {
             m.r += m.dir.dr;
             m.c += m.dir.dc;
             m.prog = 0;
-            if (m === player) collectAt(m.r, m.c);
+            if (m === player) {
+                collectAt(m.r, m.c);
+                // Clearing the garden re-places the sparrow; stop walking the
+                // hop it was part-way through.
+                if (m !== player) return;
+            }
         }
     }
 }
@@ -413,6 +419,7 @@ function gameOver() {
     saveBest();
     stopLoop();
     showOverlay('The cats win this round', 'Score ' + score + ' — press Start to try again.');
+    btnStart.textContent = 'Start Game';
     updateHud();
 }
 
@@ -532,6 +539,7 @@ function togglePause() {
     if (state === 'playing') {
         state = 'paused';
         showOverlay('Paused', 'Press P to carry on.');
+        btnStart.textContent = 'Resume';
     } else if (state === 'paused') {
         state = 'playing';
         hideOverlay();
@@ -547,6 +555,7 @@ function showOverlay(title, sub) {
 
 function hideOverlay() {
     overlay.classList.remove('visible');
+    btnStart.textContent = 'Start Game';
 }
 
 function updateHud() {
@@ -585,7 +594,43 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-btnStart.addEventListener('click', startGame);
+const SWIPE_MIN = 18;   // pixels before a drag counts as a swipe
+
+// Steer by swipe on a touch screen. Exposed as its own function so the tests
+// can drive it without synthesising touches.
+function swipe(dx, dy) {
+    if (Math.abs(dx) < SWIPE_MIN && Math.abs(dy) < SWIPE_MIN) return false;
+    const dir = Math.abs(dx) > Math.abs(dy)
+        ? { dr: 0, dc: Math.sign(dx) }
+        : { dr: Math.sign(dy), dc: 0 };
+    if (state === 'idle' || state === 'gameover') startGame();
+    if (state === 'playing') player.want = dir;
+    return true;
+}
+
+var touchFrom = null;
+
+canvas.addEventListener('touchstart', (e) => {
+    const t = e.changedTouches[0];
+    touchFrom = { x: t.clientX, y: t.clientY };
+}, { passive: true });
+
+canvas.addEventListener('touchmove', (e) => {
+    if (touchFrom) e.preventDefault();
+}, { passive: false });
+
+canvas.addEventListener('touchend', (e) => {
+    if (!touchFrom) return;
+    const t = e.changedTouches[0];
+    swipe(t.clientX - touchFrom.x, t.clientY - touchFrom.y);
+    touchFrom = null;
+});
+
+// The overlay button starts a game, or carries on from a pause.
+btnStart.addEventListener('click', () => {
+    if (state === 'paused') togglePause();
+    else startGame();
+});
 btnRestart.addEventListener('click', startGame);
 btnPause.addEventListener('click', () => {
     if (state === 'playing' || state === 'paused') togglePause();
