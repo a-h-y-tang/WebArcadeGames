@@ -106,6 +106,15 @@ as one. Stones pushed into a dead corner are pruned. That keeps the hardest leve
 to about two seconds, where a naive search over single steps did not finish at
 all.
 
+The solver hands back the line of pushes it found, and each level's test then
+**plays that line out through the game's own keyboard input** — walking the
+bearer round behind each stone in turn (a second, much smaller breadth-first
+search over open bed) and pressing the key that shoves it. The level is only
+counted as solvable once the game itself reports it finished, with the same
+number of pushes the solver used. So the tests do not merely assert that the
+maps are winnable in theory; they prove the shipped game can be won by playing
+it, and would catch the two halves disagreeing about a rule.
+
 The suite also checks that every map is rectangular and walled all the way round,
 that stones and memorial places come in equal numbers, that no stone starts
 wedged, and that the push counts climb from level to level.

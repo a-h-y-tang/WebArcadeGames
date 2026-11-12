@@ -74,18 +74,31 @@ function solve(level, limit = 2_000_000) {
     const keyOf = (stones, canon) => String.fromCharCode(...stones) + ':' + canon;
     const allHome = (stones) => Array.from(stones).every((i) => goals[i]);
 
+    // Walk the parent chain back to the start to recover the line of pushes,
+    // each as the stone's square and the direction it was shoved in.
+    const lineTo = (node, lastPush) => {
+        const out = [lastPush];
+        for (let at = node; at && at.push; at = at.parent) out.unshift(at.push);
+        return out.map(({ cell, d }) => ({
+            stone: [Math.floor(cell / w), cell % w],
+            dr: [-1, 1, 0, 0][d],
+            dc: [0, 0, -1, 1][d],
+        }));
+    };
+
     const start = sorted(level.stones);
-    if (allHome(start)) return { solved: true, pushes: 0 };
+    if (allHome(start)) return { solved: true, pushes: 0, line: [] };
     for (const i of start) occupied[i] = 1;
     const first = flood(AREA, player);
 
     const seen = new Set([keyOf(start, first.canon)]);
-    let frontier = [[start, player, 0]];
+    let frontier = [{ stones: start, from: player, depth: 0, parent: null, push: null }];
     let expanded = 0;
 
     while (frontier.length) {
         const next = [];
-        for (const [stones, from, pushes] of frontier) {
+        for (const node of frontier) {
+            const { stones, from, depth } = node;
             occupied.fill(0);
             for (const i of stones) occupied[i] = 1;
             const area = flood(AREA, from);
@@ -96,7 +109,9 @@ function solve(level, limit = 2_000_000) {
                     const target = stone + step[d];
                     if (walls[target] || occupied[target] || dead[target]) continue;
                     const moved = sorted(Array.from(stones, (i) => (i === stone ? target : i)));
-                    if (allHome(moved)) return { solved: true, pushes: pushes + 1, expanded };
+                    if (allHome(moved)) {
+                        return { solved: true, pushes: depth + 1, line: lineTo(node, { cell: stone, d }) };
+                    }
                     occupied[stone] = 0;
                     occupied[target] = 1;
                     const after = flood(PROBE, stone);
@@ -106,13 +121,55 @@ function solve(level, limit = 2_000_000) {
                     if (seen.has(key)) continue;
                     seen.add(key);
                     if (++expanded > limit) return { solved: false, reason: 'limit' };
-                    next.push([moved, stone, pushes + 1]);
+                    next.push({ stones: moved, from: stone, depth: depth + 1, parent: node, push: { cell: stone, d } });
                 }
             }
         }
         frontier = next;
     }
     return { solved: false, reason: 'exhausted' };
+}
+
+// The shortest walk across open bed from `from` to `to`, as arrow-key names.
+// Stones block the way: this is walking only, never pushing.
+function walkKeys(board, from, to) {
+    const { rows, cols, walls, stones } = board;
+    const id = ([r, c]) => r * cols + c;
+    const steps = [[-1, 0, 'ArrowUp'], [1, 0, 'ArrowDown'], [0, -1, 'ArrowLeft'], [0, 1, 'ArrowRight']];
+    const cameFrom = new Map([[id(from), null]]);
+    const queue = [from];
+    while (queue.length) {
+        const [r, c] = queue.shift();
+        if (r === to[0] && c === to[1]) break;
+        for (const [dr, dc, key] of steps) {
+            const nr = r + dr;
+            const nc = c + dc;
+            if (nr < 0 || nc < 0 || nr >= rows || nc >= cols) continue;
+            if (walls[nr][nc] || stones[nr][nc] || cameFrom.has(id([nr, nc]))) continue;
+            cameFrom.set(id([nr, nc]), { from: [r, c], key });
+            queue.push([nr, nc]);
+        }
+    }
+    if (!cameFrom.has(id(to))) return null;
+    const keys = [];
+    for (let at = to; cameFrom.get(id(at)); at = cameFrom.get(id(at)).from) {
+        keys.unshift(cameFrom.get(id(at)).key);
+    }
+    return keys;
+}
+
+const PUSH_KEY = { '-1,0': 'ArrowUp', '1,0': 'ArrowDown', '0,-1': 'ArrowLeft', '0,1': 'ArrowRight' };
+
+// Play a solver line out through the game's own keyboard input: walk round
+// behind each stone in turn, then shove it.
+async function playLine(page, line) {
+    for (const { stone, dr, dc } of line) {
+        const board = await page.evaluate(() => ({ rows, cols, walls, stones, player }));
+        const stand = [stone[0] - dr, stone[1] - dc];
+        const keys = walkKeys(board, [board.player.r, board.player.c], stand);
+        expect(keys, `no way round to ${stand} to push ${stone}`).not.toBeNull();
+        await press(page, ...keys, PUSH_KEY[`${dr},${dc}`]);
+    }
 }
 
 // --- helpers against the running page ---------------------------------------
@@ -274,16 +331,28 @@ test.describe('Stones of Remembrance', () => {
         });
 
         for (const index of [0, 1, 2, 3, 4]) {
-            test(`level ${index + 1} can be solved`, async ({ page }) => {
+            test(`level ${index + 1} can be solved, and the game plays that line out`, async ({ page }) => {
+                test.slow();  // searching the later maps takes a few seconds
                 const levels = await levelMaps(page);
                 const { name, map } = levels[index];
                 const result = solve(parseMap(map));
                 expect(result.solved, `${name} is not solvable: ${result.reason}`).toBe(true);
                 expect(result.pushes).toBeGreaterThan(0);
+                expect(result.line).toHaveLength(result.pushes);
+
+                // The solver only reasons about the map. Playing its line out
+                // through the keyboard checks the game agrees about the rules.
+                await page.locator(`.level-btn[data-level="${index}"]`).click();
+                await playLine(page, result.line);
+                const state = await snapshot(page);
+                expect(state.solved, `${name} did not finish`).toBe(true);
+                expect(state.pushes).toBe(result.pushes);
+                await expect(page.locator('#stones-left')).toHaveText('0');
             });
         }
 
         test('the levels get harder: each needs at least as many pushes as the last', async ({ page }) => {
+            test.slow();  // this one solves all five maps
             const levels = await levelMaps(page);
             const pushes = levels.map(({ map }) => solve(parseMap(map)).pushes);
             for (let i = 1; i < pushes.length; i++) {
