@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stones of Remembrance</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main id="container">
+        <h1>Stones of Remembrance</h1>
+        <p id="verse">&ldquo;These stones are to be a memorial to the people of Israel for ever&rdquo;
+            &mdash; Joshua 4:7</p>
+
+        <div id="hud">
+            <div class="stat"><span class="label">Crossing</span><strong id="level-label">The Riverbed</strong></div>
+            <div class="stat"><span class="label">Stones left</span><strong id="stones-left">2</strong></div>
+            <div class="stat"><span class="label">Steps</span><strong id="moves">0</strong></div>
+            <div class="stat"><span class="label">Pushes</span><strong id="pushes">0</strong></div>
+        </div>
+
+        <p id="status">Push every stone onto a memorial place.</p>
+
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="560" height="460"></canvas>
+            <div id="overlay">
+                <h2 id="overlay-title">Memorial set up!</h2>
+                <p id="overlay-sub"></p>
+            </div>
+        </div>
+
+        <div id="levels">
+            <button class="level-btn active" data-level="0">1. The Riverbed</button>
+            <button class="level-btn" data-level="1">2. Dry Ground</button>
+            <button class="level-btn" data-level="2">3. The Crossing</button>
+            <button class="level-btn" data-level="3">4. Gilgal</button>
+            <button class="level-btn" data-level="4">5. The Memorial</button>
+        </div>
+
+        <div id="controls">
+            <button id="btn-undo">Undo</button>
+            <button id="btn-reset">Reset</button>
+            <button id="btn-next" hidden>Next Crossing</button>
+        </div>
+
+        <div id="rules">
+            <p>When Israel came up out of the Jordan, twelve men each carried a
+               <strong>stone</strong> from the riverbed and set it up at Gilgal, so that
+               later generations would ask what the stones meant. Walk the bearer across
+               the dry bed and <strong>push</strong> every stone onto a
+               <strong>memorial place</strong>.</p>
+            <ul>
+                <li>You can only <strong>push</strong> a stone, never pull it &mdash; so you
+                    must stand on the far side of a stone to move it.</li>
+                <li>One stone at a time: a stone will not shift if a wall or another stone
+                    is behind it.</li>
+                <li>A stone shoved into a corner is <strong>wedged</strong> for good. Take
+                    it back with Undo.</li>
+            </ul>
+            <table id="keys">
+                <tr><td>Arrow keys / WASD</td><td>Walk, and push what is in front of you</td></tr>
+                <tr><td>Click a square</td><td>Step one square towards it (same row or column)</td></tr>
+                <tr><td>U</td><td>Undo the last step</td></tr>
+                <tr><td>R</td><td>Reset this crossing</td></tr>
+                <tr><td>N</td><td>Next crossing, once this one is finished</td></tr>
+            </table>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>
