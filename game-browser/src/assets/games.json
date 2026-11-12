@@ -1116,6 +1116,15 @@
     "thumbnail": "games/StainedGlassHop/screenshot.png"
   },
   {
+    "id": "stones-of-remembrance",
+    "name": "Stones of Remembrance",
+    "description": "Push the memorial stones out of the Jordan riverbed and set them up at Gilgal",
+    "category": "Puzzle",
+    "dir": "StonesOfRemembrance",
+    "path": "games/StonesOfRemembrance/index.html",
+    "thumbnail": "games/StonesOfRemembrance/screenshot.png"
+  },
+  {
     "id": "sudoku",
     "name": "Sudoku",
     "description": "Number logic puzzle - fill the grid correctly",
