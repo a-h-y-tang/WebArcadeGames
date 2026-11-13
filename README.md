@@ -150,6 +150,7 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Promised Land | [PromisedLand/](PromisedLand/) | Complete |
 | Lamp unto My Feet | [LampUntoMyFeet/](LampUntoMyFeet/) | Complete |
 | Feast of Booths | [FeastOfBooths/](FeastOfBooths/) | Complete |
+| Dominoes | [Dominoes/](Dominoes/) | Complete |
 
 ## Playing
 

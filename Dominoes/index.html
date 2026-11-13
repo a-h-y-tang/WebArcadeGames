@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dominoes</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main id="container">
+        <h1>Dominoes</h1>
+        <p id="tagline">Draw dominoes with a double-six set &mdash; first to 100 points</p>
+
+        <div id="hud">
+            <div class="stat"><span class="label">You</span><strong id="score-you">0</strong></div>
+            <div class="stat"><span class="label">Computer</span><strong id="score-cpu">0</strong></div>
+            <div class="stat"><span class="label">Boneyard</span><strong id="boneyard-count">14</strong></div>
+            <div class="stat wide"><span class="label">Turn</span><strong id="turn-label">Your turn</strong></div>
+        </div>
+
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="880" height="330"></canvas>
+            <div id="overlay">
+                <h2 id="overlay-title">Hand over</h2>
+                <p id="overlay-sub"></p>
+                <button id="btn-continue">Next hand</button>
+            </div>
+        </div>
+
+        <p id="message">Click a bone to play it.</p>
+
+        <div id="controls">
+            <button id="btn-draw">Draw</button>
+            <button id="btn-pass">Pass</button>
+            <button id="btn-new">New Game</button>
+        </div>
+
+        <div id="rules">
+            <p>Add a bone to either open end of the train so the touching numbers
+               match. Empty your hand first and you win the hand, scoring the pips
+               left in the computer's hand.</p>
+            <ul>
+                <li>The highest double leads each hand &mdash; that bone is forced, so
+                    it is played for you.</li>
+                <li>Nothing playable? <strong>Draw</strong> a bone from the boneyard.
+                    Once the boneyard is empty you must <strong>Pass</strong>.</li>
+                <li>Two passes in a row block the train: the lighter hand wins and
+                    scores the heavier one.</li>
+                <li>First to 100 points takes the match.</li>
+            </ul>
+            <p class="hint">Click a bone to play it. If it fits both ends, click one
+               of the glowing pads beside the train. Keyboard:
+               <strong>&larr;</strong> <strong>&rarr;</strong> to choose a bone,
+               <strong>Enter</strong> to play it, <strong>L</strong>/<strong>R</strong>
+               for a particular end, <strong>D</strong> to draw,
+               <strong>P</strong> to pass.</p>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>
