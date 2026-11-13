@@ -125,10 +125,13 @@ test and debugging hook that drops the game into an exact position.
 ### Drawing
 
 `render()` repaints everything from state: the computer's bones face down along
-the top, the train wrapped into rows, the message line, and your hand. The train
-is laid left to right and wraps to the next row when a bone would not fit;
-doubles are drawn across the train, as they are on a table. Rows reserve a
-gutter at each side for the end pads.
+the top, the train, and your hand. The train is laid left to right and wraps to
+the next row when a bone would not fit; doubles are drawn across the train, as
+they are on a table. Each row is centred across the cloth and the rows in use
+are centred top to bottom, so a short train sits in the middle of the table
+rather than in a corner, and the two end pads — which carry the number you have
+to match — sit in the gutter each row reserves for them. Bones in your hand that
+cannot be played are dimmed, and the selected one is lifted and outlined.
 
 ## Assumptions
 

@@ -4,13 +4,13 @@
 // Geometry
 // ---------------------------------------------------------------------------
 const W = 880;
-const H = 360;
+const H = 330;
 const PAD = 16;
 
 const HALF = 26;              // one half of a bone on the table
-const ROW_H = 62;             // height of a row of the train
-const TRAIN_TOP = 44;
-const TRAIN_ROWS = 4;
+const ROW_H = 66;             // height of a row of the train
+const TRAIN_TOP = 42;
+const TRAIN_ROWS = 3;
 const TILE_GAP = 1;
 
 const PAD_W = 24;             // the glowing "play here" pads
@@ -21,11 +21,11 @@ const ROW_END = W - GUTTER;
 
 const HAND_HALF = 30;         // one half of a bone in your hand
 const HAND_W = HAND_HALF * 2;
-const HAND_TOP = 306;
+const HAND_TOP = 286;
 const HAND_LIFT = 10;
 const HAND_GAP = 6;
 
-const CPU_Y = 14;
+const CPU_Y = 12;
 const CPU_W = 34;
 const CPU_H = 18;
 const CPU_GAP = 5;
@@ -133,30 +133,50 @@ function bestMove(hand, train) {
     return best ? { index: best.index, end: best.end } : null;
 }
 
-/** Canvas rectangles for the train, plus the two end pads. */
+/**
+ * Canvas rectangles for the train, plus the two end pads. The train is laid
+ * left to right and wraps when a bone would not fit; each row is centred
+ * across the cloth, and the rows in use are centred top to bottom, so a short
+ * train sits in the middle of the table instead of in one corner.
+ */
 function trainGeometry(train) {
-    const tiles = [];
-    let row = 0;
-    let x = ROW_START;
+    const span = ROW_END - ROW_START;
+    const rows = [[]];
+    let used = 0;
     for (const entry of train) {
         const wide = !entry.double;
         const w = wide ? HALF * 2 : HALF;
         const h = wide ? HALF : HALF * 2;
-        if (x + w > ROW_END && x > ROW_START) {
-            row = Math.min(row + 1, TRAIN_ROWS - 1);
-            x = ROW_START;
+        if (used > 0 && used + TILE_GAP + w > span) {
+            rows.push([]);
+            used = 0;
         }
-        const centre = TRAIN_TOP + row * ROW_H + ROW_H / 2;
-        tiles.push({ x, y: centre - h / 2, w, h, row, a: entry.a, b: entry.b, double: entry.double });
-        x += w + TILE_GAP;
+        rows[rows.length - 1].push({ entry, w, h });
+        used += (used > 0 ? TILE_GAP : 0) + w;
     }
+
+    const rowCount = Math.min(rows.length, TRAIN_ROWS);
+    const yShift = ((TRAIN_ROWS - rowCount) * ROW_H) / 2;
+    const tiles = [];
+    rows.forEach((row, r) => {
+        const total = row.reduce((sum, t, i) => sum + t.w + (i ? TILE_GAP : 0), 0);
+        let x = ROW_START + (span - total) / 2;
+        const index = Math.min(r, TRAIN_ROWS - 1);
+        const centre = TRAIN_TOP + yShift + index * ROW_H + ROW_H / 2;
+        row.forEach((t) => {
+            tiles.push({
+                x, y: centre - t.h / 2, w: t.w, h: t.h, row: index,
+                a: t.entry.a, b: t.entry.b, double: t.entry.double,
+            });
+            x += t.w + TILE_GAP;
+        });
+    });
+
     const padFor = (tile, side) => {
-        const centre = tile
-            ? tile.y + tile.h / 2
-            : TRAIN_TOP + ROW_H / 2;
+        const centre = tile ? tile.y + tile.h / 2 : TRAIN_TOP + (TRAIN_ROWS * ROW_H) / 2;
         const px = tile
             ? (side === 'left' ? tile.x - PAD_W - 6 : tile.x + tile.w + 6)
-            : (side === 'left' ? ROW_START - PAD_W - 6 : ROW_START + 6);
+            : W / 2 + (side === 'left' ? -PAD_W - 6 : 6);
         return {
             x: Math.max(PAD, Math.min(px, W - PAD - PAD_W)),
             y: centre - PAD_H / 2,
@@ -567,7 +587,7 @@ function drawBack(x, y, w, h) {
     ctx.stroke();
 }
 
-function drawPadMarker(rect, live) {
+function drawPadMarker(rect, live, value) {
     ctx.save();
     ctx.globalAlpha = live ? 1 : 0.28;
     ctx.fillStyle = live ? '#ffd98a33' : '#ffffff14';
@@ -578,6 +598,15 @@ function drawPadMarker(rect, live) {
     ctx.strokeStyle = live ? '#ffd98a' : '#ffffff55';
     roundRect(rect.x + 1, rect.y + 1, rect.w - 2, rect.h - 2, 6);
     ctx.stroke();
+    if (value !== null && value !== undefined) {
+        ctx.setLineDash([]);
+        ctx.fillStyle = live ? '#ffe9b8' : '#ffffff88';
+        ctx.font = '600 13px "Segoe UI", Arial, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(String(value), rect.x + rect.w / 2, rect.y + rect.h / 2);
+        ctx.textAlign = 'left';
+    }
     ctx.restore();
 }
 
@@ -597,13 +626,11 @@ function render() {
     grad.addColorStop(1, '#0e4425');
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, W, H);
-    ctx.strokeStyle = '#ffffff12';
-    for (let y = TRAIN_TOP; y < TRAIN_TOP + TRAIN_ROWS * ROW_H; y += ROW_H) {
-        ctx.beginPath();
-        ctx.moveTo(PAD, y);
-        ctx.lineTo(W - PAD, y);
-        ctx.stroke();
-    }
+    const glow = ctx.createRadialGradient(W / 2, TRAIN_TOP + 70, 40, W / 2, TRAIN_TOP + 70, W * 0.62);
+    glow.addColorStop(0, '#ffffff10');
+    glow.addColorStop(1, '#00000000');
+    ctx.fillStyle = glow;
+    ctx.fillRect(0, 0, W, H);
 
     // The computer's bones, face down
     const n = hands[1].length;
@@ -623,9 +650,10 @@ function render() {
     const sel = selected >= 0 ? hands[0][selected] : null;
     const can = sel ? canPlayTile(sel, layout) : { left: false, right: false };
     const myTurn = phase === 'playing' && turn === 0;
-    if (layout.length) {
-        drawPadMarker(geo.leftPad, myTurn && can.left);
-        drawPadMarker(geo.rightPad, myTurn && can.right);
+    const ends = openEnds(layout);
+    if (ends) {
+        drawPadMarker(geo.leftPad, myTurn && can.left, ends.left);
+        drawPadMarker(geo.rightPad, myTurn && can.right, ends.right);
     }
 
     // Your hand
@@ -641,7 +669,7 @@ function render() {
         const playable = playableTiles(hands[0], layout).includes(i);
         drawBone(r.x, r.y, r.w, r.h, r.tile[0], r.tile[1], i === selected && playable);
         if (myTurn && !playable) {
-            ctx.fillStyle = '#0b3a1f55';
+            ctx.fillStyle = '#0d3b2133';
             roundRect(r.x, r.y, r.w, r.h, 4);
             ctx.fill();
         }

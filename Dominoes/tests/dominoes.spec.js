@@ -150,10 +150,10 @@ test.describe('Dominoes', () => {
     // Opening state
     // -----------------------------------------------------------------------
     test.describe('a new game', () => {
-        test('the page is titled Dominoes and the canvas is 880x360', async ({ page }) => {
+        test('the page is titled Dominoes and the canvas is 880x330', async ({ page }) => {
             await expect(page).toHaveTitle('Dominoes');
             await expect(page.locator('#canvas')).toHaveAttribute('width', '880');
-            await expect(page.locator('#canvas')).toHaveAttribute('height', '360');
+            await expect(page.locator('#canvas')).toHaveAttribute('height', '330');
         });
 
         test('deals seven bones each from one complete set', async ({ page }) => {
@@ -510,6 +510,18 @@ test.describe('Dominoes', () => {
             expect(overlaps).toEqual([]);
         });
 
+        test('a short train is centred on the cloth', async ({ page }) => {
+            await setup(page, { you: [], computer: [], boneyard: [], layout: [[2, 4], [4, 5]], turn: 0 });
+            const g = await page.evaluate(() => {
+                const t = trainGeometry(layout).tiles;
+                const left = t[0].x;
+                const right = t[t.length - 1].x + t[t.length - 1].w;
+                return { left, right, mid: (left + right) / 2, cy: t[0].y + t[0].h / 2 };
+            });
+            expect(Math.abs(g.mid - 440)).toBeLessThan(2);
+            expect(Math.abs(g.cy - (42 + (3 * 66) / 2))).toBeLessThan(2);
+        });
+
         test('doubles are laid across the train', async ({ page }) => {
             await setup(page, { you: [], computer: [], boneyard: [], layout: [[3, 3], [3, 5]], turn: 0 });
             const shape = await page.evaluate(() => trainGeometry(layout).tiles.map((t) => t.w > t.h));
@@ -547,11 +559,19 @@ test.describe('Dominoes', () => {
         test('the board is actually drawn, not blank', async ({ page }) => {
             await setup(page, { you: [[1, 2]], computer: [[0, 0]], boneyard: [], layout: [[5, 5]], turn: 0 });
             const painted = await page.evaluate(() => {
+                const mean = (x, y, w, h) => {
+                    const d = canvas.getContext('2d').getImageData(x, y, w, h).data;
+                    const sum = [0, 0, 0];
+                    for (let i = 0; i < d.length; i += 4) {
+                        sum[0] += d[i]; sum[1] += d[i + 1]; sum[2] += d[i + 2];
+                    }
+                    return sum.map((v) => (v * 4) / d.length);
+                };
                 const t = trainGeometry(layout).tiles[0];
-                const ctx = canvas.getContext('2d');
-                const face = ctx.getImageData(Math.round(t.x + t.w / 2), Math.round(t.y + t.h / 2), 1, 1).data;
-                const felt = ctx.getImageData(2, canvas.height - 2, 1, 1).data;
-                return { face: [...face].slice(0, 3), felt: [...felt].slice(0, 3) };
+                return {
+                    face: mean(Math.round(t.x) + 2, Math.round(t.y) + 2, Math.round(t.w) - 4, Math.round(t.h) - 4),
+                    felt: mean(2, 2, 20, 20),
+                };
             });
             // The bone face is light, the cloth behind it is not.
             expect(painted.face.reduce((a, b) => a + b, 0)).toBeGreaterThan(450);

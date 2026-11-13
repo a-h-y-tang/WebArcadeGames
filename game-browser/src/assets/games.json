@@ -288,6 +288,15 @@
     "thumbnail": "games/DinoRun/screenshot.png"
   },
   {
+    "id": "dominoes",
+    "name": "Dominoes",
+    "description": "Classic draw dominoes against the computer - match the ends, empty your hand, first to 100 points",
+    "category": "Cards & Dice",
+    "dir": "Dominoes",
+    "path": "games/Dominoes/index.html",
+    "thumbnail": "games/Dominoes/screenshot.png"
+  },
+  {
     "id": "dots-and-boxes",
     "name": "Dots and Boxes",
     "description": "Strategy game - claim more boxes than your opponent",
