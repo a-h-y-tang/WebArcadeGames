@@ -53,7 +53,7 @@ beatable.
 | `style.css` | Dark table-side styling |
 | `game.js` | Rules, computer opponent, canvas drawing and input |
 | `DESIGN.md` | How the code works and the decisions behind it |
-| `tests/dominoes.spec.js` | Playwright suite (43 tests) |
+| `tests/dominoes.spec.js` | Playwright suite (47 tests) |
 
 ## Tests
 

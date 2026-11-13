@@ -269,6 +269,7 @@ function newGame(seed) {
 
 function startHand() {
     clearTimeout(aiTimer);
+    hideOverlay();
     const deck = shuffled(fullSet());
     hands = [deck.slice(0, HAND_SIZE), deck.slice(HAND_SIZE, HAND_SIZE * 2)];
     boneyard = deck.slice(HAND_SIZE * 2);

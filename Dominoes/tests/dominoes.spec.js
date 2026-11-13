@@ -446,6 +446,17 @@ test.describe('Dominoes', () => {
             await expect(page.locator('#btn-continue')).toContainText(/new game/i);
         });
 
+        test('a new hand clears the overlay even when started from code', async ({ page }) => {
+            await setup(page, {
+                you: [[1, 5]], computer: [[6, 6]], boneyard: [], layout: [[5, 2], [2, 6]], turn: 0,
+            });
+            await page.evaluate(() => { aiEnabled = false; });
+            await clickHandTile(page, 0);
+            await expect(page.locator('#overlay')).toHaveClass(/visible/);
+            await page.evaluate(() => newGame(8));
+            await expect(page.locator('#overlay')).not.toHaveClass(/visible/);
+        });
+
         test('New Game resets the match', async ({ page }) => {
             await setup(page, {
                 you: [[1, 5]], computer: [[6, 6]], boneyard: [], layout: [[5, 2], [2, 6]], turn: 0,
@@ -456,6 +467,87 @@ test.describe('Dominoes', () => {
             expect(s.scores).toEqual([0, 0]);
             expect(s.phase).toBe('playing');
             expect(s.boneyard).toBe(14);
+        });
+    });
+
+    // -----------------------------------------------------------------------
+    // Whole hands
+    // -----------------------------------------------------------------------
+    test.describe('a hand played to the end', () => {
+        test('always finishes, and the bones are all still accounted for', async ({ page }) => {
+            const results = await page.evaluate(async () => {
+                const out = [];
+                for (let seed = 1; seed <= 12; seed++) {
+                    aiEnabled = false;          // drive both sides by hand, no timers
+                    newGame(seed);
+                    let steps = 0;
+                    while (phase === 'playing' && steps < 400) {
+                        steps++;
+                        const hand = hands[turn];
+                        const move = bestMove(hand, layout);
+                        if (move) {
+                            const player = turn;
+                            placeBone(player, move.index, move.end);
+                            if (hands[player].length === 0) { endHand(player, false); break; }
+                            turn = 1 - player;
+                        } else if (boneyard.length) {
+                            hands[turn].push(boneyard.pop());
+                        } else {
+                            passes++;
+                            if (passes >= 2) { endBlocked(); break; }
+                            turn = 1 - turn;
+                        }
+                    }
+                    const all = [...hands[0], ...hands[1], ...boneyard, ...layout.map((e) => e.tile)];
+                    out.push({
+                        seed,
+                        steps,
+                        phase,
+                        bones: new Set(all.map((t) => t.join('-'))).size,
+                        joined: layout.every((e, i) => i === 0 || layout[i - 1].b === e.a),
+                        scored: scores[0] + scores[1],
+                    });
+                }
+                return out;
+            });
+            for (const r of results) {
+                expect(r.phase, `seed ${r.seed} should end`).not.toBe('playing');
+                expect(r.steps, `seed ${r.seed} should not spin`).toBeLessThan(400);
+                expect(r.bones, `seed ${r.seed} keeps all 28 bones`).toBe(28);
+                expect(r.joined, `seed ${r.seed} keeps the train joined`).toBe(true);
+                expect(r.scored).toBeGreaterThanOrEqual(0);
+            }
+        });
+
+        test('clicking through a hand never leaves an illegal train', async ({ page }) => {
+            await page.evaluate(() => { aiDelay = 0; newGame(2468); });
+            for (let i = 0; i < 40; i++) {
+                const done = await page.evaluate(() => phase !== 'playing');
+                if (done) break;
+                const acted = await page.evaluate(() => {
+                    if (turn !== 0) return 'wait';
+                    const idx = playableTiles(hands[0], layout);
+                    if (idx.length) {
+                        const can = canPlayTile(hands[0][idx[0]], layout);
+                        return humanPlay(idx[0], can.right ? 'right' : 'left') ? 'played' : 'stuck';
+                    }
+                    if (boneyard.length) return humanDraw() ? 'drew' : 'stuck';
+                    return humanPass() ? 'passed' : 'stuck';
+                });
+                expect(acted).not.toBe('stuck');
+                await expect.poll(() => page.evaluate(() => turn === 0 || phase !== 'playing')).toBe(true);
+            }
+            const end = await page.evaluate(() => ({
+                phase,
+                joined: layout.every((e, i) => i === 0 || layout[i - 1].b === e.a),
+                bones: new Set([...hands[0], ...hands[1], ...boneyard, ...layout.map((e) => e.tile)]
+                    .map((t) => t.join('-'))).size,
+                scored: scores[0] + scores[1],
+            }));
+            expect(end.phase).not.toBe('playing');
+            expect(end.joined).toBe(true);
+            expect(end.bones).toBe(28);
+            expect(end.scored).toBeGreaterThanOrEqual(0);
         });
     });
 

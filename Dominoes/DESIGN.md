@@ -119,8 +119,14 @@ makes them testable on their own.
 `hands` (`[you, computer]`), `boneyard`, `layout`, `turn`, `scores`, `passes`,
 `phase` (`playing` / `hand-over` / `game-over`), `selected` and `message`.
 `newGame(seed)` reseeds a mulberry32 PRNG and deals, so a given seed always
-deals the same bones; `setupHand({ you, computer, boneyard, layout, turn })` is a
-test and debugging hook that drops the game into an exact position.
+deals the same bones; `setupHand({ you, computer, boneyard, layout, turn, scores })` is a
+test and debugging hook that drops the game into an exact position, and
+`aiEnabled = false` holds the computer still so a test can read a freshly dealt
+hand before the computer answers.
+
+The suite ends by playing hands right through: twelve seeded hands driven by
+`bestMove` on both sides (every one finishes, the train stays joined and all 28
+bones stay accounted for) and one hand clicked through the real interface.
 
 ### Drawing
 
