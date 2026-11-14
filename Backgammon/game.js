@@ -329,6 +329,7 @@ function checkWin() {
     clearTimers();
     overlayTitle.textContent = winner === WHITE ? 'You win!' : 'The computer wins';
     overlaySub.textContent = winMargin();
+    btnStart.textContent = 'Play Again';
     overlay.classList.add('visible');
     sync();
     return true;
@@ -463,7 +464,14 @@ function clickPoint(where) {
 
     if (selected === null) {
         if (barOf(pos, currentPlayer) > 0) {
-            if (where === 'bar') selected = 'bar';
+            // Nothing else may move, so clicking an entry point is enough.
+            const entry = targetsFor('bar').filter((m) => m.to === where);
+            if (entry.length) {
+                entry.sort((a, b) => a.die - b.die);
+                applyMove(entry[0]);
+            } else if (where === 'bar') {
+                selected = 'bar';
+            }
             return;
         }
         if (where === 'bar' || where === 'off') return;

@@ -325,6 +325,22 @@ test.describe('Backgammon', () => {
             expect(s.barB).toBe(1);
         });
 
+        test('clicking an entry point enters straight from the bar', async ({ page }) => {
+            await setup(page, { w: { 6: 5 }, barW: 1 });
+            await roll(page, [3, 6]);
+            await page.evaluate(() => clickPoint(21));   // point 22 = 25 - 3
+            const s = await snapshot(page);
+            expect(s.barW).toBe(0);
+            expect(s.pts[21]).toBe(1);
+        });
+
+        test('while on the bar, nothing else can be picked up', async ({ page }) => {
+            await setup(page, { w: { 6: 5 }, barW: 1 });
+            await roll(page, [3, 6]);
+            await page.evaluate(() => clickPoint(5));
+            expect(await page.evaluate(() => selected)).toBe(null);
+        });
+
         test('a closed home board means the turn is lost', async ({ page }) => {
             await setup(page, { w: { 6: 3 }, b: { 19: 2, 20: 2, 21: 2, 22: 2, 23: 2, 24: 2 }, barW: 1 });
             await roll(page, [2, 5]);
@@ -394,6 +410,17 @@ test.describe('Backgammon', () => {
             expect(await page.evaluate(() => ({ state, winner, offW: pos.offW })))
                 .toEqual({ state: 'over', winner: 'white', offW: 15 });
             await expect(page.locator('#overlay')).toHaveClass(/visible/);
+        });
+
+        test('the overlay offers another game once one is won', async ({ page }) => {
+            await setup(page, { w: { 1: 1 }, b: { 20: 10 }, offW: 14, offB: 5 });
+            await roll(page, [1, 2]);
+            await page.evaluate(() => applyMove({ from: 0, to: 'off', die: 1 }));
+            await expect(page.locator('#btn-start')).toHaveText('Play Again');
+            await page.click('#btn-start');
+            await expect(page.locator('#overlay')).not.toHaveClass(/visible/);
+            expect(await page.evaluate(() => ({ state, pip: pipCount('white') })))
+                .toEqual({ state: 'rolling', pip: 167 });
         });
 
         test('a win with the loser on nothing is a gammon', async ({ page }) => {
