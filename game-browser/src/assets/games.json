@@ -72,6 +72,15 @@
     "thumbnail": "games/Asteroids/screenshot.png"
   },
   {
+    "id": "backgammon",
+    "name": "Backgammon",
+    "description": "Race your checkers home and bear them off before the computer, hitting blots along the way",
+    "category": "Board Game",
+    "dir": "Backgammon",
+    "path": "games/Backgammon/index.html",
+    "thumbnail": "games/Backgammon/screenshot.png"
+  },
+  {
     "id": "barrel-climb",
     "name": "Barrel Climb",
     "description": "Climb girders and ladders to the prize while dodging rolling barrels",

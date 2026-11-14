@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backgammon</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Backgammon</h1>
+        <div id="hud">
+            <span class="hud-item">
+                <span class="chip chip-white"></span>You
+                <strong id="white-pips">167</strong><span class="unit">pips</span>
+                <span class="sep">·</span>off <strong id="white-off">0</strong>
+                <span class="sep">·</span>bar <strong id="white-bar">0</strong>
+            </span>
+            <span class="hud-item" id="turn-indicator">Your roll</span>
+            <span class="hud-item">
+                <span class="chip chip-black"></span>Computer
+                <strong id="black-pips">167</strong><span class="unit">pips</span>
+                <span class="sep">·</span>off <strong id="black-off">0</strong>
+                <span class="sep">·</span>bar <strong id="black-bar">0</strong>
+            </span>
+        </div>
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="900" height="560"></canvas>
+            <div id="overlay" class="visible">
+                <p id="overlay-title">Backgammon</p>
+                <p id="overlay-sub">Race all fifteen checkers home and bear them off before the computer does</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+        <div id="bar-row">
+            <button id="btn-roll">Roll</button>
+            <span id="message"></span>
+        </div>
+        <p id="controls-hint">
+            Roll, then click a checker and a highlighted point &nbsp;·&nbsp;
+            click the tray on the right to bear off &nbsp;·&nbsp;
+            Space rolls &nbsp;·&nbsp; R restarts
+        </p>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
