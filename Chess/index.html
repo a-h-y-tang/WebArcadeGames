@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main id="container">
+        <h1>Chess</h1>
+        <p id="tagline">The whole game &mdash; castling, en passant, promotion and all &mdash; against a computer that thinks a few moves ahead.</p>
+
+        <div id="layout">
+            <div id="board-side">
+                <div id="canvas-wrapper">
+                    <canvas id="canvas" width="480" height="480" role="img" aria-label="Chess board"></canvas>
+                    <div id="overlay">
+                        <h2 id="overlay-title">Checkmate</h2>
+                        <p id="overlay-sub"></p>
+                        <p class="dismiss">Click to look at the board</p>
+                    </div>
+                    <div id="promotion">
+                        <p>Promote the pawn to:</p>
+                        <div id="promo-buttons">
+                            <button class="promo-btn" data-piece="q" title="Queen">&#9819;</button>
+                            <button class="promo-btn" data-piece="r" title="Rook">&#9820;</button>
+                            <button class="promo-btn" data-piece="b" title="Bishop">&#9821;</button>
+                            <button class="promo-btn" data-piece="n" title="Knight">&#9822;</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="controls">
+                    <button id="btn-new">New Game</button>
+                    <button id="btn-undo">Undo</button>
+                    <button id="btn-flip">Flip Board</button>
+                </div>
+            </div>
+
+            <aside id="panel">
+                <div id="hud">
+                    <div class="stat"><span class="label">To move</span><strong id="turn">White</strong></div>
+                    <div class="stat"><span class="label">Status</span><strong id="status">Your move</strong></div>
+                </div>
+
+                <div id="settings">
+                    <label>Opponent
+                        <select id="opponent">
+                            <option value="computer" selected>Computer</option>
+                            <option value="human">Two players</option>
+                        </select>
+                    </label>
+                    <label>Strength
+                        <select id="difficulty">
+                            <option value="gentle">Gentle</option>
+                            <option value="steady" selected>Steady</option>
+                            <option value="sharp">Sharp</option>
+                        </select>
+                    </label>
+                    <label>You play
+                        <select id="side">
+                            <option value="white" selected>White</option>
+                            <option value="black">Black</option>
+                        </select>
+                    </label>
+                </div>
+
+                <div id="captures">
+                    <div class="capture-row">
+                        <span class="label">White took</span>
+                        <span id="captured-white" class="pieces"></span>
+                    </div>
+                    <div class="capture-row">
+                        <span class="label">Black took</span>
+                        <span id="captured-black" class="pieces"></span>
+                    </div>
+                </div>
+
+                <div id="movelist-wrap">
+                    <span class="label">Moves</span>
+                    <div id="movelist"></div>
+                </div>
+            </aside>
+        </div>
+
+        <div id="rules">
+            <h2>How to play</h2>
+            <p><strong>Click a piece</strong> to pick it up &mdash; its legal moves appear as dots, and
+               a ring marks a piece you can take. <strong>Click one of them</strong> to move there.
+               Click the piece again, or press <kbd>Esc</kbd>, to put it down.</p>
+            <ul>
+                <li>A pawn that reaches the far rank opens a chooser: queen, rook, bishop or knight.</li>
+                <li>To castle, move the king two squares toward the rook; the rook follows by itself.</li>
+                <li><strong>Undo</strong> (or <kbd>U</kbd>) takes back your move and the computer's reply.
+                    <strong>Flip Board</strong> turns it around, which helps when two people share a screen.</li>
+                <li>A king in check glows red. The game ends on checkmate, stalemate, the fifty-move
+                    rule, threefold repetition, or when neither side has enough material to mate.</li>
+            </ul>
+            <p><strong>Strength:</strong> <em>Gentle</em> looks one move ahead and varies its choice,
+               <em>Steady</em> looks three, and <em>Sharp</em> looks four and takes a moment over it.
+               Set <em>Opponent</em> to <em>Two players</em> to play both sides at one keyboard.</p>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>
