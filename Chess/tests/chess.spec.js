@@ -661,7 +661,8 @@ test.describe('Chess', () => {
         });
 
         test('bishops on opposite colour squares are not', async ({ page }) => {
-            expect(await page.evaluate(() => gameStatus(parseFEN('8/8/4k1b1/8/8/4KB2/8/8 w - - 0 1'))))
+            // g7 is dark and f3 is light, so a mate is still possible.
+            expect(await page.evaluate(() => gameStatus(parseFEN('8/6b1/4k3/8/8/4KB2/8/8 w - - 0 1'))))
                 .toBe('playing');
         });
 
