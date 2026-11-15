@@ -159,7 +159,7 @@ The suite was written before the implementation and is in four parts:
 1. **Rules.** Each piece's geometry, double pushes, en passant (offered,
    executed, and expiring), all four castling cases including through check,
    promotion to each piece, pins, and the obligation to answer a check.
-2. **Perft.** Move-path counts from five standard published positions —
+2. **Perft.** Move-path counts from six standard published positions —
    including the start position to depth 4 (197,281) and "Kiwipete" to depth 3
    (97,862). These are the real test of the move generator: a single wrong
    castling or en passant rule moves the count.

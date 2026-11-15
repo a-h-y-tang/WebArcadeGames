@@ -1084,9 +1084,11 @@ const GLYPHS = {
 
 function renderMoveList() {
     const parts = [];
+    const last = history.length - 1;
     history.forEach((entry, ply) => {
         if (ply % 2 === 0) parts.push('<span class="num">' + (ply / 2 + 1) + '.</span>');
-        parts.push('<span class="ply">' + entry.san + '</span>');
+        const current = ply === last ? ' current' : '';
+        parts.push('<span class="ply' + current + '">' + entry.san + '</span>');
     });
     moveListEl.innerHTML = parts.join(' ');
     moveListEl.scrollTop = moveListEl.scrollHeight;

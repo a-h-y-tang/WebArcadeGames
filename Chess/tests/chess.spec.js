@@ -901,6 +901,14 @@ test.describe('Chess', () => {
             expect(await page.locator('#movelist .num').allInnerTexts()).toEqual(['1.', '2.']);
         });
 
+        test('the move just played is marked in the list', async ({ page }) => {
+            await play(page, ['e2e4', 'e7e5']);
+            await expect(page.locator('#movelist .ply.current')).toHaveCount(1);
+            await expect(page.locator('#movelist .ply.current')).toHaveText('e5');
+            await page.locator('#btn-undo').click();
+            await expect(page.locator('#movelist .ply.current')).toHaveText('e4');
+        });
+
         test('the turn indicator follows the move', async ({ page }) => {
             await expect(page.locator('#turn')).toHaveText(/white/i);
             await play(page, ['e2e4']);
