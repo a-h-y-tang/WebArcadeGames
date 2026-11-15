@@ -698,13 +698,13 @@ test.describe('Chess', () => {
         });
 
         test('two rooks on the same file are told apart by rank', async ({ page }) => {
-            const fen = 'R6k/8/8/8/8/8/8/R6K w - - 0 1';
+            const fen = 'R7/8/8/4k3/8/8/8/R6K w - - 0 1';
             expect(await san(page, fen, 'a1', 'a4')).toBe('R1a4');
             expect(await san(page, fen, 'a8', 'a4')).toBe('R8a4');
         });
 
         test('three queens need file, rank or both', async ({ page }) => {
-            const fen = '4k3/8/8/8/7Q/8/8/K3Q2Q w - - 0 1';
+            const fen = '8/8/1k6/8/7Q/8/8/K3Q2Q w - - 0 1';
             expect(await san(page, fen, 'e1', 'e4')).toBe('Qee4');
             expect(await san(page, fen, 'h4', 'e4')).toBe('Q4e4');
             expect(await san(page, fen, 'h1', 'e4')).toBe('Qh1e4');
@@ -1005,7 +1005,7 @@ test.describe('Chess', () => {
             await page.locator('.promo-btn[data-piece="r"]').click();
             expect(await page.evaluate(() => position.board[squareOf('a8')])).toBe('R');
             await expect(page.locator('#promotion')).not.toHaveClass(/visible/);
-            expect(await page.locator('#movelist .ply').allInnerTexts()).toEqual(['a8=R']);
+            expect(await page.locator('#movelist .ply').allInnerTexts()).toEqual(['a8=R+']);
         });
 
         test('picking the queen is the common case', async ({ page }) => {
