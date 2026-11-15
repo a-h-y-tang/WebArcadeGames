@@ -42,8 +42,10 @@ read-only:
 
 Squares are indexed 0–63 from **a8 = 0** to **h1 = 63**, i.e. the same order in
 which a FEN board field is written and the same order the board is drawn in
-when white is at the bottom. `fileOf`, `rankOf`, `squareOf` and `squareName`
-convert between the index, file/rank pairs and algebraic names like `e4`.
+when white is at the bottom. `fileOf` gives the column (0 for the a-file) and
+`rankOf` the row counted from the top (0 is rank 8), which is what the array
+index means; `squareName` and `squareOf` convert to and from algebraic names
+like `e4`.
 
 `parseFEN` and `toFEN` move between that object and a FEN string, so any test
 or saved game can be expressed as one line of text. Every test position in the
@@ -180,11 +182,10 @@ Decisions taken without being asked, as the task allows:
   PR carry the game's name.
 - **Unthemed.** Chess stays chess, for the reason given above. The title screen
   carries no verse.
-- **One opponent, no two-player mode.** The task asked for a game, not a
-  lobby; every other board game in this repo plays against the computer. The
-  move list and flip control make it usable for two people at one keyboard
-  anyway, since nothing stops either side being played by hand when the
-  computer is set aside — but the computer always answers for one colour.
+- **Two players share one keyboard rather than a network.** The *Opponent*
+  setting turns the computer off and lets one person play both sides, which
+  together with *Flip Board* covers two people at one screen. There is no
+  online play: this repo has no server, and every game in it runs from a file.
 - **Search depth over strength.** Four plies with quiescence is a club-level
   opponent, not a strong one. Going deeper in plain JavaScript on the main
   thread would make the page hang; a web worker would be the next step and is
@@ -193,4 +194,8 @@ Decisions taken without being asked, as the task allows:
   game immediately rather than offering a claim, which is what a casual player
   expects.
 - **No clock, no resignation, no saved games.** Only the chosen difficulty is
-  remembered, in `localStorage`.
+  remembered, in `localStorage`. A game in progress is lost on reload, as it is
+  in the rest of the collection.
+- **The search does not know about repetition.** `gameStatus` ends a game that
+  repeats three times, but the engine itself does not avoid or seek a
+  repetition, so a dead-drawn position may shuffle until the rule stops it.

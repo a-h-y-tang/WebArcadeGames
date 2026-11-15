@@ -641,6 +641,30 @@ test.describe('Chess', () => {
             await expect(page.locator('#overlay-sub')).toHaveText(/black wins/i);
         });
 
+        test('the result overlay can be clicked away to see the board', async ({ page }) => {
+            await setUp(page, '6k1/5ppp/8/8/8/8/8/R5K1 w - - 0 1');
+            await play(page, ['a1a8']);
+            await page.locator('#overlay').click();
+            await expect(page.locator('#overlay')).not.toHaveClass(/visible/);
+            await expect(page.locator('#status')).toHaveText(/checkmate/i);
+        });
+
+        test('two knights are not an automatic draw, as the rules have it', async ({ page }) => {
+            expect(await page.evaluate(() => gameStatus(parseFEN('8/8/4k3/8/8/3NKN2/8/8 w - - 0 1'))))
+                .toBe('playing');
+        });
+
+        test('bishops on the same colour square are a draw', async ({ page }) => {
+            // c6 and f3 are both light squares, so neither side can ever mate.
+            expect(await page.evaluate(() => gameStatus(parseFEN('8/8/2b1k3/8/8/4KB2/8/8 w - - 0 1'))))
+                .toBe('draw-material');
+        });
+
+        test('bishops on opposite colour squares are not', async ({ page }) => {
+            expect(await page.evaluate(() => gameStatus(parseFEN('8/8/4k1b1/8/8/4KB2/8/8 w - - 0 1'))))
+                .toBe('playing');
+        });
+
         test('no moves can be played once the game is over', async ({ page }) => {
             await setUp(page, '6k1/5ppp/8/8/8/8/8/R5K1 w - - 0 1');
             await play(page, ['a1a8']);
@@ -894,6 +918,12 @@ test.describe('Chess', () => {
             await page.locator('#btn-undo').click();
             expect(await page.evaluate(() => toFEN(position))).toBe(START_FEN);
             await expect(page.locator('#movelist .ply')).toHaveCount(0);
+        });
+
+        test('the U key takes back a move as well', async ({ page }) => {
+            await play(page, ['e2e4']);
+            await page.keyboard.press('u');
+            expect(await page.evaluate(() => toFEN(position))).toBe(START_FEN);
         });
 
         test('undo on an empty game does nothing', async ({ page }) => {

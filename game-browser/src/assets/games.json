@@ -225,6 +225,15 @@
     "thumbnail": "games/Checkers/screenshot.png"
   },
   {
+    "id": "chess",
+    "name": "Chess",
+    "description": "The whole game against a computer that thinks a few moves ahead - castling, en passant, promotion and all",
+    "category": "Board Game",
+    "dir": "Chess",
+    "path": "games/Chess/index.html",
+    "thumbnail": "games/Chess/screenshot.png"
+  },
+  {
     "id": "columns",
     "name": "Columns",
     "description": "Match falling blocks to clear the board",
