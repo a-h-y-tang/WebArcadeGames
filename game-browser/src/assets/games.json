@@ -1161,6 +1161,15 @@
     "thumbnail": "games/TempleVessels/screenshot.png"
   },
   {
+    "id": "narrow-path",
+    "name": "The Narrow Path",
+    "description": "Tilt a pilgrim's board to roll a stone past the ditches, gather every waymark and reach the narrow gate",
+    "category": "Action",
+    "dir": "NarrowPath",
+    "path": "games/NarrowPath/index.html",
+    "thumbnail": "games/NarrowPath/screenshot.png"
+  },
+  {
     "id": "time-pilot",
     "name": "Time Pilot",
     "description": "Fly a 360-degree dogfight through five eras and rescue the pilots",
