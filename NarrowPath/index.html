@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Narrow Path</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main id="container">
+        <h1>The Narrow Path</h1>
+        <p id="verse">&ldquo;Narrow is the gate and difficult is the way which leads to life&rdquo;
+            &mdash; Matthew 7:14</p>
+
+        <div id="hud">
+            <div class="stat"><span class="label">Stage</span><strong id="stage">The Village Road</strong></div>
+            <div class="stat"><span class="label">Waymarks</span><strong id="waymarks">3</strong></div>
+            <div class="stat"><span class="label">Journeys</span><strong id="lives">3</strong></div>
+            <div class="stat"><span class="label">Time</span><strong id="time">0</strong></div>
+            <div class="stat"><span class="label">Score</span><strong id="score">0</strong></div>
+            <div class="stat"><span class="label">Best</span><strong id="best">0</strong></div>
+        </div>
+
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="640" height="480"></canvas>
+            <div id="overlay" class="visible">
+                <h2 id="overlay-title">The Narrow Path</h2>
+                <p id="overlay-sub"></p>
+                <p id="overlay-hint">Press Space or click Start</p>
+            </div>
+        </div>
+
+        <p id="status">Tilt the board and gather every waymark.</p>
+
+        <div id="controls">
+            <button id="btn-start">Start</button>
+            <button id="btn-pause">Pause</button>
+            <button id="btn-restart">Restart</button>
+        </div>
+
+        <div id="rules">
+            <p>A pilgrim&rsquo;s stone rolls on a tilting wooden board. Tilt the board with the
+               <strong>arrow keys</strong> or <strong>WASD</strong> &mdash; or hold the pointer on the
+               board and it tilts that way &mdash; and let gravity do the walking.</p>
+            <ul>
+                <li>Gather every <strong>waymark</strong> on the stage
+                    (<em>&ldquo;Set up waymarks&rdquo;</em> &mdash; Jeremiah 31:21).</li>
+                <li>Keep out of the <strong>ditches</strong> beside the road. Fall in and you lose one
+                    of your three journeys, and the stone goes back to the start of the stage.</li>
+                <li>With every waymark gathered the <strong>narrow gate</strong> swings open. Roll into
+                    it to finish the stage.</li>
+                <li>Four stages lie ahead, each narrower than the last. The quicker a stage, the
+                    bigger the bonus.</li>
+            </ul>
+            <p class="hint"><strong>Space</strong> starts or carries on, <strong>P</strong> pauses,
+               <strong>R</strong> starts the run again. There is always a way round a ditch.</p>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>
