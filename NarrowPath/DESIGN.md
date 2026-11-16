@@ -111,6 +111,18 @@ the overlay and the rules; `style.css` holds the parchment-and-wood styling.
 rolling, wall collision, ditches, waymarks, the gate, stage progression, lives,
 scoring, the HUD, the controls and the drawing.
 
+Two specs are there to keep the board honest rather than the code:
+
+- the gate and every waymark of every stage must be in `reachableCells()`, so no
+  stage can ask the stone to cross a ditch;
+- a cautious autopilot — a breadth-first route over the open cells, steered cell
+  by cell with the same tilt a player has — has to gather every waymark and reach
+  the gate of all four stages without falling in once.
+
+Writing the collision specs before the physics paid for itself: they caught a
+stone settled flush against one wall reading as *overlapping* it, which let the
+other axis's resolution shove it along that wall and into the rim.
+
 ## Assumptions
 
 Decisions taken without being able to ask, with the simpler reading preferred:

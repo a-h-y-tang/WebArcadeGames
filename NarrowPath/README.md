@@ -13,6 +13,10 @@ start of the stage.
 Four stages, each narrower than the last: *The Village Road*, *The Winding Way*,
 *The Steep Pass* and *The Narrow Gate*.
 
+The verse is quoted as the saying the road is named for. The game is a pilgrim's
+journey along narrow country roads — the gate at the end of a stage is the gate of
+the next town, not a picture of life being won by skill.
+
 ## Playing
 
 Open `index.html` in any browser — no build step and no server needed.
