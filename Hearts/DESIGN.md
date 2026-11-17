@@ -69,12 +69,13 @@ A documented heuristic rather than a search — Hearts is a game of hidden
 information, so a deep search over unknown hands would be false precision.
 
 **Passing.** Pass the queen of spades unless it is well guarded (four or more
-spades); pass the ace and king of spades; otherwise pass the highest cards,
-preferring to void a short non-heart suit.
+spades); pass the ace and king of spades; then fill up with the highest cards
+left, taking the one from the shorter suit when two are of equal rank.
 
-**Leading.** Lead the lowest card of the shortest safe suit, to get out of the
-lead cheaply. Avoid leading spades while the queen is still out and the player
-holds a higher spade. Hearts are led only when nothing else is allowed.
+**Leading.** Lead the lowest safe card — again preferring the shorter suit when
+ranks tie — to get out of the lead cheaply. Do not lead the king or ace of
+spades while the queen is still out. Hearts are led only when nothing else is
+allowed.
 
 **Following.** If a lower card of the suit led is available, play the highest
 card that still loses the trick — shedding big cards without taking points.
