@@ -225,6 +225,15 @@
     "thumbnail": "games/Checkers/screenshot.png"
   },
   {
+    "id": "chess",
+    "name": "Chess",
+    "description": "The classic board game in full, against a built-in engine \u2014 castling, en passant, promotion and all",
+    "category": "Board Game",
+    "dir": "Chess",
+    "path": "games/Chess/index.html",
+    "thumbnail": "games/Chess/screenshot.png"
+  },
+  {
     "id": "columns",
     "name": "Columns",
     "description": "Match falling blocks to clear the board",

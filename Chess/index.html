@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Chess</h1>
+        <div id="layout">
+            <div id="board-side">
+                <div id="hud">
+                    <span class="hud-item"><span class="dot dot-white"></span>You</span>
+                    <span class="hud-item" id="status">Your move</span>
+                    <span class="hud-item"><span class="dot dot-black"></span>Engine</span>
+                </div>
+                <div id="canvas-wrapper">
+                    <canvas id="canvas" width="560" height="560"></canvas>
+                    <div id="overlay" class="visible">
+                        <p id="overlay-title">Chess</p>
+                        <p id="overlay-sub">You play White. Click a piece, then a highlighted square.</p>
+                        <button id="btn-start">Start Game</button>
+                    </div>
+                    <div id="promotion">
+                        <p>Promote to</p>
+                        <div id="promotion-buttons">
+                            <button id="promote-q" data-piece="q" title="Queen">&#9813;</button>
+                            <button id="promote-r" data-piece="r" title="Rook">&#9814;</button>
+                            <button id="promote-b" data-piece="b" title="Bishop">&#9815;</button>
+                            <button id="promote-n" data-piece="n" title="Knight">&#9816;</button>
+                        </div>
+                    </div>
+                </div>
+                <p id="controls-hint">Click a piece, then a highlighted square &nbsp;·&nbsp; U to take back &nbsp;·&nbsp; R for a new game</p>
+            </div>
+            <div id="sidebar">
+                <h2>Moves</h2>
+                <ol id="move-list"></ol>
+                <div id="captured">
+                    <div class="captured-row" id="captured-by-white"></div>
+                    <div class="captured-row" id="captured-by-black"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
