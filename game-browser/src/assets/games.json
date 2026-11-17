@@ -477,6 +477,15 @@
     "thumbnail": "games/Hashi/screenshot.png"
   },
   {
+    "id": "hearts",
+    "name": "Hearts",
+    "description": "The classic trick-avoiding card game against three computer players \u2014 dodge the hearts and the queen of spades",
+    "category": "Cards & Dice",
+    "dir": "Hearts",
+    "path": "games/Hearts/index.html",
+    "thumbnail": "games/Hearts/screenshot.png"
+  },
+  {
     "id": "hex",
     "name": "Hex",
     "description": "Strategic hexagonal board game",

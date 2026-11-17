@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hearts</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Hearts</h1>
+        <div id="scoreboard">
+            <div class="score-card" id="player-0"><span class="seat">You</span><strong id="score-0">0</strong></div>
+            <div class="score-card" id="player-1"><span class="seat">West</span><strong id="score-1">0</strong></div>
+            <div class="score-card" id="player-2"><span class="seat">North</span><strong id="score-2">0</strong></div>
+            <div class="score-card" id="player-3"><span class="seat">East</span><strong id="score-3">0</strong></div>
+        </div>
+        <p id="status">Press Start</p>
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="760" height="600"></canvas>
+            <div id="overlay" class="visible">
+                <p id="overlay-title">Hearts</p>
+                <p id="overlay-sub">Take as few hearts as you can. The queen of spades costs thirteen.</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+        <div id="controls">
+            <button id="btn-pass" disabled>Pass 3 cards</button>
+            <p id="controls-hint">Click a card to play it &nbsp;·&nbsp; R for a new game</p>
+        </div>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
