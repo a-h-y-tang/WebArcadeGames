@@ -959,6 +959,7 @@ document.addEventListener('keydown', (e) => {
 function showOverlay(title, sub) {
     overlayTitle.textContent = title;
     overlaySub.textContent = sub;
+    btnStart.textContent = state === 'over' ? 'Play Again' : 'Start Game';
     overlay.classList.add('visible');
 }
 

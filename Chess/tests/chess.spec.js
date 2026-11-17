@@ -129,6 +129,12 @@ test.describe('Chess', () => {
             expect(errors).toEqual([]);
         });
 
+        test('Space starts the game from the opening screen', async ({ page }) => {
+            await page.keyboard.press(' ');
+            expect(await page.evaluate(() => state)).toBe('playing');
+            await expect(page.locator('#overlay')).not.toHaveClass(/visible/);
+        });
+
         test('Start Game begins play with White to move', async ({ page }) => {
             await page.locator('#btn-start').click();
             expect(await page.evaluate(() => state)).toBe('playing');
@@ -699,6 +705,16 @@ test.describe('Chess', () => {
             await expect(page.locator('#overlay-title')).toContainText(/checkmate/i);
         });
 
+        test('the game-over overlay offers another game', async ({ page }) => {
+            await setup(page, '6k1/5ppp/8/8/8/8/8/R6K w - - 0 1');
+            await clickSquareName(page, 'a1');
+            await clickSquareName(page, 'a8');
+            await expect(page.locator('#btn-start')).toHaveText('Play Again');
+            await page.locator('#btn-start').click();
+            expect(await page.evaluate(() => toFen(pos))).toBe(START_FEN);
+            expect(await page.evaluate(() => state)).toBe('playing');
+        });
+
         test('stalemate ends the game as a draw', async ({ page }) => {
             await setup(page, '7k/6Q1/8/8/8/8/8/K7 w - - 0 1');
             await clickSquareName(page, 'g7');
@@ -727,6 +743,26 @@ test.describe('Chess', () => {
         test('R starts a new game from the opening position', async ({ page }) => {
             await setup(page, '6k1/5ppp/8/8/8/8/8/R6K w - - 0 1');
             await page.keyboard.press('r');
+            expect(await page.evaluate(() => toFen(pos))).toBe(START_FEN);
+            expect(await page.evaluate(() => state)).toBe('playing');
+        });
+
+        test('U takes back the engine reply as well as your move', async ({ page }) => {
+            await setup(page, START_FEN, { ai: true });
+            await clickSquareName(page, 'e2');
+            await clickSquareName(page, 'e4');
+            await page.waitForFunction(() => pos.turn === 'w', null, { timeout: 5000 });
+            await page.keyboard.press('u');
+            expect(await page.evaluate(() => toFen(pos))).toBe(START_FEN);
+            expect(await page.evaluate(() => moveHistory.length)).toBe(0);
+        });
+
+        test('taking back while the engine is thinking cancels its reply', async ({ page }) => {
+            await setup(page, START_FEN, { ai: true });
+            await clickSquareName(page, 'e2');
+            await clickSquareName(page, 'e4');
+            await page.keyboard.press('u');
+            await page.waitForTimeout(700);
             expect(await page.evaluate(() => toFen(pos))).toBe(START_FEN);
             expect(await page.evaluate(() => state)).toBe('playing');
         });

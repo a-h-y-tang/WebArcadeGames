@@ -84,9 +84,11 @@ a game can be read back.
 - **ordering** — promotions and captures first by most-valuable-victim /
   least-valuable-attacker, which is what makes alpha-beta cut anything;
 - **evaluation** — material (1/3.2/3.3/5/9) plus a piece-square table per piece
-  type, a small bishop-pair and mobility term, and a pawn-shield term for the
-  castled king. Mate is ±100000 adjusted by distance, so the engine prefers the
-  shorter mate and the longest defence.
+  type, and a bonus for the bishop pair. King safety is not a term of its own:
+  the king's own table rewards a castled corner in the middlegame and the
+  centre once the heavy pieces are gone, which is enough at this depth. Mate is
+  ±100000 adjusted by distance, so the engine prefers the shorter mate and the
+  longest defence.
 
 The engine plays its reply after a short delay so the player sees their own move
 land first.
