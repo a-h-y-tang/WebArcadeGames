@@ -14,10 +14,14 @@ Open `index.html` in any browser — no build step, no server.
 | Input | Action |
 |---|---|
 | Mouse over the field | Move the basket |
+| Finger on the field | Move the basket; a tap launches the stone |
 | ← → or A D | Move the basket |
 | Space, or click the field | Launch the stone, release a held stone, start, or clear an overlay |
 | P | Pause / carry on |
 | R | Start over from the first field |
+
+Work pauses by itself if you switch away from the page, so no stone is lost
+while you are not looking.
 
 Start with **Space** or the **Start Work** button. The stone rests on the basket
 until you launch it; after that, keep it off the ground.
@@ -84,7 +88,8 @@ From the repository root:
 npx playwright test GatherTheStones/tests/
 ```
 
-74 tests cover the HUD, the basket, launching, every bounce, stone damage and
+76 tests cover the HUD, the basket, launching, every bounce, stone damage and
 scoring, bedrock, losing a stone and losing workers, field completion and the win,
-all five gifts, pause and restart, the level data, and the rules that keep the
-stone from settling into a loop that never reaches the last stone.
+all five gifts, pause and restart, the level data, touch control, pausing when the
+page is hidden, and the rules that keep the stone from settling into a loop that
+never reaches the last stone.

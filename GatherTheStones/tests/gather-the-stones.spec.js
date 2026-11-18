@@ -256,6 +256,24 @@ test.describe('Gather the Stones', () => {
             expect(await page.evaluate(() => paddle.x)).toBeGreaterThan(start + 20);
         });
 
+        test('a finger dragged across the field moves the basket', async ({ page }) => {
+            await startFrozen(page);
+            const x = await page.evaluate(() => {
+                const rect = canvas.getBoundingClientRect();
+                const touch = new Touch({
+                    identifier: 1,
+                    target: canvas,
+                    clientX: rect.left + 180,
+                    clientY: rect.top + 500,
+                });
+                canvas.dispatchEvent(
+                    new TouchEvent('touchmove', { touches: [touch], changedTouches: [touch], bubbles: true, cancelable: true })
+                );
+                return paddle.x;
+            });
+            expect(x).toBeCloseTo(180, 0);
+        });
+
         test('keyboard movement stays inside the walls', async ({ page }) => {
             await startFrozen(page);
             await page.keyboard.down('ArrowLeft');
@@ -955,6 +973,17 @@ test.describe('Gather the Stones', () => {
             await page.keyboard.press('KeyR');
             const res = await page.evaluate(() => ({ score, lives, levelIndex, state }));
             expect(res).toEqual({ score: 0, lives: 3, levelIndex: 0, state: 'ready' });
+        });
+    });
+
+    test.describe('leaving the page', () => {
+        test('work pauses when the page is hidden', async ({ page }) => {
+            await playFrozen(page);
+            await page.evaluate(() => {
+                Object.defineProperty(document, 'hidden', { configurable: true, get: () => true });
+                document.dispatchEvent(new Event('visibilitychange'));
+            });
+            expect(await page.evaluate(() => state)).toBe('paused');
         });
     });
 

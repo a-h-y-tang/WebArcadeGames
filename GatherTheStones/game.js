@@ -186,9 +186,6 @@ function brickRect(r, c) {
     return { x: FIELD.x + c * CELL_W, y: GRID_TOP + r * CELL_H, w: CELL_W, h: CELL_H };
 }
 
-function brickAt(r, c) {
-    return bricks[r] ? bricks[r][c] || null : null;
-}
 
 function aliveBreakable() {
     let n = 0;
@@ -266,6 +263,7 @@ function launch() {
         b.hold = 0;
         launched = true;
     }
+    if (launched) sinceHit = 0;
     if (launched && state === 'ready') state = 'playing';
     return launched;
 }
@@ -526,6 +524,7 @@ function loseLife() {
         return;
     }
     balls = [newBall()];
+    sinceHit = 0;
     state = 'ready';
 }
 
@@ -766,6 +765,38 @@ canvas.addEventListener('mousemove', (e) => {
 });
 
 canvas.addEventListener('click', () => act());
+
+// Touch: a finger on the field slides the basket, and a tap launches the stone.
+function touchX(e) {
+    const t = e.touches && e.touches[0] ? e.touches[0] : e.changedTouches && e.changedTouches[0];
+    if (!t) return null;
+    const rect = canvas.getBoundingClientRect();
+    return ((t.clientX - rect.left) / rect.width) * canvas.width;
+}
+
+canvas.addEventListener('touchstart', (e) => {
+    const x = touchX(e);
+    if (x !== null) {
+        paddle.x = x;
+        clampPaddle();
+    }
+    act();
+    e.preventDefault();
+}, { passive: false });
+
+canvas.addEventListener('touchmove', (e) => {
+    const x = touchX(e);
+    if (x !== null) {
+        paddle.x = x;
+        clampPaddle();
+    }
+    e.preventDefault();
+}, { passive: false });
+
+// Work stops when the player looks away, so no stone is lost off-screen.
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden && (state === 'playing' || state === 'ready')) togglePause();
+});
 el.btnStart.addEventListener('click', () => act());
 
 // ---------------------------------------------------------------------------

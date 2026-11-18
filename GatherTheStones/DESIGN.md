@@ -103,6 +103,7 @@ running simply restarts its clock.
 | input | action |
 |---|---|
 | mouse over the field | move the basket |
+| finger on the field | move the basket; a tap launches |
 | ← → or A D | move the basket |
 | Space / click | launch, release a held stone, start, dismiss an overlay |
 | P | pause / resume |
@@ -124,7 +125,7 @@ the other action games in this repo:
    global so Playwright can simulate frames deterministically instead of waiting
    on `requestAnimationFrame`. `giftChance` is a global too, so a test can pin the
    drop rate at 0 or 1.
-5. **Input** — keyboard, mouse and button handlers; they only set intent
+5. **Input** — keyboard, mouse, touch and button handlers; they only set intent
    (`keys.left`, `paddle.targetX`) so the simulation stays in one place.
 6. **Render** — `draw()` paints the frame, the stones, the basket, the stone, the
    gifts, the particles and the overlay text.
@@ -137,7 +138,7 @@ the other action games in this repo:
 ## Testing
 
 `tests/gather-the-stones.spec.js` is a Playwright suite written before the game
-and run against `index.html` over `file://` — no server needed. Its 74 tests cover
+and run against `index.html` over `file://` — no server needed. Its 76 tests cover
 the initial state and HUD, basket movement and clamping, launching, wall and
 basket reflection, stone damage and scoring, bedrock, losing stones and workers,
 field completion and the win, every gift, pause, restart, the geometry of all five
@@ -167,5 +168,7 @@ time:
 * **Speed.** Rising with the field and with stones gathered, rather than with each
   basket hit, so a long rally cannot make the game unplayable.
 * **No sound.** The rest of the collection is silent, so this game is too.
-* **Mouse and keyboard only.** Touch works through the mouse events the browser
-  synthesises; no separate pointer handling.
+* **Touch.** `touchstart` / `touchmove` on the canvas move the basket and launch
+  the stone, which is enough for a phone; there is no separate pointer-events
+  path and no gesture handling beyond that.
+* **Leaving the page** pauses the work rather than playing on unseen.
