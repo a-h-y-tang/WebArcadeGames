@@ -63,6 +63,11 @@ let painting = false;
 let seed = 1;
 
 const cursor = { r: 0, c: 0, visible: false };
+let needsDraw = true;
+
+function invalidate() {
+    needsDraw = true;
+}
 
 // ---------------------------------------------------------------------------
 // DOM
@@ -687,6 +692,7 @@ function acceptPuzzle(list, sol, steps) {
     cursor.r = 0;
     cursor.c = 0;
     best = loadBest();
+    invalidate();
     hideOverlay();
     setStatus('Shade the sea; leave the numbered land dry.');
     updateHud();
@@ -739,6 +745,7 @@ function mark(r, c, value) {
     if (stroke) stroke.push(entry);
     else history.push([entry]);
     wrongCells = [];
+    invalidate();
     if (isSolved()) finish();
     updateHud();
     return true;
@@ -756,6 +763,7 @@ function undo() {
     if (!last) return;
     for (let i = last.length - 1; i >= 0; i--) grid[last[i].i] = last[i].from;
     wrongCells = [];
+    invalidate();
     setStatus('Taken back.');
     updateHud();
 }
@@ -764,6 +772,7 @@ function reset() {
     grid = new Uint8Array(rows * cols);
     history = [];
     wrongCells = [];
+    invalidate();
     state = 'playing';
     hideOverlay();
     setStatus('Board cleared - the puzzle is the same.');
@@ -797,6 +806,7 @@ function hint() {
     grid[idx(found.r, found.c)] = found.v;
     history.push([{ i: idx(found.r, found.c), from: UNKNOWN, to: found.v }]);
     wrongCells = [];
+    invalidate();
     const what = found.v === SEA ? 'Sea' : 'Dry land';
     setStatus(`${what} at row ${found.r + 1}, column ${found.c + 1}: ${found.why}.`);
     if (isSolved()) finish();
@@ -813,6 +823,7 @@ function check() {
             if (grid[i] !== solution[i]) bad.push({ r, c });
         }
     wrongCells = bad;
+    invalidate();
     wrongUntil = (typeof performance !== 'undefined' ? performance.now() : Date.now()) + 4000;
     if (!bad.length) setStatus('Every mark is right so far.');
     else setStatus(`${bad.length} mark${bad.length === 1 ? '' : 's'} cannot be right - they are ringed in red.`);
@@ -891,6 +902,7 @@ canvas.addEventListener('mousedown', (e) => {
     cursor.r = at.r;
     cursor.c = at.c;
     cursor.visible = true;
+    invalidate();
     const order = e.button === 2 ? [UNKNOWN, LAND, SEA] : [UNKNOWN, SEA, LAND];
     const next = order[(order.indexOf(grid[idx(at.r, at.c)]) + 1) % 3];
     paintValue = next;
@@ -906,6 +918,7 @@ canvas.addEventListener('mousemove', (e) => {
     if (!at) return;
     cursor.r = at.r;
     cursor.c = at.c;
+    invalidate();
     mark(at.r, at.c, paintValue);
 });
 
@@ -956,6 +969,7 @@ window.addEventListener('keydown', (e) => {
         cursor.r = Math.max(0, Math.min(rows - 1, cursor.r + dr));
         cursor.c = Math.max(0, Math.min(cols - 1, cursor.c + dc));
         cursor.visible = true;
+        invalidate();
     };
     switch (e.code) {
         case 'ArrowUp': move(-1, 0); break;
@@ -1150,7 +1164,12 @@ function frame(ts) {
         elapsed += dt;
         if (Math.floor(elapsed) !== before) updateHud();
     }
-    draw();
+    // Nothing on the board moves by itself, so the map is only repainted when
+    // something has changed - or while Check is showing its red rings.
+    if (needsDraw || wrongCells.length) {
+        draw();
+        needsDraw = false;
+    }
     requestAnimationFrame(frame);
 }
 

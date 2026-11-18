@@ -100,7 +100,7 @@ a map has one answer and whether the plain rules settle it.
 ## Testing
 
 `tests/dry-land.spec.js` runs against `index.html` over `file://` — no server.
-Its 55 tests were written before the game and cover the HUD and verse, the board
+Its 57 tests were written before the game and cover the HUD and verse, the board
 geometry at all three sizes, marking by click, right-click, drag, keyboard and the
 counters, the four rules of the puzzle checked against generated answers,
 single-answer and logic-solvable generation, hints, checking, undo, reset, new

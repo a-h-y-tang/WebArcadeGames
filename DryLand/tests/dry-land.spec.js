@@ -743,6 +743,28 @@ test.describe('Dry Land', () => {
             expect(drawn).toBe(true);
         });
 
+        test('a marked square is repainted on the next frame', async ({ page }) => {
+            // The map is only repainted when something changes, so a mark that did
+            // not ask for a repaint would leave the board looking untouched.
+            await newPuzzle(page, 0, 5);
+            const cell = await page.evaluate(() => {
+                for (let r = 0; r < rows; r++)
+                    for (let c = 0; c < cols; c++) if (!clueAt(r, c)) return { r, c };
+            });
+            const sample = () =>
+                page.evaluate(([r, c]) => {
+                    const rect = cellRect(r, c);
+                    const d = canvas.getContext('2d').getImageData(rect.x + 4, rect.y + 4, rect.w - 8, rect.h - 8).data;
+                    let sum = 0;
+                    for (let i = 0; i < d.length; i += 4) sum += d[i] + d[i + 1] * 2 + d[i + 2] * 3;
+                    return sum;
+                }, [cell.r, cell.c]);
+            const before = await sample();
+            await clickCell(page, cell.r, cell.c);
+            await page.waitForTimeout(120);
+            expect(await sample()).not.toBe(before);
+        });
+
         test('a burst of random marking raises no error', async ({ page }) => {
             await page.evaluate(() => {
                 let s = 7;

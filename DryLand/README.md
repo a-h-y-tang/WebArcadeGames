@@ -78,7 +78,8 @@ From the repository root:
 npx playwright test DryLand/tests/
 ```
 
-55 tests cover the board and HUD, marking by click, right-click, drag and
+57 tests cover the board and HUD, marking by click, right-click, drag and
 keyboard, the four rules checked against generated maps, single-answer and
 logic-solvable generation, hints, checking, undo, reset, the clock and best
-times, all three sizes, and the drawing.
+times, all three sizes, a whole map solved by clicking, and the drawing
+(including that a marked square really is repainted).
