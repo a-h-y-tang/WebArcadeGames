@@ -411,6 +411,19 @@ test.describe('Dry Land', () => {
             await expect(page.locator('#overlay-title')).toContainText(/dry land|appear/i);
         });
 
+        test('a map can be finished by clicking, one square at a time', async ({ page }) => {
+            await newPuzzle(page, 0, 5);
+            const seaCells = await page.evaluate(() => {
+                const out = [];
+                for (let r = 0; r < rows; r++)
+                    for (let c = 0; c < cols; c++) if (solution[r * cols + c] === SEA) out.push({ r, c });
+                return out;
+            });
+            for (const { r, c } of seaCells) await clickCell(page, r, c);
+            expect(await page.evaluate(() => state)).toBe('won');
+            await expect(page.locator('#overlay')).toHaveClass(/visible/);
+        });
+
         test('land may be left unmarked - only the sea has to be right', async ({ page }) => {
             await newPuzzle(page, 0, 5);
             const anyLandMarked = await page.evaluate(() => [...grid].some((v) => v === LAND));
