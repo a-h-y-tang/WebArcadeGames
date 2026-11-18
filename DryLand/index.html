@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dry Land</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="game">
+        <header class="hud">
+            <div class="title">
+                <h1>DRY LAND</h1>
+                <p id="verse">&ldquo;Let the waters under the heaven be gathered together unto one
+                    place, and let the dry land appear.&rdquo; &mdash; Genesis 1:9</p>
+            </div>
+            <div class="stats">
+                <div class="stat"><span class="label">Sea marked</span><span id="sea">0 / 0</span></div>
+                <div class="stat"><span class="label">Time</span><span id="time">0:00</span></div>
+                <div class="stat"><span class="label">Best</span><span id="best">--</span></div>
+                <div class="stat"><span class="label">Hints</span><span id="hints">0</span></div>
+            </div>
+        </header>
+
+        <div class="strip">
+            <span id="size-label" class="size-label">Small &middot; 7x7</span>
+            <div class="sizes">
+                <button class="size-btn active" type="button">Small</button>
+                <button class="size-btn" type="button">Medium</button>
+                <button class="size-btn" type="button">Large</button>
+            </div>
+        </div>
+
+        <div class="board-wrap">
+            <canvas id="canvas" width="520" height="520"
+                    aria-label="A map of sea and dry land, with a number on each piece of land"></canvas>
+            <div id="overlay" class="overlay">
+                <h2 id="overlay-title">THE DRY LAND APPEARS</h2>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub"></p>
+                <button id="btn-again" type="button">Another map</button>
+            </div>
+        </div>
+
+        <p id="status" role="status" aria-live="polite" class="status">Shade the sea; leave the numbered land dry.</p>
+
+        <div class="controls">
+            <button id="btn-new" type="button">New map</button>
+            <button id="btn-reset" type="button">Reset</button>
+            <button id="btn-undo" type="button">Undo</button>
+            <button id="btn-hint" type="button">Hint</button>
+            <button id="btn-check" type="button">Check</button>
+        </div>
+
+        <div class="help">
+            <p><strong>Click</strong> sea &rarr; land &rarr; clear</p>
+            <p><strong>Right-click</strong> the other way round</p>
+            <p><strong>Drag</strong> to shade a run</p>
+            <p><kbd>&larr;</kbd><kbd>&uarr;</kbd><kbd>&darr;</kbd><kbd>&rarr;</kbd> move, <kbd>Space</kbd> mark</p>
+            <p><kbd>H</kbd> hint &middot; <kbd>C</kbd> check &middot; <kbd>U</kbd> undo &middot; <kbd>N</kbd> new</p>
+        </div>
+
+        <section class="rules">
+            <p>On the third day God gathered the waters into one place and the dry land appeared.
+               Every number on this map stands on a piece of dry land, and tells you how many
+               squares that land covers. Shade in the sea around them.</p>
+            <ul>
+                <li>Each piece of land holds <strong>exactly one number</strong> and is
+                    <strong>exactly that many squares</strong>.</li>
+                <li>Two pieces of land may <strong>never touch</strong> side by side &mdash; only
+                    corner to corner.</li>
+                <li>The sea must be <strong>gathered into one piece</strong>, every square of it
+                    joined to the rest.</li>
+                <li>The sea may <strong>never fill a whole square of four</strong>; still water of
+                    two by two is not allowed anywhere on the map.</li>
+            </ul>
+            <p>Every map can be worked out by those four rules alone &mdash; there is never any need
+               to guess, and <strong>Hint</strong> will name the rule that settles the next square.</p>
+        </section>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>
