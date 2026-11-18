@@ -306,6 +306,15 @@
     "thumbnail": "games/DroidArena/screenshot.png"
   },
   {
+    "id": "dry-land",
+    "name": "Dry Land",
+    "description": "Shade the sea around the numbered islands until the dry land appears - one sea, no still pools, no island touching another",
+    "category": "Puzzle",
+    "dir": "DryLand",
+    "path": "games/DryLand/index.html",
+    "thumbnail": "games/DryLand/screenshot.png"
+  },
+  {
     "id": "farkle",
     "name": "Farkle",
     "description": "Dice-rolling game - score combinations wisely",

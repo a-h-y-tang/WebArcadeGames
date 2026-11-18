@@ -458,9 +458,14 @@ test.describe('Dry Land', () => {
         test('marking dry land where the sea belongs does not finish it', async ({ page }) => {
             await newPuzzle(page, 0, 5);
             await page.evaluate(() => {
+                let first = true;
                 for (let r = 0; r < rows; r++)
                     for (let c = 0; c < cols; c++)
-                        if (solution[r * cols + c] === SEA) mark(r, c, r === 0 && c === 0 ? LAND : SEA);
+                        if (solution[r * cols + c] === SEA) {
+                            // the first square of sea is marked as land instead
+                            mark(r, c, first ? LAND : SEA);
+                            first = false;
+                        }
             });
             expect(await page.evaluate(() => isSolved())).toBe(false);
         });

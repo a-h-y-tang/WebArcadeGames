@@ -83,6 +83,7 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Turbo Racer | [TurboRacer/](TurboRacer/) | Complete |
 | Columns | [Columns/](Columns/) | Complete |
 | Dots and Boxes | [DotsAndBoxes/](DotsAndBoxes/) | Complete |
+| Dry Land | [DryLand/](DryLand/) | Complete |
 | Wilderness Wanderings | [WildernessWanderings/](WildernessWanderings/) | Complete |
 | Joust | [Joust/](Joust/) | Complete |
 | Checkers | [Checkers/](Checkers/) | Complete |
@@ -151,7 +152,7 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Lamp unto My Feet | [LampUntoMyFeet/](LampUntoMyFeet/) | Complete |
 | Feast of Booths | [FeastOfBooths/](FeastOfBooths/) | Complete |
 | Land of Inheritance | [LandOfInheritance/](LandOfInheritance/) | Complete |
-| Gather the Stones | [GatherTheStones/](GatherTheStones/) | In Progress |
+| Gather the Stones | [GatherTheStones/](GatherTheStones/) | Complete |
 
 ## Playing
 

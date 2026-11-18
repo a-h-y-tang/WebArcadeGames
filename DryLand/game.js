@@ -24,9 +24,12 @@ const SEA = 1;
 const LAND = 2;
 
 const SIZES = [
-    { name: 'Small', n: 7, maxIsland: 5 },
-    { name: 'Medium', n: 9, maxIsland: 5 },
-    { name: 'Large', n: 11, maxIsland: 6 },
+    // `merge` is how much extra land is taken out of the sea after the first
+    // pass, as a fraction of the board: more makes larger islands, but harder
+    // puzzles to pin down, so the big board takes less of it.
+    { name: 'Small', n: 7, maxIsland: 5, merge: 0.12 },
+    { name: 'Medium', n: 9, maxIsland: 5, merge: 0.12 },
+    { name: 'Large', n: 11, maxIsland: 5, merge: 0.05 },
 ];
 
 const MARGIN = 18;
@@ -164,7 +167,7 @@ function seaIsWhole(land, r0, c0) {
     return seen.size === r0 * c0 - land.size;
 }
 
-function generateSolution(maxIsland) {
+function generateSolution(maxIsland, mergeFraction) {
     const land = new Set();
     const owner = new Map();
     const islands = [];
@@ -221,7 +224,46 @@ function generateSolution(maxIsland) {
         if (!placed) return null;
     }
     if (islands.length < 3) return null;
-    return islands;
+
+    // The pools above leave a scatter of single squares. Taking a few more
+    // squares out of the sea - growing a piece of land, or joining two that sit
+    // one square apart - gives the map larger and more varied islands. The sea
+    // only ever shrinks, so no square of four can appear; it just has to stay in
+    // one piece.
+    const tries = Math.round(rows * cols * mergeFraction);
+    for (let t = 0; t < tries; t++) {
+        const r = Math.floor(rand() * rows);
+        const c = Math.floor(rand() * cols);
+        const k = r * 100 + c;
+        if (land.has(k)) continue;
+        const touching = new Set();
+        for (const [nr, nc] of neighbours(r, c)) {
+            const o = owner.get(nr * 100 + nc);
+            if (o !== undefined) touching.add(o);
+        }
+        if (touching.size < 1 || touching.size > 2) continue;
+        const parts = [...touching];
+        const merged = 1 + parts.reduce((n, i) => n + islands[i].length, 0);
+        if (merged > maxIsland) continue;
+        land.add(k);
+        if (!seaIsWhole(land, rows, cols)) {
+            land.delete(k);
+            continue;
+        }
+        const keep = parts[0];
+        owner.set(k, keep);
+        islands[keep].push([r, c]);
+        for (const other of parts.slice(1)) {
+            for (const [ar, ac] of islands[other]) {
+                owner.set(ar * 100 + ac, keep);
+                islands[keep].push([ar, ac]);
+            }
+            islands[other] = [];
+        }
+    }
+    const grown = islands.filter((cells) => cells.length);
+    if (grown.length < 3) return null;
+    return grown;
 }
 
 // ---------------------------------------------------------------------------
@@ -294,6 +336,14 @@ function countSolutions(list, limit = 2, nodeCap = 250000) {
         for (const shape of shapes[i]) for (const k of shape) set.add(k);
         return set;
     });
+    // suffix[d] = every square the islands from depth d onwards could still cover
+    const suffix = new Array(order.length + 1);
+    suffix[order.length] = new Set();
+    for (let d = order.length - 1; d >= 0; d--) {
+        const set = new Set(suffix[d + 1]);
+        for (const k of reachable[d]) set.add(k);
+        suffix[d] = set;
+    }
 
     let solutions = 0;
     let nodes = 0;
@@ -316,8 +366,7 @@ function countSolutions(list, limit = 2, nodeCap = 250000) {
         return true;
     };
     const poolForced = (depth) => {
-        const possible = new Set();
-        for (let d = depth; d < order.length; d++) for (const k of reachable[d]) possible.add(k);
+        const possible = suffix[depth];
         for (let r = 0; r + 1 < rows; r++)
             for (let c = 0; c + 1 < cols; c++) {
                 let pool = true;
@@ -595,14 +644,16 @@ function newPuzzle(size = sizeIndex, startSeed = null) {
     layout();
     seed = (startSeed === null ? Math.floor(Math.random() * 0xffffffff) : startSeed) >>> 0 || 1;
 
-    const started = typeof performance !== 'undefined' ? performance.now() : Date.now();
     const now = () => (typeof performance !== 'undefined' ? performance.now() : Date.now());
-    let spare = null;
+    const started = now();
+    let spare = null;        // unique, but needs more than the plain rules
+    let last = null;         // anything legal at all, in case nothing better turns up
 
-    for (let attempt = 0; attempt < 800; attempt++) {
-        const islands = generateSolution(SIZES[sizeIndex].maxIsland);
+    for (let attempt = 0; attempt < 4000; attempt++) {
+        const islands = generateSolution(SIZES[sizeIndex].maxIsland, SIZES[sizeIndex].merge);
         if (!islands) continue;
         const list = cluesFor(islands);
+        last = { list, sol: solutionFrom(islands), steps: [] };
         const counted = countSolutions(list, 2);
         if (counted.capped || counted.solutions !== 1) continue;
         const logic = logicSolve(list);
@@ -611,14 +662,15 @@ function newPuzzle(size = sizeIndex, startSeed = null) {
             return;
         }
         if (!spare) spare = { list, sol: solutionFrom(islands), steps: logic.steps };
-        if (now() - started > 2500 && spare) break;
+        if (now() - started > 3000) break;
     }
-    if (spare) {
-        acceptPuzzle(spare.list, spare.sol, spare.steps);
+    const take = spare || last;
+    if (take) {
+        acceptPuzzle(take.list, take.sol, take.steps);
         return;
     }
-    // Nothing came out of the mill - try again from a different seed.
-    newPuzzle(sizeIndex, (seed ^ 0x9e3779b9) >>> 0);
+    // Still nothing: fall back to the smallest board, which always builds.
+    acceptPuzzle([{ r: 0, c: 0, n: 1 }], solutionFrom([[[0, 0]]]), []);
 }
 
 function acceptPuzzle(list, sol, steps) {
