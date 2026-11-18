@@ -423,6 +423,15 @@
     "thumbnail": "games/Galaga/screenshot.png"
   },
   {
+    "id": "gather-the-stones",
+    "name": "Gather the Stones",
+    "description": "Clear a stony field for the vineyard - keep the threshing stone in the air with your basket until every stone is gathered in",
+    "category": "Action",
+    "dir": "GatherTheStones",
+    "path": "games/GatherTheStones/index.html",
+    "thumbnail": "games/GatherTheStones/screenshot.png"
+  },
+  {
     "id": "geo-dash",
     "name": "Geo Dash",
     "description": "Rhythm-based platformer with geometric obstacles",

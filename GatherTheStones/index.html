@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gather the Stones</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="game">
+        <header class="hud">
+            <div class="title">
+                <h1>GATHER THE STONES</h1>
+                <p id="verse">&ldquo;And he fenced it, and gathered out the stones thereof, and
+                    planted it with the choicest vine.&rdquo; &mdash; Isaiah 5:2</p>
+            </div>
+            <div class="stats">
+                <div class="stat"><span class="label">Score</span><span id="score">0</span></div>
+                <div class="stat"><span class="label">Best</span><span id="best">0</span></div>
+                <div class="stat"><span class="label">Workers</span><span id="lives">3</span></div>
+                <div class="stat"><span class="label">Field</span><span id="field">1</span></div>
+                <div class="stat"><span class="label">Stones left</span><span id="stones">0</span></div>
+            </div>
+        </header>
+
+        <div class="strip">
+            <span id="field-name" class="field-name">Stony field</span>
+            <div id="gifts" class="gifts" aria-live="polite"></div>
+        </div>
+
+        <div class="board-wrap">
+            <canvas id="canvas" width="520" height="600"
+                    aria-label="A stony field, a woven basket and a threshing stone"></canvas>
+            <div id="overlay" class="overlay visible">
+                <h2 id="overlay-title">GATHER THE STONES</h2>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Press Space or click Start Work to clear the field</p>
+                <button id="btn-start">Start Work</button>
+            </div>
+        </div>
+
+        <div class="help">
+            <p><kbd>&larr;</kbd> <kbd>&rarr;</kbd> or the mouse moves the basket</p>
+            <p><kbd>Space</kbd> launch / release</p>
+            <p><kbd>P</kbd> pause</p>
+            <p><kbd>R</kbd> start over</p>
+        </div>
+
+        <section class="rules">
+            <p>A vineyard cannot be planted until the field is cleared. Keep the threshing stone in
+               the air with your basket and knock every field stone loose &mdash; five fields, and
+               the vines go in.</p>
+            <ul>
+                <li><strong>Loose stones</strong> come away in one hit, <strong>packed stones</strong>
+                    in two, <strong>boulders</strong> in three. <strong>Bedrock</strong> never
+                    shifts, so play the angles around it.</li>
+                <li>Where the stone lands on the basket decides where it goes next: the edges send
+                    it out wide, the middle sends it straight back up.</li>
+                <li>Some stones leave a <strong>gift</strong> behind &mdash; a wider basket, a
+                    steadier hand, three stones at once, sticky pitch to hold the stone, or an extra
+                    worker. Catch it with the basket.</li>
+            </ul>
+        </section>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>
