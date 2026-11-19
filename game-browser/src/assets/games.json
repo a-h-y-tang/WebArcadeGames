@@ -999,6 +999,15 @@
     "thumbnail": "games/Scramble/screenshot.png"
   },
   {
+    "id": "scribes-crossword",
+    "name": "Scribe's Crossword",
+    "description": "A crossword where every answer comes out of the Bible, built fresh each time",
+    "category": "Puzzle",
+    "dir": "ScribesCrossword",
+    "path": "games/ScribesCrossword/index.html",
+    "thumbnail": "games/ScribesCrossword/screenshot.png"
+  },
+  {
     "id": "set-game",
     "name": "Set Game",
     "description": "Card game - find sets of three cards with matching attributes",
