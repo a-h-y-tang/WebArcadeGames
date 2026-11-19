@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scribe's Crossword</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main id="container">
+        <h1>Scribe&rsquo;s Crossword</h1>
+        <p id="verse">&ldquo;Ezra had set his heart to study the Law of the LORD, and to do it,
+            and to teach his statutes and judgments in Israel.&rdquo; &mdash; Ezra 7:10</p>
+
+        <div id="hud">
+            <div class="stat"><span class="label">Scroll</span><strong id="level-label">Short scroll</strong></div>
+            <div class="stat"><span class="label">Words</span><strong id="words">0 / 0</strong></div>
+            <div class="stat"><span class="label">Letters</span><strong id="filled">0 / 0</strong></div>
+            <div class="stat"><span class="label">Revealed</span><strong id="hints">0</strong></div>
+        </div>
+
+        <p id="status" role="status" aria-live="polite">Fill the scroll from the clues.</p>
+        <p id="current-clue" aria-live="polite">Click a cell or a clue to start writing.</p>
+
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="460" height="460"
+                    aria-label="The crossword grid: numbered cells of parchment to write letters into"></canvas>
+            <div id="overlay">
+                <h2 id="overlay-title">The scroll is complete!</h2>
+                <p id="overlay-sub"></p>
+                <button id="btn-next">On to the next scroll</button>
+            </div>
+        </div>
+
+        <div id="levels">
+            <button class="level-btn active" data-level="0">Short scroll</button>
+            <button class="level-btn" data-level="1">Long scroll</button>
+            <button class="level-btn" data-level="2">Great scroll</button>
+        </div>
+
+        <div id="controls">
+            <button id="btn-check">Check</button>
+            <button id="btn-hint">Reveal Letter</button>
+            <button id="btn-reset">Reset</button>
+            <button id="btn-new">New Scroll</button>
+        </div>
+
+        <div id="keyboard" aria-label="On-screen keyboard"></div>
+
+        <div id="clues">
+            <section class="clue-column">
+                <h2>Across</h2>
+                <div id="across-list" class="clue-list"></div>
+            </section>
+            <section class="clue-column">
+                <h2>Down</h2>
+                <div id="down-list" class="clue-list"></div>
+            </section>
+        </div>
+
+        <div id="rules">
+            <p>Every answer is out of the Bible &mdash; people, places, books and things, from
+               the ark to the empty tomb. Read a clue, write the answer into the numbered
+               cells, and the letters shared between words will help you along.</p>
+            <p class="hint"><strong>Mouse:</strong> click a cell to write there, click it again to
+               turn across&nbsp;&harr;&nbsp;down, or click a clue to jump to its first cell.
+               <strong>Keyboard:</strong> letters write, <strong>Backspace</strong> rubs out,
+               <strong>arrow keys</strong> move, <strong>Space</strong> turns the direction,
+               <strong>Tab</strong> moves to the next clue, <strong>Esc</strong> puts the pen down.
+               Because every letter key writes, <em>Check</em>, <em>Reveal Letter</em>,
+               <em>Reset</em> and <em>New Scroll</em> are buttons.</p>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>
