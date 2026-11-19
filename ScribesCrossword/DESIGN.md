@@ -14,7 +14,7 @@ Nothing in the collection yet is a crossword (Bible Words is a five-letter
 deduction game, Words of Life is a typing game), so this adds a genre rather
 than another variation.
 
-The puzzles are **generated at run time** from a bank of about ninety
+The puzzles are **generated at run time** from a bank of 183
 answer-and-clue pairs, in the "criss-cross" style: words interlock at shared
 letters and the cells that are not part of a word stay blank parchment. A
 seeded PRNG builds the grid, so a seed always produces the same scroll, and
