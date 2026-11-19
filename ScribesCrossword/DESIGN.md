@@ -85,6 +85,8 @@ more letters takes the next number. A cell that begins both shares one number.
   are wrong; it never fills anything in. **Reveal Letter** writes the correct
   letter into the selected cell and counts a hint. **Reset** empties the grid,
   **New Scroll** generates another one, and the level buttons switch scrolls.
+- Each time a word comes out right the status line says so and counts down how
+  many are left, so there is a little feedback without giving anything away.
 - The scroll is finished the moment every letter cell holds the right letter: an
   overlay congratulates the scribe and offers the next scroll. After that,
   typing does nothing.

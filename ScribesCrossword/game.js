@@ -36,7 +36,7 @@ const WORD_BANK = [
     ['EVE', 'The first woman, the mother of all living'],
     ['PIT', "Joseph's brothers threw him into one at Dothan"],
     ['ROD', "Aaron's budded before the whole congregation"],
-    ['SEA', 'Jesus stilled the storm on the ___ of Galilee'],
+    ['SEA', 'Israel walked through the Red ___ on dry ground'],
     ['DEN', "Daniel spent a night in the lions' ___"],
     // --- four ---
     ['NOAH', 'He and his household rode out the flood'],
@@ -119,7 +119,7 @@ const WORD_BANK = [
     ['STONE', 'Rolled away from the door of the tomb'],
     ['STAFF', "A shepherd's; Moses carried one to Egypt"],
     ['SWORD', '"The ___ of the Spirit, which is the word of God"'],
-    ['TRUTH', '"I am the way, the ___, and the life"'],
+    ['TRUTH', '"Sanctify them through thy ___" (John 17:17)'],
     ['TITHE', 'A tenth part given back to the Lord'],
     ['TOWER', "Babel's, built to reach the heavens"],
     ['FLOOD', 'Forty days of rain brought it on the earth'],
@@ -231,6 +231,7 @@ let endStop = false;    // the cursor sits on a filled last cell of an entry
 let wrong = new Set();  // cells marked by Check, as 'r,c'
 let wrongTimer = null;
 let hintsUsed = 0;
+let wordsDone = 0;      // how many entries were right the last time anything changed
 let solved = false;
 let seedCounter = 1;
 
@@ -465,13 +466,18 @@ function numberEntries(grid, placed, cols, rows) {
 function buildPuzzle(level, seed) {
     const cfg = LEVELS[level];
     let best = null;
+    let fallback = null;
     for (let attempt = 0; attempt < BUILD_ATTEMPTS; attempt++) {
         const rand = makeRng(seed * 7919 + attempt * 104729 + 1);
         const built = attemptBuild(cfg, rand);
+        if (!fallback) fallback = built;
+        // The run check is a safety net: a grid whose runs are not exactly the
+        // words laid on it would read as a word nobody clued, so it is dropped.
         if (!runsMatch(built.grid, built.placed, cfg.cols, cfg.rows)) continue;
         if (!best || built.placed.length > best.placed.length) best = built;
         if (best.placed.length >= cfg.target) break;
     }
+    if (!best) best = fallback;
     const tidy = centreWords(best.grid, best.placed, cfg.cols, cfg.rows);
     const { numbers, list } = numberEntries(tidy.grid, tidy.placed, cfg.cols, cfg.rows);
     return {
@@ -541,6 +547,7 @@ function newPuzzle(seed) {
     letters = Array.from({ length: puzzle.rows }, () => Array(puzzle.cols).fill(''));
     wrong = new Set();
     hintsUsed = 0;
+    wordsDone = 0;
     solved = false;
     endStop = false;
     selection = null;
@@ -573,6 +580,7 @@ function resetBoard() {
     letters = Array.from({ length: puzzle.rows }, () => Array(puzzle.cols).fill(''));
     wrong = new Set();
     hintsUsed = 0;
+    wordsDone = 0;
     solved = false;
     endStop = false;
     document.getElementById('overlay').classList.remove('visible');
@@ -596,6 +604,7 @@ function clueLabel(entry) {
 
 function updateHud() {
     const done = puzzle.entries.filter(entryComplete).length;
+    wordsDone = done;
     document.getElementById('words').textContent = `${done} / ${puzzle.entries.length}`;
     const cells = letterCells();
     const filled = cells.filter((cell) => letters[cell.r][cell.c] !== '').length;
@@ -809,7 +818,14 @@ function revealLetter() {
 }
 
 function afterChange() {
+    const before = wordsDone;
     updateHud();
+    if (!solved && wordsDone > before) {
+        const left = puzzle.entries.length - wordsDone;
+        setStatus(left
+            ? `That word is right — ${left} to go.`
+            : 'Every word is right.', 'good');
+    }
     if (!solved && letterCells().every((cell) => letters[cell.r][cell.c] === puzzle.grid[cell.r][cell.c])) {
         solved = true;
         wrong = new Set();
@@ -916,11 +932,21 @@ const KEY_ROWS = ['ABCDEFGHI', 'JKLMNOPQR', 'STUVWXYZ'];
     });
 })();
 
-document.getElementById('btn-check').addEventListener('click', check);
-document.getElementById('btn-hint').addEventListener('click', revealLetter);
-document.getElementById('btn-reset').addEventListener('click', resetBoard);
-document.getElementById('btn-new').addEventListener('click', () => newPuzzle());
-document.getElementById('btn-next').addEventListener('click', nextLevel);
+// Control buttons give the focus straight back, so Space and Enter keep
+// writing into the grid instead of pressing the button again.
+function onButton(id, handler) {
+    const btn = document.getElementById(id);
+    btn.addEventListener('click', () => {
+        btn.blur();
+        handler();
+    });
+}
+
+onButton('btn-check', check);
+onButton('btn-hint', revealLetter);
+onButton('btn-reset', resetBoard);
+onButton('btn-new', () => newPuzzle());
+onButton('btn-next', nextLevel);
 document.querySelectorAll('.level-btn').forEach((btn) => {
     btn.addEventListener('click', () => {
         btn.blur();

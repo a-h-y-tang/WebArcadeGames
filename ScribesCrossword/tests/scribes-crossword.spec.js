@@ -529,6 +529,17 @@ test.describe("Scribe's Crossword", () => {
             expect(keys).toContain('back');
         });
 
+        test('finishing a word is called out in the status line', async ({ page }) => {
+            const entries = await entryList(page);
+            const e = entries.find((x) => x.dir === 'across');
+            await clue(page, 'across', e.num).click();
+            await page.keyboard.type(e.answer.slice(0, -1));
+            await expect(page.locator('#status')).not.toHaveClass(/good/);
+            await page.keyboard.type(e.answer.slice(-1));
+            await expect(page.locator('#status')).toHaveClass(/good/);
+            await expect(page.locator('#status')).toContainText('word');
+        });
+
         test('a finished entry is marked done in the clue list', async ({ page }) => {
             const entries = await entryList(page);
             const e = entries.find((x) => x.dir === 'across');
