@@ -355,7 +355,13 @@ function playCpuTurn() {
         chain.push(to);
         selected = to;
     }
+    const hops = move.path.length - 1;
     finishTurn('cpu');
+    if (!winner) {
+        setStatus(hops > 1
+            ? `The computer rode a chain of ${hops} jumps — your move.`
+            : 'The computer moved — your move.');
+    }
 }
 
 // ------------------------------------------------------------------ drawing
@@ -553,6 +559,7 @@ function newGame() {
     clearTimeout(cpuTimer);
     cpuTimer = null;
     rngState = rngSeed;
+    rngSeed = (rngSeed * 1103515245 + 12345) & 0x7fffffff;  // the next game differs
     board = new Array(HOLES.length).fill(null);
     for (const id of ZONES.south) board[id] = 'player';
     for (const id of ZONES.north) board[id] = 'cpu';
@@ -643,6 +650,7 @@ function activate(id) {
 }
 
 canvas.addEventListener('click', (event) => {
+    keyboardActive = false;
     const rect = canvas.getBoundingClientRect();
     const scaleX = canvas.width / rect.width;
     const scaleY = canvas.height / rect.height;
@@ -685,6 +693,8 @@ const ARROWS = {
 
 document.addEventListener('keydown', (event) => {
     const key = event.key;
+    // Let a focused button keep its own Space / Enter.
+    if ((key === ' ' || key === 'Enter') && event.target && event.target.tagName === 'BUTTON') return;
     if (ARROWS[key]) {
         event.preventDefault();
         moveCursor(...ARROWS[key]);

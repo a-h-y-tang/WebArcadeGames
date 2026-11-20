@@ -130,6 +130,9 @@ uncaught page error or console error.
 - **A peg may re-enter its own starting point.** Rather than forbid it, the
   blocked-win rule above decides the game if someone squats, which is less
   surprising than silently refusing a legal-looking move.
+- **Short jumps only.** A peg hops over an *adjacent* peg into the hole directly
+  beyond. The "super jump" variant, where a peg flies over a distant peg along a
+  line and lands the same distance past it, is a different game and is not used.
 - **No multi-level search in the computer player.** One ply, plus an optional
   look at the best reply on "Keen". A deeper search on a board with hundreds of
   legal moves per turn would stall the page, and one ply already plays a brisk,
