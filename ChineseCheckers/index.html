@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chinese Checkers</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main id="container">
+        <h1>Chinese Checkers</h1>
+        <p id="tagline">Race your ten pegs across the star &mdash; one hop at a time, or a chain of
+            jumps all the way over.</p>
+
+        <div id="hud">
+            <div class="stat"><span class="label">You (green)</span><strong id="home-player">0 / 10</strong></div>
+            <div class="stat"><span class="label">Computer (amber)</span><strong id="home-cpu">0 / 10</strong></div>
+            <div class="stat"><span class="label">Your moves</span><strong id="moves">0</strong></div>
+        </div>
+
+        <p id="status" role="status" aria-live="polite">Your move &mdash; pick a green peg.</p>
+
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="540" height="610" tabindex="0"
+                    aria-label="A six-pointed Chinese Checkers star: your green pegs fill the bottom point, the computer's amber pegs the top"></canvas>
+            <div id="overlay">
+                <h2 id="overlay-title">You win!</h2>
+                <p id="overlay-sub"></p>
+                <button id="btn-again">Play again</button>
+            </div>
+        </div>
+
+        <div id="controls">
+            <button id="btn-new">New Game</button>
+            <button id="btn-undo">Undo</button>
+            <button id="btn-difficulty">Computer: Gentle</button>
+        </div>
+
+        <div id="rules">
+            <p>Both sides hold <strong>ten</strong> pegs in opposite points of the star. You play the
+                green pegs at the bottom and win by filling the top point; the computer comes the
+                other way. Nothing is ever captured.</p>
+            <ul>
+                <li><strong>Step</strong> one hole into any of the six directions, if it is empty.</li>
+                <li><strong>Jump</strong> straight over a peg of either colour into the empty hole
+                    beyond &mdash; and keep <strong>jumping</strong> as long as you have a jump left,
+                    never landing twice on the same hole.</li>
+                <li>A whole chain of jumps is one move. Stop early whenever you like.</li>
+            </ul>
+            <p class="hint"><strong>Mouse:</strong> click a peg, then click a ringed hole.
+                <strong>Keyboard:</strong> arrow keys move the cursor, <strong>Space</strong> picks a
+                peg or moves it, <strong>Esc</strong> deselects or ends a chain of jumps,
+                <strong>U</strong> undo, <strong>N</strong> new game.</p>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>

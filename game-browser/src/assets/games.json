@@ -225,6 +225,15 @@
     "thumbnail": "games/Checkers/screenshot.png"
   },
   {
+    "id": "chinese-checkers",
+    "name": "Chinese Checkers",
+    "description": "Race ten pegs across the star against the computer, one step or a long chain of jumps at a time",
+    "category": "Board Game",
+    "dir": "ChineseCheckers",
+    "path": "games/ChineseCheckers/index.html",
+    "thumbnail": "games/ChineseCheckers/screenshot.png"
+  },
+  {
     "id": "columns",
     "name": "Columns",
     "description": "Match falling blocks to clear the board",
