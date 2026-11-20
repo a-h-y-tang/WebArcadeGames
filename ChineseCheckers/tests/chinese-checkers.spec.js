@@ -199,6 +199,12 @@ test.describe('Chinese Checkers', () => {
             await expect(page.locator('#home-cpu')).toHaveText('0 / 10');
         });
 
+        test('the home counters follow the pegs that have arrived', async ({ page }) => {
+            await setup(page, [[0, 0], [1, -1], [1, 1], [8, 0]], [[16, 0], [15, 1]]);
+            await expect(page.locator('#home-player')).toHaveText('3 / 10');
+            await expect(page.locator('#home-cpu')).toHaveText('2 / 10');
+        });
+
         test('the status line asks the player to move', async ({ page }) => {
             await expect(page.locator('#status')).toContainText(/your move/i);
         });
@@ -241,6 +247,21 @@ test.describe('Chinese Checkers', () => {
         test('clicking an empty hole selects nothing', async ({ page }) => {
             await clickHole(page, 8, 0);
             expect(await page.evaluate(() => selected)).toBe(null);
+        });
+
+        test('a peg can still be picked up when the canvas is scaled down', async ({ page }) => {
+            await page.setViewportSize({ width: 380, height: 760 });
+            const target = await id(page, 13, 1);
+            const pos = await page.evaluate((i) => {
+                const rect = canvas.getBoundingClientRect();
+                const centre = holeCentre(i);
+                return {
+                    x: (centre.x * rect.width) / canvas.width,
+                    y: (centre.y * rect.height) / canvas.height,
+                };
+            }, target);
+            await page.locator('#canvas').click({ position: pos });
+            expect(await page.evaluate(() => selected)).toBe(target);
         });
 
         test('Escape clears the selection', async ({ page }) => {
