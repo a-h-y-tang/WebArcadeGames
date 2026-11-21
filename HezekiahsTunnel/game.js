@@ -427,7 +427,8 @@ function updateHud() {
     elDays.textContent = String(days);
     elFlooded.textContent = String(flooded);
     elTimer.textContent = state === 'levelclear' || state === 'won' ? 'Arrived'
-        : state === 'gameover' ? 'Lost'
+        : state === 'leak' ? 'Broke out'
+            : state === 'gameover' ? 'Lost'
             : grace > 0 ? `${Math.ceil(grace)}s` : 'Flowing';
     btnStart.textContent = state === 'idle' ? 'Start'
         : state === 'paused' ? 'Resume'

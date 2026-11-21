@@ -134,7 +134,9 @@ deliberate hooks:
   spend in all. This is friendlier than the original's single life, and keeps a
   bad queue from ending a run immediately.
 * **One head of water.** A `cross` carries two separate channels, but the water
-  never branches, so at most one head is in motion at any time.
+  never branches, so at most one head is in motion at any time. Each of a
+  cross's two channels scores in its own right, so a route that crosses itself
+  is paid for both passes.
 * **Five levels.** Difficulty rises through five hand-tuned levels and the game
   is won at the end of the fifth, rather than continuing endlessly.
 * **The route is not required to be long.** Score comes from cells flooded, so a

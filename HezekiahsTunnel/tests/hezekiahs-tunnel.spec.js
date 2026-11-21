@@ -477,6 +477,48 @@ test.describe("Hezekiah's Tunnel", () => {
             expect(crossFill).toEqual({ h: 1, v: 1 });
         });
 
+        test('sections can still be laid while the water is running', async ({ page }) => {
+            await startStill(page);
+            await buildBoard(page, 3, 3);
+            await lay(page, 3, 1, 'h');
+            // The water sets off with only one section down; keep laying ahead of it.
+            await page.evaluate(() => { grace = 0; step(0.1); });
+            expect(await page.evaluate(() => flow !== null)).toBe(true);
+            for (let c = 2; c <= 7; c++) {
+                expect(await lay(page, 3, c, 'h')).toBe(true);
+                await page.evaluate(() => { for (let i = 0; i < 20; i++) step(0.05); });
+            }
+            await runWater(page);
+            expect(await page.evaluate(() => state)).toBe('levelclear');
+        });
+
+        test('the water keeps running at its own pace, countdown over', async ({ page }) => {
+            await startStill(page);
+            await buildBoard(page, 3, 3);
+            await layStraightRoute(page, 3);
+            await page.evaluate(() => { grace = 0; step(0.5); });
+            const first = await page.evaluate(() => grid[3][1].fill.main);
+            await page.evaluate(() => step(0.5));
+            const second = await page.evaluate(() => grid[3][1].fill.main);
+            expect(second).toBeGreaterThan(first);
+            expect(await page.evaluate(() => grace)).toBe(0);
+        });
+
+        test('each channel of a cross scores on its own', async ({ page }) => {
+            await startStill(page);
+            await page.evaluate(() => buildLevel({ level: 1, springRow: 3, poolRow: 4, rocks: 0 }));
+            const route = [
+                [3, 1, 'h'], [3, 2, 'h'], [3, 3, 'h'], [3, 4, 'cross'], [3, 5, 'nw'],
+                [2, 5, 'sw'], [2, 4, 'se'],
+                [4, 4, 'ne'], [4, 5, 'h'], [4, 6, 'h'], [4, 7, 'h'],
+            ];
+            for (const [r, c, t] of route) await lay(page, r, c, t);
+            await runWater(page);
+            // Eleven sections, but the cross is filled twice: twelve scoring cells.
+            expect(await page.evaluate(() => flooded)).toBe(12);
+            expect(await page.evaluate(() => score)).toBe(12 * 10 + 200);
+        });
+
         test('water running into bare ground leaks', async ({ page }) => {
             await startStill(page);
             await buildBoard(page, 3, 3);
