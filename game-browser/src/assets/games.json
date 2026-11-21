@@ -486,6 +486,15 @@
     "thumbnail": "games/Hex/screenshot.png"
   },
   {
+    "id": "hezekiahs-tunnel",
+    "name": "Hezekiah's Tunnel",
+    "description": "Lay a channel of hewn rock from the Gihon spring to the Pool of Siloam before the water catches up",
+    "category": "Puzzle",
+    "dir": "HezekiahsTunnel",
+    "path": "games/HezekiahsTunnel/index.html",
+    "thumbnail": "games/HezekiahsTunnel/screenshot.png"
+  },
+  {
     "id": "hitori",
     "name": "Hitori",
     "description": "Logic puzzle - eliminate duplicate cells",
