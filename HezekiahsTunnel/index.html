@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hezekiah's Tunnel</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main id="container">
+        <h1>Hezekiah&rsquo;s Tunnel</h1>
+        <p id="verse">&ldquo;&hellip;and how he made the pool and the tunnel and brought water into the
+            city&hellip;&rdquo; &mdash; 2 Kings 20:20</p>
+
+        <div id="hud">
+            <div class="stat"><span class="label">Score</span><strong id="score">0</strong></div>
+            <div class="stat"><span class="label">Best</span><strong id="best">0</strong></div>
+            <div class="stat"><span class="label">Stretch</span><strong id="level">1</strong></div>
+            <div class="stat"><span class="label">Days</span><strong id="days">3</strong></div>
+            <div class="stat"><span class="label">Water</span><strong id="timer">12s</strong></div>
+            <div class="stat"><span class="label">Cells cut</span><strong id="flooded">0</strong></div>
+        </div>
+
+        <p id="status" role="status" aria-live="polite">Lay channel from the spring to the pool before the water starts.</p>
+
+        <div id="play">
+            <div id="canvas-wrapper">
+                <canvas id="canvas" width="560" height="420"
+                        aria-label="Bedrock grid with the Gihon spring on the left and the Pool of Siloam on the right"></canvas>
+                <div id="overlay">
+                    <h2 id="overlay-title">Hezekiah&rsquo;s Tunnel</h2>
+                    <p id="overlay-sub">Press Space to start the dig.</p>
+                    <button id="btn-action">Start the dig</button>
+                </div>
+            </div>
+
+            <div id="queue-panel">
+                <span class="label">Next</span>
+                <canvas id="queue-canvas" width="56" height="280"
+                        aria-label="The next five channel sections from the stonecutters"></canvas>
+            </div>
+        </div>
+
+        <div id="controls">
+            <button id="btn-start">Start</button>
+            <button id="btn-new">New Game</button>
+        </div>
+
+        <div id="rules">
+            <p>King Hezekiah&rsquo;s workmen cut a channel through solid rock to bring the water of the
+               Gihon spring inside the city walls, into the <strong>Pool of Siloam</strong>. The spring
+               is already running &mdash; lay the channel before the water catches up.</p>
+            <ul>
+                <li>Sections arrive one at a time. Lay the next one on any <strong>bare ground</strong>;
+                    rock cannot be dug and a laid section cannot be moved.</li>
+                <li>When the countdown ends the water runs from the spring at a steady pace. Every cell
+                    it fills scores 10.</li>
+                <li>If the water meets bare ground, rock, or a section that does not face it, it
+                    <strong>breaks out</strong> and a day of digging is lost. Three lost days end the dig.</li>
+                <li>Water reaching the pool finishes the stretch for a 200 bonus. Five stretches
+                    complete the tunnel.</li>
+            </ul>
+            <p class="hint"><strong>Mouse:</strong> click a cell to lay the next section.
+               <strong>Keyboard:</strong> <strong>Arrow keys</strong> move the cursor,
+               <strong>Space</strong> lays a section (and starts the dig),
+               <strong>P</strong> pauses, <strong>N</strong> starts a new game.</p>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>
