@@ -311,17 +311,34 @@ test.describe('Joyful Noise', () => {
             expect(s.combo).toBe(1);
         });
 
-        test('the nearest note in the lane is the one judged', async ({ page }) => {
+        test('notes in a lane are judged in the order they fall', async ({ page }) => {
             const picked = await page.evaluate(() => {
-                // Two notes in one lane; press nearer the second.
                 const lane = chart[0].lane;
                 const pair = chart.filter((n) => n.lane === lane).slice(0, 2);
-                if (pair.length < 2) return null;
                 advanceClockTo(LEAD_IN_MS + pair[1].time);
                 pressLane(lane);
                 return { first: pair[0].judgement, second: pair[1].judgement };
             });
+            // The first note is long gone by then, so the press takes the second.
+            expect(picked.first).toBe('miss');
             expect(picked.second).toBe('perfect');
+        });
+
+        test('a late press takes the note it was aimed at, not the one behind it', async ({ page }) => {
+            const outcome = await page.evaluate(() => {
+                // A pair of notes in one lane close enough that a late press for
+                // the first sits nearer the second.
+                const lane = 2;
+                chart = [
+                    { time: 1000, dur: 300, pitch: 'C4', lane, judgement: null, hitAt: 0 },
+                    { time: 1260, dur: 300, pitch: 'C4', lane, judgement: null, hitAt: 0 },
+                ];
+                advanceClockTo(LEAD_IN_MS + 1140);
+                pressLane(lane);
+                return { first: chart[0].judgement, second: chart[1].judgement };
+            });
+            expect(outcome.first).toBe('good');
+            expect(outcome.second).toBe(null);
         });
     });
 
@@ -368,9 +385,11 @@ test.describe('Joyful Noise', () => {
                 advanceClockTo(LEAD_IN_MS + chart[1].time - 140);
                 pressLane(chart[1].lane);
                 advanceClockTo(LEAD_IN_MS + chart[chart.length - 1].time + OUTRO_MS + 50);
-                return { acc: accuracy(), total: chart.length };
+                return { acc: accuracy(), total: chart.length, judged: state.counts };
             });
-            expect(weighted.acc).toBeCloseTo((1 + 0.4) / weighted.total, 6);
+            // Every note is judged by the end, so the whole chart is the denominator.
+            expect(weighted.judged).toEqual({ perfect: 1, great: 0, good: 1, miss: weighted.total - 2 });
+            expect(weighted.acc).toBeCloseTo((1 + 0.6) / weighted.total, 6);
         });
 
         test('mid-hymn accuracy weighs only the notes judged so far', async ({ page }) => {
@@ -380,6 +399,34 @@ test.describe('Joyful Noise', () => {
             // One note of twenty-odd struck cleanly still reads as a clean run.
             await expect(page.locator('#accuracy')).toHaveText('100%');
             expect(await page.evaluate(() => accuracy())).toBe(1);
+        });
+
+        test('catching every note a little late still earns a good grade', async ({ page }) => {
+            await startFrozen(page);
+            await page.evaluate(() => {
+                for (const note of chart) {
+                    advanceClockTo(LEAD_IN_MS + note.time + 80);
+                    pressLane(note.lane);
+                }
+                advanceClockTo(LEAD_IN_MS + chart[chart.length - 1].time + OUTRO_MS + 50);
+            });
+            const s = await getState(page);
+            expect(s.miss).toBe(0);
+            expect(s.great).toBe(await page.evaluate(() => chart.length));
+            await expect(page.locator('#overlay-title')).toHaveText('Well played');
+        });
+
+        test('a hymn half left unstruck falls to the gentlest grade', async ({ page }) => {
+            await startFrozen(page);
+            await page.evaluate(() => {
+                chart.forEach((note, i) => {
+                    if (i % 2) return;                 // strike every other note
+                    advanceClockTo(LEAD_IN_MS + note.time);
+                    pressLane(note.lane);
+                });
+                advanceClockTo(LEAD_IN_MS + chart[chart.length - 1].time + OUTRO_MS + 50);
+            });
+            await expect(page.locator('#overlay-title')).toHaveText('Give it another voice');
         });
 
         test('the HUD tracks score and combo as the hymn plays', async ({ page }) => {

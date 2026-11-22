@@ -31,7 +31,7 @@ const GREAT_MS = 100;
 const GOOD_MS = 160;            // the widest window; beyond it the note is lost
 
 const POINTS = { perfect: 100, great: 60, good: 30, miss: 0 };
-const WEIGHTS = { perfect: 1, great: 0.8, good: 0.4, miss: 0 };
+const WEIGHTS = { perfect: 1, great: 0.85, good: 0.6, miss: 0 };
 
 const LANES = [
     { name: 'Harp', key: 'D', colour: '#6fb4e8', glow: '#bfe2ff' },
@@ -105,10 +105,13 @@ const SONGS = [
     },
 ];
 
+// The bands are set against whole runs: every note caught cleanly is the top
+// grade, every note caught a little late still earns "Well played", and only a
+// hymn with notes left unstruck falls to the bottom.
 const GRADES = [
     { at: 0.95, title: 'A joyful noise!', sub: 'Every note in its place — the whole hymn rang true.' },
-    { at: 0.85, title: 'Well played', sub: 'A clear, steady hymn. A few notes slipped past.' },
-    { at: 0.70, title: 'Keep praising', sub: 'The tune came through. Try it once more for the rest.' },
+    { at: 0.80, title: 'Well played', sub: 'A clear, steady hymn, near enough every note caught.' },
+    { at: 0.55, title: 'Keep praising', sub: 'The tune came through. Try it once more for the rest.' },
     { at: 0, title: 'Give it another voice', sub: 'Listen for the beat and strike right on the line.' },
 ];
 
@@ -269,19 +272,16 @@ function record(note, judgement) {
     updateHud();
 }
 
-// The nearest unstruck note in the lane, if one is inside the widest window.
+// The first unstruck note in the lane that is inside the widest window. Taking
+// them in order matters where two notes fall close together: a press a little
+// late belongs to the note it was aimed at, not the one behind it — which would
+// leave the first standing to be missed.
 function judgeFor(lane, time) {
-    let best = null;
-    let bestGap = Infinity;
     for (const note of chart) {
         if (note.lane !== lane || note.judgement) continue;
-        const gap = Math.abs(note.time - time);
-        if (gap <= GOOD_MS && gap < bestGap) {
-            best = note;
-            bestGap = gap;
-        }
+        if (Math.abs(note.time - time) <= GOOD_MS) return note;
     }
-    return best;
+    return null;
 }
 
 function pressLane(lane) {
@@ -309,6 +309,7 @@ function startSong(index) {
     pausedTotal = 0;
     lastJudgement = null;
     padFlash = [0, 0, 0, 0];
+    held = [false, false, false, false];
     setStatus('Strike each note as it crosses the line.');
     updateHud();
     showOverlay(false);
@@ -435,7 +436,7 @@ function draw() {
     // The lanes, lit a little brighter where a hand is resting.
     for (let lane = 0; lane < LANE_COUNT; lane++) {
         const x = laneX(lane);
-        const lit = nowMs() - padFlash[lane] < 140;
+        const lit = held[lane] || nowMs() - padFlash[lane] < 140;
         ctx.fillStyle = lit ? 'rgba(255,255,255,0.10)' : lane % 2 ? 'rgba(255,255,255,0.035)' : 'rgba(0,0,0,0.12)';
         ctx.fillRect(x, 0, LANE_W, STRIKE_Y + PAD_H);
         ctx.strokeStyle = 'rgba(255,255,255,0.12)';
@@ -538,7 +539,7 @@ function drawPads() {
         const info = LANES[lane];
         const x = laneX(lane) + 8;
         const width = LANE_W - 16;
-        const lit = nowMs() - padFlash[lane] < 140;
+        const lit = held[lane] || nowMs() - padFlash[lane] < 140;
         ctx.save();
         ctx.fillStyle = lit ? info.glow : 'rgba(255,255,255,0.09)';
         roundRect(x, STRIKE_Y + 10, width, PAD_H - 18, 10);

@@ -50,10 +50,19 @@ note's time, taking the nearest unjudged note in that lane:
 | Good      | ≤ 160 ms    | 30     |
 | Miss      | note passes 160 ms late | 0 |
 
+Where two notes fall close together the press takes the **first** unstruck note
+in its window rather than the nearest one, so a press a little late belongs to
+the note it was aimed at instead of stealing the note behind it and leaving the
+first to be missed.
+
 A hit extends the combo and a miss ends it; the longest combo of the run is kept.
-Accuracy is weighted — perfect 1, great 0.8, good 0.4, miss 0 — over every note
-in the hymn, and the end screen turns it into a grade (95% "A joyful noise!",
-85% "Well played", 70% "Keep praising", below that "Give it another voice").
+Accuracy is weighted — perfect 1, great 0.85, good 0.6, miss 0 — over the notes
+judged so far, so it reads the same mid-hymn as at the end, where every note has
+been judged and the denominator is the whole chart. The end screen turns it into
+a grade: 95% "A joyful noise!", 80% "Well played", 55% "Keep praising", below
+that "Give it another voice". The bands are set against whole runs — catching
+every note of a hymn, even a little late, is always worth more than the bottom
+grade, which is reserved for a hymn with notes left unstruck.
 
 Notes approach the strike line over a fixed travel time set by the speed: Gentle
 2200 ms, Steady 1600 ms, Lively 1100 ms. Speed changes how far apart the notes
@@ -89,12 +98,17 @@ the live state reachable from Playwright as globals:
 - **Melodies and charts** — `SONGS`, `laneForPitch`, `buildChart`, `pitchToMidi`.
 - **State** — `state` (`score`, `combo`, `bestCombo`, counts per judgement,
   `phase`), `chart`, `songIndex`, `speedIndex`.
-- **Timing** — `nowMs`, `songTimeMs`, `tick`, and a deterministic test clock:
-  `freezeClock(ms)` pins the clock and `advanceClock(ms)` moves it on and runs a
-  tick, so a suite can place a press a known number of milliseconds from a note
-  without waiting in real time. Unfrozen, `nowMs` is `performance.now()`.
+- **Timing** — `nowMs`, `songTimeMs`, `lastNoteMs`, `tick`, and a deterministic
+  test clock:
+  `freezeClock(ms)` pins the clock, `advanceClock(ms)` moves it on and runs a
+  tick, and `thawClock()` hands timing back to the browser. A suite (or the
+  console) can therefore place a press a known number of milliseconds from a
+  note without waiting in real time. Unfrozen, `nowMs` is `performance.now()`.
 - **Play** — `pressLane`, `judgeFor`, `releaseLane`, `startSong`, `togglePause`.
-- **Drawing** — `draw`, called from the animation frame.
+- **Drawing** — `draw`, called from the animation frame. It lays down the lanes,
+  a beat grid that scrolls with the hymn, the count and combo watermark, then the
+  notes, the strike line, the instrument pads and the judgement flash, in that
+  order, so no text ever hides a falling note.
 
 ## Assumptions
 

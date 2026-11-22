@@ -48,9 +48,13 @@ combo of the run is kept. A press on an empty lane costs nothing, so there is no
 penalty for a stray finger — but mashing scores nothing either, because each note
 still has to be struck inside its own window.
 
-Accuracy weighs the judgements (perfect 1, great 0.8, good 0.4) and the end
+Accuracy weighs the judgements (perfect 1, great 0.85, good 0.6) and the end
 screen turns it into a grade, from *Give it another voice* up to *A joyful
-noise!* at 95%.
+noise!* at 95%. Catch every note of a hymn, even a little late, and you will
+always better the bottom grade — that one is for a hymn with notes left
+unstruck. Where two notes fall close together, a press takes the first note
+still standing in its window, so playing a shade late never costs you the note
+behind it.
 
 ## How it works
 
