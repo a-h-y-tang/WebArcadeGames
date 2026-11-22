@@ -531,6 +531,15 @@
     "thumbnail": "games/Joust/screenshot.png"
   },
   {
+    "id": "joyful-noise",
+    "name": "Joyful Noise",
+    "description": "Strike the harp, lyre, timbrel and trumpet in time to play three hymns of praise",
+    "category": "Action",
+    "dir": "JoyfulNoise",
+    "path": "games/JoyfulNoise/index.html",
+    "thumbnail": "games/JoyfulNoise/screenshot.png"
+  },
+  {
     "id": "kakuro",
     "name": "Kakuro",
     "description": "Number logic puzzle combining crosswords and sudoku",
