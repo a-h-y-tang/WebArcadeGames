@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Joyful Noise</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main id="container">
+        <h1>Joyful Noise</h1>
+        <p id="verse">&ldquo;Make a joyful noise unto the LORD, all ye lands.&rdquo; &mdash; Psalm 100:1</p>
+
+        <div id="hud">
+            <div class="stat"><span class="label">Hymn</span><strong id="song-name">Amazing Grace</strong></div>
+            <div class="stat"><span class="label">Score</span><strong id="score">0</strong></div>
+            <div class="stat"><span class="label">Combo</span><strong id="combo">0</strong></div>
+            <div class="stat"><span class="label">Accuracy</span><strong id="accuracy">100%</strong></div>
+        </div>
+
+        <p id="status" role="status" aria-live="polite">Strike each note as it crosses the line.</p>
+
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="460" height="620"
+                    aria-label="Four instrument lanes with the notes of a hymn falling towards a strike line"></canvas>
+            <div id="overlay">
+                <h2 id="overlay-title">Play a hymn of praise</h2>
+                <p id="overlay-sub">Four instruments, four keys: <strong>D</strong> <strong>F</strong>
+                    <strong>J</strong> <strong>K</strong>. Strike every note as it reaches the line.</p>
+                <button id="btn-play">Play</button>
+            </div>
+        </div>
+
+        <div id="songs">
+            <button class="song-btn active" data-song="0">Amazing Grace</button>
+            <button class="song-btn" data-song="1">Joyful, Joyful</button>
+            <button class="song-btn" data-song="2">Holy, Holy, Holy</button>
+        </div>
+
+        <div id="speeds">
+            <button class="speed-btn" data-speed="0">Gentle</button>
+            <button class="speed-btn active" data-speed="1">Steady</button>
+            <button class="speed-btn" data-speed="2">Lively</button>
+        </div>
+
+        <div id="rules">
+            <p>The notes of the hymn fall down four lanes &mdash; <strong>harp</strong>, <strong>lyre</strong>,
+               <strong>timbrel</strong> and <strong>trumpet</strong>, low notes on the left and high notes on
+               the right. Strike a lane as its note crosses the line and the instrument sounds that note of
+               the melody, so a clean run plays the tune under your fingers.</p>
+            <ul>
+                <li>On the line is <strong>Perfect</strong> (100), a little out is <strong>Great</strong> (60)
+                    and only just caught is <strong>Good</strong> (30).</li>
+                <li>Every note struck lengthens your <strong>combo</strong>; a note let slip ends it.</li>
+                <li>The hymn always plays to its last note &mdash; the end screen grades how much you caught.</li>
+            </ul>
+            <p class="hint"><strong>Keys:</strong> <strong>D F J K</strong> or the arrow keys play the four
+               lanes, and you can click or tap a lane instead. <strong>Space</strong> plays,
+               <strong>R</strong> starts the hymn again, <strong>P</strong> pauses, and
+               <strong>1</strong>&ndash;<strong>3</strong> choose the hymn.</p>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>
