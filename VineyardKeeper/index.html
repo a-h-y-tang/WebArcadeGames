@@ -27,5 +27,14 @@
         <p class="verse">&ldquo;I will repay you for the years the locusts have eaten.&rdquo; &mdash; Joel 2:25</p>
     </div>
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            pad: { kind: 'dpad', repeat: 110 },
+            buttons: [{ label: 'Flick', key: ' ', repeat: 150 }, { label: '❚❚', key: 'p', aria: 'Pause', small: true }],
+            hint: 'Pad moves · Flick a pebble · ❚❚ pause',
+            say: [[/Move with arrows \/ WASD\s*·\s*Space to flick a pebble\s*·\s*press Space to start/g, 'Tap Start'], [/Press Space/g, 'Tap Start'], [/Press P/g, 'Tap ❚❚']],
+        });
+    </script>
 </body>
 </html>
