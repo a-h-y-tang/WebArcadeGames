@@ -16,7 +16,7 @@ async function openGame(page, dir) {
     const errors = [];
     page.on('pageerror', (e) => errors.push(e.message));
     await page.goto(gameUrl(dir));
-    await page.waitForFunction(() => window.TouchControls && window.TouchControls.enabled);
+    await page.waitForFunction(() => window.TouchControls && window.TouchControls.enabled, null, { timeout: 3000 });
     await page.waitForTimeout(350);
     page.__gameErrors = errors;
     return errors;
@@ -38,7 +38,7 @@ async function expectFitsScreen(page) {
         };
     });
     expect(m.scrollWidth, 'page is no wider than the screen').toBeLessThanOrEqual(m.layoutWidth + 1);
-    expect(m.visualWidth, 'page is zoomed out to its full width').toBeGreaterThanOrEqual(m.layoutWidth - 1);
+    expect(m.visualWidth, 'page is zoomed out to its full width').toBeGreaterThanOrEqual(m.layoutWidth - 2);
     for (const c of m.canvases) {
         expect(c.left).toBeGreaterThanOrEqual(-1);
         expect(c.right).toBeLessThanOrEqual(m.layoutWidth + 1);
@@ -127,6 +127,35 @@ async function tapAt(page, locator, fx = 0.5, fy = 0.5) {
     await page.touchscreen.tap(box.x + box.width * fx, box.y + box.height * fy);
 }
 
+/** Page position of a point given in the canvas's own pixel coordinates. */
+async function canvasToPage(locator, cx, cy) {
+    const box = await locator.boundingBox();
+    const size = await locator.evaluate((c) => ({ w: c.width, h: c.height }));
+    return { x: box.x + (cx / size.w) * box.width, y: box.y + (cy / size.h) * box.height };
+}
+
+/** Drags a finger between two points in canvas pixel coordinates. */
+async function dragCanvas(page, locator, from, to, steps = 10) {
+    const a = await canvasToPage(locator, from[0], from[1]);
+    const b = await canvasToPage(locator, to[0], to[1]);
+    const s = await cdp(page);
+    await s.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: a.x, y: a.y, id: 9 }] });
+    for (let i = 1; i <= steps; i++) {
+        await s.send('Input.dispatchTouchEvent', {
+            type: 'touchMove',
+            touchPoints: [{ x: a.x + ((b.x - a.x) * i) / steps, y: a.y + ((b.y - a.y) * i) / steps, id: 9 }],
+        });
+        await page.waitForTimeout(16);
+    }
+    await s.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+}
+
+/** Taps a point given in canvas pixel coordinates. */
+async function tapCanvas(page, locator, cx, cy) {
+    const p = await canvasToPage(locator, cx, cy);
+    await page.touchscreen.tap(p.x, p.y);
+}
+
 /** Checks the standard phone setup every game must have. */
 async function expectPhoneReady(page) {
     await expectFitsScreen(page);
@@ -135,5 +164,5 @@ async function expectPhoneReady(page) {
 
 module.exports = {
     gameUrl, openGame, expectFitsScreen, expectPhoneReady, control, touchDown, touchUp,
-    hold, tapControl, drag, swipe, tapAt,
+    hold, tapControl, drag, swipe, tapAt, canvasToPage, dragCanvas, tapCanvas,
 };

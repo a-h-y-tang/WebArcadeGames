@@ -439,7 +439,7 @@ html.tc-touch canvas { touch-action: none; }
             if (opts.drag) [].concat(opts.drag).forEach(attachDrag);
 
             if (opts.hint) {
-                const hintEl = document.querySelector(opts.hintTarget || '#controls-hint, .controls-hint, #controls, .controls, .hint, #hint');
+                const hintEl = document.querySelector(opts.hintTarget || '#controls-hint, .controls-hint');
                 if (hintEl) hintEl.textContent = opts.hint;
             }
             if (opts.text) {
