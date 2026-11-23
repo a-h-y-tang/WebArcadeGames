@@ -52,5 +52,15 @@
     </main>
 
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            drag: '#canvas',
+            buttons: [{ label: 'New', key: 'r', small: true }],
+            hint: 'Touch the table to aim · hold to build power, slide to fine-tune, let go to shoot',
+            help: '.help',
+            say: [[/Press Space or R/g, 'Tap New'], ['Press Space or click Start to play', 'Tap Start to play'], [/hold click or Space to charge, release to shoot/g, 'hold to charge, let go to shoot'], [/Press Space/g, 'Tap Start']],
+        });
+    </script>
 </body>
 </html>
