@@ -32,5 +32,15 @@
         <p class="verse">&ldquo;Take every kind of food that is to be eaten and store it away.&rdquo; &mdash; Genesis 6:21</p>
     </div>
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            pad: 'dpad',
+            padRepeat: 160,
+            swipe: '#canvas',
+            hint: 'Swipe or use the arrows · Undo / Reset / Next below the board',
+            say: [['arrows / WASD to move', 'swipe or use the arrows to move']],
+        });
+    </script>
 </body>
 </html>
