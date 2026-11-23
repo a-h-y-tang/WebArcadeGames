@@ -40,5 +40,15 @@
     </main>
 
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            pad: 'leftright',
+            buttons: [{ label: 'Tuck', key: 'ArrowDown' }, { label: '❚❚', key: 'p', aria: 'Pause', small: true }],
+            hint: '◀ ▶ carve · hold Tuck for speed · ❚❚ pause',
+            help: '.help',
+            say: [[/Press Space or click Start/g, 'Tap Start'], [/Press Space/g, 'Tap Start'], [/Press P/g, 'Tap ❚❚']],
+        });
+    </script>
 </body>
 </html>
