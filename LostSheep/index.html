@@ -26,5 +26,17 @@
         <p class="verse">&ldquo;Rejoice with me; I have found my lost sheep.&rdquo; &mdash; Luke 15:6</p>
     </div>
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            pad: 'dpad',
+            buttons: [{ label: '\u275A\u275A', key: 'p', aria: 'Pause' }],
+            swipe: '#canvas',
+            hint: 'Swipe or use the arrows \u00B7 \u275A\u275A to pause',
+            say: [['Press an arrow key or WASD to start', 'Tap an arrow to start'],
+                  ['Press an arrow key or WASD to play again', 'Tap an arrow to play again'],
+                  ['Press P to resume', 'Tap \u275A\u275A to resume']],
+        });
+    </script>
 </body>
 </html>
