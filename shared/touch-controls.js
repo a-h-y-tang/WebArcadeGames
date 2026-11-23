@@ -24,6 +24,7 @@
  *       swipe: '#canvas',                    // swipe on this element = arrow key
  *       tap: { target: '#overlay', key: 'Enter' }, // tap on this element = key
  *       drag: '#canvas',                     // touch drag = mouse events
+ *       doubleTap: '#canvas',                // two quick taps = dblclick
  *       hint: 'Use the buttons below',       // replaces the keyboard hint text
  *     });
  *   </script>
@@ -312,6 +313,39 @@ html.tc-touch canvas { touch-action: none; }
         return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
 
+    /**
+     * Two quick taps on the element send a dblclick, for games that use a
+     * double-click (some phone browsers never send one for touch).
+     */
+    function attachDoubleTap(spec) {
+        const el = resolve(spec);
+        if (!el) return;
+        let last = null;
+        let nativeAt = 0;
+        el.addEventListener('dblclick', (e) => {
+            if (!e.__tcSynthetic) nativeAt = performance.now();
+        }, true);
+        el.addEventListener('pointerup', (e) => {
+            if (e.pointerType === 'mouse') return;
+            const now = performance.now();
+            const pt = { x: e.clientX, y: e.clientY, sx: e.screenX, sy: e.screenY, t: now };
+            if (last && now - last.t < 400 && Math.hypot(pt.x - last.x, pt.y - last.y) < 30) {
+                last = null;
+                setTimeout(() => {
+                    if (performance.now() - nativeAt < 200) return; // the browser sent its own
+                    const ev = new MouseEvent('dblclick', {
+                        bubbles: true, cancelable: true, view: window, detail: 2,
+                        clientX: pt.x, clientY: pt.y, screenX: pt.sx, screenY: pt.sy,
+                    });
+                    ev.__tcSynthetic = true;
+                    el.dispatchEvent(ev);
+                }, 60);
+            } else {
+                last = pt;
+            }
+        });
+    }
+
     // ---------------------------------------------------------------------
     // Fit the page to the screen
     // ---------------------------------------------------------------------
@@ -459,6 +493,7 @@ html.tc-touch canvas { touch-action: none; }
             if (opts.swipe) [].concat(opts.swipe).forEach(attachSwipe);
             if (opts.tap) [].concat(opts.tap).forEach(attachTap);
             if (opts.drag) [].concat(opts.drag).forEach(attachDrag);
+            if (opts.doubleTap) [].concat(opts.doubleTap).forEach(attachDoubleTap);
 
             if (opts.hint) {
                 const hintEl = document.querySelector(opts.hintTarget || '#controls-hint, .controls-hint');
