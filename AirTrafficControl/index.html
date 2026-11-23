@@ -38,5 +38,13 @@
     </main>
 
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            buttons: [{ label: '❚❚', key: 'p', aria: 'Pause', small: true }],
+            say: [['Press Space or click Start', 'Tap Start'], ['Press Space to take another shift', 'Tap Start to take another shift'],
+                  ['Press P to resume', 'Tap ❚❚ to resume'], [/^Click$/, 'Tap']],
+        });
+    </script>
 </body>
 </html>
