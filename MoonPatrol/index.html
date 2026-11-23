@@ -36,5 +36,14 @@
     </main>
 
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            help: '.help',
+            buttons: [{ label: 'Jump', key: ' ', side: 'left' }, { label: 'Fire', key: 'f' }, { label: '❚❚', key: 'p', aria: 'Pause', small: true }],
+            hint: 'Jump over craters · Fire at rocks and ships · ❚❚ pause',
+            say: [['Press Enter to start · Space to jump, F to fire', 'Tap Start · then Jump and Fire'], [/Press Enter/g, 'Tap Start'], [/Press Space/g, 'Tap Jump'], [/Press P/g, 'Tap ❚❚']],
+        });
+    </script>
 </body>
 </html>
