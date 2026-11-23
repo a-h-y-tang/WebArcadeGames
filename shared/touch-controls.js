@@ -288,9 +288,10 @@ html.tc-touch canvas { touch-action: none; }
         const rules = pairs.map(([from, to]) => [typeof from === 'string' ? new RegExp(escapeRe(from), 'g') : from, to]);
         const fix = (node) => {
             const v = node.nodeValue;
-            let out = v;
+            const plain = v.replace(/\u00A0/g, ' '); // &nbsp; matches a plain space in the rules
+            let out = plain;
             for (const [re, to] of rules) out = out.replace(re, to);
-            if (out !== v) node.nodeValue = out;
+            if (out !== plain) node.nodeValue = out;
         };
         const walk = (root) => {
             const it = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
