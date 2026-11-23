@@ -42,5 +42,18 @@
         </p>
     </div>
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            pad: 'dpad',
+            padRepeat: 110,
+            buttons: [
+                { label: 'Drop', key: ' ' },
+                { label: '❚❚', key: 'p', aria: 'Pause', small: true },
+            ],
+            hint: '◀ ▶ move · ▲ rotate · ▼ soft drop · Drop slams · ❚❚ pause',
+            say: [['Arrows move, ↑/Z rotate, Space to slam.', 'Arrows move, ▲ rotates, Drop slams.'], [/Press Space( or Enter)?/g, 'Tap Drop'], [/Press P/g, 'Tap ❚❚'], [/press Space/g, 'tap Drop']],
+        });
+    </script>
 </body>
 </html>
