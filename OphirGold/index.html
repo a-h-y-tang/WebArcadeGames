@@ -40,5 +40,15 @@
     </main>
 
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            pad: 'dpad',
+            buttons: [{ label: 'Dig ◀', key: 'z' }, { label: 'Dig ▶', key: 'x' }, { label: '❚❚', key: 'p', aria: 'Pause', small: true }],
+            hint: 'Arrows run and climb · Dig ◀ / Dig ▶ dig a hole beside you · ❚❚ pause',
+            help: '.help',
+            say: [['Press Space or click Start to play', 'Tap Start to play'], [/Press Space/g, 'Tap Start'], [/Press P/g, 'Tap ❚❚']],
+        });
+    </script>
 </body>
 </html>
