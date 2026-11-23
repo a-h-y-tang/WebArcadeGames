@@ -24,5 +24,11 @@
         <p id="controls-hint">Click a column or press 1–7 to drop &nbsp;·&nbsp; R for a new game</p>
     </div>
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            say: [[/Click a column or press 1–7 to drop/g, 'Tap a column to drop'], [/ · R for a new game/g, ''], [/click/g, 'tap']],
+        });
+    </script>
 </body>
 </html>
