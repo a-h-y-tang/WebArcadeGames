@@ -25,5 +25,13 @@
         <p id="controls-hint">Move mouse or ← → to aim &nbsp;·&nbsp; Space / click to fire</p>
     </div>
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            drag: { target: '#canvas', releaseClick: true },
+            hint: 'Touch and drag to aim · lift your finger to fire',
+            say: [[/Press Space( or click)?/g, 'Tap'], [/click/g, 'tap']],
+        });
+    </script>
 </body>
 </html>
