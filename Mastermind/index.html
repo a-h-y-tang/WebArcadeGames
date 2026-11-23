@@ -24,5 +24,13 @@
         <p id="controls-hint">Keys 1–6 pick colours &nbsp;·&nbsp; Enter submits &nbsp;·&nbsp; Backspace deletes &nbsp;·&nbsp; or click the palette</p>
     </div>
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            buttons: [{ label: '⌫', key: 'Backspace', aria: 'Delete' }, { label: 'Check', key: 'Enter' }],
+            hint: 'Tap the palette to pick colours · Check submits · ⌫ deletes',
+            say: [[/Keys 1–6 pick colours, Enter submits, Backspace deletes/g, 'Tap colours, then Check'], [/Press any key to start/g, 'Tap Start'], [/Press any key/g, 'Tap the button'], [/Press Enter/g, 'Tap Check']],
+        });
+    </script>
 </body>
 </html>
