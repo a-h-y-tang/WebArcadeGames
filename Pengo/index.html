@@ -29,5 +29,17 @@
         </p>
     </div>
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            hintTarget: '#hint',
+            pad: 'dpad',
+            padRepeat: 150,
+            swipe: { target: '#canvas', min: 24 },
+            buttons: [{ label: '❚❚', key: 'p', aria: 'Pause', small: true }],
+            hint: 'Swipe or use the arrows to move · push a block to send it sliding · ❚❚ pause',
+            say: [[/press R or Start/g, 'tap Start'], [/Press Space/g, 'Tap Start'], [/Press P/g, 'Tap ❚❚'], [/press an arrow/gi, 'tap an arrow']],
+        });
+    </script>
 </body>
 </html>
