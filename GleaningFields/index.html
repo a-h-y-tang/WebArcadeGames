@@ -28,5 +28,15 @@
         <p class="verse">&ldquo;Let her glean even among the sheaves, and don&rsquo;t reprimand her.&rdquo; &mdash; Ruth 2:15</p>
     </div>
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            pad: 'dpad',
+            buttons: [{ label: '❚❚', key: 'p', aria: 'Pause', small: true }],
+            swipe: { target: '#canvas', min: 20 },
+            hint: 'Swipe or use the arrows to steer · ❚❚ pause',
+            say: [['Press Space or an arrow key to start', 'Swipe or tap an arrow to start'], [/Press Space/g, 'Tap an arrow'], [/Press P/g, 'Tap ❚❚']],
+        });
+    </script>
 </body>
 </html>
