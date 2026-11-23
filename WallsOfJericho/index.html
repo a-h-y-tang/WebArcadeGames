@@ -28,5 +28,15 @@
         <p class="verse">&ldquo;When the trumpets sounded, the army shouted, and the wall collapsed.&rdquo; &mdash; Joshua 6:20</p>
     </div>
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            pad: 'leftright',
+            drag: '#canvas',
+            buttons: [{ label: '❚❚', key: 'p', aria: 'Pause', small: true }],
+            hint: 'Drag on the field or use ◀ ▶ to move · ❚❚ pause',
+            say: [['Press Space or an arrow key to start', 'Tap Start or an arrow'], [/Press Space/g, 'Tap Start'], [/Press P/g, 'Tap ❚❚']],
+        });
+    </script>
 </body>
 </html>
