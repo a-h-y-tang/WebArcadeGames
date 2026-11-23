@@ -39,5 +39,12 @@
     </div>
 
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            buttons: [{ label: 'Restart', key: 'r', small: true }, { label: 'Next', key: 'n', small: true }],
+            hint: 'Tap an edge to draw a line · tap again to mark it blocked · tap a third time to clear',
+        });
+    </script>
 </body>
 </html>
