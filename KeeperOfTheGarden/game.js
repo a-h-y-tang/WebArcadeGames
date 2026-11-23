@@ -145,7 +145,7 @@ function segmentCenter(seg) {
 }
 
 function stepInterval() {
-    return Math.max(45, 130 - (level - 1) * 12);
+    return Math.max(42, 120 - (level - 1) * 11);
 }
 
 function segmentCount() {
@@ -582,6 +582,25 @@ function drawGarden() {
     ctx.lineTo(WIDTH, top + 0.5);
     ctx.stroke();
     ctx.setLineDash([]);
+
+    // grass tufts along the garden wall
+    ctx.strokeStyle = 'rgba(74, 222, 128, 0.18)';
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    for (let x = 6; x < WIDTH; x += 14) {
+        ctx.moveTo(x, HEIGHT);
+        ctx.lineTo(x + 3, HEIGHT - 6);
+        ctx.moveTo(x, HEIGHT);
+        ctx.lineTo(x - 3, HEIGHT - 5);
+    }
+    ctx.stroke();
+
+    // vignette
+    const vignette = ctx.createRadialGradient(WIDTH / 2, HEIGHT / 2, HEIGHT * 0.3, WIDTH / 2, HEIGHT / 2, HEIGHT * 0.78);
+    vignette.addColorStop(0, 'rgba(0, 0, 0, 0)');
+    vignette.addColorStop(1, 'rgba(0, 0, 0, 0.45)');
+    ctx.fillStyle = vignette;
+    ctx.fillRect(0, 0, WIDTH, HEIGHT);
 }
 
 function drawThistles() {
@@ -590,29 +609,59 @@ function drawThistles() {
             const health = thistles[row][col];
             if (health <= 0) continue;
             const { x, y } = cellCenter(col, row);
-            const size = 3 + health * 1.7;
-            ctx.fillStyle = ['#1f3b2a', '#2f6b45', '#3f9159', '#4ade80'][health - 1];
-            // a little bush of three leaves
-            ctx.beginPath();
-            ctx.moveTo(x, y - size);
-            ctx.lineTo(x + size, y + size * 0.8);
-            ctx.lineTo(x - size, y + size * 0.8);
-            ctx.closePath();
-            ctx.fill();
-            if (health === THISTLE_STAGES) {
-                ctx.fillStyle = '#c084fc';
-                ctx.beginPath();
-                ctx.arc(x, y - size - 1.5, 2.1, 0, Math.PI * 2);
-                ctx.fill();
-            }
+            drawThistle(x, y, health);
         }
     }
+}
+
+// A thistle loses a pair of leaves, then its flower, as it is watered down.
+function drawThistle(x, y, health) {
+    const green = ['#2a5338', '#357a4a', '#43a05d', '#4ade80'][health - 1];
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = green;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(x, y + 7);
+    ctx.lineTo(x, y - 1 - health);
+    ctx.stroke();
+
+    ctx.lineWidth = 1.6;
+    const pairs = Math.max(1, health - 1);
+    ctx.beginPath();
+    for (let i = 0; i < pairs; i++) {
+        const ly = y + 5 - i * 4;
+        ctx.moveTo(x, ly);
+        ctx.lineTo(x - 5 - i, ly - 3.5);
+        ctx.moveTo(x, ly);
+        ctx.lineTo(x + 5 + i, ly - 3.5);
+    }
+    ctx.stroke();
+
+    if (health >= 3) {
+        const top = y - 3 - health;
+        ctx.fillStyle = health === THISTLE_STAGES ? '#c084fc' : '#7c5bb8';
+        ctx.beginPath();
+        ctx.ellipse(x, top, 3.2, 4, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = health === THISTLE_STAGES ? '#e9d5ff' : '#9c82d4';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        for (let a = -2; a <= 2; a++) {
+            ctx.moveTo(x + a * 1.3, top - 3);
+            ctx.lineTo(x + a * 2.2, top - 6);
+        }
+        ctx.stroke();
+    }
+    ctx.lineCap = 'butt';
 }
 
 function drawCaterpillars() {
     for (const cat of caterpillars) {
         for (let i = cat.cells.length - 1; i >= 0; i--) {
-            const { x, y } = segmentCenter(cat.cells[i]);
+            const c = segmentCenter(cat.cells[i]);
+            const x = c.x;
+            // a decorative crawling ripple; hit testing uses the true centre
+            const y = c.y + (i === 0 ? 0 : Math.sin(tick * 0.18 + i * 0.8) * 1.3);
             if (x < -CELL || x > WIDTH + CELL) continue;
             const r = i === 0 ? CELL / 2 - 1 : CELL / 2 - 2.5;
             ctx.fillStyle = i === 0 ? '#fbbf24' : i % 2 ? '#86efac' : '#4ade80';
@@ -655,29 +704,72 @@ function drawCaterpillars() {
 
 function drawKeeper() {
     const { x, y } = player;
-    // robe
-    ctx.fillStyle = '#93c5fd';
+
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.32)';
     ctx.beginPath();
-    ctx.moveTo(x, y - 9);
-    ctx.lineTo(x + 7, y + 9);
-    ctx.lineTo(x - 7, y + 9);
+    ctx.ellipse(x, y + 9, 8, 2.4, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // robe
+    const robe = ctx.createLinearGradient(x, y - 8, x, y + 9);
+    robe.addColorStop(0, '#dbeafe');
+    robe.addColorStop(1, '#60a5fa');
+    ctx.fillStyle = robe;
+    ctx.beginPath();
+    ctx.moveTo(x, y - 7);
+    ctx.lineTo(x + 6.5, y + 9);
+    ctx.lineTo(x - 6.5, y + 9);
     ctx.closePath();
     ctx.fill();
-    // head
+
+    // arms
+    ctx.strokeStyle = '#dbeafe';
+    ctx.lineWidth = 2;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(x - 2.5, y - 2);
+    ctx.lineTo(x - 6.5, y + 2);
+    ctx.moveTo(x + 2.5, y - 2);
+    ctx.lineTo(x + 5.5, y - 1);
+    ctx.stroke();
+    ctx.lineCap = 'butt';
+
+    // head under a straw hat
     ctx.fillStyle = '#fde68a';
     ctx.beginPath();
-    ctx.arc(x, y - 10, 4, 0, Math.PI * 2);
+    ctx.arc(x, y - 8.5, 3.6, 0, Math.PI * 2);
     ctx.fill();
-    // watering can
-    ctx.fillStyle = '#cbd5e1';
-    ctx.fillRect(x + 4, y - 4, 6, 6);
+    ctx.fillStyle = '#d4a258';
     ctx.beginPath();
-    ctx.moveTo(x + 10, y - 4);
-    ctx.lineTo(x + 13, y - 8);
-    ctx.lineTo(x + 11, y - 8);
-    ctx.lineTo(x + 8, y - 4);
+    ctx.ellipse(x, y - 11, 6.4, 2.1, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(x, y - 12.4, 3.1, 2.2, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // watering can, kept inside the sprite so it never leaves the garden
+    ctx.fillStyle = '#cbd5e1';
+    ctx.fillRect(x + 3, y - 3.5, 5.5, 6);
+    ctx.beginPath();
+    ctx.moveTo(x + 8.5, y - 3.5);
+    ctx.lineTo(x + 9, y - 7);
+    ctx.lineTo(x + 7, y - 7);
+    ctx.lineTo(x + 6, y - 3.5);
     ctx.closePath();
     ctx.fill();
+    ctx.strokeStyle = '#94a3b8';
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.arc(x + 2.5, y - 0.5, 2.6, Math.PI * 0.5, Math.PI * 1.5);
+    ctx.stroke();
+
+    // a puff of water while squirting
+    if (keys.spray && state === 'running') {
+        ctx.fillStyle = 'rgba(186, 230, 253, 0.45)';
+        ctx.beginPath();
+        ctx.arc(x + 8, y - 8 - (tick % 6) * 0.8, 2.2, 0, Math.PI * 2);
+        ctx.fill();
+    }
 }
 
 function drawDrops() {

@@ -52,7 +52,8 @@ grid-stepped chain still looks like it is crawling.
 - When the cell ahead is outside the garden or holds a thistle, the head
   **reverses `dx` and drops one row** in direction `dy`. At the top or bottom row
   `dy` flips first, so a caterpillar that reaches the bottom climbs back up
-  through the keeper's patch.
+  through the keeper's patch. Only sideways movement is ever blocked — a head
+  dropping a row may land on a thistle and crawl on from there.
 - A wave is one long caterpillar (10 segments, growing by one each level to a
   maximum of 14) entering at the top-left, plus one extra lone crawler per level
   beyond the first, up to four, entering at random columns.
@@ -122,6 +123,10 @@ Playwright tests can read the state directly:
 | `loop()` | `requestAnimationFrame` driver: measures `dt`, calls `step`, then `draw` |
 | `draw()` | all rendering; no state changes |
 | `setSeed(n)` | seeds the small deterministic RNG the tests use |
+| `freezeLoop()` / `resumeLoop()` | test hooks: hand the clock to `step(dt)` and back |
+
+The caterpillar's grid step is `max(42, 120 - 11 × (level - 1))` ms, so the first
+wave crawls at about 8 cells a second and the eighth wave at twice that.
 
 `step(dt)` is deliberately separate from `loop()` so the tests can advance the
 world by an exact number of milliseconds without waiting for animation frames.
@@ -146,6 +151,8 @@ Decisions taken without asking, in each case the simpler reading:
    speeds (the original sped up short chains; that is more code than it is fun).
 6. **Hold-to-squirt is allowed** with a cooldown, rather than requiring one key
    press per drop, because it is kinder on a keyboard.
-7. **The bee takes two drops.** The first adds speed, the second shoos it away,
+7. **A dropping head is never blocked.** Thistles stop sideways movement only,
+   which is what keeps the turn-and-drop rule from ever deadlocking.
+8. **The bee takes two drops.** The first adds speed, the second shoos it away,
    which keeps the flea's "it is worth chasing" feel without tracking health in
    a separate place.
