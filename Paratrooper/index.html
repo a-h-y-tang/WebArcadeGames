@@ -39,5 +39,15 @@
     </main>
 
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            pad: 'leftright',
+            buttons: [{ label: 'Fire', key: ' ' }, { label: '❚❚', key: 'p', aria: 'Pause', small: true }],
+            hint: '◀ ▶ turn the cannon · Fire · ❚❚ pause',
+            help: '.help',
+            say: [[/Press Space or R/g, 'Tap Fire'], ['Press Space or click Start to defend the tower', 'Tap Fire or Start to defend the tower'], [/Press Space/g, 'Tap Fire'], [/Press P/g, 'Tap ❚❚'], [/Press R/g, 'Tap Start']],
+        });
+    </script>
 </body>
 </html>
