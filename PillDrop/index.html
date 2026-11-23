@@ -30,5 +30,15 @@
         </p>
     </div>
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            pad: 'dpad',
+            padRepeat: 110,
+            buttons: [{ label: 'Drop', key: ' ' }, { label: '❚❚', key: 'p', aria: 'Pause', small: true }],
+            hint: '◀ ▶ move · ▲ rotate · ▼ soft drop · Drop · match 4+ to clear the germs',
+            say: [[/Press Space or Start/g, 'Tap Start'], [/Press Space( or Enter)?/g, 'Tap Start'], [/Press P/g, 'Tap ❚❚']],
+        });
+    </script>
 </body>
 </html>

@@ -38,5 +38,15 @@
     </main>
 
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            help: '.help',
+            drag: { target: '#canvas', releaseClick: true },
+            buttons: [{ label: 'Swap', key: 's' }, { label: '❚❚', key: 'p', aria: 'Pause', small: true }],
+            hint: 'Touch and drag to aim, lift to fire · Swap · ❚❚ pause',
+            say: [['Press Space or click Start to play', 'Tap Start to play'], [/click or Space to fire/g, 'drag and lift to fire'], [/Press Space/g, 'Tap Start'], [/Press P/g, 'Tap ❚❚']],
+        });
+    </script>
 </body>
 </html>

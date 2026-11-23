@@ -27,5 +27,9 @@
         <p id="controls-hint">Click a peg, then click a highlighted hole to jump</p>
     </div>
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({ say: [[/Click/g, 'Tap'], [/click/g, 'tap']] });
+    </script>
 </body>
 </html>

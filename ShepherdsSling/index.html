@@ -39,5 +39,15 @@
     </main>
 
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            pad: 'updown',
+            buttons: [{ label: 'Sling', key: ' ' }, { label: '❚❚', key: 'p', aria: 'Pause', small: true }],
+            hint: '▲ ▼ ride the basket · Sling a stone · ❚❚ pause',
+            help: '.help',
+            say: [['Press Space or click Start to play', 'Tap Start to play'], [/Press P or Enter/g, 'Tap ❚❚'], [/Press Space/g, 'Tap Sling'], [/Press P/g, 'Tap ❚❚']],
+        });
+    </script>
 </body>
 </html>

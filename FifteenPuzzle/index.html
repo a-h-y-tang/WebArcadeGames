@@ -28,5 +28,12 @@
         <p id="controls-hint">Click a tile next to the gap &nbsp;·&nbsp; or use the arrow keys</p>
     </div>
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            swipe: { target: '#canvas', min: 30 },
+            say: [[/Click a tile next to the gap/g, 'Tap a tile next to the gap'], [/or use the arrow keys/g, 'or swipe']],
+        });
+    </script>
 </body>
 </html>

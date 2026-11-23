@@ -26,5 +26,9 @@
         <p id="controls-hint">Click a point to place · click a piece then a spot to move · form a mill to remove a piece</p>
     </div>
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({ say: [[/Press Space( or click Start)?/g, 'Tap Start'], [/Click/g, 'Tap'], [/click/g, 'tap']] });
+    </script>
 </body>
 </html>

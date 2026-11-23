@@ -13,6 +13,7 @@ const launchOptions = fs.existsSync(PREINSTALLED_CHROMIUM)
 module.exports = defineConfig({
     testDir: '.',
     testMatch: '**/tests/*.spec.js',
+    testIgnore: '**/node_modules/**',
     timeout: 10_000,
     use: {
         headless: true,
@@ -20,8 +21,16 @@ module.exports = defineConfig({
     },
     projects: [
         {
+            // Desktop: keyboard and mouse.
             name: 'chromium',
+            testIgnore: ['**/*.touch.spec.js', '**/node_modules/**'],
             use: { ...devices['Desktop Chrome'], launchOptions },
+        },
+        {
+            // Phone: an iPhone 13 screen with touch only (no keyboard is used).
+            name: 'iphone',
+            testMatch: '**/tests/*.touch.spec.js',
+            use: { ...devices['iPhone 13'], browserName: 'chromium', launchOptions },
         },
     ],
 });

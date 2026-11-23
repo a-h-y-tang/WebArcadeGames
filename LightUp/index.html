@@ -39,5 +39,14 @@
     </div>
 
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            longPress: '#canvas',
+            buttons: [{ label: 'Next', key: 'n', small: true }, { label: 'Reset', key: 'r', small: true }],
+            hide: ['footer.help span:nth-child(3)', 'footer.help span:nth-child(4)'],
+            say: [[/^Click$/, 'Tap'], [/^Right-click$/, 'Hold'], [/Click/g, 'Tap'], [/click/g, 'tap']],
+        });
+    </script>
 </body>
 </html>

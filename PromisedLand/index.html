@@ -40,5 +40,15 @@
     </main>
 
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            pad: 'dpad',
+            buttons: [{ label: 'Slow', key: 'z', small: true, aria: 'Slow draw (double points)' }, { label: '❚❚', key: 'p', aria: 'Pause', small: true }],
+            hint: 'Hold the arrows to move and draw · hold Slow too for double points · ❚❚ pause',
+            help: '.help',
+            say: [['Press Space or click Start to play', 'Tap Start to play'], [/Press Space/g, 'Tap'], [/Press P/g, 'Tap ❚❚']],
+        });
+    </script>
 </body>
 </html>

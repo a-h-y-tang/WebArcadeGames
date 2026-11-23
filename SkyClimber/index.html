@@ -38,5 +38,16 @@
     </main>
 
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            pad: { kind: 'dpad', keys: { ArrowUp: 'w', ArrowDown: 's', ArrowLeft: 'a', ArrowRight: 'd' }, repeat: false },
+            pad2: { kind: 'dpad', repeat: false },
+            buttons: [{ label: '❚❚', key: 'p', aria: 'Pause', small: true, side: 'left' }],
+            hint: 'Left pad moves the left hand · right pad moves the right hand · ❚❚ pause',
+            help: '.help',
+            say: [['Press Space or click Start to play', 'Tap Start to play'], [/Press Space/g, 'Tap Start'], [/Press P/g, 'Tap ❚❚']],
+        });
+    </script>
 </body>
 </html>

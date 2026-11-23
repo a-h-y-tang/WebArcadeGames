@@ -27,5 +27,15 @@
         <p id="controls-hint">↑ ↓ ← → / W A S D to steer &nbsp;·&nbsp; P to pause &nbsp;·&nbsp; first to 5 rounds wins</p>
     </div>
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            pad: 'dpad',
+            swipe: '#canvas',
+            buttons: [{ label: '❚❚', key: 'p', aria: 'Pause', small: true }],
+            hint: 'Swipe or use the pad to steer · ❚❚ pause · first to 5 rounds wins',
+            say: [['Press Space or an arrow key to start', 'Tap Start or an arrow'], [/Press Space/g, 'Tap Start'], [/Press P/g, 'Tap ❚❚']],
+        });
+    </script>
 </body>
 </html>

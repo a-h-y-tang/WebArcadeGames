@@ -42,5 +42,14 @@
     </main>
 
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            pad: 'dpad',
+            buttons: [{ label: 'Bomb', key: 'x' }, { label: 'Laser', key: ' ' }, { label: '❚❚', key: 'p', aria: 'Pause', small: true }],
+            hint: 'Arrows fly · Laser · Bomb · ❚❚ pause',
+            say: [['Press Space or click Launch to fly', 'Tap Laser or Launch to fly'], [/Press Space/g, 'Tap Laser'], [/Press P/g, 'Tap ❚❚']],
+        });
+    </script>
 </body>
 </html>

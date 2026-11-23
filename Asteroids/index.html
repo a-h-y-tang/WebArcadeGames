@@ -27,5 +27,18 @@
         <p id="controls-hint">← → / A D rotate &nbsp;·&nbsp; ↑ / W thrust &nbsp;·&nbsp; Space fire &nbsp;·&nbsp; P pause</p>
     </div>
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            pad: 'leftright',
+            buttons: [
+                { label: 'Thrust', key: 'ArrowUp' },
+                { label: 'Fire', key: ' ' },
+                { label: '❚❚', key: 'p', aria: 'Pause', small: true },
+            ],
+            hint: '◀ ▶ rotate · Thrust · Fire · ❚❚ pause',
+            say: [['Press Space or an arrow key to start', 'Tap Fire or Start'], [/Press Space/g, 'Tap Fire'], [/Press P/g, 'Tap ❚❚']],
+        });
+    </script>
 </body>
 </html>

@@ -35,5 +35,13 @@
     </main>
 
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            doubleTap: '#canvas',
+            say: [[/Click a card, then its destination · double-click sends a card home/g, 'Tap a card, then its destination · double-tap sends a card home'],
+                  [/Click New Game or press any key to start/g, 'Tap New Game to start'], [/double-click/g, 'double-tap'], [/click/gi, 'tap']],
+        });
+    </script>
 </body>
 </html>

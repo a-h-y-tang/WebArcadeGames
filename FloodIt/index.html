@@ -26,5 +26,12 @@
         <p id="controls-hint">Click a color or press 1&ndash;6 &nbsp;·&nbsp; R for a new game</p>
     </div>
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            buttons: [{ label: 'New', key: 'n', small: true }],
+            say: [[/Click a color or press 1–6/g, 'Tap a colour'], [/\s*\u00B7\s*R for a new game/g, ''], [/click/g, 'tap']],
+        });
+    </script>
 </body>
 </html>

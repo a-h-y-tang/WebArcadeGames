@@ -44,5 +44,16 @@
     </main>
 
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            pad: 'dpad',
+            padRepeat: 70,
+            buttons: [{ label: 'Handle', key: 'h' }, { label: 'Throw', key: ' ' }],
+            drag: '#canvas',
+            hint: 'Drag on the ice or ◀ ▶ to aim · ▲ ▼ power · Throw (or tap the ice)',
+            say: [['Press Space or click Start to play', 'Tap Throw or Start to play'], [/Press Space/g, 'Tap Throw'], [/press Space/g, 'tap Throw'], [/mouse to aim, click to throw/g, 'drag to aim, tap to throw']],
+        });
+    </script>
 </body>
 </html>

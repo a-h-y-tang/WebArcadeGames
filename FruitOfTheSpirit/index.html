@@ -27,5 +27,11 @@
         <p class="verse">&ldquo;The fruit of the Spirit is love, joy, peace, forbearance, kindness, goodness, faithfulness, gentleness and self-control.&rdquo; &mdash; Galatians 5:22-23</p>
     </div>
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            say: [['Press Space or Start to play', 'Tap Start to play'], [/Click a fruit/g, 'Tap a fruit'], [/\s*\u00B7\s*Space to start/g, ''], [/Press Space/g, 'Tap Start']],
+        });
+    </script>
 </body>
 </html>

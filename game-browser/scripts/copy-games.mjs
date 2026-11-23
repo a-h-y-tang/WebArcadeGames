@@ -14,7 +14,7 @@ const games = JSON.parse(readFileSync(join(appRoot, 'src/assets/games.json'), 'u
 const dirs = [...new Set(games.map((game) => game.dir))];
 
 // Test suites and design notes are not part of the playable game.
-const skip = new Set(['tests', 'node_modules', 'DESIGN.md', 'design.md', 'README.md']);
+const skip = new Set(['tests', 'test-helpers', 'node_modules', 'DESIGN.md', 'design.md', 'README.md']);
 
 rmSync(outDir, { recursive: true, force: true });
 const missing = [];
@@ -29,6 +29,12 @@ for (const dir of dirs) {
     filter: (path) => !skip.has(basename(path)),
   });
 }
+
+// Code shared by the games (touch controls), loaded as ../shared/... by each game.
+cpSync(join(repoRoot, 'shared'), join(outDir, 'shared'), {
+  recursive: true,
+  filter: (path) => !skip.has(basename(path)),
+});
 
 if (missing.length) {
   console.error(`games.json points at folders that do not exist: ${missing.join(', ')}`);

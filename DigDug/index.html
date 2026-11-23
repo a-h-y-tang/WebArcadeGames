@@ -27,5 +27,14 @@
         <p id="controls-hint">Arrows / WASD to dig &nbsp;·&nbsp; Space to pump &nbsp;·&nbsp; drop rocks on monsters &nbsp;·&nbsp; P to pause</p>
     </div>
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            pad: 'dpad',
+            buttons: [{ label: 'Pump', key: ' ' }, { label: '❚❚', key: 'p', aria: 'Pause', small: true }],
+            hint: 'Arrows dig · Pump · drop rocks on monsters · ❚❚ pause',
+            say: [['Press Space or an arrow key to start', 'Tap an arrow or Start'], [/Press Space/g, 'Tap Pump'], [/Press P/g, 'Tap ❚❚']],
+        });
+    </script>
 </body>
 </html>

@@ -30,5 +30,12 @@
         <p id="controls-hint">Click a grid to place / fire &nbsp;·&nbsp; R to rotate &nbsp;·&nbsp; Space to start</p>
     </div>
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            buttons: [{ label: 'Rotate', key: 'r' }],
+            say: [[/click/g, 'tap'], [/Click/g, 'Tap'], [/\s*\u00B7\s*R to rotate/g, ' · Rotate button turns it'], [/Space to start/g, 'Start button']],
+        });
+    </script>
 </body>
 </html>

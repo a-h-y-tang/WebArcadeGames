@@ -29,5 +29,11 @@
         <p id="controls-hint">Click near a line to draw it &nbsp;·&nbsp; complete a box to go again</p>
     </div>
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            say: [[/Click near a line/g, 'Tap near a line'], [/click/g, 'tap']],
+        });
+    </script>
 </body>
 </html>

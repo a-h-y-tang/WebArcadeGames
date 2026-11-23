@@ -32,5 +32,11 @@
     </main>
 
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            say: [[/Click a cell/g, 'Tap a cell'], [/click/g, 'tap']],
+        });
+    </script>
 </body>
 </html>

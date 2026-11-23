@@ -26,5 +26,14 @@
         <p id="controls-hint">Move to aim &nbsp;·&nbsp; click to shoot &nbsp;·&nbsp; P to pause</p>
     </div>
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            drag: '#canvas',
+            buttons: [{ label: '❚❚', key: 'p', aria: 'Pause', small: true }],
+            hint: 'Tap a clay to shoot it · ❚❚ pause',
+            say: [[/Move the mouse to aim\s*\u00B7\s*click to shoot the clays/g, 'Tap the clays to shoot them'], [/click or press Space/g, 'tap'], [/Press P/g, 'Tap ❚❚']],
+        });
+    </script>
 </body>
 </html>

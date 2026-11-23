@@ -41,5 +41,14 @@
     </main>
 
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            buttons: [{ label: 'Rotate', key: 'r' }, { label: '❚❚', key: 'p', aria: 'Pause', small: true }],
+            hint: 'Tap to place, fire and build · Rotate turns the wall piece · ❚❚ pause',
+            hide: ['.help p:nth-child(4)', '.help p:nth-child(5)'],
+            say: [['Press Space or click Start to play', 'Tap Start to play'], [/click/g, 'tap'], [/Press Space/g, 'Tap Start'], [/Press P/g, 'Tap ❚❚']],
+        });
+    </script>
 </body>
 </html>

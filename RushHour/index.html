@@ -34,5 +34,14 @@
     </div>
 
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            buttons: [{ label: 'Restart', key: 'r', small: true }, { label: 'Next', key: 'n', small: true }],
+            help: 'footer.help',
+            hint: 'Tap a vehicle, then tap an empty square in its row or column to slide it',
+            say: [[/Press any key or the button/g, 'Tap the button'], [/^Click$/, 'Tap'], [/Click/g, 'Tap'], [/click/g, 'tap']],
+        });
+    </script>
 </body>
 </html>

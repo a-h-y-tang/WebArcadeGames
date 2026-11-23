@@ -26,5 +26,13 @@
         <p class="verse">&ldquo;I have hidden your word in my heart.&rdquo; &mdash; Psalm 119:11</p>
     </div>
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            tap: { target: '#overlay', key: ' ', ignore: 'button' },
+            hint: 'Tap the letters below the grid · ↵ to guess · 6 tries',
+            say: [[/Press Space to start/g, 'Tap to start'], [/Press Space/g, 'Tap']],
+        });
+    </script>
 </body>
 </html>

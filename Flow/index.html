@@ -44,5 +44,11 @@
     </main>
 
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            say: [[/Press N or Enter for the next level/g, 'Tap the button for the next level'], [/Press Enter to play again/g, 'Tap the button to play again'], [/Press any key or click to start/g, 'Tap Start'], [/click/g, 'tap']],
+        });
+    </script>
 </body>
 </html>

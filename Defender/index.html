@@ -41,5 +41,14 @@
     </main>
 
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            pad: 'dpad',
+            buttons: [{ label: 'Bomb', key: 'b', small: true }, { label: 'Fire', key: ' ' }, { label: '❚❚', key: 'p', aria: 'Pause', small: true }],
+            hint: '◀ ▶ fly and turn · ▲ ▼ climb · Fire · Bomb clears the screen · ❚❚ pause',
+            say: [['Press Enter or click Start to defend the planet', 'Tap Fire or Start to defend the planet'], [/Press (Space|Enter)/g, 'Tap Fire'], [/Press P/g, 'Tap ❚❚'], [/ or click /g, ' or ']],
+        });
+    </script>
 </body>
 </html>

@@ -33,5 +33,13 @@
     </main>
 
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            help: '.help',
+            hint: 'Remove pairs that add to 13 · Kings go alone · tap the stock to deal',
+            say: [[/Click/g, 'Tap'], [/click/g, 'tap']],
+        });
+    </script>
 </body>
 </html>

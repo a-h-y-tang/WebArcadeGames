@@ -27,5 +27,13 @@
         <p id="controls-hint">Click a hole or press 1–9 to whack &nbsp;·&nbsp; Space to start &nbsp;·&nbsp; P to pause</p>
     </div>
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            buttons: [{ label: '❚❚', key: 'p', aria: 'Pause', small: true }],
+            hint: 'Tap a hole to whack · ❚❚ pause',
+            say: [[/Press Space/g, 'Tap Start'], [/Press P/g, 'Tap ❚❚']],
+        });
+    </script>
 </body>
 </html>

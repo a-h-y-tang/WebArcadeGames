@@ -29,5 +29,14 @@
         <p class="verse">&ldquo;Take up the shield of faith, with which you can extinguish all the flaming arrows of the evil one.&rdquo; &mdash; Ephesians 6:16</p>
     </div>
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            drag: '#canvas',
+            buttons: [{ label: '❚❚', key: 'p', aria: 'Pause', small: true }],
+            hint: 'Tap to raise a shield of light · ❚❚ pause',
+            say: [[/Press Space/g, 'Tap Start'], [/Press P/g, 'Tap ❚❚']],
+        });
+    </script>
 </body>
 </html>

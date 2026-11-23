@@ -28,5 +28,17 @@
         <p id="controls-hint">Arrows / WASD move &nbsp;·&nbsp; Space drops a bomb &nbsp;·&nbsp; P to pause</p>
     </div>
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            pad: 'dpad',
+            buttons: [
+                { label: 'Bomb', key: ' ' },
+                { label: '❚❚', key: 'p', aria: 'Pause', small: true },
+            ],
+            hint: 'Arrows move · Bomb drops a bomb · ❚❚ pause',
+            say: [['Press Space or an arrow key to start', 'Tap an arrow or Start'], [/Press Space/g, 'Tap Bomb'], [/Press P/g, 'Tap ❚❚']],
+        });
+    </script>
 </body>
 </html>

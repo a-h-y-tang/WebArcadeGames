@@ -53,5 +53,11 @@
     </main>
 
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            say: [[/Click an open square/g, 'Tap an open square'], [/ Right-click goes the other way\./g, ''], [/click/g, 'tap']],
+        });
+    </script>
 </body>
 </html>

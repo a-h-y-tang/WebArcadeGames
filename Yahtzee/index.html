@@ -36,5 +36,12 @@
         <p id="controls-hint">Space / Enter or Roll &nbsp;·&nbsp; 1–5 or click a die to hold &nbsp;·&nbsp; click a row to score</p>
     </div>
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            hint: 'Tap Roll · tap a die to hold it · tap a row to score',
+            say: [[/Press Space or Enter/g, 'Tap Start']],
+        });
+    </script>
 </body>
 </html>

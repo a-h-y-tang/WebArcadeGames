@@ -27,5 +27,15 @@
         <p id="controls-hint">Arrow keys / WASD to move &nbsp;·&nbsp; R restart &nbsp;·&nbsp; P pause</p>
     </div>
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            pad: 'dpad',
+            swipe: '#canvas',
+            buttons: [{ label: 'Restart', key: 'r', small: true }, { label: '❚❚', key: 'p', aria: 'Pause', small: true }],
+            hint: 'Swipe or use the pad to move · Restart · ❚❚ pause',
+            say: [[/Press R/g, 'Tap Restart'], [/Press P/g, 'Tap ❚❚']],
+        });
+    </script>
 </body>
 </html>

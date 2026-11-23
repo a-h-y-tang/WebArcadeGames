@@ -27,5 +27,14 @@
         <p class="verse">&ldquo;Lord, to whom shall we go? You have the words of eternal life.&rdquo; &mdash; John 6:68</p>
     </div>
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            keypad: 'QWERTYUIOPASDFGHJKLZXCVBNM'.split('').map((c) => ({ key: c.toLowerCase(), label: c })),
+            buttons: [{ label: '❚❚', key: 'Escape', aria: 'Pause', small: true }],
+            hint: 'Tap the letters of a falling word to catch it · ❚❚ pause',
+            say: [['Type the falling words.', 'Tap the letters of the falling words.'], [/Esc to (pause|resume)/gi, 'Tap ❚❚ to $1'], [/Press Esc/g, 'Tap ❚❚'], [/Type a letter/gi, 'Tap a letter'], [/Press any letter/gi, 'Tap a letter']],
+        });
+    </script>
 </body>
 </html>

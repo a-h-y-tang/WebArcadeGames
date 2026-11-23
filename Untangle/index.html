@@ -30,5 +30,12 @@
         <p id="controls-hint">Drag any dot to move it &nbsp;·&nbsp; R reset &nbsp;·&nbsp; N next level</p>
     </div>
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            hint: 'Drag any dot to move it',
+            say: [[/^Reset \(R\)$/, 'Reset'], [/^Next \(N\)$/, 'Next']],
+        });
+    </script>
 </body>
 </html>

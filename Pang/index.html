@@ -30,5 +30,14 @@
         </p>
     </div>
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            pad: 'leftright',
+            buttons: [{ label: 'Fire', key: ' ' }, { label: '❚❚', key: 'p', aria: 'Pause', small: true }],
+            hint: '◀ ▶ move · Fire shoots the harpoon · ❚❚ pause',
+            say: [[/Reset \(R\)/g, 'Reset'], [/Press Space/g, 'Tap Fire'], [/Press P/g, 'Tap ❚❚']],
+        });
+    </script>
 </body>
 </html>

@@ -40,5 +40,15 @@
     </main>
 
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            pad: 'dpad',
+            buttons: [{ label: 'Fire', key: ' ' }, { label: '❚❚', key: 'p', aria: 'Pause', small: true }],
+            hint: '◀ ▶ steer · ▲ ▼ speed · Fire · ❚❚ pause',
+            help: '.help',
+            say: [['Press Space or click Start to fly', 'Tap Fire or Start to fly'], [/Press Space or click to/g, 'Tap Fire to'], [/Press (Space|Enter)/g, 'Tap Fire'], [/Press P/g, 'Tap ❚❚']],
+        });
+    </script>
 </body>
 </html>

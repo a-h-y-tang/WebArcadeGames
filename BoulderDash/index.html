@@ -26,5 +26,15 @@
         <p id="controls-hint">← ↑ ↓ → / W A S D to dig &nbsp;·&nbsp; push boulders sideways &nbsp;·&nbsp; P to pause</p>
     </div>
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            pad: 'dpad',
+            padRepeat: 120,
+            swipe: { target: '#canvas', continuous: true, min: 28 },
+            buttons: [{ label: '❚❚', key: 'p', aria: 'Pause', small: true }],
+            say: [['Press Space or the button to play again', 'Tap the button to play again'], [/Press Space/g, 'Tap Start'], [/Press P/g, 'Tap ❚❚'], [/press Space/g, 'tap Start']],
+        });
+    </script>
 </body>
 </html>

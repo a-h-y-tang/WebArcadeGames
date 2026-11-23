@@ -26,5 +26,13 @@
         <p id="controls-hint">Click a block to pick it up · Arrow keys to slide · Click an empty cell to move there</p>
     </div>
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            pad: 'dpad',
+            swipe: { target: '#canvas', min: 30 },
+            say: [[/Click a block, then use the arrow keys/g, 'Tap a block, then swipe or use the arrows'], [/Click a block to pick it up · Arrow keys to slide · Click an empty cell to move there/g, 'Tap a block, then swipe, use the arrows, or tap an empty cell'], [/Click/g, 'Tap'], [/click/g, 'tap']],
+        });
+    </script>
 </body>
 </html>

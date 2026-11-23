@@ -28,5 +28,14 @@
         <p class="verse">&ldquo;I will repay you for the years the locusts have eaten.&rdquo; &mdash; Joel 2:25</p>
     </div>
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            pad: 'leftright',
+            buttons: [{ label: 'Smoke', key: ' ' }, { label: '❚❚', key: 'p', aria: 'Pause', small: true }],
+            hint: '◀ ▶ move · Smoke puffs smoke · ❚❚ pause',
+            say: [['Press Space or an arrow key to start', 'Tap Smoke or Start'], [/Press Space/g, 'Tap Smoke'], [/Press P/g, 'Tap ❚❚']],
+        });
+    </script>
 </body>
 </html>

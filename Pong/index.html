@@ -26,5 +26,15 @@
         <p id="controls-hint">↑ ↓ / W S or mouse &nbsp;·&nbsp; P to pause</p>
     </div>
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            pad: 'updown',
+            buttons: [{ label: '❚❚', key: 'p', aria: 'Pause', small: true }],
+            drag: '#canvas',
+            hint: 'Drag your finger or use ▲ ▼ to move the paddle · ❚❚ pause',
+            say: [[/press ↑ to/g, 'tap Start to'], [/Press Space( or an arrow key)?/g, 'Tap Start'], [/Press P/g, 'Tap ❚❚'], [/press an arrow/gi, 'tap Start']],
+        });
+    </script>
 </body>
 </html>

@@ -32,5 +32,13 @@
         </p>
     </div>
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            longPress: '#canvas',
+            hint: 'Tap a square to fill it · touch and hold to mark it empty',
+            say: [[/Left-click fills, right-click marks\./g, 'Tap fills, touch and hold marks.']],
+        });
+    </script>
 </body>
 </html>
