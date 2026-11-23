@@ -28,5 +28,14 @@
         <p class="verse">&ldquo;By day the Lord went ahead of them in a pillar of cloud&hellip; and by night in a pillar of fire.&rdquo; &mdash; Exodus 13:21</p>
     </div>
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            pad: 'dpad',
+            swipe: '#canvas',
+            hint: 'Swipe or use the pad to move',
+            say: [['Press an arrow key or click Play Again', 'Tap Play Again'], ['Press Start', 'Tap Start']],
+        });
+    </script>
 </body>
 </html>
