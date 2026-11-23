@@ -32,5 +32,18 @@
         <p id="controls-hint">↑ ↓ angle &nbsp;·&nbsp; ← → power &nbsp;·&nbsp; Space fire &nbsp;·&nbsp; P pause</p>
     </div>
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            pad: 'dpad',
+            padRepeat: 90,
+            buttons: [
+                { label: 'Fire', key: ' ' },
+                { label: '❚❚', key: 'p', aria: 'Pause', small: true },
+            ],
+            hint: '▲▼ angle · ◀▶ power · Fire · ❚❚ pause',
+            say: [['Press Space or an arrow key to start', 'Tap Fire or Start'], [/Press Space/g, 'Tap Fire'], [/Press P/g, 'Tap ❚❚']],
+        });
+    </script>
 </body>
 </html>
