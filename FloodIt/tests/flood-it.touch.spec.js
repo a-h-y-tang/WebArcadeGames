@@ -17,4 +17,8 @@ test.describe('Flood It on a phone', () => {
         await page.locator('#palette button, #palette > *').nth(pick).tap();
         await expect.poll(() => page.evaluate(() => movesLeft)).toBe(moves - 1);
     });
+
+    test('has an on-screen button for the N key (new game / restart)', async ({ page }) => {
+        await expect(T.control(page, 'n')).toBeVisible();
+    });
 });

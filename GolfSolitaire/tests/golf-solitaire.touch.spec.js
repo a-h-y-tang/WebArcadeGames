@@ -16,4 +16,8 @@ test.describe('Golf Solitaire on a phone', () => {
         await T.tapCanvas(page, page.locator('#canvas'), ...(await page.evaluate(() => [STOCK_X + CARD_W / 2, PILE_Y + CARD_H / 2])));
         await expect.poll(() => page.evaluate(() => stock.length)).toBe(n - 1);
     });
+
+    test('has an on-screen button for the N key (new game / restart)', async ({ page }) => {
+        await expect(T.control(page, 'n')).toBeVisible();
+    });
 });

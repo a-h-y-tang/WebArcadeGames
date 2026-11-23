@@ -28,6 +28,7 @@
     <script src="../shared/touch-controls.js"></script>
     <script>
         TouchControls.init({
+            buttons: [{ label: 'New deal', key: 'n', small: true }],
             say: [[/Click a column/g, 'Tap a column'], [/click the stock or press Space to flip/g, 'tap the stock to flip'], [/\s*\u00B7\s*N for a new \w+/g, ''], [/Click/g, 'Tap'], [/click/g, 'tap']],
         });
     </script>

@@ -19,4 +19,8 @@ test.describe('Hashi on a phone', () => {
         await T.dragCanvas(page, page.locator('#canvas'), a, b);
         await expect.poll(() => page.evaluate(() => Object.keys(bridges).length)).toBe(1);
     });
+
+    test('has an on-screen button for the R key (new game / restart)', async ({ page }) => {
+        await expect(T.control(page, 'r')).toBeVisible();
+    });
 });

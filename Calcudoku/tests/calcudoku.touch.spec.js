@@ -19,4 +19,8 @@ test.describe('Calcudoku on a phone', () => {
         await T.tapControl(page, 'Backspace');
         expect(await page.evaluate(() => grid[2][1])).toBe(0);
     });
+
+    test('has an on-screen button for the R key (new game / restart)', async ({ page }) => {
+        await expect(T.control(page, 'r')).toBeVisible();
+    });
 });

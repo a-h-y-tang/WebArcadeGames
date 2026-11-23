@@ -17,4 +17,8 @@ test.describe('Fox and Hounds on a phone', () => {
         await T.tapCanvas(page, page.locator('#canvas'), p.x, p.y);
         await expect.poll(() => page.evaluate(() => selected)).toEqual({ r: who.r, c: who.c });
     });
+
+    test('has an on-screen button for the R key (new game / restart)', async ({ page }) => {
+        await expect(T.control(page, 'r')).toBeVisible();
+    });
 });

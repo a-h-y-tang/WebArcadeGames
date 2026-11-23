@@ -28,4 +28,8 @@ test.describe('Checkers on a phone', () => {
         await T.tapCanvas(page, page.locator('#canvas'), move.nc * 70 + 35, move.nr * 70 + 35);
         await expect.poll(() => page.evaluate(({ nr, nc }) => !!board[nr][nc], move)).toBe(true);
     });
+
+    test('has an on-screen button for the R key (new game / restart)', async ({ page }) => {
+        await expect(T.control(page, 'r')).toBeVisible();
+    });
 });
