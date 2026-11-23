@@ -28,5 +28,16 @@
         <p id="controls-hint">← → / A D or mouse to aim &nbsp;·&nbsp; Space / click to bowl &nbsp;·&nbsp; R to restart</p>
     </div>
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            pad: 'leftright',
+            padRepeat: 60,
+            buttons: [{ label: 'Bowl', key: ' ' }],
+            drag: '#canvas',
+            hint: 'Drag across the lane or use ◀ ▶ to aim · tap the lane or Bowl to bowl',
+            say: [['Aim with ← → (or the mouse) and bowl with Space / click.', 'Drag or use ◀ ▶ to aim, then tap Bowl.'], [/Space \/ click/g, 'Bowl'], [/Press Space/g, 'Tap Bowl']],
+        });
+    </script>
 </body>
 </html>
