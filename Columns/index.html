@@ -26,5 +26,16 @@
         <p id="controls-hint">← → / A D move &nbsp;·&nbsp; ↑ / W cycle colours &nbsp;·&nbsp; ↓ / S drop &nbsp;·&nbsp; P pause</p>
     </div>
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            pad: 'dpad',
+            padRepeat: 110,
+            buttons: [{ label: '❚❚', key: 'p', aria: 'Pause', small: true }],
+            swipe: { target: '#canvas', tapKey: 'ArrowUp' },
+            hint: '◀ ▶ move · ▲ or tap the well to shuffle colours · ▼ drop · ❚❚ pause',
+            say: [['Press Space or an arrow key to start', 'Tap an arrow or Start'], [/Press Space/g, 'Tap Start'], [/Press P/g, 'Tap ❚❚']],
+        });
+    </script>
 </body>
 </html>
