@@ -28,5 +28,17 @@
         <p class="verse">&ldquo;You are the light of the world. A town built on a hill cannot be hidden.&rdquo; &mdash; Matthew 5:14</p>
     </div>
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            buttons: [
+                { label: '↖', key: 'ArrowLeft', aria: 'Hop up left' }, { label: '↗', key: 'ArrowUp', aria: 'Hop up right' },
+                { label: '↙', key: 'ArrowDown', aria: 'Hop down left' }, { label: '↘', key: 'ArrowRight', aria: 'Hop down right' },
+                { label: '❚❚', key: 'p', aria: 'Pause', small: true },
+            ],
+            hint: 'Tap an arrow to hop diagonally · ❚❚ pause',
+            say: [['Press an arrow key or WASD to start', 'Tap an arrow to start'], [/Press any key/g, 'Tap the button'], [/Press P/g, 'Tap ❚❚']],
+        });
+    </script>
 </body>
 </html>

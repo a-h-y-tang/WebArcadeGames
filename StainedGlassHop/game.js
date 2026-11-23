@@ -464,7 +464,7 @@ function init() {
     lastSpawn = lastEnemyHop = lastTime = 0;
     state = 'idle';
     syncHud();
-    showOverlay('Q*bert', '', 'Press an arrow key or WASD to start', 'Start Game');
+    showOverlay('Stained Glass Hop', '', 'Press an arrow key or WASD to start', 'Start Game');
     window.addEventListener('keydown', onKey);
     btnStart.addEventListener('click', onButton);
     requestAnimationFrame(loop);
