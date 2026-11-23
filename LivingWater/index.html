@@ -37,5 +37,11 @@
         <p class="verse">&ldquo;Strike the rock, and water will come out of it for the people to drink.&rdquo; &mdash; Exodus 17:6</p>
     </div>
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            say: [[/Click a cell \(or move with arrows \/ WASD \+ Space\) to lay the next pipe\s*·\s*F releases the water early\s*·\s*R resets/g, 'Tap a cell to lay the next pipe · Flow releases the water early'], [/Click/g, 'Tap'], [/click/g, 'tap']],
+        });
+    </script>
 </body>
 </html>
