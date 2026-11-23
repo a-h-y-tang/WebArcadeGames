@@ -17,7 +17,9 @@
  *   <script src="../shared/touch-controls.js"></script>
  *   <script>
  *     TouchControls.init({
- *       pad: 'dpad',                         // 'dpad' | 'leftright' | 'updown' | null
+ *       pad: 'dpad',                         // 'dpad' | 'leftright' | 'updown' | null,
+ *                                            // or { kind: 'dpad', keys: { ArrowUp: 'w', ... } }
+ *       pad2: { kind: 'dpad' },              // optional second pad on the right (twin-stick)
  *       buttons: [{ label: 'Fire', key: ' ' }],
  *       swipe: '#canvas',                    // swipe on this element = arrow key
  *       tap: { target: '#overlay', key: 'Enter' }, // tap on this element = key
@@ -152,7 +154,11 @@ html.tc-touch canvas { touch-action: none; }
         return btn;
     }
 
-    function makePad(kind, repeat) {
+    function makePad(spec, repeat) {
+        // spec: 'dpad' | 'leftright' | 'updown', or { kind, keys: { ArrowUp: 'w', ... }, repeat }
+        const kind = typeof spec === 'string' ? spec : spec.kind || 'dpad';
+        const keymap = (typeof spec === 'object' && spec.keys) || {};
+        if (typeof spec === 'object' && spec.repeat !== undefined) repeat = spec.repeat;
         const pad = document.createElement('div');
         pad.className = 'tc-pad tc-' + kind;
         const cells = {
@@ -165,7 +171,7 @@ html.tc-touch canvas { touch-action: none; }
                 pad.appendChild(document.createElement('span'));
                 continue;
             }
-            pad.appendChild(makeButton(ARROWS[key], key, { repeat, aria: key.replace('Arrow', '') }));
+            pad.appendChild(makeButton(ARROWS[key], keymap[key] || key, { repeat, aria: key.replace('Arrow', '') }));
         }
         return pad;
     }
@@ -420,7 +426,7 @@ html.tc-touch canvas { touch-action: none; }
             style.textContent = STYLE;
             document.head.appendChild(style);
 
-            if (opts.pad || (opts.buttons && opts.buttons.length) || opts.keypad) {
+            if (opts.pad || opts.pad2 || (opts.buttons && opts.buttons.length) || opts.keypad) {
                 bar = document.createElement('div');
                 bar.id = 'tc-bar';
                 const left = document.createElement('div');
@@ -428,6 +434,7 @@ html.tc-touch canvas { touch-action: none; }
                 const right = document.createElement('div');
                 right.className = 'tc-group tc-right';
                 if (opts.pad) left.appendChild(makePad(opts.pad, opts.padRepeat));
+                if (opts.pad2) right.appendChild(makePad(opts.pad2, opts.padRepeat));
                 for (const b of opts.buttons || []) {
                     const btn = makeButton(b.label, b.key, b);
                     (b.side === 'left' ? left : right).appendChild(btn);
