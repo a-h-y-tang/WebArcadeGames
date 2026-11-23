@@ -26,5 +26,13 @@
         <p class="verse">&ldquo;When the dove returned to him, there in its beak was a freshly plucked olive leaf!&rdquo; &mdash; Genesis 8:11</p>
     </div>
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            buttons: [{ label: '❚❚', key: 'p', aria: 'Pause', small: true }],
+            hint: 'Tap to flap · ❚❚ pause',
+            say: [[/Press Space to flap and start/g, 'Tap to flap and start'], [/Press Space/g, 'Tap'], [/Press P/g, 'Tap ❚❚']],
+        });
+    </script>
 </body>
 </html>
