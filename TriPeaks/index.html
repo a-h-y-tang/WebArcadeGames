@@ -35,5 +35,13 @@
     </main>
 
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            buttons: [{ label: 'New', key: 'n', small: true }],
+            hint: 'Tap an exposed card one rank above or below the waste · tap the stock to flip a card',
+            help: '.help',
+        });
+    </script>
 </body>
 </html>
