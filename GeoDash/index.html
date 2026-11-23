@@ -1863,5 +1863,12 @@ populateLevelMenu();
 openOverlay('level');
 requestAnimationFrame(loop);
 </script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            fit: false,
+            say: [[/CLICK TO/g, 'TAP TO']],
+        });
+    </script>
 </body>
 </html>
