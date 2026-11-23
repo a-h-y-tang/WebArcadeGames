@@ -33,5 +33,11 @@
         <p id="controls-hint">R / Space roll &nbsp;·&nbsp; click die or 1–6 to select &nbsp;·&nbsp; A set aside &nbsp;·&nbsp; B bank</p>
     </div>
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            say: [[/R \/ Space roll/g, 'Roll'], [/click die or 1–6 to select/g, 'tap dice to select'], [/A set aside/g, 'Set Aside'], [/B bank/g, 'Bank'], [/click/g, 'tap']],
+        });
+    </script>
 </body>
 </html>
