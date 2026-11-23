@@ -28,5 +28,15 @@
         <p id="controls-hint">← → move &nbsp;·&nbsp; ↑ ↓ hop rows &nbsp;·&nbsp; P to pause</p>
     </div>
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            pad: 'dpad',
+            buttons: [{ label: '❚❚', key: 'p', aria: 'Pause', small: true }],
+            swipe: { target: '#canvas' },
+            hint: '▲ ▼ (or swipe) hop between floes · ◀ ▶ walk · ❚❚ pause',
+            say: [['Build the igloo! Press Space or hop to start', 'Build the igloo! Tap an arrow to start'], [/Press Space/g, 'Tap an arrow'], [/Press P/g, 'Tap ❚❚']],
+        });
+    </script>
 </body>
 </html>
