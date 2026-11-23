@@ -28,5 +28,13 @@
         <p class="verse">&ldquo;Pairs of clean and unclean animals&hellip; came to Noah and entered the ark.&rdquo; &mdash; Genesis 7:8-9</p>
     </div>
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            buttons: [{ label: '❚❚', key: 'p', aria: 'Pause', small: true }],
+            hint: 'Tap a card · find all 8 pairs · ❚❚ pause',
+            say: [[/Press Space or Enter/g, 'Tap Start'], [/Press Space/g, 'Tap Start'], [/Press P/g, 'Tap ❚❚']],
+        });
+    </script>
 </body>
 </html>
