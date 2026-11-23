@@ -38,5 +38,17 @@
     </main>
 
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            pad: 'dpad',
+            buttons: [
+                { label: 'Pepper', key: ' ' },
+                { label: '❚❚', key: 'p', aria: 'Pause', small: true },
+            ],
+            hint: 'Arrows walk and climb · Pepper sprays · ❚❚ pause',
+            say: [['Press Space or Enter to play again', 'Tap Pepper to play again'], ['Press Space or click Start to play', 'Tap Pepper or Start to play'], [/Press Space/g, 'Tap Pepper'], [/Press P/g, 'Tap ❚❚'], [/Press Enter/g, 'Tap Start']],
+        });
+    </script>
 </body>
 </html>
