@@ -540,6 +540,15 @@
     "thumbnail": "games/Kakuro/screenshot.png"
   },
   {
+    "id": "keeper-of-the-garden",
+    "name": "Keeper of the Garden",
+    "description": "Tend the garden of Eden - water the caterpillar away segment by segment before it reaches your patch",
+    "category": "Action",
+    "dir": "KeeperOfTheGarden",
+    "path": "games/KeeperOfTheGarden/index.html",
+    "thumbnail": "games/KeeperOfTheGarden/screenshot.png"
+  },
+  {
     "id": "klotski",
     "name": "Klotski",
     "description": "Sliding block puzzle - move blocks strategically",
