@@ -102,6 +102,9 @@ html.tc-touch canvas { touch-action: none; }
 #tc-bar .tc-pad.tc-leftright { grid-template-columns: repeat(2, 4.4em); grid-template-rows: 4.4em; gap: 0.6em; }
 #tc-bar .tc-pad.tc-updown { grid-template-columns: 4.4em; grid-template-rows: repeat(2, 4.4em); gap: 0.6em; }
 #tc-bar .tc-pad.tc-updown .tc-btn { width: 4.4em; height: 4.4em; }
+#tc-bar.tc-has-keypad { flex-wrap: wrap; }
+#tc-bar .tc-keypad { flex: 1 0 100%; display: flex; flex-wrap: wrap; justify-content: center; gap: 0.4em; pointer-events: none; }
+#tc-bar .tc-keypad .tc-btn { width: 2.9em; height: 2.9em; border-radius: 0.6em; font-size: 1.05em; }
 #tc-bar .tc-small { width: 3em; height: 3em; font-size: 0.8em; }
 `;
 
@@ -233,7 +236,8 @@ html.tc-touch canvas { touch-action: none; }
 
     /** Touch drags on the element become mousedown / mousemove / mouseup / click. */
     function attachDrag(spec) {
-        const el = resolve(spec);
+        const opts = typeof spec === 'string' || spec instanceof Element ? { target: spec } : spec;
+        const el = resolve(opts.target);
         if (!el) return;
         el.style.touchAction = 'none';
         let startPt = null;
@@ -259,7 +263,7 @@ html.tc-touch canvas { touch-action: none; }
         el.addEventListener('touchend', (e) => {
             const t = e.changedTouches[0];
             fire('mouseup', t);
-            if (startPt && Math.hypot(t.clientX - startPt.x, t.clientY - startPt.y) < 12) fire('click', t);
+            if (opts.releaseClick || (startPt && Math.hypot(t.clientX - startPt.x, t.clientY - startPt.y) < 12)) fire('click', t);
             startPt = null;
             e.preventDefault();
         }, { passive: false });
@@ -416,7 +420,7 @@ html.tc-touch canvas { touch-action: none; }
             style.textContent = STYLE;
             document.head.appendChild(style);
 
-            if (opts.pad || (opts.buttons && opts.buttons.length)) {
+            if (opts.pad || (opts.buttons && opts.buttons.length) || opts.keypad) {
                 bar = document.createElement('div');
                 bar.id = 'tc-bar';
                 const left = document.createElement('div');
@@ -427,6 +431,17 @@ html.tc-touch canvas { touch-action: none; }
                 for (const b of opts.buttons || []) {
                     const btn = makeButton(b.label, b.key, b);
                     (b.side === 'left' ? left : right).appendChild(btn);
+                }
+                if (opts.keypad) {
+                    // A row of keys, e.g. digits for a number puzzle.
+                    bar.classList.add('tc-has-keypad');
+                    const row = document.createElement('div');
+                    row.className = 'tc-keypad';
+                    for (const k of opts.keypad) {
+                        const spec = typeof k === 'string' ? { key: k, label: k } : k;
+                        row.appendChild(makeButton(spec.label || spec.key, spec.key, { aria: spec.aria }));
+                    }
+                    bar.appendChild(row);
                 }
                 bar.appendChild(left);
                 bar.appendChild(right);
