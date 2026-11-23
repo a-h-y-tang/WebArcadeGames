@@ -25,5 +25,11 @@
         <p id="controls-hint">Click a piece, then a highlighted square &nbsp;·&nbsp; captures are forced &nbsp;·&nbsp; R to restart</p>
     </div>
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            say: [[/Click a piece/g, 'Tap a piece'], [/ · R to restart/g, ''], [/click/g, 'tap']],
+        });
+    </script>
 </body>
 </html>
