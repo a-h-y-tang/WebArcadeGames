@@ -25,5 +25,11 @@
         <p id="controls-hint">Click a column to play its bottom card &nbsp;·&nbsp; click the stock or press Space to flip &nbsp;·&nbsp; N for a new deal</p>
     </div>
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            say: [[/Click a column/g, 'Tap a column'], [/click the stock or press Space to flip/g, 'tap the stock to flip'], [/\s*\u00B7\s*N for a new \w+/g, ''], [/Click/g, 'Tap'], [/click/g, 'tap']],
+        });
+    </script>
 </body>
 </html>
