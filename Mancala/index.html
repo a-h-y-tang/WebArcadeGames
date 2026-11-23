@@ -28,5 +28,12 @@
         <p id="controls-hint">Click one of your pits (bottom row) or press <strong>1–6</strong> &nbsp;·&nbsp; land the last stone in your store for another turn</p>
     </div>
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            hint: 'Tap one of your pits (bottom row) · land the last stone in your store for another turn',
+            say: [[/Click/g, 'Tap'], [/click/g, 'tap']],
+        });
+    </script>
 </body>
 </html>
