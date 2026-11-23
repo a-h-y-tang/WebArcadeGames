@@ -29,6 +29,7 @@
  *       hint: 'Use the buttons below',       // replaces the keyboard hint text
  *       say: [['Press Space', 'Tap Fire']],  // rewrites keyboard wording, now and later
  *       hide: '.keys-help',                  // hides keyboard-only help
+ *       help: '.help',                       // swaps a keyboard help panel for the hint
  *     });
  *   </script>
  */
@@ -568,6 +569,21 @@ html.tc-touch canvas { touch-action: none; }
                 }
             }
 
+            if (opts.help) {
+                // A panel of keyboard help: hide its lines (keep any verse) and show the touch hint.
+                const panel = document.querySelector(opts.help);
+                if (panel) {
+                    for (const child of panel.children) {
+                        if (!child.classList.contains('verse')) child.style.display = 'none';
+                    }
+                    if (opts.hint) {
+                        const p = document.createElement(panel.tagName === 'FOOTER' || panel.tagName === 'DIV' ? 'p' : 'span');
+                        p.className = 'tc-hint';
+                        p.textContent = opts.hint;
+                        panel.insertBefore(p, panel.firstChild);
+                    }
+                }
+            }
             if (opts.hide) {
                 // Keyboard-only help that means nothing on a phone.
                 document.querySelectorAll([].concat(opts.hide).join(',')).forEach((el) => { el.style.display = 'none'; });
