@@ -27,5 +27,17 @@
         <p id="controls-hint">Space / Up: launch &nbsp;·&nbsp; Left (Z/A) &amp; Right (/ or L): flippers</p>
     </div>
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            buttons: [
+                { label: 'Flip', key: 'ArrowLeft', side: 'left', aria: 'Left flipper' },
+                { label: 'Launch', key: ' ', side: 'left', small: true },
+                { label: 'Flip', key: 'ArrowRight', aria: 'Right flipper' },
+            ],
+            hint: 'Launch the ball · hold the Flip buttons for the flippers',
+            say: [[/Press any key/g, 'Tap the button'], ['Press Space to launch, arrow keys to flip', 'Tap Launch, then the Flip buttons'], [/Press Space/g, 'Tap Launch'], [/press Space/g, 'tap Launch']],
+        });
+    </script>
 </body>
 </html>
