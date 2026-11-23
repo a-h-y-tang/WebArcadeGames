@@ -26,6 +26,7 @@
  *       drag: '#canvas',                     // touch drag = mouse events
  *       doubleTap: '#canvas',                // two quick taps = dblclick
  *       longPress: '#canvas',                // touch and hold = right-click
+ *                                            // ({ target, rightButton: true } also sends a button-2 mousedown)
  *       hint: 'Use the buttons below',       // replaces the keyboard hint text
  *       say: [['Press Space', 'Tap Fire']],  // rewrites keyboard wording, now and later
  *       hide: '.keys-help',                  // hides keyboard-only help
@@ -378,6 +379,17 @@ html.tc-touch canvas { touch-action: none; }
             start = { x: e.clientX, y: e.clientY, sx: e.screenX, sy: e.screenY };
             clearTimeout(timer);
             timer = setTimeout(() => {
+                if (opts.rightButton) {
+                    // Games that read e.button on mousedown get a right-button press too.
+                    for (const type of ['mousedown', 'mouseup']) {
+                        const m = new MouseEvent(type, {
+                            bubbles: true, cancelable: true, view: window, button: 2,
+                            buttons: type === 'mousedown' ? 2 : 0,
+                            clientX: start.x, clientY: start.y, screenX: start.sx, screenY: start.sy,
+                        });
+                        el.dispatchEvent(m);
+                    }
+                }
                 fired = true;
                 const ev = new MouseEvent('contextmenu', {
                     bubbles: true, cancelable: true, view: window, button: 2, buttons: 2,
