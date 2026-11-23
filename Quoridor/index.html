@@ -43,5 +43,12 @@
     </main>
 
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            hide: ['.help p:nth-child(3)', '.help p:nth-child(4)', '.help p:nth-child(5)'],
+            say: [['Press Space or click Start to play', 'Tap Start to play'], [/Press Space/g, 'Tap Start'], [/Click/g, 'Tap'], [/click/g, 'tap']],
+        });
+    </script>
 </body>
 </html>
