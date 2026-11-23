@@ -26,6 +26,8 @@
  *       drag: '#canvas',                     // touch drag = mouse events
  *       doubleTap: '#canvas',                // two quick taps = dblclick
  *       hint: 'Use the buttons below',       // replaces the keyboard hint text
+ *       say: [['Press Space', 'Tap Fire']],  // rewrites keyboard wording, now and later
+ *       hide: '.keys-help',                  // hides keyboard-only help
  *     });
  *   </script>
  */
@@ -506,6 +508,10 @@ html.tc-touch canvas { touch-action: none; }
                 }
             }
 
+            if (opts.hide) {
+                // Keyboard-only help that means nothing on a phone.
+                document.querySelectorAll([].concat(opts.hide).join(',')).forEach((el) => { el.style.display = 'none'; });
+            }
             if (opts.say) watchText(opts.say);
 
             if (opts.fit !== false) {
