@@ -59,5 +59,15 @@
     </main>
 
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            hide: ['#btn-wave kbd'],
+            buttons: [{ label: 'Restart', key: 'r', small: true }, { label: '❚❚', key: 'p', aria: 'Pause', small: true }],
+            hint: 'Pick a tower, tap grass to build · tap a tower to upgrade · Send Wave · ❚❚ pause',
+            help: '.help',
+            say: [['Press Space or click Start to play', 'Tap Start to play'], [/Press Space/g, 'Tap Start'], [/click/g, 'tap']],
+        });
+    </script>
 </body>
 </html>
