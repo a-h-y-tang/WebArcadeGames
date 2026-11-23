@@ -33,5 +33,13 @@
     </div>
 
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            buttons: [{ label: 'New', key: 'n', small: true }, { label: 'Reset', key: 'r', small: true }],
+            hide: ['footer.help span:nth-child(2)', 'footer.help span:nth-child(3)'],
+            say: [[/Press any key or the button/g, 'Tap the button'], [/^Click$/, 'Tap'], [/Click/g, 'Tap'], [/click/g, 'tap']],
+        });
+    </script>
 </body>
 </html>
