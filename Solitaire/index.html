@@ -30,5 +30,13 @@
         </p>
     </div>
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            doubleTap: '#canvas',
+            say: [[/Click the deck/g, 'Tap the deck'], [/click a card/g, 'tap a card']],
+            hint: 'Tap the stock to draw · tap a card, then a pile, to move it · double-tap to send a card home',
+        });
+    </script>
 </body>
 </html>
