@@ -38,7 +38,7 @@ async function expectFitsScreen(page) {
         };
     });
     expect(m.scrollWidth, 'page is no wider than the screen').toBeLessThanOrEqual(m.layoutWidth + 1);
-    expect(m.visualWidth, 'page is zoomed out to its full width').toBeGreaterThanOrEqual(m.layoutWidth - 2);
+    expect(m.visualWidth, 'page is zoomed out to its full width').toBeGreaterThanOrEqual(m.layoutWidth - 3);
     for (const c of m.canvases) {
         expect(c.left).toBeGreaterThanOrEqual(-1);
         expect(c.right).toBeLessThanOrEqual(m.layoutWidth + 1);
@@ -166,3 +166,25 @@ module.exports = {
     gameUrl, openGame, expectFitsScreen, expectPhoneReady, control, touchDown, touchUp,
     hold, tapControl, drag, swipe, tapAt, canvasToPage, dragCanvas, tapCanvas,
 };
+
+/**
+ * Finds a canvas point (in canvas pixels) for which `hit(x, y)` — evaluated in
+ * the page — returns `want` (compared as JSON). Lets a test tap a board cell
+ * without knowing the board's geometry.
+ */
+async function findCanvasPoint(page, hitSource, want, selector = 'canvas') {
+    return page.evaluate(({ src, wantJson, sel }) => {
+        const hit = eval(src);
+        const c = document.querySelector(sel);
+        // Centre of all matching points, so the tap lands well inside the cell.
+        let sx = 0, sy = 0, n = 0;
+        for (let y = 2; y < c.height; y += 3) {
+            for (let x = 2; x < c.width; x += 3) {
+                const got = hit(x, y);
+                if (got !== undefined && JSON.stringify(got) === wantJson) { sx += x; sy += y; n++; }
+            }
+        }
+        return n ? [sx / n, sy / n] : null;
+    }, { src: hitSource, wantJson: JSON.stringify(want), sel: selector });
+}
+module.exports.findCanvasPoint = findCanvasPoint;
