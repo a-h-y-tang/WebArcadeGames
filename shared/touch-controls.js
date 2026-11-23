@@ -25,6 +25,7 @@
  *       tap: { target: '#overlay', key: 'Enter' }, // tap on this element = key
  *       drag: '#canvas',                     // touch drag = mouse events
  *       doubleTap: '#canvas',                // two quick taps = dblclick
+ *       longPress: '#canvas',                // touch and hold = right-click
  *       hint: 'Use the buttons below',       // replaces the keyboard hint text
  *       say: [['Press Space', 'Tap Fire']],  // rewrites keyboard wording, now and later
  *       hide: '.keys-help',                  // hides keyboard-only help
@@ -349,6 +350,64 @@ html.tc-touch canvas { touch-action: none; }
         });
     }
 
+    /**
+     * Holding a finger still on the element sends a contextmenu (right-click)
+     * event, and the tap that ends the hold is swallowed. Used for flags and
+     * marks in puzzle games. The browser's own long-press menu is suppressed
+     * so the action happens exactly once.
+     */
+    function attachLongPress(spec) {
+        const opts = typeof spec === 'string' || spec instanceof Element ? { target: spec } : spec;
+        const el = resolve(opts.target);
+        if (!el) return;
+        const delay = opts.delay || 450;
+        let timer = null;
+        let start = null;
+        let fired = false;
+        el.style.webkitTouchCallout = 'none';
+        el.addEventListener('contextmenu', (e) => {
+            if (!e.__tcSynthetic && start !== null) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+            }
+        }, true);
+        el.addEventListener('pointerdown', (e) => {
+            if (e.pointerType === 'mouse') return;
+            fired = false;
+            start = { x: e.clientX, y: e.clientY, sx: e.screenX, sy: e.screenY };
+            clearTimeout(timer);
+            timer = setTimeout(() => {
+                fired = true;
+                const ev = new MouseEvent('contextmenu', {
+                    bubbles: true, cancelable: true, view: window, button: 2, buttons: 2,
+                    clientX: start.x, clientY: start.y, screenX: start.sx, screenY: start.sy,
+                });
+                ev.__tcSynthetic = true;
+                el.dispatchEvent(ev);
+                if (navigator.vibrate) navigator.vibrate(15);
+            }, delay);
+        });
+        el.addEventListener('pointermove', (e) => {
+            if (start && Math.hypot(e.clientX - start.x, e.clientY - start.y) > 12) clearTimeout(timer);
+        });
+        const end = () => {
+            clearTimeout(timer);
+            setTimeout(() => { start = null; }, 0);
+        };
+        el.addEventListener('pointerup', end);
+        el.addEventListener('pointercancel', end);
+        // The click (and mouse events) that follow a long press are not a tap.
+        for (const type of ['click', 'mousedown', 'mouseup']) {
+            el.addEventListener(type, (e) => {
+                if (fired) {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    if (type === 'click') fired = false;
+                }
+            }, true);
+        }
+    }
+
     // ---------------------------------------------------------------------
     // Fit the page to the screen
     // ---------------------------------------------------------------------
@@ -497,6 +556,7 @@ html.tc-touch canvas { touch-action: none; }
             if (opts.tap) [].concat(opts.tap).forEach(attachTap);
             if (opts.drag) [].concat(opts.drag).forEach(attachDrag);
             if (opts.doubleTap) [].concat(opts.doubleTap).forEach(attachDoubleTap);
+            if (opts.longPress) [].concat(opts.longPress).forEach(attachLongPress);
 
             if (opts.hint) {
                 const hintEl = document.querySelector(opts.hintTarget || '#controls-hint, .controls-hint');
