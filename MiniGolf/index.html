@@ -28,5 +28,16 @@
         <p id="controls-hint">Drag from the ball to aim &amp; set power &nbsp;·&nbsp; ← → aim &nbsp;·&nbsp; ↑ ↓ power &nbsp;·&nbsp; Space putt &nbsp;·&nbsp; P pause</p>
     </div>
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            drag: '#canvas',
+            pad: 'dpad',
+            padRepeat: 70,
+            buttons: [{ label: 'Putt', key: ' ' }, { label: '\u275A\u275A', key: 'p', aria: 'Pause', small: true }],
+            hint: 'Drag back from the ball and let go to putt · or aim with ◀ ▶, power with ▲ ▼, then Putt \u00B7 \u275A\u275A pause',
+            say: [['Press Space or click Start to tee off', 'Tap Putt or Start to tee off'], [/Press Space/g, 'Tap Putt'], [/press Space/g, 'tap Putt']],
+        });
+    </script>
 </body>
 </html>
