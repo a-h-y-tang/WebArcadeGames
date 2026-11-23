@@ -47,5 +47,15 @@
     </main>
 
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            pad: { kind: 'dpad', repeat: 110 },
+            buttons: [{ label: 'Drop', key: ' ' }, { label: '❚❚', key: 'p', aria: 'Pause', small: true }],
+            hint: '◀ ▶ move · ▲ rotate · ▼ soft drop · Drop · ❚❚ pause',
+            help: '.help',
+            say: [[/Press any arrow key or Space/g, 'Tap an arrow or Drop'], [/Press P/g, 'Tap ❚❚']],
+        });
+    </script>
 </body>
 </html>
