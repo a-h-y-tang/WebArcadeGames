@@ -26,5 +26,13 @@
         <p id="controls-hint">Left-click reveal &nbsp;·&nbsp; Right-click flag &nbsp;·&nbsp; Clear the field without hitting a mine</p>
     </div>
     <script src="game.js"></script>
+    <script src="../shared/touch-controls.js"></script>
+    <script>
+        TouchControls.init({
+            longPress: { target: '#canvas', rightButton: true },
+            hint: 'Tap to reveal · touch and hold to flag · clear the field without hitting a mine',
+            say: [[/Left-click to reveal · right-click to flag\. Press any key to start\./g, 'Tap to reveal · touch and hold to flag.'], [/Press any key/g, 'Tap the button']],
+        });
+    </script>
 </body>
 </html>
