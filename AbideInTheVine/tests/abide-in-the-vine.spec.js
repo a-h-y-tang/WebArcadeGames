@@ -385,6 +385,83 @@ test.describe('Abide in the Vine', () => {
     });
 
     // -----------------------------------------------------------------------
+    // Flourishes
+    // -----------------------------------------------------------------------
+    test.describe('flourishes', () => {
+        test('gathering a grape floats a +10 over the garden', async ({ page }) => {
+            const pops = await page.evaluate(() => {
+                startGame();
+                pops.length = 0;
+                grape = { x: vine[0].x + 1, y: vine[0].y };
+                advance();
+                return pops.map((p) => p.text);
+            });
+            expect(pops).toEqual(['+10']);
+        });
+
+        test('gathering a fig floats a +50', async ({ page }) => {
+            const pops = await page.evaluate(() => {
+                startGame();
+                fig = { x: vine[0].x + 1, y: vine[0].y, ticks: 20 };
+                grape = { x: 0, y: 0 };
+                pops.length = 0;
+                advance();
+                return pops.map((p) => p.text);
+            });
+            expect(pops).toEqual(['+50']);
+        });
+
+        test('a new season announces itself', async ({ page }) => {
+            const texts = await page.evaluate(() => {
+                startGame();
+                fruit = 4;
+                grape = { x: vine[0].x + 1, y: vine[0].y };
+                pops.length = 0;
+                advance();
+                return pops.map((p) => p.text);
+            });
+            expect(texts).toContain('Season 2');
+        });
+
+        test('pops fade away as time passes', async ({ page }) => {
+            const left = await page.evaluate(() => {
+                startGame();
+                grape = { x: vine[0].x + 1, y: vine[0].y };
+                advance();
+                updatePops(5);
+                return pops.length;
+            });
+            expect(left).toBe(0);
+        });
+
+        test('a tangle is marked where the vine hit', async ({ page }) => {
+            const mark = await page.evaluate(() => {
+                startGame();
+                grape = { x: 0, y: 0 };
+                stones = [{ x: vine[0].x + 1, y: vine[0].y }];
+                const wall = { x: vine[0].x + 1, y: vine[0].y };
+                advance();
+                return { tangleAt: tangleAt && { ...tangleAt }, wall, state };
+            });
+            expect(mark.state).toBe('over');
+            expect(mark.tangleAt).toEqual(mark.wall);
+        });
+
+        test('starting a new run clears the tangle mark and the pops', async ({ page }) => {
+            const s = await page.evaluate(() => {
+                startGame();
+                stones = [{ x: vine[0].x + 1, y: vine[0].y }];
+                grape = { x: 0, y: 0 };
+                advance();
+                startGame();
+                return { tangleAt, pops: pops.length };
+            });
+            expect(s.tangleAt).toBeNull();
+            expect(s.pops).toBe(0);
+        });
+    });
+
+    // -----------------------------------------------------------------------
     // Collisions and game over
     // -----------------------------------------------------------------------
     test.describe('tangling', () => {
@@ -536,6 +613,16 @@ test.describe('Abide in the Vine', () => {
         test('P does nothing before a run has started', async ({ page }) => {
             await page.keyboard.press('p');
             expect(await page.evaluate(() => state)).toBe('idle');
+        });
+
+        test('leaving the tab pauses the run', async ({ page }) => {
+            const st = await page.evaluate(() => {
+                startGame();
+                Object.defineProperty(document, 'hidden', { value: true, configurable: true });
+                document.dispatchEvent(new Event('visibilitychange'));
+                return state;
+            });
+            expect(st).toBe('paused');
         });
 
         test('the Start button resumes a paused run', async ({ page }) => {

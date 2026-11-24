@@ -46,8 +46,9 @@ bonus food is `fig`, and the obstacles are `stones`.
 | Every 5 grapes | Level up: 2 more trellis stones appear (capped at 16) |
 | Every 4th grape | A fig appears for 40 ticks if none is on the board |
 
-- `tickMs = max(TICK_MIN, TICK_BASE − fruit × TICK_STEP)` = `max(70, 140 − 5·fruit)`,
-  so the vine speeds up with every cluster and tops out at 70 ms per cell. Speed
+- `tickMs = max(TICK_MIN, TICK_BASE − fruit × TICK_STEP)` = `max(85, 150 − 4·fruit)`,
+  so the vine speeds up with every cluster and tops out at 85 ms per cell (about
+  sixteen clusters in). Speed
   is a pure function of `fruit`, which keeps the simulation reproducible.
 - `level = 1 + floor(fruit / 5)` — also a pure function of `fruit`.
 - Growth is deferred: gathering sets `growth += 3`, and each tick either consumes
@@ -86,6 +87,8 @@ visible in every state except `running`. The best score is kept in
 - **P** — pause / resume.
 - **Swipe** on the canvas — steer on a touch screen; the Start button is a
   normal button, so touch devices can play without a keyboard.
+- Switching away from the tab pauses a running game (`visibilitychange`), so a
+  long vine is never lost to a notification.
 
 ## Rendering
 
@@ -97,7 +100,13 @@ function of the model:
   with small leaves on alternating segments and a lighter growing tip.
 - Grapes are a small cluster of purple berries with a stem; the fig is a deeper
   purple teardrop that blinks over its last 10 ticks.
-- Stones are grey rounded squares with a lighter top edge.
+- Stones are irregular grey blobs; each one's wobble is derived from its own
+  cell coordinates, so a stone keeps the same shape for the whole run.
+- Gathering fruit floats a label (`+10`, `+50`, `Season 3`) that rises and fades.
+  Labels live in `pops` and age in wall-clock seconds through `updatePops(dt)`,
+  not in ticks, so they fade at the same rate however fast the vine is moving.
+- A lost run leaves an amber burst on `tangleAt`, the cell the tip could not
+  enter, so the player can see what the vine ran into behind the overlay.
 
 ## Code layout
 

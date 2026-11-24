@@ -34,9 +34,9 @@ const MAX_STONES = 16;
 const SAFE_CELLS_AHEAD = 3;     // no new stone may land this close in front
 
 // --- Speed (pure functions of `fruit`) ---
-const TICK_BASE = 140;          // ms per cell at the start of a run
-const TICK_STEP = 5;            // ms shaved off per grape gathered
-const TICK_MIN = 70;            // fastest the vine ever moves
+const TICK_BASE = 150;          // ms per cell at the start of a run
+const TICK_STEP = 4;            // ms shaved off per grape gathered
+const TICK_MIN = 85;            // fastest the vine ever moves
 
 const BEST_KEY = 'abide-in-the-vine-best';
 
@@ -55,7 +55,8 @@ let level = 1;
 let growth = 0;                 // cells still to be added
 let tickMs = TICK_BASE;
 let tickTimer = 0;
-let ticks = 0;                  // ticks since the run began (for animation)
+let pops = [];                  // floating score / season labels
+let tangleAt = null;            // cell the vine tangled on, marked after a loss
 
 // --- DOM -------------------------------------------------------------------
 const canvas = document.getElementById('canvas');
@@ -113,6 +114,19 @@ function freeCells(extraBlocked) {
 
 function pick(cells) {
     return cells.length ? cells[Math.floor(Math.random() * cells.length)] : null;
+}
+
+const POP_LIFE = 1.2;           // seconds a floating label lingers
+
+function addPop(text, cell, color) {
+    pops.push({ text, x: cell.x, y: cell.y, life: POP_LIFE, color: color || '#dcf7b4' });
+}
+
+// Floating labels live in wall-clock time, not in ticks, so they fade at the
+// same rate however fast the vine is moving.
+function updatePops(dt) {
+    for (const p of pops) p.life -= dt;
+    pops = pops.filter((p) => p.life > 0);
 }
 
 function refreshSpeed() {
@@ -180,8 +194,9 @@ function startGame() {
     fruit = 0;
     level = 1;
     growth = 0;
-    ticks = 0;
     tickTimer = 0;
+    pops = [];
+    tangleAt = null;
     refreshSpeed();
     spawnGrape();
     state = 'running';
@@ -256,7 +271,6 @@ function setDirection(dx, dy) {
 // One grid tick: the tip moves exactly one cell.
 function advance() {
     if (state !== 'running') return;
-    ticks++;
 
     if (pendingDirs.length) dir = pendingDirs.shift();
 
@@ -266,6 +280,7 @@ function advance() {
 
     if (!inBounds(next.x, next.y) || onStone(next.x, next.y) ||
         (onVine(next.x, next.y) && !tailVacates)) {
+        tangleAt = next;
         gameOver();
         return;
     }
@@ -279,16 +294,21 @@ function advance() {
         fruit++;
         score += GRAPE_POINTS;
         growth += GROW_PER_FRUIT;
+        addPop(`+${GRAPE_POINTS}`, next);
         const before = level;
         refreshLevel();
         refreshSpeed();
-        if (level > before) addStones();
+        if (level > before) {
+            addStones();
+            addPop(`Season ${level}`, { x: next.x, y: next.y - 1 }, '#f0c96a');
+        }
         if (fruit % FIG_EVERY === 0 && !fig) spawnFig();
         spawnGrape();
     }
 
     if (ateFig) {
         score += FIG_POINTS;
+        addPop(`+${FIG_POINTS}`, next, '#d6a0f5');
         fig = null;
     }
 
@@ -572,12 +592,46 @@ function drawTip() {
     drawLeaf(px, py, angle + 2.2, 9);
 }
 
+// Where the vine came to grief: an amber burst left on the board.
+function drawTangle() {
+    if (!tangleAt) return;
+    const px = cx(Math.max(0, Math.min(COLS - 1, tangleAt.x)));
+    const py = cy(Math.max(0, Math.min(ROWS - 1, tangleAt.y)));
+    ctx.strokeStyle = '#f2a65a';
+    ctx.lineWidth = 2.4;
+    ctx.lineCap = 'round';
+    for (let i = 0; i < 6; i++) {
+        const a = (i / 6) * Math.PI * 2 + Math.PI / 12;
+        ctx.beginPath();
+        ctx.moveTo(px + Math.cos(a) * 4, py + Math.sin(a) * 4);
+        ctx.lineTo(px + Math.cos(a) * 11, py + Math.sin(a) * 11);
+        ctx.stroke();
+    }
+}
+
+function drawPops() {
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    for (const p of pops) {
+        const t = 1 - p.life / POP_LIFE;          // 0 at birth, 1 at the end
+        ctx.globalAlpha = Math.max(0, 1 - t * t);
+        ctx.font = 'bold 13px "Segoe UI", system-ui, sans-serif';
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+        ctx.fillText(p.text, cx(p.x) + 1, cy(p.y) - t * 18 + 1);
+        ctx.fillStyle = p.color;
+        ctx.fillText(p.text, cx(p.x), cy(p.y) - t * 18);
+    }
+    ctx.globalAlpha = 1;
+}
+
 function draw() {
     drawGarden();
     drawStones();
     if (grape) drawGrapes(grape, 1.1);
     drawFig();
     drawVine();
+    drawTangle();
+    drawPops();
 }
 
 // ---------------------------------------------------------------------------
@@ -590,6 +644,7 @@ function frame(now) {
     const dt = lastTime ? Math.min((now - lastTime) / 1000, 0.1) : 0;
     lastTime = now;
     if (state === 'running') step(dt);
+    updatePops(dt);
     draw();
     requestAnimationFrame(frame);
 }
@@ -664,15 +719,26 @@ canvas.addEventListener('touchend', () => { touchStart = null; });
 
 btnStart.addEventListener('click', () => startOrRestart());
 
+// Nobody should lose a long vine because they switched tabs.
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden && state === 'running') togglePause();
+});
+
 // ---------------------------------------------------------------------------
 // Init
 // ---------------------------------------------------------------------------
 
-best = parseInt(localStorage.getItem(BEST_KEY) || '0', 10) || 0;
+try {
+    best = parseInt(localStorage.getItem(BEST_KEY) || '0', 10) || 0;
+} catch (e) {
+    best = 0;  // private mode / storage blocked
+}
 state = 'idle';
 vine = [];
 for (let i = 0; i < START_LENGTH; i++) vine.push({ x: START_X - i, y: START_Y });
 grape = { x: 20, y: 10 };
+pops = [];
+tangleAt = null;
 updateHud();
 draw();
 requestAnimationFrame(frame);

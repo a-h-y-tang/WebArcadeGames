@@ -18,7 +18,7 @@ Open `index.html` in any browser — no build step or server required.
   the garden.
 - **Start** a run with **Space**, **Enter**, any steering key, or the Start
   button.
-- **Pause / resume** with **P**.
+- **Pause / resume** with **P**. Switching to another tab pauses the run for you.
 
 The vine never stops moving, and it cannot turn back on itself — you can only
 turn left or right of the way it is already growing.
@@ -36,8 +36,8 @@ Every five clusters starts a new **season**: two more trellis stones are set in
 the garden, and they are as solid as the wall. Stones never appear right in
 front of the tip, so a new season can never kill you on its own.
 
-The vine speeds up with every cluster, from 140 ms a cell down to a floor of
-70 ms, so late seasons are long, fast and crowded. Fill the whole garden with
+The vine speeds up with every cluster, from 150 ms a cell down to a floor of
+85 ms, so late seasons are long, fast and crowded. Fill the whole garden with
 vine and you win outright — *much fruit*.
 
 Your best score is kept in the browser between visits.
