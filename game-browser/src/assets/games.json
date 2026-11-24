@@ -18,6 +18,15 @@
     "thumbnail": "games/Pool/screenshot.png"
   },
   {
+    "id": "abide-in-the-vine",
+    "name": "Abide in the Vine",
+    "description": "Steer the growing tip of a vine around the garden, gathering grapes - every cluster makes it longer",
+    "category": "Action",
+    "dir": "AbideInTheVine",
+    "path": "games/AbideInTheVine/index.html",
+    "thumbnail": "games/AbideInTheVine/screenshot.png"
+  },
+  {
     "id": "air-hockey",
     "name": "Air Hockey",
     "description": "Fast-paced air hockey match against the computer",

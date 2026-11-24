@@ -151,6 +151,7 @@ For each new game, put it in a new folder. Each game should have its own README.
 | Lamp unto My Feet | [LampUntoMyFeet/](LampUntoMyFeet/) | Complete |
 | Feast of Booths | [FeastOfBooths/](FeastOfBooths/) | Complete |
 | Land of Inheritance | [LandOfInheritance/](LandOfInheritance/) | Complete |
+| Abide in the Vine | [AbideInTheVine/](AbideInTheVine/) | In Progress |
 
 ## Playing
 
