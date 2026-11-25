@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faithful Scribe</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="game">
+        <div class="hud">
+            <h1>Faithful Scribe</h1>
+            <div class="stats">
+                <div class="stat"><span class="label">Score</span><span id="score">0</span></div>
+                <div class="stat"><span class="label">Best</span><span id="best">0</span></div>
+                <div class="stat"><span class="label">Chapter</span><span id="chapter">1</span></div>
+                <div class="stat"><span class="label">Combo</span><span id="combo">0</span></div>
+                <div class="stat"><span class="label">Candles</span><span id="candles">3</span></div>
+            </div>
+        </div>
+
+        <div class="board-wrap">
+            <canvas id="canvas" width="640" height="420"
+                    aria-label="Scrolls drifting down toward the scribe's desk, each carrying a word to type"></canvas>
+            <input id="typing-input" type="text" inputmode="text" autocomplete="off"
+                   autocorrect="off" autocapitalize="off" spellcheck="false"
+                   aria-label="Type the word on the lowest scroll">
+            <div id="overlay" class="overlay visible">
+                <h2 id="overlay-title">Faithful Scribe</h2>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Press <kbd>Space</kbd> to start copying</p>
+                <button id="btn-start">Begin the day</button>
+            </div>
+        </div>
+
+        <div class="help">
+            <p><strong>Type</strong> the word on a scroll to copy it before it reaches the desk.</p>
+            <p><kbd>Esc</kbd> release a scroll &middot; <kbd>Esc</kbd> again to pause</p>
+            <p>On a phone, tap the page to bring up the keyboard.</p>
+            <p id="verse" class="verse">&ldquo;Take a scroll and write on it all the words I have spoken to
+                you.&rdquo; &mdash; Jeremiah 36:2</p>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>
