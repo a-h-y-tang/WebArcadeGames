@@ -306,6 +306,15 @@
     "thumbnail": "games/DroidArena/screenshot.png"
   },
   {
+    "id": "faithful-scribe",
+    "name": "Faithful Scribe",
+    "description": "Type the word on each falling scroll before it reaches the scribe's desk",
+    "category": "Action",
+    "dir": "FaithfulScribe",
+    "path": "games/FaithfulScribe/index.html",
+    "thumbnail": "games/FaithfulScribe/screenshot.png"
+  },
+  {
     "id": "farkle",
     "name": "Farkle",
     "description": "Dice-rolling game - score combinations wisely",
