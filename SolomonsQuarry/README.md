@@ -65,7 +65,7 @@ always carves the same tunnels.
 * `index.html` — markup, HUD and the overlay.
 * `style.css` — the lamplit colour scheme.
 * `game.js` — maze generation, movement, the lamp, and the raycasting renderer.
-* `tests/solomons-quarry.spec.js` — 68 Playwright tests, written before the game.
+* `tests/solomons-quarry.spec.js` — 69 Playwright tests, written before the game.
 * `DESIGN.md` — how the engine works, and the assumptions behind the design.
 
 Run the tests from the repository root:

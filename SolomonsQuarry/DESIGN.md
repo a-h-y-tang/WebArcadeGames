@@ -29,7 +29,7 @@ dressed stone, then carry them back to the quarry mouth before the lamp dies.
 * `maze.grid` is a flat `Uint8Array`: `1` = rock, `0` = open tunnel. The outer
   border is always rock.
 * The quarry mouth (the gate) is the cell `(1, 1)`, where the player starts
-  facing east.
+  facing the first open tunnel out of it — never nose-first into the rock.
 * Generation is driven by a `mulberry32` RNG seeded from the `?seed=` query
   parameter, so a seed always produces the same quarry (used by the tests) and
   no seed produces a new one each run.
@@ -73,6 +73,10 @@ dressed stone, then carry them back to the quarry mouth before the lamp dies.
   buffer from the wall pass, so an item behind a corner is correctly hidden.
 * A minimap inset in the top-left corner shows only cells you have already
   walked past (an "explored" set), the player's heading, and the gate.
+* The title screen is the real first view of the quarry you are about to walk,
+  dimmed behind the overlay, and pressing Start walks into that same quarry; a
+  later run (after a win or a dead lamp) carves a new one. When the lamp dies
+  the canvas goes dark with it.
 
 ## Controls
 
@@ -115,8 +119,11 @@ time:
 6. **State lives in script-level `let`/`const` bindings**, as in the other games
    here (for example `Darts/game.js`), so the Playwright specs can read and
    drive the game directly with `page.evaluate`.
-7. **The minimap lives inside the one `<canvas>`** rather than a second element,
+7. **Playwright drives the real bindings.** The 69 specs read and set the same
+   script-level state the game runs on, rather than a test-only API, so a test
+   cannot pass against a façade the player never touches.
+8. **The minimap lives inside the one `<canvas>`** rather than a second element,
    which keeps the markup and the screenshot the same shape as the other games.
-8. **Mouse look is deliberately left out.** Pointer-lock behaves differently
+9. **Mouse look is deliberately left out.** Pointer-lock behaves differently
    across browsers and makes nothing about the game better; the keyboard turn is
    enough.

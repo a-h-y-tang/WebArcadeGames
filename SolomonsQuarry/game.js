@@ -241,6 +241,17 @@ function gateOpen() {
 }
 
 // --- Level lifecycle -------------------------------------------------------
+// Look down a tunnel at the start of a level, never straight into the rock.
+function facingFromGate() {
+    const gx = Math.floor(GATE.x);
+    const gy = Math.floor(GATE.y);
+    const choices = [[1, 0, 0], [0, 1, Math.PI / 2], [0, -1, -Math.PI / 2], [-1, 0, Math.PI]];
+    for (const [dx, dy, angle] of choices) {
+        if (!isWall(gx + dx, gy + dy)) return angle;
+    }
+    return 0;
+}
+
 function startLevel() {
     const cfg = config();
     maze = generateMaze(cfg.cols, cfg.rows);
@@ -252,16 +263,20 @@ function startLevel() {
     oil = 100;
     player.x = GATE.x;
     player.y = GATE.y;
-    player.angle = 0;
+    player.angle = facingFromGate();
     explored = new Set();
     markExplored();
     updateHUD();
 }
 
 function startRun() {
+    // The quarry shown behind the title screen is the one you walk into; only
+    // a later run (after a win or a dead lamp) carves a new one.
+    const carveNew = state !== 'idle';
     level = 1;
     score = 0;
-    startLevel();
+    if (carveNew) startLevel();
+    else updateHUD();
     state = 'running';
     overlay.classList.remove('visible');
     overlayScore.textContent = '';
@@ -314,6 +329,7 @@ function loseRun() {
     overlay.classList.add('visible');
     statusEl.textContent = 'The quarry is dark. Press Space to start again.';
     updateHUD();
+    drawDarkness();
 }
 
 // --- HUD -------------------------------------------------------------------
@@ -548,19 +564,40 @@ function drawSprite(sprite, depth) {
     }
 
     if (sprite.kind === 'stone') {
+        // A dressed block: a lit top, a front face, and one side face in
+        // shadow on whichever side the player is standing.
         const size = height * 0.36;
+        const depthFace = size * 0.26;
         const x = screenX - size / 2;
         const y = floorY - size;
+        const lean = screenX < CANVAS_W / 2 ? 1 : -1;                 // side we can see
+
+        ctx.fillStyle = `rgb(${Math.round(150 * k) + 8},${Math.round(130 * k) + 7},${Math.round(96 * k) + 5})`;
+        ctx.beginPath();                                              // side face
+        ctx.moveTo(x + (lean > 0 ? size : 0), y);
+        ctx.lineTo(x + (lean > 0 ? size : 0) + depthFace * lean, y - depthFace * 0.5);
+        ctx.lineTo(x + (lean > 0 ? size : 0) + depthFace * lean, y - depthFace * 0.5 + size);
+        ctx.lineTo(x + (lean > 0 ? size : 0), y + size);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = `rgba(255,244,216,${0.3 + 0.45 * k})`;        // top face
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x + size, y);
+        ctx.lineTo(x + size + depthFace * lean, y - depthFace * 0.5);
+        ctx.lineTo(x + depthFace * lean, y - depthFace * 0.5);
+        ctx.closePath();
+        ctx.fill();
+
         ctx.fillStyle = `rgb(${Math.round(222 * k) + 12},${Math.round(198 * k) + 10},${Math.round(150 * k) + 8})`;
-        ctx.fillRect(x, y, size, size);
-        ctx.fillStyle = `rgba(255,243,214,${0.35 + 0.4 * k})`;        // lit top face
-        ctx.fillRect(x, y, size, size * 0.2);
-        ctx.strokeStyle = 'rgba(30,22,10,0.55)';
-        ctx.lineWidth = Math.max(1, size * 0.04);
+        ctx.fillRect(x, y, size, size);                               // front face
+        ctx.strokeStyle = 'rgba(30,22,10,0.5)';
+        ctx.lineWidth = Math.max(1, size * 0.035);
         ctx.strokeRect(x, y, size, size);
         ctx.beginPath();                                              // chisel line
-        ctx.moveTo(x + size * 0.12, y + size * 0.6);
-        ctx.lineTo(x + size * 0.88, y + size * 0.6);
+        ctx.moveTo(x + size * 0.14, y + size * 0.62);
+        ctx.lineTo(x + size * 0.86, y + size * 0.62);
         ctx.stroke();
         return;
     }
@@ -653,8 +690,24 @@ function drawPausedVeil() {
     ctx.fillText('Paused', CANVAS_W / 2, CANVAS_H / 2);
 }
 
+// The title screen looks down the first tunnel of the quarry, behind the
+// overlay, instead of showing a blank rectangle.
+// When the lamp dies the tunnel goes with it.
+function drawDarkness() {
+    ctx.fillStyle = '#04050a';
+    ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
+    const ember = ctx.createRadialGradient(
+        CANVAS_W / 2, CANVAS_H * 0.6, 2, CANVAS_W / 2, CANVAS_H * 0.6, CANVAS_W * 0.3
+    );
+    ember.addColorStop(0, 'rgba(120, 60, 16, 0.5)');
+    ember.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = ember;
+    ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
+}
+
 function drawTitleView() {
-    ctx.fillStyle = '#05070b';
+    drawTunnel();
+    ctx.fillStyle = 'rgba(5, 8, 14, 0.12)';
     ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
 }
 

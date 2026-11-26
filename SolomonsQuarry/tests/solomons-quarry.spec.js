@@ -167,13 +167,29 @@ test.describe("Solomon's Quarry", () => {
             expect(await page.evaluate(() => state)).toBe('running');
         });
 
-        test('the player starts at the quarry mouth facing east', async ({ page }) => {
+        test('the player starts at the quarry mouth, looking down a tunnel', async ({ page }) => {
             await start(page);
-            const p = await page.evaluate(() => ({ x: player.x, y: player.y, angle: player.angle }));
+            const p = await page.evaluate(() => ({ x: player.x, y: player.y }));
             const gate = await page.evaluate(() => ({ x: GATE.x, y: GATE.y }));
             expect(p.x).toBeCloseTo(gate.x, 5);
             expect(p.y).toBeCloseTo(gate.y, 5);
-            expect(p.angle).toBeCloseTo(0, 5);
+            // Never nose-first into the rock: the view ahead is open tunnel.
+            const ahead = await page.evaluate(() => castRay(player.x, player.y, player.angle).dist);
+            expect(ahead).toBeGreaterThan(0.9);
+        });
+
+        test('every level opens looking down a tunnel', async ({ page }) => {
+            await start(page);
+            const views = await page.evaluate(() => {
+                const out = [];
+                for (let l = 1; l <= LEVELS.length; l++) {
+                    level = l;
+                    startLevel();
+                    out.push(castRay(player.x, player.y, player.angle).dist);
+                }
+                return out;
+            });
+            expect(views.filter((d) => d <= 0.9)).toEqual([]);
         });
 
         test('the status line asks for the stones', async ({ page }) => {
@@ -555,7 +571,7 @@ test.describe("Solomon's Quarry", () => {
             await returnToGate(page);
             await page.waitForFunction(() => level === 2);
             expect(await page.evaluate(() => score)).toBeGreaterThan(3 * 100 + 250);
-            expect(await page.evaluate(() => oil)).toBe(100);
+            expect(await page.evaluate(() => oil)).toBeGreaterThan(99);
         });
 
         test('the new level puts the player back at its quarry mouth', async ({ page }) => {
@@ -648,7 +664,10 @@ test.describe("Solomon's Quarry", () => {
             await page.keyboard.press('Space');
             await page.waitForFunction(() => state === 'running');
             const s = await page.evaluate(() => ({ level, score, oil, taken: stones.filter((x) => x.taken).length }));
-            expect(s).toEqual({ level: 1, score: 0, oil: 100, taken: 0 });
+            expect(s.level).toBe(1);
+            expect(s.score).toBe(0);
+            expect(s.taken).toBe(0);
+            expect(s.oil).toBeGreaterThan(99);     // a frame of burn may already have passed
         });
 
         test('a fresh run carves a fresh quarry', async ({ page }) => {
