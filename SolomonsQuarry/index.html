@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solomon's Quarry</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Solomon's Quarry</h1>
+        <div id="hud">
+            <span>Level: <strong id="level">1</strong></span>
+            <span>Stones: <strong id="stones">0 / 3</strong></span>
+            <span>Lamp: <strong id="oil">100%</strong></span>
+            <span>Score: <strong id="score">0</strong></span>
+            <span>Best: <strong id="best">—</strong></span>
+        </div>
+        <div id="oil-gauge"><div id="oil-bar" style="width: 100%"></div></div>
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="760" height="440"></canvas>
+            <div id="overlay" class="visible">
+                <p id="overlay-title">Solomon's Quarry</p>
+                <p id="verse">&ldquo;Only blocks dressed at the quarry were used.&rdquo; — 1 Kings 6:7</p>
+                <p id="overlay-score"></p>
+                <p id="overlay-sub">Press Space or click Start to go down</p>
+                <button id="btn-start">Start Game</button>
+            </div>
+        </div>
+        <p id="status">Light the lamp and go down into the quarry.</p>
+        <p id="controls-hint">
+            ↑ ↓ / W S: walk &nbsp;·&nbsp; ← → / A D: turn &nbsp;·&nbsp; Q E: sidestep &nbsp;·&nbsp; P: pause
+        </p>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
