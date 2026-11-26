@@ -1098,6 +1098,15 @@
     "thumbnail": "games/Solitaire/screenshot.png"
   },
   {
+    "id": "solomons-quarry",
+    "name": "Solomon's Quarry",
+    "description": "Gather the temple's dressed stones in a first-person maze before your lamp burns out",
+    "category": "Action",
+    "dir": "SolomonsQuarry",
+    "path": "games/SolomonsQuarry/index.html",
+    "thumbnail": "games/SolomonsQuarry/screenshot.png"
+  },
+  {
     "id": "split-ball",
     "name": "Split Ball",
     "description": "Grow walls to partition the arena and fence the bouncing balls in",
