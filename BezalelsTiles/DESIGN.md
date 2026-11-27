@@ -68,8 +68,13 @@ Ark, House on the Rock, The Fish, Breastplate Jewel, Fishing Boat, The Dove.
 - The canvas has two areas: the **board** on top, where the shadow figure sits,
   and the **tray** below, holding the tiles that have not been laid yet.
 - Dragging a tile onto the board snaps its bounding box to the nearest lattice
-  point. Dropping it below the board, or outside the board, sends it back to its
-  tray slot.
+  point. Dropping it below the board, or anywhere it would hang over the edge,
+  sends it back to its tray slot, where it also goes back to its upright
+  orientation.
+- A tile selected on the bench and then driven by the keyboard jumps onto the
+  board first, landing on the free spot nearest the middle, so it never
+  disappears underneath a tile already laid. A click inside the selected tile
+  always picks that tile up, even where another tile lies across it.
 - Tiles may overlap while you work — the puzzle is only finished when the cover
   is exact — and overlapping tiles are drawn with a warning outline so a
   near-miss is visible.
