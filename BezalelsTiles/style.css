@@ -93,6 +93,8 @@ canvas {
     border: 2px solid #4b3a1d;
     border-radius: 10px;
     touch-action: none;
+    max-width: 100%;
+    height: auto;
 }
 
 #overlay {
