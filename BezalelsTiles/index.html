@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bezalel's Tiles</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main id="container">
+        <h1>Bezalel&rsquo;s Tiles</h1>
+        <p id="verse">&ldquo;I have filled him with the Spirit of God, in wisdom, and in understanding,
+            and in knowledge, and in all manner of workmanship.&rdquo; &mdash; Exodus 31:3</p>
+
+        <div id="hud">
+            <div class="stat"><span class="label">Figure</span><strong id="figure-label">The Cornerstone</strong></div>
+            <div class="stat"><span class="label">Finished</span><strong id="solved-count">0 / 8</strong></div>
+            <div class="stat"><span class="label">Hints</span><strong id="hint-count">0</strong></div>
+        </div>
+
+        <p id="status" role="status" aria-live="polite">Lay all seven tiles inside the shadow.</p>
+
+        <div id="canvas-wrapper">
+            <canvas id="canvas" width="640" height="540"
+                    aria-label="A shadowed figure to fill with seven wooden tiles, and a tray of tiles below"></canvas>
+            <div id="overlay">
+                <h2 id="overlay-title">The figure is finished!</h2>
+                <p id="overlay-verse"></p>
+                <button id="btn-continue">Next figure</button>
+            </div>
+        </div>
+
+        <div id="figures">
+            <button class="figure-btn active" data-figure="0">The Cornerstone</button>
+            <button class="figure-btn" data-figure="1">The Tent of Meeting</button>
+            <button class="figure-btn" data-figure="2">Noah&#39;s Ark</button>
+            <button class="figure-btn" data-figure="3">The House on the Rock</button>
+            <button class="figure-btn" data-figure="4">The Fish</button>
+            <button class="figure-btn" data-figure="5">The Breastplate Jewel</button>
+            <button class="figure-btn" data-figure="6">The Fishing Boat</button>
+            <button class="figure-btn" data-figure="7">The Dove</button>
+        </div>
+
+        <div id="controls">
+            <button id="btn-reset">Reset</button>
+            <button id="btn-hint">Hint</button>
+            <button id="btn-next">Next figure</button>
+        </div>
+
+        <div id="rules">
+            <p>Bezalel was the craftsman the Lord filled with his Spirit to cut stone and carve
+               timber for the tabernacle. Seven tiles lie on his bench: two large triangles, a
+               medium triangle, two small triangles, a square and a parallelogram.</p>
+            <ul>
+                <li>Fill the <strong>shadowed figure</strong> with all seven tiles.</li>
+                <li>No gaps and no overlaps &mdash; the tiles cover the figure exactly.</li>
+                <li>Every tile is used in every figure.</li>
+            </ul>
+            <p class="hint"><strong>Mouse:</strong> drag a tile to lay it; it snaps to the grid.
+               Drop a tile below the figure to put it back on the bench. Click a tile to select it.
+               <strong>Keyboard:</strong> <strong>1</strong>&ndash;<strong>7</strong> pick a tile,
+               arrow keys move it, <strong>R</strong> turns it (<strong>Shift</strong>+<strong>R</strong>
+               turns it back), <strong>F</strong> flips it, <strong>Backspace</strong> returns it to the
+               bench. <strong>H</strong> hint, <strong>N</strong> next figure, <strong>Esc</strong> reset.</p>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>
