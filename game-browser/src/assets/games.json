@@ -99,6 +99,15 @@
     "thumbnail": "games/Berzerk/screenshot.png"
   },
   {
+    "id": "bezalels-tiles",
+    "name": "Bezalel's Tiles",
+    "description": "Lay seven craftsman's tiles inside a shadowed figure so they cover it exactly",
+    "category": "Puzzle",
+    "dir": "BezalelsTiles",
+    "path": "games/BezalelsTiles/index.html",
+    "thumbnail": "games/BezalelsTiles/screenshot.png"
+  },
+  {
     "id": "bible-words",
     "name": "Bible Words",
     "description": "Guess the hidden five-letter Bible word in six tries - names, places and things from Scripture",
