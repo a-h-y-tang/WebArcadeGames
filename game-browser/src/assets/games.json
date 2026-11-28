@@ -1242,6 +1242,15 @@
     "thumbnail": "games/Untangle/screenshot.png"
   },
   {
+    "id": "up-to-jerusalem",
+    "name": "Up to Jerusalem",
+    "description": "Four pilgrim families race up to the temple for the feast - roll, set out and get all four pilgrims home to Jerusalem",
+    "category": "Board Game",
+    "dir": "UpToJerusalem",
+    "path": "games/UpToJerusalem/index.html",
+    "thumbnail": "games/UpToJerusalem/screenshot.png"
+  },
+  {
     "id": "vineyard-keeper",
     "name": "Vineyard Keeper",
     "description": "Guard the vineyard - flick pebbles at the caterpillar as it winds down through the grapevines",

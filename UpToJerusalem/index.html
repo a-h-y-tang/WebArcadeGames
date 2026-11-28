@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Up to Jerusalem</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="game">
+    <header class="hud">
+        <h1>Up to Jerusalem</h1>
+        <p id="verse">&ldquo;I rejoiced with those who said to me, &lsquo;Let us go to the
+            house of the LORD.&rsquo;&rdquo; &mdash; Psalm 122:1</p>
+
+        <div class="stats">
+            <div class="stat"><span class="label">Travelling</span><span id="turn">Nazareth</span></div>
+            <div class="stat"><span class="label">Die</span><span id="die">&ndash;</span></div>
+            <div class="stat"><span class="label">Feasts won</span><span id="wins">0</span></div>
+        </div>
+    </header>
+
+    <p id="status" role="status" aria-live="polite">Four families set out for the feast. Press Space to roll.</p>
+
+    <div class="board-wrap">
+        <canvas id="canvas" width="600" height="600"
+                aria-label="The pilgrim road board: four home towns, the shared road and the temple in Jerusalem"></canvas>
+        <div id="overlay" class="overlay visible">
+            <h2 id="overlay-title">Up to Jerusalem</h2>
+            <p id="overlay-sub">Four pilgrim families race to the feast. Press <strong>Space</strong> to set out.</p>
+            <button id="btn-start">Set out</button>
+        </div>
+    </div>
+
+    <div id="families">
+        <div class="family" data-player="0">
+            <span class="dot" style="background:#5b9bf8"></span>
+            <span class="fname">Nazareth</span>
+            <span class="tag you">you</span>
+            <span class="counts">home <strong class="fhome">4</strong> &middot; temple <strong class="ftemple">0</strong></span>
+        </div>
+        <div class="family" data-player="1">
+            <span class="dot" style="background:#4ec98a"></span>
+            <span class="fname">Jericho</span>
+            <span class="counts">home <strong class="fhome">4</strong> &middot; temple <strong class="ftemple">0</strong></span>
+        </div>
+        <div class="family" data-player="2">
+            <span class="dot" style="background:#f0b429"></span>
+            <span class="fname">Beersheba</span>
+            <span class="counts">home <strong class="fhome">4</strong> &middot; temple <strong class="ftemple">0</strong></span>
+        </div>
+        <div class="family" data-player="3">
+            <span class="dot" style="background:#ef6f8c"></span>
+            <span class="fname">Joppa</span>
+            <span class="counts">home <strong class="fhome">4</strong> &middot; temple <strong class="ftemple">0</strong></span>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button id="btn-roll">Roll</button>
+        <button id="btn-new">New Game</button>
+    </div>
+
+    <section id="rules">
+        <p>Joseph and Mary &ldquo;went to Jerusalem every year at the Feast of the Passover&rdquo;
+            (Luke 2:41). Four families set out from four towns; you travel with
+            <strong>Nazareth</strong>. Gather all four of your pilgrims in the temple courts
+            before the other families do.</p>
+        <ul>
+            <li>A pilgrim leaves home only on a <strong>six</strong>, stepping onto your start cell.</li>
+            <li>The die says how far one pilgrim walks. You choose which pilgrim goes.</li>
+            <li>Land on a lone pilgrim of another family and it goes back home &mdash; unless it
+                stands on a <strong>well</strong> or a start cell, or has a companion beside it.</li>
+            <li>Roll a six, or send someone home, and you roll again. Three sixes in a row and
+                your turn is over.</li>
+            <li>The last five cells are your own <strong>ascent</strong>, and the
+                <strong>temple</strong> must be reached by an exact roll.</li>
+        </ul>
+        <p class="hint"><strong>Mouse:</strong> click <em>Roll</em>, then click the pilgrim you
+            want to send on. <strong>Keyboard:</strong> <strong>Space</strong> or
+            <strong>Enter</strong> rolls, <strong>1</strong>&ndash;<strong>4</strong> picks a
+            pilgrim, <strong>Enter</strong> takes the first move offered, <strong>N</strong>
+            starts a new game.</p>
+    </section>
+</main>
+
+<script src="game.js"></script>
+</body>
+</html>
