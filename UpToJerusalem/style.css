@@ -1,0 +1,241 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 20px 12px 36px;
+    background: radial-gradient(circle at 50% 0%, #2a2238 0%, #141020 60%);
+    color: #ece6f2;
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    display: flex;
+    justify-content: center;
+}
+
+.game {
+    width: min(600px, 100%);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.hud h1 {
+    margin: 0 0 6px;
+    font-size: 28px;
+    letter-spacing: 4px;
+    text-align: center;
+    color: #fdf6e3;
+}
+
+#verse {
+    margin: 0 0 12px;
+    text-align: center;
+    font-size: 13px;
+    font-style: italic;
+    color: #bcaed0;
+}
+
+.stats {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.stat {
+    flex: 1;
+    background: #221b33;
+    border: 1px solid #3a2f52;
+    border-radius: 10px;
+    padding: 8px 10px;
+    text-align: center;
+}
+
+.stat .label {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: #a294bb;
+}
+
+.stat span:last-child {
+    font-size: 20px;
+    font-weight: 700;
+}
+
+#status {
+    margin: 0;
+    min-height: 22px;
+    text-align: center;
+    font-size: 14px;
+    color: #e4d9f2;
+}
+
+.board-wrap {
+    position: relative;
+    line-height: 0;
+}
+
+canvas {
+    width: 100%;
+    height: auto;
+    border-radius: 14px;
+    background: #1a1428;
+    border: 1px solid #3a2f52;
+    touch-action: manipulation;
+}
+
+.overlay {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 24px;
+    text-align: center;
+    line-height: 1.5;
+    background: rgba(16, 12, 28, 0.88);
+    border-radius: 14px;
+}
+
+.overlay.visible {
+    display: flex;
+}
+
+.overlay h2 {
+    margin: 0;
+    font-size: 26px;
+    color: #f7e3a1;
+}
+
+.overlay p {
+    margin: 0;
+    max-width: 380px;
+    font-size: 15px;
+    color: #d9cfe8;
+}
+
+button {
+    font: inherit;
+    font-weight: 600;
+    padding: 10px 18px;
+    border-radius: 10px;
+    border: 1px solid #5b4a7f;
+    background: #342a4e;
+    color: #f3ecfb;
+    cursor: pointer;
+}
+
+button:hover:not(:disabled) {
+    background: #44366a;
+}
+
+button:disabled {
+    opacity: 0.45;
+    cursor: default;
+}
+
+#btn-start {
+    background: #c9a227;
+    border-color: #e4c35c;
+    color: #241c08;
+}
+
+#btn-start:hover {
+    background: #e0b63a;
+}
+
+#families {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+}
+
+.family {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    background: #221b33;
+    border: 1px solid #3a2f52;
+    border-radius: 10px;
+    padding: 7px 10px;
+}
+
+.family.active {
+    border-color: #f7e3a1;
+    background: #2b2240;
+}
+
+.family .dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex: none;
+}
+
+.family .fname {
+    font-weight: 700;
+}
+
+.family .tag {
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #0f1020;
+    background: #9fc7ff;
+    border-radius: 5px;
+    padding: 1px 5px;
+}
+
+.family .counts {
+    margin-left: auto;
+    color: #a294bb;
+    white-space: nowrap;
+}
+
+.family .counts strong {
+    color: #ece6f2;
+}
+
+.controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+#rules {
+    font-size: 13px;
+    line-height: 1.6;
+    color: #c8bcdb;
+    background: #1d1730;
+    border: 1px solid #332a4b;
+    border-radius: 12px;
+    padding: 14px 18px;
+}
+
+#rules p {
+    margin: 0 0 8px;
+}
+
+#rules ul {
+    margin: 0 0 8px;
+    padding-left: 20px;
+}
+
+#rules strong {
+    color: #f3ecfb;
+}
+
+#rules .hint {
+    margin: 0;
+    color: #a294bb;
+}
+
+@media (max-width: 480px) {
+    #families {
+        grid-template-columns: 1fr;
+    }
+}
